@@ -5,7 +5,9 @@
   "type": "module",
   "private": true,
   "bin": {
-    "snl-lint-entry": "./bin/snl-lint-entry.mjs"
+    "snl-lint-entry": "./bin/snl-lint-entry.mjs",
+    "snl-lint-graph": "./bin/snl-lint-graph.mjs",
+    "snl-lint-package": "./bin/snl-lint-package.mjs"
   },
   "scripts": {
     "test": "tsx --test tests/*.test.ts",
