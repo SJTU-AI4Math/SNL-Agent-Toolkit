@@ -15,14 +15,18 @@ This document has two parts. Depending on the task, you may only need one.
 
 ## Part A — Authoring SNL content
 
-_Placeholder — to be filled in the next iteration._
+_Placeholder — to be filled once we've run the first spike with real data._
 
 Short version of what will go here:
 
-1. **What SNL is.** A structured math markup language: text with `\macro`-style
-   references to shared terms, `[tag]` style variants, `#*` variadic children,
-   and formula-or-text render modes. See `docs/snl-syntax-primer.md` for the
-   micro-reference.
+1. **What SNL is.** A macro-expression language. **The entire `content.snl`
+   field is one macro tree — not "prose with inline macros".** Free text
+   lives inside `%…%` (text mode) or `$…$` / `$$…$$` (LaTeX inline / display)
+   delimiters, which become leaf nodes of the tree. A single macro reference
+   is written as a bare identifier (`R`, `DivRing.div.frac`), NOT with a
+   `\backslash-prefix`. Applying a macro to children uses parens:
+   `foo(a, b)`. Selecting a render style uses square brackets:
+   `foo[display](a, b)`.
 2. **Entry kinds.** The project defines its own set — theorem / definition /
    remark / example / etc. Each has a coloring + numbering template. Pick the
    kind that matches the paragraph's semantic role. Use `snl-list-kinds` to see
@@ -32,55 +36,118 @@ Short version of what will go here:
    example under a definition, a remark inside a section). Don't split for
    pure prose flow.
 4. **Macros.** Named terms that render specially and can cross-reference other
-   entries. Use `snl-search-macros` before inventing a new one — the project
-   likely already has `\Ric`, `\continuous`, etc. Naming a new macro is a
-   commitment (it goes in the shared pool), so err on the side of using
-   existing ones.
+   entries. Use `snl-search-macros` (P1, not shipped yet) before inventing a
+   new one — the project likely already has `Ric`, `continuous`, etc. Naming a
+   new macro is a commitment (it goes in the shared pool), so err on the side
+   of using existing ones.
 
-Full authoring rules to be written after we've run the first spike with real
-data.
+Full authoring rules to be written after we've run the first spike.
 
 ---
 
 ## Part B — Toolkit CLIs
 
-_Placeholder — to be filled once the CLIs are implemented._
+### Status: bootstrapping
 
-Planned surface (all take `--root <path-to-workspace-containing-.SNL_Doc>` and
-default to `$PWD`):
+- ✅ **`snl-lint-entry`** — schema + SNL syntax + reference lint for EntryData JSON payloads.
+- ⏳ **`snl-lint-graph`** — schema + branch-tree lint for library graph.json.
+- ⏳ **`snl-lint-package`** — schema + template lint for macro package files.
+- ⏳ **`snl-commit-batch`** — atomic merge of validated payloads into .SNL_Doc/.
+- ⏳ **Read CLIs (P1)** — `snl-entry-get`, `snl-macro-get`, `snl-macro-find`, `snl-list-*`.
 
-| CLI | Purpose |
-|---|---|
-| `snl-list-kinds` | Dump `entry_kinds` + `macro_kinds` from `.SNL_Doc/config.json`. |
-| `snl-search-macros <query>` | Fuzzy search macro names + descriptions across `term_macros/*.json`. |
-| `snl-search-entries <query>` | Search entry titles + SNL content across `entries.json`. |
-| `snl-list-libraries` | Dump each library's slug / title / outline (from `graph.json`). |
-| `snl-validate-entry <file.json>` | Schema-check a single EntryData JSON without writing anything. |
-| `snl-validate-graph <file.json>` | Schema-check a `graph.json` (branch tree, entryId resolution, cycles). |
-| `snl-commit-batch <dir>` | Take a directory of validated JSON payloads and merge them into `.SNL_Doc/`. Fails atomically. |
+### snl-lint-entry
 
-CLIs are pure Node ESM, no build step. Each is a self-contained script under
-`bin/` so an agent can `node bin/xxx.mjs` without `npm install`ing anything
-beyond the toolkit's own dev deps.
+Lint one or more EntryData JSON payloads against a workspace's `.SNL_Doc/`
+context.
+
+```bash
+node bin/snl-lint-entry.mjs --root /path/to/project entry-draft.json [more.json ...]
+
+# Machine-readable output for programmatic consumption:
+node bin/snl-lint-entry.mjs --root . --json entry-draft.json
+
+# Treat unknown-macro references as errors (default: warnings).
+node bin/snl-lint-entry.mjs --root . --strict-macros entry-draft.json
+```
+
+**Exit codes:**
+- `0` — clean, or warnings only
+- `1` — at least one lint error
+- `2` — CLI-level failure (bad flags, no `.SNL_Doc/`, unreadable JSON)
+
+**Layered validation** the linter runs:
+
+- **L1 (schema)** — id/kind/title/content/contribution_info/pointer presence,
+  id-uniqueness against the shared pool, kind is one of `config.entry_kinds`.
+- **L2 (SNL syntax)** — if `content.snl` is non-empty, it must parse via
+  SNL-Basics's `tryParseSnlSyntaxTree`; parse errors carry the character
+  offset.
+- **L3 (references)** — bare identifiers in `content.snl` that don't resolve
+  in the active macro pool surface as warnings (errors under `--strict-macros`).
+  This is a coarse regex-based check for now — precise, tree-walk-based
+  reference extraction is a future refinement.
+
+### Common flag conventions
+
+Every CLI accepts:
+
+- `-r, --root <path>` — workspace containing `.SNL_Doc/`. Defaults to `.`.
+- `--json` — output JSON instead of coloured human text (when supported).
+- `-h, --help` — show usage and exit.
 
 ---
 
-## Workflow patterns
+## Workflow patterns (planned)
 
-_Placeholder — to be filled once we've run a real batch and know what works._
+_Placeholder — the full workflow lands once `snl-commit-batch` is shipped._
 
-Rough sketch of what the pattern will look like:
+Rough sketch of the target loop:
 
-1. Read source material (markdown / LaTeX / natural text) provided by the user.
+1. Read source material (markdown / LaTeX / natural text) from the user.
 2. Break it into paragraphs by heading structure (`#` → chapter, `##` → section,
    leaf paragraph → single entry).
 3. For each leaf paragraph:
-   a. Call `snl-search-macros` for any term you'd like to macro-ise.
-   b. Call `snl-list-kinds` if you're not sure what kind fits.
+   a. `snl-macro-find <term>` (P1) to check for an existing macro before
+      inventing one.
+   b. `snl-list-kinds` (P1) if unsure what kind fits.
    c. Emit a JSON file into a scratch dir with your candidate EntryData.
-4. When the whole document is drafted, call `snl-commit-batch` to validate +
-   merge everything atomically. On failure, fix the reported entry and retry.
+   d. `snl-lint-entry` on the file. If errors → fix and retry. If only
+      warnings → decide whether to register a new macro or accept.
+4. When the whole document is drafted, `snl-commit-batch` (P0.5) validates
+   the whole batch and merges atomically. On failure, fix the reported entry
+   and retry.
 
-Design intent: keep each agent invocation stateless and single-purpose — the
+Design intent: each agent invocation is stateless and single-purpose — the
 scratch dir is the only durable state until commit. If a step fails, drop the
 scratch dir and retry.
+
+---
+
+## Roadmap
+
+**P0 — Linters (in progress).** `snl-lint-entry` shipped; `snl-lint-graph`
+and `snl-lint-package` up next.
+
+**P0.5 — Atomic commit.** `snl-commit-batch` — accepts a directory of validated
+payloads, re-lints against the current on-disk state, and writes only if
+everything passes.
+
+**P1 — Basic reads.** Exact-lookup CLIs so agents don't reinvent existing
+macros / entries: `snl-macro-get <name>`, `snl-macro-find <substring>`,
+`snl-entry-get <id>`, `snl-list-kinds`, `snl-list-libraries`,
+`snl-list-package <name>`, `snl-list-entries [--kind X] [--library Y]`.
+
+**Future (post-spike).** Tag system, TED for entry lookup, LeanSearch-style
+retrieval, multi-filter rerank pipeline. Depends on how large real docs get
+before naive search stops cutting it.
+
+---
+
+## Contributing
+
+- Every CLI: `.mjs` shim under `bin/` (shebang + hand off to `tsx`) +
+  implementation under `bin/impl/*.ts`. Shared logic goes in `lib/`.
+- Tests: `tests/*.test.ts` — run via `npm test` (uses tsx + node --test).
+- Type check: `npm run lint-types` (tsc --noEmit).
+- Schema drift: if `SNL-Doc-Extension/src/snlDoc.ts` changes, sync
+  `schema/snl-doc.ts` per the procedure in `schema/README.md`.

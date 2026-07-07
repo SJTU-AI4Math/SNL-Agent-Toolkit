@@ -1,7 +1,12 @@
 # Toolkit CLIs
 
-_Empty. First CLI to land: `snl-list-kinds.mjs` (dumps `entry_kinds` +
-`macro_kinds` from `.SNL_Doc/config.json`)._
+Each CLI is a `.mjs` shim (shebang + argv passthrough) that hands off to a
+TypeScript implementation under `impl/`, executed via `tsx` so no build step
+is required.
 
-Each CLI is a single self-contained ESM script. See `AGENT.md` for the target
-surface.
+**Shipped:**
+- `snl-lint-entry.mjs` — schema + SNL syntax + reference lint for EntryData
+  JSON payloads. See `../AGENT.md` §snl-lint-entry.
+
+**Planned (see roadmap in ../AGENT.md):** `snl-lint-graph`,
+`snl-lint-package`, `snl-commit-batch`, plus the P1 read CLIs.

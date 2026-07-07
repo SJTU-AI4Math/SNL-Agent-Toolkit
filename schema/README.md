@@ -8,7 +8,7 @@ they gate) so the toolkit doesn't take a dependency on the extension itself.
 **Source of truth:** `SJTU-AI4Math/SNL-Doc-Extension`, files
 `src/snlDoc.ts` and `src/libraryGraph.ts`.
 
-**Frozen at commit:** _(not yet — populate this when the first snapshot lands)_
+**Frozen at commit:** `SJTU-AI4Math/SNL-Doc-Extension@78ef2f9a` (2026-07-07)
 
 ## Sync procedure
 

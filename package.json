@@ -4,12 +4,22 @@
   "description": "CLIs and agent-facing docs for authoring SNL documents in a .SNL_Doc/ workspace without the VS Code extension.",
   "type": "module",
   "private": true,
-  "bin": {},
+  "bin": {
+    "snl-lint-entry": "./bin/snl-lint-entry.mjs"
+  },
   "scripts": {
-    "test": "echo 'no tests yet' && exit 0"
+    "test": "tsx --test tests/*.test.ts",
+    "lint-types": "tsc --noEmit"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "tsx": "^4.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "~5.9.3"
   },
   "repository": {
     "type": "git",
