@@ -1,0 +1,26 @@
+{
+  "name": "@snl-doc/agent-toolkit",
+  "version": "0.0.0",
+  "description": "CLIs and agent-facing docs for authoring SNL documents in a .SNL_Doc/ workspace without the VS Code extension.",
+  "type": "module",
+  "private": true,
+  "bin": {},
+  "scripts": {
+    "test": "echo 'no tests yet' && exit 0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SJTU-AI4Math/SNL-Agent-Toolkit.git"
+  },
+  "keywords": [
+    "snl",
+    "snl-doc",
+    "agent",
+    "cli"
+  ],
+  "author": "SJTU-AI4Math",
+  "license": "MIT"
+}
