@@ -16,18 +16,21 @@
  *          tryParseSnlSyntaxTree; parse errors surface with the char
  *          offset. Empty content.snl is fine (empty entries are allowed).
  *
- *   L3 — REFERENCE INTEGRITY
- *        - every `\name` reference in content.snl that resolves to a
- *          known macro is fine; unknown macros are warned (not errored —
- *          they render as fvar, which is a valid intermediate state
- *          during authoring) but reported so the agent can decide whether
- *          to register a new macro or fix a typo.
- *        - NOTE: cross-entry links via macro `source.entries` are
- *          validated by the graph linter, not here.
+ *   L3 — IDENTIFIER RESOLUTION (informational by default)
+ *        - Every bare identifier in content.snl that isn't a registered
+ *          macro is reported as an INFO note — NOT a warning, because SNL
+ *          intentionally supports fvar/bvar fallback for unbound
+ *          identifiers (cat 2026-07-07: "在没有找到宏的情况下也有默认
+ *          行为的，这个功能还比较常用"). The agent decides whether the
+ *          fallback is intentional (e.g. bound variable in a binder
+ *          scope, or a locally-scoped free variable) or a typo / missing
+ *          registration.
+ *        - Under `strictMacros: true`, these get promoted to ERRORS —
+ *          use when the caller wants to enforce "every identifier is a
+ *          registered macro" (rare; typically off).
  *
- * All three layers push into a LintReport instead of throwing, so the
- * caller can decide how strict to be. Rule of thumb: `hasErrors()` on the
- * returned report means "do not commit"; warnings are agent hints.
+ * All layers push into a LintReport instead of throwing. `hasErrors()`
+ * checks only `severity === 'error'`, so info notes don't fail the run.
  */
 
 import type {
@@ -49,9 +52,11 @@ export interface LintEntryContext {
    */
   siblingEntries: EntryData[];
   /**
-   * When true, unknown macro references become errors instead of warnings.
-   * Off by default — agents typically want to write, lint, register-any-new
-   * -macros, and re-lint iteratively.
+   * When true, unresolved identifiers become errors instead of info
+   * notes. Off by default: SNL's fvar/bvar fallback for unbound names is
+   * intentional, so the linter reports them but doesn't fail the run.
+   * Set true only when the caller wants to enforce "every identifier
+   * must be a registered macro" (rare).
    */
   strictMacros?: boolean;
 }
@@ -181,15 +186,17 @@ export function lintEntry(
         position: parsed.position,
       });
     } else {
-      // L3 — REFERENCE INTEGRITY
-      const unknownMacros = findUnknownMacros(snl, ctx.macros);
-      for (const name of unknownMacros) {
+      // L3 — IDENTIFIER RESOLUTION
+      const unresolved = findUnresolvedIdentifiers(snl, ctx.macros);
+      for (const name of unresolved) {
         issues.push({
-          severity: ctx.strictMacros ? 'error' : 'warning',
-          code: 'snl.unknown-macro',
+          severity: ctx.strictMacros ? 'error' : 'info',
+          code: 'snl.identifier-not-in-pool',
           message:
-            `Macro '${name}' is not in the active macro pool. ` +
-            `Either register it in .SNL_Doc/term_macros/ or fix the reference.`,
+            `Identifier '${name}' is not a registered macro; ` +
+            `will render as fvar/bvar fallback. ` +
+            `May be intentional (bound variable, local free variable) or ` +
+            `may indicate a typo / missing macro registration — agent decides.`,
           path: 'content.snl',
         });
       }
@@ -200,39 +207,43 @@ export function lintEntry(
 }
 
 /**
- * Cheap macro-name extractor. Walks the raw SNL source for identifier
+ * Cheap identifier extractor. Walks the raw SNL source for identifier
  * tokens matching `[A-Za-z_][A-Za-z0-9_.-]*` — SNL macros are referenced
  * as bare identifiers, e.g. `Ric` or `DivRing.div.frac`, not
  * `\backslash-prefixed`. This overshoots (grabs style tags in `foo[bar]`,
- * variable names inside binder scopes, etc.) — false positives here just
- * mean an extra "unknown macro" warning, which the agent can ignore.
- * Precise reference extraction is a future improvement (walk the syntax
- * tree instead).
+ * variable names inside binder scopes, etc.) — false positives here are
+ * fine because the whole layer is informational; the agent looks at each
+ * reported identifier and decides whether it's intended fvar/bvar
+ * fallback or a typo.
  *
- * Returns a deduped list of names that are NOT in the macro pool.
+ * Precise identifier-vs-macro extraction (walking the parsed tree
+ * post-annotate-bind so we can tell bvar / fvar / unresolved-macro apart)
+ * is a future refinement. Cat 2026-07-07 explicitly asked for these to be
+ * reported so the agent can judge intent, so verbose > terse for now.
+ *
+ * Returns a deduped list of identifiers not present in the macro pool.
  */
-function findUnknownMacros(
+function findUnresolvedIdentifiers(
   snl: string,
   pool: Record<string, MacroPackageEntry>,
 ): string[] {
-  // Match bare identifiers (may contain `.` and `-` per SNL parser).
-  // Skip the very-common trivial cases and `%…%` / `$…$` / `$$…$$`
-  // delimited names (those are literal text/latex, not macro refs).
+  // Skip `%…%` / `$…$` / `$$…$$` delimited names (those are literal text
+  // or LaTeX, not macro refs — they become opaque leaf nodes).
   const stripped = snl
     .replace(/\$\$[\s\S]*?\$\$/g, ' ')
     .replace(/\$[\s\S]*?\$/g, ' ')
     .replace(/%[\s\S]*?%/g, ' ');
   const re = /([A-Za-z_][A-Za-z0-9_.\-]*)/g;
   const seen = new Set<string>();
-  const unknown = new Set<string>();
+  const unresolved = new Set<string>();
   let m: RegExpExecArray | null;
   while ((m = re.exec(stripped)) !== null) {
     const name = m[1];
     if (seen.has(name)) continue;
     seen.add(name);
-    if (!(name in pool)) unknown.add(name);
+    if (!(name in pool)) unresolved.add(name);
   }
-  return [...unknown].sort();
+  return [...unresolved].sort();
 }
 
 function describe(v: unknown): string {

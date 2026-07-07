@@ -82,10 +82,13 @@ node bin/snl-lint-entry.mjs --root . --strict-macros entry-draft.json
 - **L2 (SNL syntax)** — if `content.snl` is non-empty, it must parse via
   SNL-Basics's `tryParseSnlSyntaxTree`; parse errors carry the character
   offset.
-- **L3 (references)** — bare identifiers in `content.snl` that don't resolve
-  in the active macro pool surface as warnings (errors under `--strict-macros`).
-  This is a coarse regex-based check for now — precise, tree-walk-based
-  reference extraction is a future refinement.
+- **L3 (identifiers)** — bare identifiers in `content.snl` that don't resolve
+  to a registered macro are reported as **info notes** (not warnings, not
+  errors). SNL intentionally falls back to fvar/bvar rendering for unbound
+  identifiers, so an unresolved name may be a bound variable, a locally-scoped
+  free variable, a typo, or a genuinely missing macro registration — the
+  agent decides. Under `--strict-macros` these become errors (rare; typically
+  off).
 
 ### Common flag conventions
 

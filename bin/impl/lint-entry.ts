@@ -54,7 +54,11 @@ const STRICT_FLAG: FlagSpec = {
   name: 'strict-macros',
   hasValue: false,
   default: false,
-  help: 'Treat unknown-macro references as errors instead of warnings.',
+  help:
+    'Treat unresolved identifiers as errors instead of info notes. ' +
+    'Off by default: SNL supports fvar/bvar fallback for unbound names, ' +
+    'so unresolved identifiers are reported informationally so the agent ' +
+    'can judge whether they are intentional variables or typos.',
 };
 
 const SPECS: FlagSpec[] = [ROOT_FLAG, JSON_FLAG, STRICT_FLAG, HELP_FLAG];
@@ -135,7 +139,8 @@ async function main(): Promise<number> {
     process.stdout.write(
       `Linted ${reports.length} file${reports.length === 1 ? '' : 's'}: ` +
         `${c.errors} error${c.errors === 1 ? '' : 's'}, ` +
-        `${c.warnings} warning${c.warnings === 1 ? '' : 's'}.\n`,
+        `${c.warnings} warning${c.warnings === 1 ? '' : 's'}, ` +
+        `${c.infos} info.\n`,
     );
   }
 

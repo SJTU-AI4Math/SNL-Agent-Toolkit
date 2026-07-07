@@ -145,37 +145,37 @@ describe('lintEntry', () => {
     assert.ok(codes(r).includes('snl.parse'));
   });
 
-  it('warns on unknown macro reference (default)', () => {
+  it('reports unresolved identifier as info by default (fvar/bvar fallback is OK)', () => {
     const r = lintEntry(
       {
         id: 'x',
         kind: 'theorem',
         title: '',
-        content: { snl: 'UnknownMacroName' },
+        content: { snl: 'UnknownIdentifier' },
         contribution_info: null,
         pointer: null,
       },
       baseCtx(),
     );
-    const issue = r.issues.find((i) => i.code === 'snl.unknown-macro');
-    assert.ok(issue, 'expected snl.unknown-macro issue');
-    assert.equal(issue!.severity, 'warning');
+    const issue = r.issues.find((i) => i.code === 'snl.identifier-not-in-pool');
+    assert.ok(issue, 'expected snl.identifier-not-in-pool issue');
+    assert.equal(issue!.severity, 'info');
   });
 
-  it('errors on unknown macro reference with --strict-macros', () => {
+  it('promotes unresolved identifier to error with --strict-macros', () => {
     const r = lintEntry(
       {
         id: 'x',
         kind: 'theorem',
         title: '',
-        content: { snl: 'UnknownMacroName' },
+        content: { snl: 'UnknownIdentifier' },
         contribution_info: null,
         pointer: null,
       },
       baseCtx({ strictMacros: true }),
     );
-    const issue = r.issues.find((i) => i.code === 'snl.unknown-macro');
-    assert.ok(issue, 'expected snl.unknown-macro issue');
+    const issue = r.issues.find((i) => i.code === 'snl.identifier-not-in-pool');
+    assert.ok(issue, 'expected snl.identifier-not-in-pool issue');
     assert.equal(issue!.severity, 'error');
   });
 
