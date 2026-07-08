@@ -105,9 +105,16 @@ these registries.
   find-and-replace across every SNL source in every entry. Use the
   fully-qualified dotted form (`DivRing.div.frac`, not `frac`) even
   when nothing collides yet — future packages will.
-- **Naming rule.** Macro names must match `[A-Za-z0-9_.]+`. No
-  hyphens (KaTeX `\htmlData` treats `-` as binary minus). Use
-  camelCase for compound suffixes: `inlineDiv`, not `inline-div`.
+- **Naming rule.** Macro names must match `[A-Za-z_][A-Za-z0-9_.-]*`
+  — letters, digits, dots, underscores, and hyphens are all allowed
+  in the SNL parser (`SNL-Basics/src/snl-syntax-tree/parser.ts`).
+  Hyphens are LEGAL and pass through KaTeX's `\htmlData` verbatim
+  (upstream fix 2026-07-04 after empirical verification). Cat's own
+  packages use them extensively: `def-hyp`, `hyp-list`,
+  `Set.sep-typed`. Use hyphens for multi-word semantic names when
+  it reads better than camelCase (`def-hyp` > `defHyp`). Unicode
+  (CJK / Greek letters as identifiers) is NOT yet supported — the
+  parser rejects it, wait for an upstream change.
 - **Style ordering matters.** `styles[0]` is the default (used when
   SNL source omits `[tag]`). Put the most common render first.
 - **`dynamic_arity` + `#*`.** If the macro takes a variable number
@@ -177,11 +184,11 @@ Recommended shape: `<domain>.<kind>.<slug>[.<qualifier>]`
 - `linearAlgebra.def.linearMap.pointfree` — pointfree variant, added
   when `linearAlgebra.def.linearMap` was already taken
 
-**Character rule.** Extension only enforces non-empty + unique. But
-keep to `[A-Za-z0-9._]` for your own sanity — no hyphens (bites you
-when the id ever surfaces near a KaTeX class), no unicode (bites you
-in filesystem-based tooling later), no spaces (bites you in shell
-one-liners). Case-sensitive: `Def` ≠ `def`, don't mix within a project.
+**Character rule.** Extension only enforces non-empty + unique. The
+parser accepts `[A-Za-z_][A-Za-z0-9_.-]*` for identifiers — letters,
+digits, dots, underscores, hyphens all fine. Case-sensitive:
+`Def` ≠ `def`, don't mix within a project. Avoid spaces (shell
+hazard) and unicode (parser doesn't accept it in identifiers yet).
 
 **When UUIDs are OK.** Bulk-generated entries from a converter script
 where no human will ever author the id (e.g. importing 10k Mathlib
