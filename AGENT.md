@@ -15,33 +15,272 @@ This document has two parts. Depending on the task, you may only need one.
 
 ## Part A — Authoring SNL content
 
-_Placeholder — to be filled once we've run the first spike with real data._
+Writing a complete SNL-Doc is not "type paragraphs into entries". It's a
+staged process of **modelling a domain's terminology, then wiring text
+into it**. Follow the five phases below in order for any fresh document
+of non-trivial size. Sections below give purpose, deliverables, tools
+(shipped or planned), and rules of thumb for each phase.
 
-Short version of what will go here:
+For small edits to an already-established `.SNL_Doc/` (add one lemma,
+tweak a macro's template) you'll usually only touch phase 3 or phase 2 —
+see [Partial workflows](#partial-workflows) at the end of this Part.
 
-1. **What SNL is.** A macro-expression language. **The entire `content.snl`
-   field is one macro tree — not "prose with inline macros".** Free text
-   lives inside `%…%` (text mode) or `$…$` / `$$…$$` (LaTeX inline / display)
-   delimiters, which become leaf nodes of the tree. A single macro reference
-   is written as a bare identifier (`R`, `DivRing.div.frac`), NOT with a
-   `\backslash-prefix`. Applying a macro to children uses parens:
-   `foo(a, b)`. Selecting a render style uses square brackets:
-   `foo[display](a, b)`.
-2. **Entry kinds.** The project defines its own set — theorem / definition /
-   remark / example / etc. Each has a coloring + numbering template. Pick the
-   kind that matches the paragraph's semantic role. Use `snl-list-kinds` to see
-   what's available. If nothing fits, ask before inventing one.
-3. **When to split into subentries.** Rule of thumb: a subentry is warranted
-   when the child paragraph has its OWN semantic role (a proof of a theorem, an
-   example under a definition, a remark inside a section). Don't split for
-   pure prose flow.
-4. **Macros.** Named terms that render specially and can cross-reference other
-   entries. Use `snl-search-macros` (P1, not shipped yet) before inventing a
-   new one — the project likely already has `Ric`, `continuous`, etc. Naming a
-   new macro is a commitment (it goes in the shared pool), so err on the side
-   of using existing ones.
+### The five phases
 
-Full authoring rules to be written after we've run the first spike.
+| # | Phase (EN)               | Phase (CN)   | Produces                                     |
+|---|--------------------------|--------------|----------------------------------------------|
+| 1 | Drafting                 | 起稿         | scratch `.md` outline + prose                |
+| 2 | Terminologization        | 术语化       | `config.json#entry_kinds` + `macro_kinds`; `term_macros/*.json` |
+| 3 | Entry Prefabrication     | 条目预制     | `entries.json` (ids + kinds + titles, content optional) |
+| 4 | Library Construction     | 库建构       | `libraries/<slug>/{meta,graph}.json` (branch tree over entries) |
+| 5 | Semantic Indexation      | 建立语义索引 | each macro's `source: { entries[], urls[] }` filled in |
+
+Phases 3 and 4 are usually interleaved (see §Phase 4).
+
+---
+
+### Phase 1 — Drafting (起稿)
+
+**Purpose.** For any professional or complex material, write a
+free-form markdown plan FIRST. This is where you decide scope,
+chapter/section skeleton, and rough content, without any commitment
+to the SNL schema.
+
+**When to skip.** Trivial one-entry edits, or when the user already
+handed you a structured source (a Lean file, a Typst blueprint, etc.).
+
+**Deliverables.**
+- A scratch `.md` file (kept outside `.SNL_Doc/`, e.g. `drafts/<name>.md`).
+- Rough heading tree that will later map to library branches.
+- Prose paragraphs annotated in your head as "definition / theorem /
+  remark / example / proof …" — the annotations become entry kinds
+  in phase 3.
+
+**Tools.** None specific to this toolkit — plain markdown, your
+editor of choice.
+
+**Rules of thumb.**
+- Don't invent terminology yet. Write in whatever natural language
+  the source uses. Term extraction happens in phase 2.
+- Keep the outline shallow at first (2–3 heading levels). Deep
+  nesting will migrate to `branch` edges in phase 4, not to more
+  heading levels.
+- If the source has cross-references ("by Theorem 2.3"), mark them
+  in the draft as `[[ref: theorem 2.3]]` — you'll resolve them into
+  macro references in phase 5.
+
+---
+
+### Phase 2 — Terminologization (术语化)
+
+**Purpose.** Establish the **terminology system**: the set of
+Entry Kinds, Macro Kinds, and Term Macros the document will use.
+This is the highest-leverage step — every later phase reads from
+these registries.
+
+**Deliverables (in `.SNL_Doc/`).**
+- `config.json#entry_kinds` — one entry per semantic role of a paragraph
+  (Definition / Theorem / Remark / …). Each carries `coloring`
+  (stroke+background), `numbering` DSL, `style` tag. Presets available
+  (`Fulcrum's Math Notes` etc.) via VS Code `SNL: Initialize Entry
+  Kinds`; CLI equivalent is TODO.
+- `config.json#macro_kinds` — palette-only categories for macros
+  (constant / operator / relation / …). No numbering; only affects
+  hover-badge coloring.
+- One or more `term_macros/<pkg>.json` files — each holds a
+  `Record<string, MacroPackageEntry>` of macros. Split by domain
+  (`arithmetic.json`, `topology.json`, …) not by size.
+
+**Tools.**
+- ⏳ `snl-list-kinds` / `snl-list-package <name>` (P1) — see what
+  already exists before inventing.
+- ⏳ `snl-macro-find <substring>` (P1) — check the union of active
+  packages for prior art.
+- ✅ `snl-lint-package` — validate schema, template placeholders,
+  cross-style arity.
+- ⏳ `snl-commit-batch` (P0.5) — atomic write.
+
+**Rules of thumb.**
+- **Every macro name is a lifetime commitment.** Renaming means
+  find-and-replace across every SNL source in every entry. Use the
+  fully-qualified dotted form (`DivRing.div.frac`, not `frac`) even
+  when nothing collides yet — future packages will.
+- **Naming rule.** Macro names must match `[A-Za-z0-9_.]+`. No
+  hyphens (KaTeX `\htmlData` treats `-` as binary minus). Use
+  camelCase for compound suffixes: `inlineDiv`, not `inline-div`.
+- **Style ordering matters.** `styles[0]` is the default (used when
+  SNL source omits `[tag]`). Put the most common render first.
+- **`dynamic_arity` + `#*`.** If the macro takes a variable number
+  of children, set `dynamic_arity: true` AND put `#*` in the default
+  style's template. The linter warns if you set one without the other.
+- **Don't macro-ise prose.** Only concepts that (a) are referenced in
+  more than one place OR (b) have non-trivial render (formula, badge,
+  cross-link) deserve a macro. Everything else stays as `%text%` /
+  `$formula$` leaves.
+- Leave `source: { entries: [], urls: [] }` empty for now — it gets
+  filled in phase 5, after entries exist.
+
+---
+
+### Phase 3 — Entry Prefabrication (条目预制)
+
+**Purpose.** Materialise the full list of entries the document will
+contain, as records in the shared pool `entries.json`, **before**
+committing to their internal structure or writing their `content.snl`.
+This lets phase 4 wire them into the graph without chasing moving
+targets.
+
+**Deliverables.**
+- `.SNL_Doc/entries.json` grows to hold every planned entry with:
+  - `id` — UUID v4 (mint fresh with `crypto.randomUUID()`).
+  - `kind` — one of `config.entry_kinds[].id` from phase 2.
+  - `title` — human-readable name (may be empty for section-heading
+    entries; empty is legal since 2026-07-06).
+  - `content: {}` — leave empty at this phase; you'll fill it later.
+  - `contribution_info: null`, `pointer: null` — pass-through fields,
+    leave as null unless you have concrete data.
+
+**Tools.**
+- ⏳ `snl-list-entries [--kind X] [--library Y]` (P1) — check for
+  duplicates / existing entries you can reuse.
+- ✅ `snl-lint-entry` — schema check. Note: empty `content.snl` will
+  pass silently (SNL syntax check is skipped when content is empty).
+- ⏳ `snl-commit-batch` — atomic write.
+
+**Rules of thumb.**
+- **One entry = one semantic unit.** Split when the child paragraph
+  has its own role (proof under a theorem, example under a definition,
+  remark inside a section). Don't split for prose flow.
+- **The pool is shared across libraries.** Two libraries can reference
+  the same entry via `graph.props.entryId`. Prefer reusing an existing
+  entry over minting a near-duplicate.
+- **Section-heading entries.** Some kinds (e.g. a "chapter" kind) may
+  only carry a title with empty content — they exist purely to anchor
+  a branch in phase 4. That's fine.
+- Phase 3 and 4 are usually **interleaved**: draft a chunk of entries,
+  wire them into the graph, notice a missing entry, add it, continue.
+  Treat the split as conceptual, not sequential.
+
+---
+
+### Phase 4 — Library Construction (库建构)
+
+**Purpose.** Build the `.SNL_Doc/libraries/<slug>/` folder that
+selects a subset of entries and imposes a **branch tree** over them
+(chapter → section → subsection → leaf entry). The graph is the
+source of truth for the library's structure; there is no separate
+"table of contents".
+
+**Deliverables.**
+- `libraries/<slug>/meta.json` — `{ title, description? }`.
+- `libraries/<slug>/graph.json` — Library Graph v2:
+  - `nodes[]` — each `{ id, label: 'Entry', props: { entryId?, ... } }`.
+    `id` is library-local; `entryId` points at the shared pool
+    (unset = placeholder for a slot you'll fill later).
+  - `relationships[]` — each `{ from, to, label: 'branch' }`. A branch
+    from A → B means "B is a child of A" for numbering / rendering.
+
+**Tools.**
+- ⏳ `snl-outline-to-graph` (planned, not yet designed) — takes a
+  markdown outline + entry-id map and emits a `graph.json`. Until it
+  ships, hand-author the JSON, then lint.
+- ✅ `snl-lint-graph` — schema, label vocab, branch-tree integrity
+  (no multi-parent, no cycles, all `entryId`s resolve in the pool).
+- ⏳ `snl-commit-batch`.
+
+**Rules of thumb.**
+- **The branch subgraph is a tree**, not a DAG. Each node has at most
+  one incoming `branch` edge; the linter enforces this.
+- **Placeholder nodes are legitimate.** An entry that isn't drafted
+  yet can still occupy a slot in the tree — set `props.entryId`
+  unset and give the node a memorable local `id`. Fill in later.
+- **Non-`branch` relationships survive round-trip but are ignored.**
+  If you want to record "Theorem X depends on Lemma Y" as data,
+  use a custom label (`depends_on`, `uses`) — the linter will warn
+  but not delete it. Future phases may consume these.
+- **One library, one narrative.** A library is a curated reading
+  path over a subset of the pool. If you find yourself building a
+  library that references half the pool with no clear structure,
+  you probably want two libraries instead.
+
+---
+
+### Phase 5 — Semantic Indexation (建立语义索引)
+
+**Purpose.** Wire each macro back to the entries and external
+resources that define / justify it. This is what turns the document
+from "typeset LaTeX with fancy colors" into a **queryable
+knowledge graph** — hovering a macro in the reader can jump to its
+defining entry; agents can trace concept dependencies.
+
+**Deliverables (edits to phase-2 macro packages).**
+- For each `MacroPackageEntry`, fill in `source`:
+  - `entries: string[]` — one or more entry ids (from `entries.json`)
+    that define / axiomatize / introduce this concept. Usually the
+    Definition entry for the concept, sometimes plus a Theorem that
+    justifies the notation.
+  - `urls: string[]` — external references (nLab, Wikipedia,
+    Mathlib docs, arXiv). Cite the concept, not the paper it
+    appeared in.
+
+**Tools.**
+- ✅ `snl-lint-package` — validates schema, but does NOT currently
+  check that `source.entries[]` ids resolve in `entries.json`. That
+  check is planned; until then, cross-check by hand.
+- ⏳ `snl-commit-batch`.
+
+**Rules of thumb.**
+- **Empty is legal, wrong is not.** A macro with no `source.entries`
+  is still valid (some macros are pure notation with no formal
+  definition — `+`, `·`). But if you put an id in and it points at
+  the wrong entry, the popover in the reader will mislead.
+- **Prefer the primary definition.** If a concept is defined once
+  and re-derived twice, `source.entries` should point at the
+  definition only — the derivations aren't the semantic source.
+- **URLs are stable, not fresh.** Prefer nLab / Wikipedia / a
+  canonical textbook over a blog post. If you cite arXiv, cite the
+  abstract page, not a PDF URL.
+- Phase 5 is the natural time to **audit phase-2 decisions**: a macro
+  you can't attach any source entry to is often one that should have
+  been prose in the first place.
+
+---
+
+### Partial workflows
+
+Not every task walks all five phases. Common shapes:
+
+- **"Add one lemma."** Phase 3 only (mint an entry, drop it in the
+  pool, insert it into the target library's `graph.json` as a leaf
+  under its parent section). Phase 5 stays untouched unless the
+  lemma introduces new notation.
+- **"Rename a display style on macro X."** Phase 2 only. Bump the
+  affected `styles[]` entry; re-lint the package. No entries touched.
+- **"Import an existing markdown chapter."** Phases 1 → 3 → 4. Skip
+  phase 2 if the chapter reuses existing terminology; skip phase 5
+  if no new macros were introduced.
+- **"Draft a new library from scratch."** All five phases in order.
+  Budget most time on phase 2 (terminology design) — it caps the
+  quality of every later phase.
+
+### Bedrock rules (applied everywhere)
+
+- **SNL syntax is a single macro tree per `content.snl`.** Free text
+  lives inside `%…%` (text mode), `$…$` (formula inline), `$$…$$`
+  (formula display). Macro references are bare identifiers
+  (`R`, `DivRing.div.frac`) — no `\backslash-prefix`. Apply children
+  with parens `foo(a, b)`; select a style with brackets
+  `foo[display](a, b)`; introduce a binder with `@foo(x)`.
+- **Identity fields never change.** `EntryKind.id`, `MacroKind.id`,
+  `EntryData.id`, macro package filenames, and `MacroPackageEntry.name`
+  are lookup keys referenced from elsewhere. "Rename" = delete +
+  recreate. Every `update*` API and CLI enforces this.
+- **The parser wants EOF after the single root.** `"For any R, foo"`
+  fails with `Expected EOF but got IDENT at position N`. Wrap prose in
+  `%…%`.
+- **When unsure, ask.** Inventing an entry kind, macro name, or
+  library slug on the user's behalf commits them to a schema
+  decision they'll live with. Cheap to ask, expensive to unwind.
 
 ---
 
@@ -172,29 +411,30 @@ Every CLI accepts:
 
 ---
 
-## Workflow patterns (planned)
+## Workflow patterns
 
-_Placeholder — the full workflow lands once `snl-commit-batch` is shipped._
+The end-to-end authoring workflow lives in **Part A** (five-phase model:
+Drafting → Terminologization → Entry Prefabrication → Library
+Construction → Semantic Indexation). This section tracks the
+CLI-execution shape those phases will take once tooling is complete.
 
-Rough sketch of the target loop:
+**Current CLI-execution shape (partial).** Each phase's write-side is
+still manual JSON authoring; the CLIs so far only lint. Target loop
+once `snl-commit-batch` (P0.5) and P1 read CLIs land:
 
-1. Read source material (markdown / LaTeX / natural text) from the user.
-2. Break it into paragraphs by heading structure (`#` → chapter, `##` → section,
-   leaf paragraph → single entry).
-3. For each leaf paragraph:
-   a. `snl-macro-find <term>` (P1) to check for an existing macro before
-      inventing one.
-   b. `snl-list-kinds` (P1) if unsure what kind fits.
-   c. Emit a JSON file into a scratch dir with your candidate EntryData.
-   d. `snl-lint-entry` on the file. If errors → fix and retry. If only
-      warnings → decide whether to register a new macro or accept.
-4. When the whole document is drafted, `snl-commit-batch` (P0.5) validates
-   the whole batch and merges atomically. On failure, fix the reported entry
-   and retry.
+1. For each phase, materialise its deliverables as JSON files in a
+   scratch dir (outside `.SNL_Doc/`).
+2. Lint each file with the matching CLI (`snl-lint-package`,
+   `snl-lint-entry`, `snl-lint-graph`). Fix errors before proceeding.
+3. Consult `snl-list-*` / `snl-*-find` (P1) before inventing anything
+   already in the pool.
+4. When the whole phase is drafted, `snl-commit-batch` (P0.5)
+   re-lints against current on-disk state and merges atomically.
+   On failure, fix the reported artifact and retry.
 
-Design intent: each agent invocation is stateless and single-purpose — the
-scratch dir is the only durable state until commit. If a step fails, drop the
-scratch dir and retry.
+Design intent: each agent invocation is stateless and single-purpose —
+the scratch dir is the only durable state until commit. If a step
+fails, drop the scratch dir and retry.
 
 ---
 
