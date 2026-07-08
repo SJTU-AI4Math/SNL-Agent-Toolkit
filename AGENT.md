@@ -132,13 +132,61 @@ targets.
 
 **Deliverables.**
 - `.SNL_Doc/entries.json` grows to hold every planned entry with:
-  - `id` — UUID v4 (mint fresh with `crypto.randomUUID()`).
+  - `id` — **a semantic identifier**, not a UUID. Human-readable so you
+    can index / grep / hand-edit graph.json without dying. See
+    [ID conventions](#id-conventions) below for the shape. Only hard
+    constraints from the extension: non-empty string, globally unique
+    within `entries.json`.
   - `kind` — one of `config.entry_kinds[].id` from phase 2.
   - `title` — human-readable name (may be empty for section-heading
     entries; empty is legal since 2026-07-06).
   - `content: {}` — leave empty at this phase; you'll fill it later.
   - `contribution_info: null`, `pointer: null` — pass-through fields,
     leave as null unless you have concrete data.
+
+#### ID conventions
+
+Prefer **semantic dotted paths** that mirror the concept, not a UUID.
+Rationale: entry ids appear inside every `graph.json` node's
+`props.entryId`, every macro's `source.entries[]`, and every commit
+diff — a wall of `f8c3a201-…` makes hand-authoring and code review
+brutal.
+
+Recommended shape: `<domain>.<kind>.<slug>[.<qualifier>]`
+
+- `<domain>` — subject area (`arithmetic`, `topology`,
+  `linearAlgebra`, …). Matches the natural grouping of macro packages
+  in phase 2. Skip when the whole `.SNL_Doc/` is single-domain.
+- `<kind>` — abbreviates the entry kind (`def` / `thm` / `lem` /
+  `cor` / `prop` / `rmk` / `ex` / `proof` / …). Redundant with the
+  `kind` field but makes the id readable in isolation.
+- `<slug>` — concept slug in camelCase or dot.separated form
+  (`continuousFunction`, `divRing.div`, `chainRule`). Match your
+  macro name where possible so `foo.def.continuous` clearly binds to
+  macro `continuous`.
+- `<qualifier>` — optional discriminator when one slug isn't enough
+  (`.v2`, `.pointfree`, `.zariski`). Add only when a collision forces
+  it, don't pre-emptively number things.
+
+**Examples.**
+- `topology.def.continuous` — the definition of continuous function
+- `topology.thm.continuousComposition` — theorem that composition
+  preserves continuity
+- `topology.thm.continuousComposition.proof` — its proof (when the
+  proof is a separate entry, see §Phase 3 rule of thumb)
+- `linearAlgebra.def.linearMap.pointfree` — pointfree variant, added
+  when `linearAlgebra.def.linearMap` was already taken
+
+**Character rule.** Extension only enforces non-empty + unique. But
+keep to `[A-Za-z0-9._]` for your own sanity — no hyphens (bites you
+when the id ever surfaces near a KaTeX class), no unicode (bites you
+in filesystem-based tooling later), no spaces (bites you in shell
+one-liners). Case-sensitive: `Def` ≠ `def`, don't mix within a project.
+
+**When UUIDs are OK.** Bulk-generated entries from a converter script
+where no human will ever author the id (e.g. importing 10k Mathlib
+declarations). Even then, keep a `title` that a human can read.
+Manual and mixed workflows: always semantic.
 
 **Tools.**
 - ⏳ `snl-list-entries [--kind X] [--library Y]` (P1) — check for
@@ -175,7 +223,11 @@ source of truth for the library's structure; there is no separate
 - `libraries/<slug>/meta.json` — `{ title, description? }`.
 - `libraries/<slug>/graph.json` — Library Graph v2:
   - `nodes[]` — each `{ id, label: 'Entry', props: { entryId?, ... } }`.
-    `id` is library-local; `entryId` points at the shared pool
+    `id` is library-local (unique within this file only) — use a short
+    semantic slug like `ch1`, `ch1.sec2`, `ch1.sec2.thmContinuous`, or
+    reuse the pool `entryId` when the node is not a placeholder.
+    Extension only enforces uniqueness; keep it human-readable for
+    the same reason as entry ids. `entryId` points at the shared pool
     (unset = placeholder for a slot you'll fill later).
   - `relationships[]` — each `{ from, to, label: 'branch' }`. A branch
     from A → B means "B is a child of A" for numbering / rendering.
