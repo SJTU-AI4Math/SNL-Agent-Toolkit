@@ -120,6 +120,57 @@ these registries.
 - **`dynamic_arity` + `#*`.** If the macro takes a variable number
   of children, set `dynamic_arity: true` AND put `#*` in the default
   style's template. The linter warns if you set one without the other.
+- **Backslash escaping in `template`. READ TWICE.** The `template`
+  field is a KaTeX source string embedded in a JSON string. JSON
+  strings ALREADY escape backslashes — so **exactly ONE backslash in
+  the KaTeX command = TWO backslash characters in the JSON source**:
+
+  ```json
+  {
+    "template": "\\frac{#0}{#1}"    ✓ Correct — renders as \frac{a}{b}
+  }
+  ```
+
+  ```json
+  {
+    "template": "\\\\frac{#0}{#1}"  ✗ WRONG — renders as "line break, then literal 'frac{a}{b}'"
+  }
+  ```
+
+  When the JSON string is decoded, the second form yields `\\frac{...}`,
+  and `\\` in KaTeX is the newline command (`\newline`). This is a
+  **silent-corruption** trap: KaTeX does NOT throw — it happily renders
+  a line break followed by the macro name as literal text. So
+  `snl-lint-package` cannot catch it — you must eyeball your templates.
+
+  **How agents fall into this**: LLMs frequently over-escape when writing
+  JSON, either because they mentally simulate "escape once for JSON,
+  once for LaTeX" (only once is needed — LaTeX doesn't escape) or
+  because they're mimicking a Python `re.escape`-style pattern. Whenever
+  you write a `template` containing `\`, pause and count the backslashes
+  once more before saving.
+
+  **Quick self-check**: read the JSON with a helper that prints the
+  DECODED string (not `repr`), so you see the exact characters KaTeX
+  will consume. One-liner:
+
+  ```bash
+  python3 -c "import json,sys; print(json.load(open('term_macros/pkg.json'))['DivRing']['div']['styles'][0]['template'])"
+  # Correct output:  \frac{#0}{#1}
+  # Wrong output:    \\frac{#0}{#1}   ← one backslash too many
+  ```
+
+  If a KaTeX command appears with `\\` instead of `\` in the printed
+  output, you have one too many. Do NOT use `print(dict)` or
+  `json.dumps` here — both re-escape and hide the bug. Same trap
+  applies to `description` when it embeds inline LaTeX, and to `title`
+  fields in `entries.json` when they carry `$…$` math (though `title`
+  runs through the entry-render title path where the KaTeX source is
+  interpreted separately — same escaping rule, different renderer).
+
+  This trap is separate from SNL `content.snl` (there is no JSON layer
+  between SNL source and the parser; `\alpha` in SNL source is one
+  backslash, not two).
 - **Don't macro-ise prose.** Only concepts that (a) are referenced in
   more than one place OR (b) have non-trivial render (formula, badge,
   cross-link) deserve a macro. Everything else stays as `%text%` /
