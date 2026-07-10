@@ -200,10 +200,68 @@ export function lintEntry(
           path: 'content.snl',
         });
       }
+      // L4 — CROSS-ENTRY `src` REFERENCES (cat 2026-07-09).
+      //
+      // Walk the parsed tree for nodes whose mdata.src is set (via the
+      // `x@foo` postfix syntax) and check each against the entry pool.
+      // Semantics per spec §fork-C: unresolved src is TOLERATED — we
+      // never fail the run — but we surface it so the agent can decide
+      // whether the ref is intentional or a typo / broken link.
+      //
+      // The pool we check against is the union of `siblingEntries`
+      // (other entries already committed) plus the entry being linted
+      // itself (self-refs are legal — a context entry may reference
+      // its own decls if that ever makes sense). If `siblingEntries`
+      // is empty (standalone lint), we cannot check anything and just
+      // report the src refs as info without a dangling verdict.
+      const knownIds = new Set<string>([
+        e.id,
+        ...ctx.siblingEntries.map((s) => s.id),
+      ]);
+      const srcRefs = collectSrcReferences(parsed.tree);
+      for (const src of srcRefs) {
+        if (!knownIds.has(src)) {
+          issues.push({
+            severity: 'info',
+            code: 'snl.src-dangling',
+            message:
+              `Cross-entry reference \`@${src}\` does not resolve to any entry ` +
+              `in the shared pool. Tolerated (renders with a warning badge), ` +
+              `but likely a typo — semantic entry ids are preferred and stable ` +
+              `once created. See docs/context-entry-design.md.`,
+            path: 'content.snl',
+          });
+        }
+      }
     }
   }
 
   return { issues };
+}
+
+/**
+ * Recursively collect every `mdata.src` string from a parsed SNL tree.
+ * Skip empty strings and non-string values defensively. Result is
+ * deduped and sorted for stable reporting.
+ */
+function collectSrcReferences(node: unknown): string[] {
+  const out = new Set<string>();
+  visit(node);
+  return [...out].sort();
+
+  function visit(n: unknown): void {
+    if (!n || typeof n !== 'object') return;
+    const nn = n as { mdata?: unknown; children?: unknown };
+    if (nn.mdata && typeof nn.mdata === 'object') {
+      const src = (nn.mdata as { src?: unknown }).src;
+      if (typeof src === 'string' && src.length > 0) {
+        out.add(src);
+      }
+    }
+    if (Array.isArray(nn.children)) {
+      for (const c of nn.children) visit(c);
+    }
+  }
 }
 
 /**

@@ -183,4 +183,66 @@ describe('lintEntry', () => {
     const r = lintEntry([1, 2, 3], baseCtx());
     assert.deepEqual(codes(r), ['entry.not-object']);
   });
+
+  describe('L4 src.dangling (cat 2026-07-09)', () => {
+    it('reports dangling `x@foo` src as info (never fails)', () => {
+      const r = lintEntry(
+        {
+          id: 'entry-a',
+          kind: 'theorem',
+          title: '',
+          content: { snl: 'x@nonexistent-entry' },
+          contribution_info: null,
+          pointer: null,
+        },
+        baseCtx({ siblingEntries: [] }),
+      );
+      const issue = r.issues.find((i) => i.code === 'snl.src-dangling');
+      assert.ok(issue, 'expected snl.src-dangling issue');
+      assert.equal(issue!.severity, 'info');
+      assert.match(issue!.message, /nonexistent-entry/);
+    });
+
+    it('does NOT flag a src that resolves to a sibling entry', () => {
+      const siblings = [
+        {
+          id: 'context-linalg-vars',
+          kind: 'context',
+          title: '',
+          content: { snl: '' },
+          contribution_info: null,
+          pointer: null,
+        } as any,
+      ];
+      const r = lintEntry(
+        {
+          id: 'thm-a',
+          kind: 'theorem',
+          title: '',
+          content: { snl: 'x@context-linalg-vars' },
+          contribution_info: null,
+          pointer: null,
+        },
+        baseCtx({ siblingEntries: siblings }),
+      );
+      const issue = r.issues.find((i) => i.code === 'snl.src-dangling');
+      assert.equal(issue, undefined, 'sibling src should resolve');
+    });
+
+    it('allows a src pointing at the entry itself (self-ref)', () => {
+      const r = lintEntry(
+        {
+          id: 'self',
+          kind: 'context',
+          title: '',
+          content: { snl: 'x@self' },
+          contribution_info: null,
+          pointer: null,
+        },
+        baseCtx({ siblingEntries: [] }),
+      );
+      const issue = r.issues.find((i) => i.code === 'snl.src-dangling');
+      assert.equal(issue, undefined, 'self-src should resolve');
+    });
+  });
 });
