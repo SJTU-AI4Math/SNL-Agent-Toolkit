@@ -43,6 +43,11 @@ import {
   readEntryKinds,
 } from '../../lib/snl-doc.ts';
 import { lintEntry } from '../../lib/lint-entry.ts';
+import { tryParseSnlSyntaxTree } from '../../lib/snl-parser.ts';
+import {
+  renderTreeAsLatex,
+  renderTreeAsText,
+} from '../../lib/snl-render.ts';
 import {
   formatReport,
   hasErrors,
@@ -61,7 +66,37 @@ const STRICT_FLAG: FlagSpec = {
     'can judge whether they are intentional variables or typos.',
 };
 
-const SPECS: FlagSpec[] = [ROOT_FLAG, JSON_FLAG, STRICT_FLAG, HELP_FLAG];
+// Cat 2026-07-10 §1: agent needs to see "what did I actually write"
+// after emitting SNL — the raw tree tells you nothing about visual
+// output. These two synth flags mirror the tree through a pure-LaTeX
+// and a plain-text render so the model can spot notation mistakes.
+const SHOW_LATEX_FLAG: FlagSpec = {
+  name: 'show-latex',
+  hasValue: false,
+  default: false,
+  help:
+    'For every linted entry, also emit a pure-LaTeX synthesis of ' +
+    'content.snl (no \\htmlData wrappers, no index annotations). ' +
+    'Meant for agent-consumption preview: "what does my SNL compile to."',
+};
+const SHOW_TEXT_FLAG: FlagSpec = {
+  name: 'show-text',
+  hasValue: false,
+  default: false,
+  help:
+    'For every linted entry, also emit a plain-text synthesis of ' +
+    'content.snl (LaTeX commands mapped to Unicode chars where possible: ' +
+    '\\cup → ∪, \\leq → ≤, etc.). Companion to --show-latex.',
+};
+
+const SPECS: FlagSpec[] = [
+  ROOT_FLAG,
+  JSON_FLAG,
+  STRICT_FLAG,
+  SHOW_LATEX_FLAG,
+  SHOW_TEXT_FLAG,
+  HELP_FLAG,
+];
 
 async function main(): Promise<number> {
   let parsed;
@@ -87,6 +122,9 @@ async function main(): Promise<number> {
   const asJson = parsed.flags.json === true;
   const strictMacros = parsed.flags['strict-macros'] === true;
 
+  const showLatex = parsed.flags['show-latex'] === true;
+  const showText = parsed.flags['show-text'] === true;
+
   try {
     await assertSnlDoc(root);
   } catch (err) {
@@ -101,6 +139,12 @@ async function main(): Promise<number> {
   ]);
 
   const reports: LintReport[] = [];
+  interface SynthPayload {
+    file: string;
+    latex?: { output: string; notes: string[] };
+    text?: { output: string; notes: string[] };
+  }
+  const synths: SynthPayload[] = [];
   for (const rel of parsed.positional) {
     const abs = path.resolve(rel);
     let raw: unknown;
@@ -129,12 +173,58 @@ async function main(): Promise<number> {
     });
     report.file = abs;
     reports.push(report);
+
+    // Synth passes only when the entry has parseable SNL. We run them
+    // even if L1/L2 flagged errors on unrelated fields — the agent
+    // still benefits from seeing the render of what parsed.
+    if (showLatex || showText) {
+      const snl =
+        raw && typeof raw === 'object' && 'content' in raw &&
+        (raw as { content?: unknown }).content &&
+        typeof (raw as { content: { snl?: unknown } }).content.snl === 'string'
+          ? (raw as { content: { snl: string } }).content.snl
+          : '';
+      const payload: SynthPayload = { file: abs };
+      if (snl.trim().length > 0) {
+        const parsed2 = tryParseSnlSyntaxTree(snl);
+        if (parsed2.ok) {
+          if (showLatex) payload.latex = renderTreeAsLatex(parsed2.tree, macros);
+          if (showText) payload.text = renderTreeAsText(parsed2.tree, macros);
+        }
+      }
+      synths.push(payload);
+    }
   }
 
   if (asJson) {
-    process.stdout.write(JSON.stringify(reports, null, 2) + '\n');
+    const payload: { reports: LintReport[]; synths?: SynthPayload[] } = {
+      reports,
+    };
+    if (showLatex || showText) payload.synths = synths;
+    process.stdout.write(JSON.stringify(payload, null, 2) + '\n');
   } else {
     process.stdout.write(formatReport(reports) + '\n');
+    // Cat 2026-07-10 §1: emit the synth blocks after the main report so
+    // the agent scanning stdout sees issues first, then the "what did
+    // I write" preview.
+    for (const s of synths) {
+      if (!s.latex && !s.text) continue;
+      process.stdout.write(`\n--- ${path.relative(root, s.file)} ---\n`);
+      if (s.latex) {
+        process.stdout.write('  [as LaTeX]\n');
+        process.stdout.write('  ' + s.latex.output + '\n');
+        for (const n of s.latex.notes) {
+          process.stdout.write('    · ' + n + '\n');
+        }
+      }
+      if (s.text) {
+        process.stdout.write('  [as text]\n');
+        process.stdout.write('  ' + s.text.output + '\n');
+        for (const n of s.text.notes) {
+          process.stdout.write('    · ' + n + '\n');
+        }
+      }
+    }
     const c = issueCount(reports);
     process.stdout.write(
       `Linted ${reports.length} file${reports.length === 1 ? '' : 's'}: ` +
