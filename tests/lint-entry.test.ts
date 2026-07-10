@@ -244,5 +244,46 @@ describe('lintEntry', () => {
       const issue = r.issues.find((i) => i.code === 'snl.src-dangling');
       assert.equal(issue, undefined, 'self-src should resolve');
     });
+
+    it('does NOT flag the src-postfix target as an unresolved macro (cat 2026-07-10)', () => {
+      // Regression: `x@srcEntry` used to report `srcEntry` as an
+      // unresolved identifier via the L3 macro-pool scan. srcEntry is
+      // an entry id, not a macro ref — L4 owns it.
+      const siblings = [
+        {
+          id: 'ctx-alpha',
+          kind: 'context',
+          title: '',
+          content: { snl: '' },
+          contribution_info: null,
+          pointer: null,
+        } as any,
+      ];
+      const r = lintEntry(
+        {
+          id: 'thm-b',
+          kind: 'theorem',
+          title: '',
+          content: { snl: 'x@ctx-alpha' },
+          contribution_info: null,
+          pointer: null,
+        },
+        baseCtx({ siblingEntries: siblings }),
+      );
+      const macroIssues = r.issues.filter(
+        (i) => i.code === 'snl.identifier-not-in-pool',
+      );
+      // `x` is still valid to report (it's an unresolved bare
+      // identifier — reader/agent decides bvar vs typo); `ctx-alpha`
+      // must NOT appear.
+      const flaggedNames = macroIssues.map((i) => {
+        const m = /'([^']+)'/.exec(i.message);
+        return m ? m[1] : '';
+      });
+      assert.ok(
+        !flaggedNames.includes('ctx-alpha'),
+        `src-postfix target must not be flagged as unresolved macro; got ${flaggedNames.join(', ')}`,
+      );
+    });
   });
 });

@@ -25,6 +25,10 @@
  *          fallback is intentional (e.g. bound variable in a binder
  *          scope, or a locally-scoped free variable) or a typo / missing
  *          registration.
+ *        - Identifiers that immediately follow `@` are exempt: those are
+ *          either binder-introduced names (`@foo(x)`) or `x@srcEntry`
+ *          src-postfix targets (checked by L4 as entry ids, not macros).
+ *          Cat 2026-07-10 §bvar-source-syntax.
  *        - Under `strictMacros: true`, these get promoted to ERRORS —
  *          use when the caller wants to enforce "every identifier is a
  *          registered macro" (rare; typically off).
@@ -225,10 +229,11 @@ export function lintEntry(
             severity: 'info',
             code: 'snl.src-dangling',
             message:
-              `Cross-entry reference \`@${src}\` does not resolve to any entry ` +
-              `in the shared pool. Tolerated (renders with a warning badge), ` +
-              `but likely a typo — semantic entry ids are preferred and stable ` +
-              `once created. See docs/context-entry-design.md.`,
+              `Cross-entry src-postfix reference \`x@${src}\` does not resolve ` +
+              `to any entry in the shared pool. Tolerated (renders with a ` +
+              `warning badge), but likely a typo — entry ids are stable once ` +
+              `created and should point at a real source entry that owns the ` +
+              `bound variable. See docs/context-entry-design.md.`,
             path: 'content.snl',
           });
         }
@@ -279,6 +284,13 @@ function collectSrcReferences(node: unknown): string[] {
  * is a future refinement. Cat 2026-07-07 explicitly asked for these to be
  * reported so the agent can judge intent, so verbose > terse for now.
  *
+ * Cat 2026-07-10 §bvar-source-syntax: skip identifiers that follow `@`
+ * — those are EITHER binder introductions (`@foo(x)` — foo is a binder
+ * macro name, but we'd flag it via the parser anyway) OR src-postfix
+ * targets (`x@srcEntry` — srcEntry is an entry id, checked by the
+ * separate `snl.src-dangling` layer, NOT a macro ref). Reporting them as
+ * "unresolved macro" would be a false positive with zero recovery value.
+ *
  * Returns a deduped list of identifiers not present in the macro pool.
  */
 function findUnresolvedIdentifiers(
@@ -291,11 +303,18 @@ function findUnresolvedIdentifiers(
     .replace(/\$\$[\s\S]*?\$\$/g, ' ')
     .replace(/\$[\s\S]*?\$/g, ' ')
     .replace(/%[\s\S]*?%/g, ' ');
+  // Also drop the identifier immediately AFTER any `@` — that's a
+  // binder-declared name or an entry-id src-postfix, neither of which
+  // can be a macro reference.
+  const withoutAtIdents = stripped.replace(
+    /@[A-Za-z_][A-Za-z0-9_.\-]*/g,
+    ' ',
+  );
   const re = /([A-Za-z_][A-Za-z0-9_.\-]*)/g;
   const seen = new Set<string>();
   const unresolved = new Set<string>();
   let m: RegExpExecArray | null;
-  while ((m = re.exec(stripped)) !== null) {
+  while ((m = re.exec(withoutAtIdents)) !== null) {
     const name = m[1];
     if (seen.has(name)) continue;
     seen.add(name);
