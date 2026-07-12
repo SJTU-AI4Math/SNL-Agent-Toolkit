@@ -69,6 +69,16 @@ editor of choice.
   in the draft as `[[ref: theorem 2.3]]` — you'll resolve them into
   macro references in phase 5.
 
+**What "起稿" is NOT (cat 2026-07-11 clarification).** For technical
+projects like an API doc, "起稿" is NOT prose-first exploration. It's a
+**construction blueprint**: chapters + a flat table under each chapter
+where every row is a future entry with `{ id, kind, title, parent? }`
+already decided. When Phase 1 ends, Phase 2 term extraction and Phase 3
+entry prefab should have zero decisions left about what exists — only
+about how to write it. If you find yourself explaining ideas in the
+draft rather than listing them, you've drifted into Phase 5 content and
+should refactor back to a table.
+
 ---
 
 ### Phase 2 — Terminologization (术语化)
@@ -175,6 +185,29 @@ these registries.
   more than one place OR (b) have non-trivial render (formula, badge,
   cross-link) deserve a macro. Everything else stays as `%text%` /
   `$formula$` leaves.
+- **Code-token rendering pattern (KaTeX pipeline).** When macros
+  represent code identifiers (class/function/prop/module names in an
+  API doc, Lean tactic names in a proof note, etc.), the canonical
+  visual is `\texttt{}` for monospace + `\textcolor{name}{...}` for
+  kind-driven coloring. Cat 2026-07-11 verbatim: "用 \texttt{} 来切
+  字体, 然后宏里面可以写一些改颜色的命令来复刻简单的代码染色, 比如
+  类染成青色".
+
+  **DO NOT use hex color literals** (`\textcolor{#0891b2}{...}`). The
+  `#` char collides with `fillLatexTemplate`'s `#N` placeholder syntax.
+  It works at render time via the `\#` escape, but authoring the
+  escape correctly across the JSON/LaTeX layers is error-prone AND the
+  linter's placeholder-scan is fixed to recognise `\#` only as of
+  2026-07-11 (older linters will false-positive `bad-placeholder`).
+
+  **Use xcolor `dvipsnames` instead** (KaTeX recognises them
+  verbatim): `Cerulean` `Teal` `OliveGreen` `Orange` `Goldenrod`
+  `RubineRed` `Magenta` `RoyalBlue` `Purple` `Gray` `MidnightBlue`
+  are all distinguishable in both light and dark themes.
+
+  Reference implementation: SNL-Basics' `.SNL_Doc/term_macros/api-doc.json`
+  (Phase 2 dogfood, 13 code-token macros × single default style
+  `\textcolor{<dvipsname>}{\texttt{#0}}`).
 - Leave `source: { entries: [], urls: [] }` empty for now — it gets
   filled in phase 5, after entries exist.
 
