@@ -177,6 +177,37 @@ describe('lintPackage', () => {
     assert.ok(codes(r).includes('style.bad-placeholder'));
   });
 
+  // Iroha 2026-07-11 regression: `\#` is a literal `#` per
+  // fillLatexTemplate; scanTemplatePlaceholders was treating the char
+  // after `\#` as a placeholder start and false-positive flagging
+  // color hex codes like `\textcolor{\#ea580c}{...}` as bad
+  // placeholders.
+  it('accepts escaped `\\#` (literal hash) in templates', () => {
+    const pkg = {
+      version: '0.4.0',
+      name: 'x',
+      macros: {
+        m: {
+          description: 'x',
+          source: { entries: [], urls: [] },
+          dynamic_arity: false,
+          styles: [
+            {
+              tag: 'default',
+              mode: 'formula_inline',
+              template: '\\textcolor{\\#ea580c}{\\texttt{#0}}',
+            },
+          ],
+        },
+      },
+    };
+    const r = lintPackage(pkg);
+    assert.ok(
+      !codes(r).includes('style.bad-placeholder'),
+      `unexpected bad-placeholder in: ${JSON.stringify(r)}`
+    );
+  });
+
   it('info-notes cross-style arity mismatch', () => {
     const pkg = {
       version: '0.4.0',

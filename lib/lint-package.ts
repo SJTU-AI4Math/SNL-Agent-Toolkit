@@ -328,12 +328,17 @@ function scanTemplatePlaceholders(template: string): {
   hasVariadic: boolean;
   badTokens: string[];
 } {
+  // Escaped `\#` renders as a literal `#` per template.ts (fillLatexTemplate
+  // §Pass 4). Strip them before scanning so a template containing a color
+  // like `\textcolor{\#ea580c}{...}` isn't reported as a bad placeholder.
+  // Iroha 2026-07-11 (SNL-Basics dogfood Phase 2 hit this).
+  const stripped = template.replace(/\\#/g, '');
   const re = /#(\d+|\*|[A-Za-z_][A-Za-z0-9_]*|[^A-Za-z0-9\s#])/g;
   let maxIndex = -1;
   let hasVariadic = false;
   const bad: string[] = [];
   let m: RegExpExecArray | null;
-  while ((m = re.exec(template)) !== null) {
+  while ((m = re.exec(stripped)) !== null) {
     const rest = m[1];
     if (rest === '*') {
       hasVariadic = true;
