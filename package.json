@@ -17,6 +17,8 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@types/katex": "^0.16.8",
+    "katex": "^0.17.0",
     "tsx": "^4.19.0"
   },
   "devDependencies": {

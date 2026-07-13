@@ -47,7 +47,20 @@ const NAME_FLAG: FlagSpec = {
     'every package on disk is linted.',
 };
 
-const SPECS: FlagSpec[] = [ROOT_FLAG, NAME_FLAG, JSON_FLAG, HELP_FLAG];
+const NO_KATEX_FLAG: FlagSpec = {
+  name: 'no-katex',
+  hasValue: false,
+  default: false,
+  help:
+    'Skip the KaTeX compile preview (default: enabled). Each macro ' +
+    'style whose template will be routed through KaTeX at render time ' +
+    'is otherwise fed through headless KaTeX with `#N` / `#*` slots ' +
+    'filled by a neutral `x` placeholder. Turn this off in ' +
+    'environments where KaTeX is unavailable or preview noise is not ' +
+    'wanted; leave on for authoring feedback.',
+};
+
+const SPECS: FlagSpec[] = [ROOT_FLAG, NAME_FLAG, NO_KATEX_FLAG, JSON_FLAG, HELP_FLAG];
 
 async function main(): Promise<number> {
   // Pre-pass to collect repeated --name flags; parseArgs is single-value.
@@ -87,6 +100,7 @@ async function main(): Promise<number> {
 
   const root = path.resolve(String(parsed.flags.root));
   const asJson = parsed.flags.json === true;
+  const checkKatexEnabled = parsed.flags['no-katex'] !== true;
 
   try {
     await assertSnlDoc(root);
@@ -135,7 +149,7 @@ async function main(): Promise<number> {
       });
       continue;
     }
-    const report = lintPackage(raw);
+    const report = lintPackage(raw, { checkKatex: checkKatexEnabled });
     report.file = abs;
     reports.push(report);
   }
@@ -160,7 +174,7 @@ function usage(): string {
   return formatUsage(
     'snl-lint-package',
     '[options] [pkg.json ...]',
-    [ROOT_FLAG, NAME_FLAG, JSON_FLAG, HELP_FLAG],
+    [ROOT_FLAG, NAME_FLAG, NO_KATEX_FLAG, JSON_FLAG, HELP_FLAG],
   );
 }
 

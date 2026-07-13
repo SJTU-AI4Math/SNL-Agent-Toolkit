@@ -34,6 +34,25 @@ import type {
   MacroPackageStyle,
 } from '../schema/index.ts';
 import type { LintIssue, LintReport } from './lint-report.ts';
+import {
+  checkKatex,
+  fillTemplateWithPlaceholders,
+  templateNeedsKatex,
+} from './katex-check.ts';
+
+export interface LintPackageOptions {
+  /**
+   * When true (default), every style whose template will be routed
+   * through KaTeX at render time is fed through headless KaTeX with
+   * `#N` / `#*` slots filled by neutral `\square` placeholders. KaTeX
+   * compile failures become errors with code `style.katex-compile`.
+   *
+   * Off: skip KaTeX preview entirely (schema-only lint). CI can turn
+   * this off with --no-katex when KaTeX isn't available, but the
+   * default is on because cat 2026-07-13: "书写的时候就在 Toolbox 里反馈出来".
+   */
+  checkKatex?: boolean;
+}
 
 const KNOWN_MODES = new Set([
   'formula_inline',
@@ -46,7 +65,11 @@ const KNOWN_MODES = new Set([
  * Lint one already-JSON-parsed package payload. Returns a LintReport with
  * the `file` slot left unset (the caller — usually the CLI — fills it).
  */
-export function lintPackage(raw: unknown): LintReport {
+export function lintPackage(
+  raw: unknown,
+  opts: LintPackageOptions = {},
+): LintReport {
+  const checkKatexEnabled = opts.checkKatex !== false;
   const issues: LintIssue[] = [];
 
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
@@ -100,7 +123,7 @@ export function lintPackage(raw: unknown): LintReport {
 
   // L1 + L2 — per-macro
   for (const [macroName, rawMacro] of Object.entries(pkg.macros)) {
-    lintMacroEntry(macroName, rawMacro, issues);
+    lintMacroEntry(macroName, rawMacro, issues, { checkKatex: checkKatexEnabled });
   }
 
   return { issues };
@@ -110,6 +133,7 @@ function lintMacroEntry(
   name: string,
   raw: unknown,
   issues: LintIssue[],
+  opts: { checkKatex: boolean },
 ): void {
   const macroPath = `macros.${name}`;
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
@@ -269,6 +293,50 @@ function lintMacroEntry(
           `not dynamic_arity — these fields will be ignored at render time.`,
         path: stylePath,
       });
+    }
+
+    // L4 — KaTeX COMPILE PREVIEW
+    //
+    // Fill `#N` / `#*` slots with neutral `\square` placeholders and
+    // run the template through headless KaTeX. Catches KaTeX-syntax
+    // errors that are invisible at schema level: unescaped `_` inside
+    // `\texttt{...}`, unbalanced `{...}`, undefined `\command`, etc.
+    //
+    // Only run when the template will actually hit KaTeX at runtime
+    // (formula_* mode, or text/block mode with a `\command` in it).
+    // Pure text templates ("hello #0") are rendered as-is and would
+    // just produce noise here.
+    //
+    // Skips silently when a prior schema-level issue already flagged
+    // this style — no point compiling a template we already know is
+    // malformed.
+    if (
+      opts.checkKatex &&
+      typeof s.template === 'string' &&
+      s.template.length > 0 &&
+      typeof s.mode === 'string' &&
+      templateNeedsKatex(s.mode, s.template) &&
+      scan.badTokens.length === 0
+    ) {
+      const filled = fillTemplateWithPlaceholders(s.template, {
+        left: s.variadic_left,
+        join: s.variadic_join,
+        right: s.variadic_right,
+      });
+      const displayMode = s.mode === 'formula_display';
+      const result = checkKatex(filled, { displayMode });
+      if (!result.ok) {
+        issues.push({
+          severity: 'error',
+          code: 'style.katex-compile',
+          message:
+            `${stylePath}.template does not compile under KaTeX: ` +
+            `${result.message}. ` +
+            `Filled preview (‘#N’ → x): ${filled}`,
+          path: `${stylePath}.template`,
+          position: result.position,
+        });
+      }
     }
   });
 
