@@ -255,25 +255,47 @@ function lintMacroEntry(
     styleHasVariadic.push(scan.hasVariadic);
     styleHasRendererKey.push(typeof s.react_renderer_key === 'string' && s.react_renderer_key !== '');
     styleTemplateNonEmpty.push(s.template.length > 0);
-    for (const bad of scan.badTokens) {
-      issues.push({
-        severity: 'error',
-        code: 'style.bad-placeholder',
-        message:
-          `${stylePath}.template contains illegal placeholder '${bad}'; ` +
-          `only '#0', '#1', … (digits) and '#*' (variadic) are recognised.`,
-        path: `${stylePath}.template`,
-      });
-    }
-    if (scan.hasVariadic && m.dynamic_arity !== true) {
-      issues.push({
-        severity: 'error',
-        code: 'style.variadic-without-dynamic-arity',
-        message:
-          `${stylePath}.template uses '#*' but the macro is not dynamic_arity. ` +
-          `Set the macro's dynamic_arity to true, or drop the '#*' placeholder.`,
-        path: `${stylePath}.template`,
-      });
+
+    // Cat 2026-07-14 §dynamic_arity-no-template: for dynamic_arity macros
+    // the template body is IGNORED at render — output is fully driven by
+    // (variadic_left, variadic_join, variadic_right) + recursed children.
+    // Skip template-body validation entirely for those; instead warn if
+    // a template was written at all (author probably expected it to do
+    // something and it won't).
+    if (m.dynamic_arity === true) {
+      if (s.template.length > 0) {
+        issues.push({
+          severity: 'warning',
+          code: 'style.dynamic-arity-template-ignored',
+          message:
+            `${stylePath}.template is non-empty but the macro is dynamic_arity — ` +
+            `the template body is IGNORED at render time. Output is composed ` +
+            `from variadic_left + children.join(variadic_join) + variadic_right. ` +
+            `Clear the template to make this explicit.`,
+          path: `${stylePath}.template`,
+        });
+      }
+    } else {
+      for (const bad of scan.badTokens) {
+        issues.push({
+          severity: 'error',
+          code: 'style.bad-placeholder',
+          message:
+            `${stylePath}.template contains illegal placeholder '${bad}'; ` +
+            `only '#0', '#1', … (digits) and '#*' (variadic) are recognised.`,
+          path: `${stylePath}.template`,
+        });
+      }
+      if (scan.hasVariadic) {
+        issues.push({
+          severity: 'error',
+          code: 'style.variadic-without-dynamic-arity',
+          message:
+            `${stylePath}.template uses '#*' but the macro is not dynamic_arity. ` +
+            `Set the macro's dynamic_arity to true, or drop the '#*' placeholder.`,
+          path: `${stylePath}.template`,
+        });
+      }
     }
 
     // Delimiter fields only meaningful with dynamic_arity + #*. Not fatal
@@ -312,6 +334,7 @@ function lintMacroEntry(
     // malformed.
     if (
       opts.checkKatex &&
+      m.dynamic_arity !== true &&
       typeof s.template === 'string' &&
       s.template.length > 0 &&
       typeof s.mode === 'string' &&
@@ -340,27 +363,10 @@ function lintMacroEntry(
     }
   });
 
-  // dynamic_arity=true → default style must use `#*` (unless the style
-  // has a react_renderer_key, in which case the template is bypassed
-  // and the custom renderer handles children directly — as done by the
-  // SNL-Basics `sample.list`/`sample.table`/etc. blocks).
-  if (
-    m.dynamic_arity === true &&
-    m.styles.length > 0 &&
-    styleHasVariadic[0] === false &&
-    !styleHasRendererKey[0] &&
-    styleTemplateNonEmpty[0]
-  ) {
-    issues.push({
-      severity: 'warning',
-      code: 'macro.dynamic-arity-default-style-missing-variadic',
-      message:
-        `${macroPath}.styles[0].template has no '#*' but the macro is ` +
-        `dynamic_arity. The default style is what SNL uses when no style tag ` +
-        `is specified — variadic children won't render.`,
-      path: `${macroPath}.styles[0].template`,
-    });
-  }
+  // Cat 2026-07-14 §dynamic_arity-no-template: dynamic_arity macros no
+  // longer need `#*` — the template body is ignored at render time. The
+  // old `macro.dynamic-arity-default-style-missing-variadic` warning is
+  // therefore obsolete.
 
   // L3 — cross-style arity mismatch (info)
   if (styleIndexMaxes.length > 1) {

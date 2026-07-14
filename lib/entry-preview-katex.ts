@@ -125,6 +125,8 @@ export async function checkEntryPreview(
       }
       // Same fallback fallbackLatexSymbol uses in default-query.ts.
       if (/^[A-Za-z]+$/.test(name)) return name;
+      // Numeric literal (cat 2026-07-14 §numeral): render bare in math mode.
+      if (/^-?\d+(\.\d+)?$/.test(name)) return name;
       return `\\mathrm{${escapeLatexText(name)}}`;
     };
     let src: string;

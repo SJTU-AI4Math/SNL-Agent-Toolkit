@@ -35,7 +35,7 @@ describe('lintPackage', () => {
     assert.deepEqual(r.issues, []);
   });
 
-  it('accepts a well-formed dynamic-arity package', () => {
+  it('accepts a well-formed dynamic-arity package (empty template, delimiters carry the render)', () => {
     const pkg = {
       version: '0.4.0',
       name: 'blocks',
@@ -44,7 +44,16 @@ describe('lintPackage', () => {
           description: 'ul',
           source: { entries: [], urls: [] },
           dynamic_arity: true,
-          styles: [{ tag: 'default', mode: 'block', template: '<ul>#*</ul>' }],
+          styles: [
+            {
+              tag: 'default',
+              mode: 'block',
+              template: '',
+              variadic_left: '<ul>',
+              variadic_join: '',
+              variadic_right: '</ul>',
+            },
+          ],
         },
       },
     };
@@ -136,7 +145,7 @@ describe('lintPackage', () => {
     assert.ok(codes(r).includes('style.variadic-without-dynamic-arity'));
   });
 
-  it('warns on dynamic macro whose default style lacks #*', () => {
+  it('warns on dynamic macro whose template is non-empty (template is ignored at render)', () => {
     const pkg = {
       version: '0.4.0',
       name: 'x',
@@ -147,14 +156,13 @@ describe('lintPackage', () => {
           dynamic_arity: true,
           styles: [
             { tag: 'default', mode: 'formula_inline', template: '\\Sigma' },
-            { tag: 'sum', mode: 'formula_inline', template: '\\sum_{}#*' },
           ],
         },
       },
     };
     const r = lintPackage(pkg);
     const issue = r.issues.find(
-      (i) => i.code === 'macro.dynamic-arity-default-style-missing-variadic',
+      (i) => i.code === 'style.dynamic-arity-template-ignored',
     );
     assert.ok(issue);
     assert.equal(issue!.severity, 'warning');
