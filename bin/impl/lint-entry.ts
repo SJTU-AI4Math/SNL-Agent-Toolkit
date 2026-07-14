@@ -54,6 +54,8 @@ import {
   issueCount,
   type LintReport,
 } from '../../lib/lint-report.ts';
+import { checkEntryPreview } from '../../lib/entry-preview-katex.ts';
+import type { EntryData } from '../../schema/index.ts';
 
 const STRICT_FLAG: FlagSpec = {
   name: 'strict-macros',
@@ -89,12 +91,27 @@ const SHOW_TEXT_FLAG: FlagSpec = {
     '\\cup → ∪, \\leq → ≤, etc.). Companion to --show-latex.',
 };
 
+const NO_CHECK_PREVIEW_FLAG: FlagSpec = {
+  name: 'no-check-preview',
+  hasValue: false,
+  default: false,
+  help:
+    'Skip the end-to-end KaTeX preview check. By default the linter ' +
+    'renders each entry through the same pure pipeline the VS Code ' +
+    "extension's Preview uses (SNL-Basics' resolveRootLatex), then " +
+    'feeds the resulting KaTeX source through headless KaTeX with ' +
+    'throwOnError. Catches issues the template-in-isolation package ' +
+    "linter can't (e.g. a `#N` slot bound to something invalid in the " +
+    'surrounding text/math mode).',
+};
+
 const SPECS: FlagSpec[] = [
   ROOT_FLAG,
   JSON_FLAG,
   STRICT_FLAG,
   SHOW_LATEX_FLAG,
   SHOW_TEXT_FLAG,
+  NO_CHECK_PREVIEW_FLAG,
   HELP_FLAG,
 ];
 
@@ -124,6 +141,7 @@ async function main(): Promise<number> {
 
   const showLatex = parsed.flags['show-latex'] === true;
   const showText = parsed.flags['show-text'] === true;
+  const checkPreview = parsed.flags['no-check-preview'] !== true;
 
   try {
     await assertSnlDoc(root);
@@ -172,6 +190,49 @@ async function main(): Promise<number> {
       strictMacros,
     });
     report.file = abs;
+
+    // L4 — END-TO-END KaTeX PREVIEW.
+    //
+    // The package linter only checks templates in isolation (`#N` filled
+    // with a neutral `x` placeholder), so it can't see that a real child
+    // — e.g. a fallback `\mathrm{formula_inline}` bound to a `\texttt{...}`
+    // slot — would break KaTeX in the surrounding mode. checkEntryPreview
+    // runs the SAME pure renderer the extension's Preview uses, then feeds
+    // the result through headless KaTeX. Failures become errors.
+    if (checkPreview && raw && typeof raw === 'object') {
+      try {
+        const previewIssues = await checkEntryPreview(raw as EntryData, {
+          macros,
+        });
+        for (const p of previewIssues) {
+          report.issues.push({
+            severity: 'error',
+            code: 'preview.katex',
+            message:
+              `Preview KaTeX compile error: ${p.message}` +
+              (p.position !== undefined
+                ? ` (at KaTeX position ${p.position})`
+                : ''),
+            path: p.path,
+            // KaTeX position is inside the compiled source, not the
+            // author-facing SNL — omit `position` from the LintIssue so
+            // downstream formatters don't misreport a source offset.
+          });
+        }
+      } catch (err) {
+        // A throw here means our pipeline bug (parse succeeded, but
+        // the render/adapter blew up). Surface it so we notice, but
+        // don't fail-stop the whole run over one entry.
+        report.issues.push({
+          severity: 'error',
+          code: 'preview.katex.internal',
+          message:
+            `Preview-check pipeline threw: ${(err as Error).message}. ` +
+            `This is likely a linter bug — please report.`,
+        });
+      }
+    }
+
     reports.push(report);
 
     // Synth passes only when the entry has parseable SNL. We run them
