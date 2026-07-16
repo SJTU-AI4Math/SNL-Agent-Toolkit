@@ -41,7 +41,7 @@ import type {
   EntryData,
   EntryKind,
   MacroPackageEntry,
-} from '../schema/index.ts';
+} from './snl-doc-schema.ts';
 import type { LintIssue, LintReport } from './lint-report.ts';
 import { tryParseSnlSyntaxTree } from './snl-parser.ts';
 
@@ -218,10 +218,15 @@ export function lintEntry(
       // its own decls if that ever makes sense). If `siblingEntries`
       // is empty (standalone lint), we cannot check anything and just
       // report the src refs as info without a dangling verdict.
-      const knownIds = new Set<string>([
-        e.id,
-        ...ctx.siblingEntries.map((s) => s.id),
-      ]);
+      const knownIds = new Set<string>();
+      for (const sibling of ctx.siblingEntries) {
+        if (typeof sibling.id === 'string') {
+          knownIds.add(sibling.id);
+        }
+      }
+      if (typeof e.id === 'string') {
+        knownIds.add(e.id);
+      }
       const srcRefs = collectSrcReferences(parsed.tree);
       for (const src of srcRefs) {
         if (!knownIds.has(src)) {

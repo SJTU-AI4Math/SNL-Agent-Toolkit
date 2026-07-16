@@ -11,7 +11,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { renderTreeAsLatex, renderTreeAsText } from '../lib/snl-render.ts';
 import { tryParseSnlSyntaxTree } from '../lib/snl-parser.ts';
-import type { MacroPackageEntry } from '../schema/index.ts';
+import type { MacroPackageEntry } from '../lib/snl-doc-schema.ts';
 
 /** Convenience: parse SNL, assert success, render as LaTeX. */
 function synthLatex(

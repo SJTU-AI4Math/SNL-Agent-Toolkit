@@ -39,7 +39,7 @@ import type {
   EntryData,
   MacroPackageEntry,
   MacroPackageStyle,
-} from '../schema/index.ts';
+} from './snl-doc-schema.ts';
 
 export interface EntryPreviewIssue {
   /** Structural location — 'title' or 'content.snl'. */

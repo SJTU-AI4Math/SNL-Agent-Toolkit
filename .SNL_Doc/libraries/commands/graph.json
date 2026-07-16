@@ -271,6 +271,13 @@
         "entryId": "command.snlDoc.openSnoogL",
         "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
+    },
+    {
+      "id": "node.command.snlDoc.createMacroPickPackage",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createMacroPickPackage"
+      }
     }
   ],
   "relationships": [
@@ -437,6 +444,11 @@
     {
       "from": "node.ui.command.palette-overview",
       "to": "node.command.snlDoc.openSnoogL",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createMacroPickPackage",
       "label": "branch"
     }
   ]

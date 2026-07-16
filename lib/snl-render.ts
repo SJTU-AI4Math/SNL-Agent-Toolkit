@@ -46,7 +46,7 @@
 import type {
   MacroPackageEntry,
   MacroPackageStyle,
-} from '../schema/index.ts';
+} from './snl-doc-schema.ts';
 import type { SnlSyntaxTree } from './snl-parser.ts';
 
 /** Result of a single-tree synth. */

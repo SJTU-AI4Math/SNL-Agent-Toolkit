@@ -1561,6 +1561,42 @@
           "template": "\\texttt{SNL: Open SNoogL (Search)}"
         }
       ]
+    },
+    "snlDoc.createMacroPickPackage": {
+      "description": "Internal Extension command identifier.",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacroPickPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createMacroPickPackage}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createMacroPickPackage": {
+      "description": "Display title for the internal package-picker command.",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacroPickPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Macro (Select Package)}"
+        }
+      ]
     }
   }
 }

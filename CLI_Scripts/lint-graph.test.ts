@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { lintGraph } from '../lib/lint-graph.ts';
-import type { EntryData } from '../schema/index.ts';
+import type { EntryData } from '../lib/snl-doc-schema.ts';
 
 const POOL: EntryData[] = [
   {

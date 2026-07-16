@@ -205,7 +205,7 @@
       "description": "Toolkit documentation term: active toggle",
       "source": {
         "entries": [
-          "ui.button.macro-package.toggle-active"
+          "ui.button.dashboard.snl-macros.toggle-active"
         ],
         "urls": []
       },
@@ -1854,6 +1854,60 @@
           "tag": "default",
           "mode": "formula_inline",
           "template": "\\texttt{+ Initialize Entry Kinds}"
+        }
+      ]
+    },
+    "New_macro_package": {
+      "description": "Toolkit documentation term: New macro package",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.package-picker-create"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{New macro package}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.snl-macros.toggle-active": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.toggle-active: Toggle Package Active Button (Dashboard List)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.snl-macros.toggle-active"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Toggle Package Active Button (Dashboard List)}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.package-picker-create": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.package-picker-create: New Macro Package Button (Package Picker)",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.package-picker-create"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{New Macro Package Button (Package Picker)}"
         }
       ]
     }
