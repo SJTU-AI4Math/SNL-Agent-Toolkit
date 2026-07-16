@@ -1,65 +1,60 @@
 {
   "nodes": [
     {
-      "id": "n_cmdOverview",
+      "id": "node.ui.command.palette-overview",
       "label": "Entry",
       "props": {
-        "entryId": "bc533b13-946f-4fb8-aa8c-268306213e3f",
-        "counterId": "0f22be77-9b6b-4abc-a663-5ae678039604"
+        "entryId": "ui.command.palette-overview"
       }
     },
     {
-      "id": "n_cmdInit",
+      "id": "node.command.snlDoc.init",
       "label": "Entry",
       "props": {
-        "entryId": "94fb52f1-2209-4394-b807-5eb0d5256cd1",
-        "counterId": "0f22be77-9b6b-4abc-a663-5ae678039604"
+        "entryId": "command.snlDoc.init"
       }
     },
     {
-      "id": "n_cmdOpenDashboard",
+      "id": "node.command.snlDoc.openDashboard",
       "label": "Entry",
       "props": {
-        "entryId": "51695b53-74a1-44d7-ad36-a193d9096dda",
-        "counterId": "0f22be77-9b6b-4abc-a663-5ae678039604"
+        "entryId": "command.snlDoc.openDashboard"
       }
     },
     {
-      "id": "n_cmdOpenEntryInfoview",
+      "id": "node.command.snlDoc.openEntryInfoview",
       "label": "Entry",
       "props": {
-        "entryId": "706b125d-a272-45db-8131-209d0cd24a7f",
-        "counterId": "0f22be77-9b6b-4abc-a663-5ae678039604"
+        "entryId": "command.snlDoc.openEntryInfoview"
       }
     },
     {
-      "id": "n_cmdRegenerateDeps",
+      "id": "node.command.snlDoc.regenerateDependencies",
       "label": "Entry",
       "props": {
-        "entryId": "0257c9be-c948-404c-a89f-d6491db40999",
-        "counterId": "0f22be77-9b6b-4abc-a663-5ae678039604"
+        "entryId": "command.snlDoc.regenerateDependencies"
       }
     }
   ],
   "relationships": [
     {
-      "from": "n_cmdOverview",
-      "to": "n_cmdInit",
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.init",
       "label": "branch"
     },
     {
-      "from": "n_cmdOverview",
-      "to": "n_cmdOpenDashboard",
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openDashboard",
       "label": "branch"
     },
     {
-      "from": "n_cmdOverview",
-      "to": "n_cmdOpenEntryInfoview",
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openEntryInfoview",
       "label": "branch"
     },
     {
-      "from": "n_cmdOverview",
-      "to": "n_cmdRegenerateDeps",
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.regenerateDependencies",
       "label": "branch"
     }
   ]

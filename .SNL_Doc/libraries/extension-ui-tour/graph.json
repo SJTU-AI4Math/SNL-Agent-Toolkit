@@ -1,360 +1,1592 @@
 {
   "nodes": [
     {
-      "id": "n_dashboard",
+      "id": "node.ui.panel.dashboard",
       "label": "Entry",
       "props": {
-        "entryId": "ee4f9a56-da43-4658-b214-6389cc451738",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.dashboard"
       }
     },
     {
-      "id": "n_infoview",
+      "id": "node.ui.panel.infoview",
       "label": "Entry",
       "props": {
-        "entryId": "5ece85ce-c90d-4d76-bddc-9eeed6fc7651",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.infoview"
       }
     },
     {
-      "id": "n_entryInfoview",
+      "id": "node.ui.panel.entry-infoview",
       "label": "Entry",
       "props": {
-        "entryId": "e51a5bd1-221e-4890-96fe-99fadb4eeb07",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.entry-infoview"
       }
     },
     {
-      "id": "n_createLibrary",
+      "id": "node.ui.panel.library.create",
       "label": "Entry",
       "props": {
-        "entryId": "161a2844-cf64-431c-a08a-32ece3907a81",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.library.create"
       }
     },
     {
-      "id": "n_editLibrary",
+      "id": "node.ui.panel.library.edit",
       "label": "Entry",
       "props": {
-        "entryId": "ed46a58f-3def-47fa-a9ac-ad3e2277d100",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.library.edit"
       }
     },
     {
-      "id": "n_createEntry",
+      "id": "node.ui.panel.entry.create",
       "label": "Entry",
       "props": {
-        "entryId": "462fb2d4-3dd1-411b-b7c7-557f408f5051",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.panel.entry.create"
       }
     },
     {
-      "id": "n_createEntryKind",
+      "id": "node.ui.panel.entry-kind.create",
       "label": "Entry",
       "props": {
-        "entryId": "638e60b0-d3bc-4e3e-9aa3-ac0476850921",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.entry-kind.create"
       }
     },
     {
-      "id": "n_initEntryKinds",
+      "id": "node.ui.panel.entry-kind.initialize",
       "label": "Entry",
       "props": {
-        "entryId": "8abe8a70-7531-4f3d-b2a0-23c4700d5d9a",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.entry-kind.initialize"
       }
     },
     {
-      "id": "n_editEntryKind",
+      "id": "node.ui.panel.entry-kind.edit",
       "label": "Entry",
       "props": {
-        "entryId": "8683ad53-40ca-412b-bbc7-0577a7fac224",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.entry-kind.edit"
       }
     },
     {
-      "id": "n_createMacroKind",
+      "id": "node.ui.panel.macro-kind.create",
       "label": "Entry",
       "props": {
-        "entryId": "b7ba6b5c-77f8-4680-84d4-cc0d48e727d4",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro-kind.create"
       }
     },
     {
-      "id": "n_initMacroKinds",
+      "id": "node.ui.panel.macro-kind.initialize",
       "label": "Entry",
       "props": {
-        "entryId": "1f1fe393-efd2-4060-86c3-a30e527bb72d",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro-kind.initialize"
       }
     },
     {
-      "id": "n_editMacroKind",
+      "id": "node.ui.panel.macro-kind.edit",
       "label": "Entry",
       "props": {
-        "entryId": "e49c185b-3fc0-4888-bcd4-6735a214de80",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro-kind.edit"
       }
     },
     {
-      "id": "n_createMacroPackage",
+      "id": "node.ui.panel.macro-package.create",
       "label": "Entry",
       "props": {
-        "entryId": "aba8a49c-af71-4d24-b9bf-2207d3cfbaf2",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro-package.create"
       }
     },
     {
-      "id": "n_packagePanel",
+      "id": "node.ui.panel.macro-package",
       "label": "Entry",
       "props": {
-        "entryId": "31bd541c-1da1-4994-b318-9590b72973cb",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro-package"
       }
     },
     {
-      "id": "n_createMacro",
+      "id": "node.ui.panel.macro.create",
       "label": "Entry",
       "props": {
-        "entryId": "f2d13d57-6485-47f3-a605-e9e896f0c226",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro.create"
       }
     },
     {
-      "id": "n_editMacro",
+      "id": "node.ui.panel.macro.edit",
       "label": "Entry",
       "props": {
-        "entryId": "2007e064-3f72-4288-8b0e-5fec4c37c3cd",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.macro.edit"
       }
     },
     {
-      "id": "n_createRelationship",
+      "id": "node.ui.panel.relationship.create",
       "label": "Entry",
       "props": {
-        "entryId": "4dab78e6-c29c-49b4-b910-b71377b51962",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.relationship.create"
       }
     },
     {
-      "id": "n_editRelationship",
+      "id": "node.ui.panel.relationship.edit",
       "label": "Entry",
       "props": {
-        "entryId": "14d8ad20-1df9-4943-b199-be6bedc54bfa",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.relationship.edit"
       }
     },
     {
-      "id": "n_relationshipGraph",
+      "id": "node.ui.panel.relationship-graph",
       "label": "Entry",
       "props": {
-        "entryId": "30258f68-0359-48a4-9882-a0d5f52cd99c",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.relationship-graph"
       }
     },
     {
-      "id": "n_snoogL",
+      "id": "node.ui.panel.snoogl",
       "label": "Entry",
       "props": {
-        "entryId": "68130846-602d-4212-afb9-ffbb672b1f8a",
-        "counterId": "070ec3ed-a4ad-42c9-a8ed-aeb5098b438a"
+        "entryId": "ui.panel.snoogl"
       }
     },
     {
-      "id": "n_dashSectionEntryKinds",
+      "id": "node.ui.section.dashboard.entry-kinds",
       "label": "Entry",
       "props": {
-        "entryId": "327a206e-cc53-4b13-937c-f872856730a6",
-        "counterId": "abc8dd84-7ca1-4c07-91f9-2919e5105af5"
+        "entryId": "ui.section.dashboard.entry-kinds"
       }
     },
     {
-      "id": "n_dashSectionMacros",
+      "id": "node.ui.section.dashboard.snl-macros",
       "label": "Entry",
       "props": {
-        "entryId": "0b7122ac-c8af-464a-8acf-16dabea6d2dc",
-        "counterId": "abc8dd84-7ca1-4c07-91f9-2919e5105af5"
+        "entryId": "ui.section.dashboard.snl-macros"
       }
     },
     {
-      "id": "n_dashSectionEntries",
+      "id": "node.ui.section.dashboard.entries",
       "label": "Entry",
       "props": {
-        "entryId": "ffad58bd-9edb-4ec0-954b-3f66e63759e0",
-        "counterId": "abc8dd84-7ca1-4c07-91f9-2919e5105af5"
+        "entryId": "ui.section.dashboard.entries"
       }
     },
     {
-      "id": "n_dashSectionLibraries",
+      "id": "node.ui.section.dashboard.libraries",
       "label": "Entry",
       "props": {
-        "entryId": "1d64a970-206a-4551-a93c-723be9f066c7",
-        "counterId": "abc8dd84-7ca1-4c07-91f9-2919e5105af5"
+        "entryId": "ui.section.dashboard.libraries"
       }
     },
     {
-      "id": "n_editLibOutlineSection",
+      "id": "node.ui.section.library.outline",
       "label": "Entry",
       "props": {
-        "entryId": "bd6f276b-e509-4e5a-ae6c-671534ab24ae",
-        "counterId": "abc8dd84-7ca1-4c07-91f9-2919e5105af5"
+        "entryId": "ui.section.library.outline"
       }
     },
     {
-      "id": "n_editLibCountersSection",
+      "id": "node.ui.section.library.counters",
       "label": "Entry",
       "props": {
-        "entryId": "9eb85ce9-b76f-419d-a838-a32baf1e8402",
-        "counterId": "abc8dd84-7ca1-4c07-91f9-2919e5105af5"
+        "entryId": "ui.section.library.counters"
       }
     },
     {
-      "id": "n_btnGenerateUuid",
+      "id": "node.ui.button.entry.generate-uuid",
       "label": "Entry",
       "props": {
-        "entryId": "9e131c67-72ba-4d7c-aa8f-fda2f93bf320",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.button.entry.generate-uuid"
       }
     },
     {
-      "id": "n_btnAddBar",
+      "id": "node.ui.button.shared.add-bar",
       "label": "Entry",
       "props": {
-        "entryId": "6c959a4f-f6e0-4622-beda-0fab3e15d992",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.button.shared.add-bar"
       }
     },
     {
-      "id": "n_btnRowUp",
+      "id": "node.ui.button.tree.move-up",
       "label": "Entry",
       "props": {
-        "entryId": "21db87b0-a139-44ae-8ca9-9c277ec2adc3",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.button.tree.move-up"
       }
     },
     {
-      "id": "n_btnIndent",
+      "id": "node.ui.button.tree.indent",
       "label": "Entry",
       "props": {
-        "entryId": "23035b9b-a6af-4ba7-b6a1-4ef3f4f48daa",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.button.tree.indent"
       }
     },
     {
-      "id": "n_btnOutdent",
+      "id": "node.ui.button.tree.outdent",
       "label": "Entry",
       "props": {
-        "entryId": "7f070bda-5b60-4b96-9299-cac6ce934ac7",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.button.tree.outdent"
       }
     },
     {
-      "id": "n_btnDeleteRow",
+      "id": "node.ui.button.tree.delete",
       "label": "Entry",
       "props": {
-        "entryId": "1750f6a2-ce66-4f45-93f0-91764f075cf9",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.button.tree.delete"
       }
     },
     {
-      "id": "n_inpEntryId",
+      "id": "node.ui.input.entry.id",
       "label": "Entry",
       "props": {
-        "entryId": "095f54de-f8f9-4d2a-936b-a4c9a001b9e8",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.input.entry.id"
       }
     },
     {
-      "id": "n_inpEntryTitle",
+      "id": "node.ui.input.entry.title",
       "label": "Entry",
       "props": {
-        "entryId": "e6bee55a-6d4b-4a26-b517-0b66c8a68ea4",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.input.entry.title"
       }
     },
     {
-      "id": "n_inpCounterNumbering",
+      "id": "node.ui.input.counter.numbering",
       "label": "Entry",
       "props": {
-        "entryId": "9ef7618d-809e-4222-a7f1-7ae931fb9c23",
-        "counterId": "5f0f4742-bc6a-4dc5-8b72-890dfc4a8ae5"
+        "entryId": "ui.input.counter.numbering"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.view-graph",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.view-graph"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.open-infoview",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.open-infoview"
+      }
+    },
+    {
+      "id": "node.ui.section.dashboard.relationships",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.dashboard.relationships"
+      }
+    },
+    {
+      "id": "node.ui.section.dashboard.macro-kinds",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.dashboard.macro-kinds"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.libraries.entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.libraries.entrance"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.libraries.create-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.libraries.create-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entries.create-header",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entries.create-header"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entries.search",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entries.search"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entries.entrance-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entries.entrance-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entries.create-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entries.create-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.relationships.entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.relationships.entrance"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.relationships.create-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.relationships.create-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.relationships.regenerate",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.relationships.regenerate"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.snl-macros.create-header",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.snl-macros.create-header"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.snl-macros.search",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.snl-macros.search"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.snl-macros.package-entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.snl-macros.package-entrance"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.snl-macros.add-package",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.snl-macros.add-package"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entry-kinds.entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entry-kinds.entrance"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entry-kinds.create-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entry-kinds.create-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.entry-kinds.initialize-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.entry-kinds.initialize-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.macro-kinds.entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.macro-kinds.entrance"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.macro-kinds.create-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.macro-kinds.create-list"
+      }
+    },
+    {
+      "id": "node.ui.button.dashboard.macro-kinds.initialize-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.macro-kinds.initialize-list"
+      }
+    },
+    {
+      "id": "node.ui.section.infoview.entry-picker",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.infoview.entry-picker"
+      }
+    },
+    {
+      "id": "node.ui.input.infoview.entry-picker",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.infoview.entry-picker"
+      }
+    },
+    {
+      "id": "node.ui.section.infoview.entry-render",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.infoview.entry-render"
+      }
+    },
+    {
+      "id": "node.ui.section.entry-infoview.entry-render",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.entry-infoview.entry-render"
+      }
+    },
+    {
+      "id": "node.ui.input.library.create.title",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.library.create.title"
+      }
+    },
+    {
+      "id": "node.ui.button.library.create.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.library.create.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.library.edit.slug",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.library.edit.slug"
+      }
+    },
+    {
+      "id": "node.ui.input.library.edit.title",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.library.edit.title"
+      }
+    },
+    {
+      "id": "node.ui.button.library.edit.update-title",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.library.edit.update-title"
+      }
+    },
+    {
+      "id": "node.ui.input.counter.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.counter.name"
+      }
+    },
+    {
+      "id": "node.ui.button.counter.add-first",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.counter.add-first"
+      }
+    },
+    {
+      "id": "node.ui.button.tree.add-child",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.tree.add-child"
+      }
+    },
+    {
+      "id": "node.ui.button.tree.add-sibling",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.tree.add-sibling"
+      }
+    },
+    {
+      "id": "node.ui.button.tree.move-down",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.tree.move-down"
+      }
+    },
+    {
+      "id": "node.ui.button.library.outline.entry-entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.library.outline.entry-entrance"
+      }
+    },
+    {
+      "id": "node.ui.input.library.outline.entry-id",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.library.outline.entry-id"
+      }
+    },
+    {
+      "id": "node.ui.input.library.outline.counter",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.library.outline.counter"
+      }
+    },
+    {
+      "id": "node.ui.button.library.outline.reference-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.library.outline.reference-create"
+      }
+    },
+    {
+      "id": "node.ui.input.entry.kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry.kind"
+      }
+    },
+    {
+      "id": "node.ui.input.entry.content",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry.content"
+      }
+    },
+    {
+      "id": "node.ui.button.entry.save",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry.save"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.create.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.create.name"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.create.stroke",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.create.stroke"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.create.background",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.create.background"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.create.default-counter",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.create.default-counter"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.create.style",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.create.style"
+      }
+    },
+    {
+      "id": "node.ui.button.entry-kind.create.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry-kind.create.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.edit.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.edit.name"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.edit.stroke",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.edit.stroke"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.edit.background",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.edit.background"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.edit.default-counter",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.edit.default-counter"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.edit.style",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.edit.style"
+      }
+    },
+    {
+      "id": "node.ui.button.entry-kind.edit.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry-kind.edit.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.initialize.preset",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.initialize.preset"
+      }
+    },
+    {
+      "id": "node.ui.button.entry-kind.initialize.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry-kind.initialize.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.create.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.create.name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.create.description",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.create.description"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.create.stroke",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.create.stroke"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.create.background",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.create.background"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-kind.create.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-kind.create.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.edit.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.edit.name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.edit.description",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.edit.description"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.edit.stroke",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.edit.stroke"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.edit.background",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.edit.background"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-kind.edit.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-kind.edit.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.initialize.preset",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.initialize.preset"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-kind.initialize.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-kind.initialize.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-package.create.title",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-package.create.title"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.create.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.create.submit"
+      }
+    },
+    {
+      "id": "node.ui.section.macro-package.macros",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.macro-package.macros"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.macro-entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.macro-entrance"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.create-macro",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.create-macro"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.select-mode",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.select-mode"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.batch-package",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.batch-package"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.batch-move",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.batch-move"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.batch-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.batch-delete"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.kind"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.package",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.package"
+      }
+    },
+    {
+      "id": "node.ui.section.macro.create.styles",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.macro.create.styles"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.template",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.template"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.kind"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.package",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.package"
+      }
+    },
+    {
+      "id": "node.ui.section.macro.edit.styles",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.macro.edit.styles"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.template",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.template"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.submit"
+      }
+    },
+    {
+      "id": "node.ui.section.macro.edit.gui-inductive",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.macro.edit.gui-inductive"
+      }
+    },
+    {
+      "id": "node.ui.input.relationship.create.from",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.relationship.create.from"
+      }
+    },
+    {
+      "id": "node.ui.input.relationship.create.to",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.relationship.create.to"
+      }
+    },
+    {
+      "id": "node.ui.input.relationship.create.label",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.relationship.create.label"
+      }
+    },
+    {
+      "id": "node.ui.button.relationship.create.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.relationship.create.submit"
+      }
+    },
+    {
+      "id": "node.ui.input.relationship.edit.from",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.relationship.edit.from"
+      }
+    },
+    {
+      "id": "node.ui.input.relationship.edit.to",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.relationship.edit.to"
+      }
+    },
+    {
+      "id": "node.ui.input.relationship.edit.label",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.relationship.edit.label"
+      }
+    },
+    {
+      "id": "node.ui.button.relationship.edit.submit",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.relationship.edit.submit"
+      }
+    },
+    {
+      "id": "node.ui.section.relationship-graph.canvas",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.relationship-graph.canvas"
+      }
+    },
+    {
+      "id": "node.ui.input.snoogl.query",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.snoogl.query"
+      }
+    },
+    {
+      "id": "node.ui.section.snoogl.entry-results",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.snoogl.entry-results"
+      }
+    },
+    {
+      "id": "node.ui.button.snoogl.entry-result-entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.snoogl.entry-result-entrance"
+      }
+    },
+    {
+      "id": "node.ui.section.snoogl.macro-results",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.snoogl.macro-results"
+      }
+    },
+    {
+      "id": "node.ui.button.snoogl.macro-result-entrance",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.snoogl.macro-result-entrance"
       }
     }
   ],
   "relationships": [
     {
-      "from": "n_dashboard",
-      "to": "n_dashSectionEntryKinds",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.button.dashboard.view-graph",
       "label": "branch"
     },
     {
-      "from": "n_dashboard",
-      "to": "n_dashSectionMacros",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.button.dashboard.open-infoview",
       "label": "branch"
     },
     {
-      "from": "n_dashboard",
-      "to": "n_dashSectionEntries",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.libraries",
       "label": "branch"
     },
     {
-      "from": "n_dashboard",
-      "to": "n_dashSectionLibraries",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.entries",
       "label": "branch"
     },
     {
-      "from": "n_editLibrary",
-      "to": "n_editLibOutlineSection",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.relationships",
       "label": "branch"
     },
     {
-      "from": "n_editLibrary",
-      "to": "n_editLibCountersSection",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.snl-macros",
       "label": "branch"
     },
     {
-      "from": "n_editLibOutlineSection",
-      "to": "n_btnRowUp",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.entry-kinds",
       "label": "branch"
     },
     {
-      "from": "n_editLibOutlineSection",
-      "to": "n_btnIndent",
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.macro-kinds",
       "label": "branch"
     },
     {
-      "from": "n_editLibOutlineSection",
-      "to": "n_btnOutdent",
+      "from": "node.ui.panel.library.edit",
+      "to": "node.ui.section.library.outline",
       "label": "branch"
     },
     {
-      "from": "n_editLibOutlineSection",
-      "to": "n_btnDeleteRow",
+      "from": "node.ui.panel.library.edit",
+      "to": "node.ui.section.library.counters",
       "label": "branch"
     },
     {
-      "from": "n_editLibCountersSection",
-      "to": "n_inpCounterNumbering",
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.button.entry.generate-uuid",
       "label": "branch"
     },
     {
-      "from": "n_createEntry",
-      "to": "n_inpEntryId",
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.move-up",
       "label": "branch"
     },
     {
-      "from": "n_createEntry",
-      "to": "n_inpEntryTitle",
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.indent",
       "label": "branch"
     },
     {
-      "from": "n_createEntry",
-      "to": "n_btnGenerateUuid",
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.outdent",
       "label": "branch"
     },
     {
-      "from": "n_packagePanel",
-      "to": "n_btnAddBar",
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.delete",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.input.entry.id",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.input.entry.title",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.counters",
+      "to": "node.ui.input.counter.numbering",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.libraries",
+      "to": "node.ui.button.dashboard.libraries.entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.libraries",
+      "to": "node.ui.button.dashboard.libraries.create-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entries",
+      "to": "node.ui.button.dashboard.entries.create-header",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entries",
+      "to": "node.ui.button.dashboard.entries.search",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entries",
+      "to": "node.ui.button.dashboard.entries.entrance-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entries",
+      "to": "node.ui.button.dashboard.entries.create-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.relationships",
+      "to": "node.ui.button.dashboard.relationships.entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.relationships",
+      "to": "node.ui.button.dashboard.relationships.create-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.relationships",
+      "to": "node.ui.button.dashboard.relationships.regenerate",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.snl-macros",
+      "to": "node.ui.button.dashboard.snl-macros.create-header",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.snl-macros",
+      "to": "node.ui.button.dashboard.snl-macros.search",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.snl-macros",
+      "to": "node.ui.button.dashboard.snl-macros.package-entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.snl-macros",
+      "to": "node.ui.button.dashboard.snl-macros.add-package",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entry-kinds",
+      "to": "node.ui.button.dashboard.entry-kinds.entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entry-kinds",
+      "to": "node.ui.button.dashboard.entry-kinds.create-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entry-kinds",
+      "to": "node.ui.button.dashboard.entry-kinds.initialize-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.macro-kinds",
+      "to": "node.ui.button.dashboard.macro-kinds.entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.macro-kinds",
+      "to": "node.ui.button.dashboard.macro-kinds.create-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.macro-kinds",
+      "to": "node.ui.button.dashboard.macro-kinds.initialize-list",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.infoview",
+      "to": "node.ui.section.infoview.entry-picker",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.infoview.entry-picker",
+      "to": "node.ui.input.infoview.entry-picker",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.infoview",
+      "to": "node.ui.section.infoview.entry-render",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-infoview",
+      "to": "node.ui.section.entry-infoview.entry-render",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.create",
+      "to": "node.ui.input.library.create.title",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.create",
+      "to": "node.ui.button.library.create.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.edit",
+      "to": "node.ui.input.library.edit.slug",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.edit",
+      "to": "node.ui.input.library.edit.title",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.edit",
+      "to": "node.ui.button.library.edit.update-title",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.counters",
+      "to": "node.ui.input.counter.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.counters",
+      "to": "node.ui.button.counter.add-first",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.add-child",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.add-sibling",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.tree.move-down",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.library.outline.entry-entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.input.library.outline.entry-id",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.input.library.outline.counter",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.button.library.outline.reference-create",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.input.entry.kind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.input.entry.content",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.button.entry.save",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.input.entry-kind.create.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.input.entry-kind.create.stroke",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.input.entry-kind.create.background",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.input.entry-kind.create.default-counter",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.input.entry-kind.create.style",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.button.entry-kind.create.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.input.entry-kind.edit.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.input.entry-kind.edit.stroke",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.input.entry-kind.edit.background",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.input.entry-kind.edit.default-counter",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.input.entry-kind.edit.style",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.button.entry-kind.edit.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.initialize",
+      "to": "node.ui.input.entry-kind.initialize.preset",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.initialize",
+      "to": "node.ui.button.entry-kind.initialize.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.create",
+      "to": "node.ui.input.macro-kind.create.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.create",
+      "to": "node.ui.input.macro-kind.create.description",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.create",
+      "to": "node.ui.input.macro-kind.create.stroke",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.create",
+      "to": "node.ui.input.macro-kind.create.background",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.create",
+      "to": "node.ui.button.macro-kind.create.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.input.macro-kind.edit.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.input.macro-kind.edit.description",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.input.macro-kind.edit.stroke",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.input.macro-kind.edit.background",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.button.macro-kind.edit.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.initialize",
+      "to": "node.ui.input.macro-kind.initialize.preset",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.initialize",
+      "to": "node.ui.button.macro-kind.initialize.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-package.create",
+      "to": "node.ui.input.macro-package.create.title",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-package.create",
+      "to": "node.ui.button.macro-package.create.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-package",
+      "to": "node.ui.section.macro-package.macros",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.macro-entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.create-macro",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.select-mode",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.batch-package",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.batch-move",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.batch-delete",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.input.macro.create.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.input.macro.create.kind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.input.macro.create.package",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.section.macro.create.styles",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.template",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.button.macro.create.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.input.macro.edit.name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.input.macro.edit.kind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.input.macro.edit.package",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.section.macro.edit.styles",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.template",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.button.macro.edit.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.section.macro.edit.gui-inductive",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.create",
+      "to": "node.ui.input.relationship.create.from",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.create",
+      "to": "node.ui.input.relationship.create.to",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.create",
+      "to": "node.ui.input.relationship.create.label",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.create",
+      "to": "node.ui.button.relationship.create.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.edit",
+      "to": "node.ui.input.relationship.edit.from",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.edit",
+      "to": "node.ui.input.relationship.edit.to",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.edit",
+      "to": "node.ui.input.relationship.edit.label",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.edit",
+      "to": "node.ui.button.relationship.edit.submit",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship-graph",
+      "to": "node.ui.section.relationship-graph.canvas",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.snoogl",
+      "to": "node.ui.input.snoogl.query",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.snoogl",
+      "to": "node.ui.section.snoogl.entry-results",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.snoogl.entry-results",
+      "to": "node.ui.button.snoogl.entry-result-entrance",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.snoogl",
+      "to": "node.ui.section.snoogl.macro-results",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.snoogl.macro-results",
+      "to": "node.ui.button.snoogl.macro-result-entrance",
       "label": "branch"
     }
   ]
