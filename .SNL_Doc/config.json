@@ -50,20 +50,110 @@
       },
       "style": "",
       "defaultCounterName": "Command"
+    },
+    {
+      "id": "entry-kind.concept",
+      "name": "Concept",
+      "coloring": {
+        "stroke": "#6a1b9a",
+        "background": "#f3e5f5"
+      },
+      "style": "",
+      "defaultCounterName": ""
     }
   ],
   "macro_kinds": [
     {
-      "id": "toolkit-terminology",
-      "name": "Toolkit terminology",
-      "description": "Named commands, panels, controls, fields, and document concepts.",
+      "id": "panel",
+      "name": "Panel",
+      "description": "Macros denoting concrete Extension Panels.",
       "coloring": {
-        "stroke": "#0277bd",
-        "background": "#e1f5fe"
+        "stroke": "#1565c0",
+        "background": "#e3f2fd"
+      }
+    },
+    {
+      "id": "section",
+      "name": "Section",
+      "description": "Macros denoting concrete UI Sections.",
+      "coloring": {
+        "stroke": "#455a64",
+        "background": "#eceff1"
+      }
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "description": "Macros denoting concrete UI Buttons and actions.",
+      "coloring": {
+        "stroke": "#2e7d32",
+        "background": "#e8f5e9"
+      }
+    },
+    {
+      "id": "text-input",
+      "name": "Text Input",
+      "description": "Macros denoting UI text/select inputs.",
+      "coloring": {
+        "stroke": "#7b1fa2",
+        "background": "#f3e5f5"
+      }
+    },
+    {
+      "id": "command",
+      "name": "Command",
+      "description": "Macros denoting registered VS Code commands.",
+      "coloring": {
+        "stroke": "#d84315",
+        "background": "#fbe9e7"
+      }
+    },
+    {
+      "id": "snl-concept",
+      "name": "SNL Concept",
+      "description": "SNL-Doc schema, renderer, and Extension concepts.",
+      "coloring": {
+        "stroke": "#6a1b9a",
+        "background": "#f3e5f5"
+      }
+    },
+    {
+      "id": "filesystem",
+      "name": "Filesystem",
+      "description": "Path composition, Folder, File, and JSON-key terms.",
+      "coloring": {
+        "stroke": "#00695c",
+        "background": "#e0f2f1"
+      }
+    },
+    {
+      "id": "computer-basics",
+      "name": "Computer Basics",
+      "description": "Keyboard shortcuts and general programming/computer terms.",
+      "coloring": {
+        "stroke": "#37474f",
+        "background": "#eceff1"
+      }
+    },
+    {
+      "id": "literal",
+      "name": "Literal",
+      "description": "Literal symbols, examples, statuses, and prose-only technical terms.",
+      "coloring": {
+        "stroke": "#5d4037",
+        "background": "#efebe9"
       }
     }
   ],
   "active_macro_packages": [
-    "toolkit-concepts"
+    "ui-panels",
+    "ui-sections",
+    "ui-buttons",
+    "ui-inputs",
+    "commands",
+    "snl-concepts",
+    "filesystem",
+    "computer-basics",
+    "literals"
   ]
 }

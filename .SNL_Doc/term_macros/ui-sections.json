@@ -1,0 +1,799 @@
+{
+  "version": "0.0.3",
+  "name": "UI Sections",
+  "description": "Concrete Extension Section terminology.",
+  "macros": {
+    "Counters_Section": {
+      "description": "Toolkit documentation term: Counters Section",
+      "source": {
+        "entries": [
+          "ui.section.library.counters"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Counters Section}"
+        }
+      ]
+    },
+    "Entries_Section": {
+      "description": "Toolkit documentation term: Entries Section",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.entries"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entries Section}"
+        }
+      ]
+    },
+    "Entry_Kinds_Section": {
+      "description": "Toolkit documentation term: Entry Kinds Section",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.entry-kinds"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kinds Section}"
+        }
+      ]
+    },
+    "GUI_inductive_editor": {
+      "description": "Toolkit documentation term: GUI inductive editor",
+      "source": {
+        "entries": [
+          "ui.section.macro.edit.gui-inductive"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{GUI inductive editor}"
+        }
+      ]
+    },
+    "Libraries_Section": {
+      "description": "Toolkit documentation term: Libraries Section",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.libraries"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Libraries Section}"
+        }
+      ]
+    },
+    "Outline_Section": {
+      "description": "Toolkit documentation term: Outline Section",
+      "source": {
+        "entries": [
+          "ui.section.library.outline"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Outline Section}"
+        }
+      ]
+    },
+    "SNL_Macros_Section": {
+      "description": "Toolkit documentation term: SNL Macros Section",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.snl-macros"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macros Section}"
+        }
+      ]
+    },
+    "Section": {
+      "description": "Toolkit documentation term: Section",
+      "source": {
+        "entries": [
+          "concept.ui.section"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.dashboard.relationships": {
+      "description": "UI terminology backed by Entry ui.section.dashboard.relationships: Relationships Section",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.relationships"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationships Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.dashboard.macro-kinds": {
+      "description": "UI terminology backed by Entry ui.section.dashboard.macro-kinds: SNL Macro Kinds Section",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.macro-kinds"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macro Kinds Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry-infoview.entry-render": {
+      "description": "UI terminology backed by Entry ui.section.entry-infoview.entry-render: Entry Infoview Render Section",
+      "source": {
+        "entries": [
+          "ui.section.entry-infoview.entry-render"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Infoview Render Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro-package.macros": {
+      "description": "UI terminology backed by Entry ui.section.macro-package.macros: Macro Package Macros Section",
+      "source": {
+        "entries": [
+          "ui.section.macro-package.macros"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Macros Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.create.styles": {
+      "description": "UI terminology backed by Entry ui.section.macro.create.styles: Macro Styles Section (Create)",
+      "source": {
+        "entries": [
+          "ui.section.macro.create.styles"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Styles Section (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.edit.styles": {
+      "description": "UI terminology backed by Entry ui.section.macro.edit.styles: Macro Styles Section (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.macro.edit.styles"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Styles Section (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.edit.gui-inductive": {
+      "description": "UI terminology backed by Entry ui.section.macro.edit.gui-inductive: GUI Inductive Editor Section",
+      "source": {
+        "entries": [
+          "ui.section.macro.edit.gui-inductive"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{GUI Inductive Editor Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.relationship-graph.canvas": {
+      "description": "UI terminology backed by Entry ui.section.relationship-graph.canvas: Relationship Graph Canvas Section",
+      "source": {
+        "entries": [
+          "ui.section.relationship-graph.canvas"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Graph Canvas Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.snoogl.entry-results": {
+      "description": "UI terminology backed by Entry ui.section.snoogl.entry-results: SNoogL Entry Results Section",
+      "source": {
+        "entries": [
+          "ui.section.snoogl.entry-results"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Entry Results Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.snoogl.macro-results": {
+      "description": "UI terminology backed by Entry ui.section.snoogl.macro-results: SNoogL Macro Results Section",
+      "source": {
+        "entries": [
+          "ui.section.snoogl.macro-results"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Macro Results Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.infoview.libraries": {
+      "description": "UI terminology backed by Entry ui.section.infoview.libraries: Infoview Libraries Layer",
+      "source": {
+        "entries": [
+          "ui.section.infoview.libraries"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Infoview Libraries Layer}"
+        }
+      ]
+    },
+    "Entry.ui.section.infoview.library-reading": {
+      "description": "UI terminology backed by Entry ui.section.infoview.library-reading: Infoview Library Reading Layer",
+      "source": {
+        "entries": [
+          "ui.section.infoview.library-reading"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Infoview Library Reading Layer}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry-infoview.context": {
+      "description": "UI terminology backed by Entry ui.section.entry-infoview.context: Entry Infoview Context Section",
+      "source": {
+        "entries": [
+          "ui.section.entry-infoview.context"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Infoview Context Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry-infoview.dependencies": {
+      "description": "UI terminology backed by Entry ui.section.entry-infoview.dependencies: Entry Infoview Dependencies Section",
+      "source": {
+        "entries": [
+          "ui.section.entry-infoview.dependencies"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Infoview Dependencies Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.create.preview": {
+      "description": "UI terminology backed by Entry ui.section.entry.create.preview: Entry Live Preview Section (Create)",
+      "source": {
+        "entries": [
+          "ui.section.entry.create.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Live Preview Section (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.create.content": {
+      "description": "UI terminology backed by Entry ui.section.entry.create.content: Entry Content Section (Create)",
+      "source": {
+        "entries": [
+          "ui.section.entry.create.content"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Content Section (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.create.contributor": {
+      "description": "UI terminology backed by Entry ui.section.entry.create.contributor: Contributor Section (Create Entry)",
+      "source": {
+        "entries": [
+          "ui.section.entry.create.contributor"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Contributor Section (Create Entry)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.create.pointer": {
+      "description": "UI terminology backed by Entry ui.section.entry.create.pointer: Pointer Section (Create Entry)",
+      "source": {
+        "entries": [
+          "ui.section.entry.create.pointer"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Pointer Section (Create Entry)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.edit.preview": {
+      "description": "UI terminology backed by Entry ui.section.entry.edit.preview: Entry Live Preview Section (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.entry.edit.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Live Preview Section (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.edit.content": {
+      "description": "UI terminology backed by Entry ui.section.entry.edit.content: Entry Content Section (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.entry.edit.content"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Content Section (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.edit.contributor": {
+      "description": "UI terminology backed by Entry ui.section.entry.edit.contributor: Contributor Section (Edit Entry)",
+      "source": {
+        "entries": [
+          "ui.section.entry.edit.contributor"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Contributor Section (Edit Entry)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry.edit.pointer": {
+      "description": "UI terminology backed by Entry ui.section.entry.edit.pointer: Pointer Section (Edit Entry)",
+      "source": {
+        "entries": [
+          "ui.section.entry.edit.pointer"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Pointer Section (Edit Entry)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry-kind.create.preview": {
+      "description": "UI terminology backed by Entry ui.section.entry-kind.create.preview: Entry Kind Color Preview (Create)",
+      "source": {
+        "entries": [
+          "ui.section.entry-kind.create.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Color Preview (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.entry-kind.edit.preview": {
+      "description": "UI terminology backed by Entry ui.section.entry-kind.edit.preview: Entry Kind Color Preview (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.entry-kind.edit.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Color Preview (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro-kind.create.preview": {
+      "description": "UI terminology backed by Entry ui.section.macro-kind.create.preview: Macro Kind Color Preview (Create)",
+      "source": {
+        "entries": [
+          "ui.section.macro-kind.create.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Color Preview (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro-kind.edit.preview": {
+      "description": "UI terminology backed by Entry ui.section.macro-kind.edit.preview: Macro Kind Color Preview (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.macro-kind.edit.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Color Preview (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro-package.batch-actions": {
+      "description": "UI terminology backed by Entry ui.section.macro-package.batch-actions: Macro Package Batch Actions Section",
+      "source": {
+        "entries": [
+          "ui.section.macro-package.batch-actions"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Batch Actions Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro-package.transfer-modal": {
+      "description": "UI terminology backed by Entry ui.section.macro-package.transfer-modal: Macro Transfer Modal Section",
+      "source": {
+        "entries": [
+          "ui.section.macro-package.transfer-modal"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Transfer Modal Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.create.preview": {
+      "description": "UI terminology backed by Entry ui.section.macro.create.preview: Macro Live Preview Section (Create)",
+      "source": {
+        "entries": [
+          "ui.section.macro.create.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Live Preview Section (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.create.sources": {
+      "description": "UI terminology backed by Entry ui.section.macro.create.sources: Macro Sources Section (Create)",
+      "source": {
+        "entries": [
+          "ui.section.macro.create.sources"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Sources Section (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.create.tags": {
+      "description": "UI terminology backed by Entry ui.section.macro.create.tags: Macro Tags Section (Create)",
+      "source": {
+        "entries": [
+          "ui.section.macro.create.tags"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Tags Section (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.edit.preview": {
+      "description": "UI terminology backed by Entry ui.section.macro.edit.preview: Macro Live Preview Section (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.macro.edit.preview"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Live Preview Section (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.edit.sources": {
+      "description": "UI terminology backed by Entry ui.section.macro.edit.sources: Macro Sources Section (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.macro.edit.sources"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Sources Section (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.macro.edit.tags": {
+      "description": "UI terminology backed by Entry ui.section.macro.edit.tags: Macro Tags Section (Edit)",
+      "source": {
+        "entries": [
+          "ui.section.macro.edit.tags"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Tags Section (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.section.snoogl.search": {
+      "description": "UI terminology backed by Entry ui.section.snoogl.search: SNoogL Search Bar Section",
+      "source": {
+        "entries": [
+          "ui.section.snoogl.search"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Search Bar Section}"
+        }
+      ]
+    },
+    "Entry.ui.section.snoogl.filters": {
+      "description": "UI terminology backed by Entry ui.section.snoogl.filters: SNoogL Filters Section",
+      "source": {
+        "entries": [
+          "ui.section.snoogl.filters"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Filters Section}"
+        }
+      ]
+    }
+  }
+}

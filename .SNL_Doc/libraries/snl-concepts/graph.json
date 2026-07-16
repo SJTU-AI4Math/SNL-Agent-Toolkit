@@ -1,0 +1,289 @@
+{
+  "nodes": [
+    {
+      "id": "node.concept.snl-doc",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl-doc"
+      }
+    },
+    {
+      "id": "node.concept.ui.panel",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.ui.panel"
+      }
+    },
+    {
+      "id": "node.concept.ui.section",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.ui.section"
+      }
+    },
+    {
+      "id": "node.concept.ui.button",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.ui.button"
+      }
+    },
+    {
+      "id": "node.concept.ui.text-input",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.ui.text-input"
+      }
+    },
+    {
+      "id": "node.concept.ui.command",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.ui.command"
+      }
+    },
+    {
+      "id": "node.concept.snl.entry",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.entry"
+      }
+    },
+    {
+      "id": "node.concept.snl.entry-kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.entry-kind"
+      }
+    },
+    {
+      "id": "node.concept.snl.macro",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.macro"
+      }
+    },
+    {
+      "id": "node.concept.snl.macro-kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.macro-kind"
+      }
+    },
+    {
+      "id": "node.concept.snl.library",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.library"
+      }
+    },
+    {
+      "id": "node.concept.snl.counter",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.counter"
+      }
+    },
+    {
+      "id": "node.concept.snl.syntax-tree",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.syntax-tree"
+      }
+    },
+    {
+      "id": "node.concept.snl.native-renderer",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.native-renderer"
+      }
+    },
+    {
+      "id": "node.concept.snl.shared-entry-pool",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.shared-entry-pool"
+      }
+    },
+    {
+      "id": "node.concept.snl.default-counter-name",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.default-counter-name"
+      }
+    },
+    {
+      "id": "node.concept.snl.dependency-relationship",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.dependency-relationship"
+      }
+    },
+    {
+      "id": "node.concept.snl.number-formatting",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.number-formatting"
+      }
+    },
+    {
+      "id": "node.concept.extension.entry-render",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.entry-render"
+      }
+    },
+    {
+      "id": "node.concept.extension.tree-view-editor",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.tree-view-editor"
+      }
+    },
+    {
+      "id": "node.concept.extension.row-toolbar",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.row-toolbar"
+      }
+    },
+    {
+      "id": "node.concept.extension.package-picker",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.package-picker"
+      }
+    },
+    {
+      "id": "node.concept.extension.entry-title-format",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.entry-title-format"
+      }
+    },
+    {
+      "id": "node.concept.extension.operation-status",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.operation-status"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.ui.panel",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.ui.section",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.ui.button",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.ui.text-input",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.ui.command",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.entry",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.entry-kind",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.macro",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.macro-kind",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.library",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.counter",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.syntax-tree",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.native-renderer",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.shared-entry-pool",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.default-counter-name",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.dependency-relationship",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.number-formatting",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.entry-render",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.tree-view-editor",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.row-toolbar",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.package-picker",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.entry-title-format",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.operation-status",
+      "label": "branch"
+    }
+  ]
+}

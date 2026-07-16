@@ -1,0 +1,1285 @@
+{
+  "version": "0.0.3",
+  "name": "UI Inputs",
+  "description": "Concrete text/select input terminology.",
+  "macros": {
+    "Counter_Numbering_DSL_Field": {
+      "description": "Toolkit documentation term: Counter Numbering DSL Field",
+      "source": {
+        "entries": [
+          "ui.input.counter.numbering"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Counter Numbering DSL Field}"
+        }
+      ]
+    },
+    "Entry_ID_Field": {
+      "description": "Toolkit documentation term: Entry ID Field",
+      "source": {
+        "entries": [
+          "ui.input.entry.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry ID Field}"
+        }
+      ]
+    },
+    "Entry_Title_Field": {
+      "description": "Toolkit documentation term: Entry Title Field",
+      "source": {
+        "entries": [
+          "ui.input.entry.title"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Title Field}"
+        }
+      ]
+    },
+    "Text_Input": {
+      "description": "Toolkit documentation term: Text Input",
+      "source": {
+        "entries": [
+          "concept.ui.text-input"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Text Input}"
+        }
+      ]
+    },
+    "Entry.ui.input.library.create.title": {
+      "description": "UI terminology backed by Entry ui.input.library.create.title: Library Title Input",
+      "source": {
+        "entries": [
+          "ui.input.library.create.title"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Title Input}"
+        }
+      ]
+    },
+    "Entry.ui.input.library.edit.slug": {
+      "description": "UI terminology backed by Entry ui.input.library.edit.slug: Library Slug Input (Read Only)",
+      "source": {
+        "entries": [
+          "ui.input.library.edit.slug"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Slug Input (Read Only)}"
+        }
+      ]
+    },
+    "Entry.ui.input.library.edit.title": {
+      "description": "UI terminology backed by Entry ui.input.library.edit.title: Library Title Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.library.edit.title"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Title Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.counter.name": {
+      "description": "UI terminology backed by Entry ui.input.counter.name: Counter Name Input",
+      "source": {
+        "entries": [
+          "ui.input.counter.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Counter Name Input}"
+        }
+      ]
+    },
+    "Entry.ui.input.library.outline.entry-id": {
+      "description": "UI terminology backed by Entry ui.input.library.outline.entry-id: Library Entry Reference ID Input",
+      "source": {
+        "entries": [
+          "ui.input.library.outline.entry-id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Entry Reference ID Input}"
+        }
+      ]
+    },
+    "Entry.ui.input.library.outline.counter": {
+      "description": "UI terminology backed by Entry ui.input.library.outline.counter: Library Entry Counter Selector",
+      "source": {
+        "entries": [
+          "ui.input.library.outline.counter"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Entry Counter Selector}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry.kind": {
+      "description": "UI terminology backed by Entry ui.input.entry.kind: Entry Kind Selector",
+      "source": {
+        "entries": [
+          "ui.input.entry.kind"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Selector}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry.content": {
+      "description": "UI terminology backed by Entry ui.input.entry.content: Entry Content Editor",
+      "source": {
+        "entries": [
+          "ui.input.entry.content"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Content Editor}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.create.name": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.create.name: Entry Kind Name Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.create.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Name Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.create.stroke": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.create.stroke: Entry Kind Stroke Color Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.create.stroke"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Stroke Color Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.create.background": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.create.background: Entry Kind Background Color Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.create.background"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Background Color Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.create.default-counter": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.create.default-counter: Default Counter Name Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.create.default-counter"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Default Counter Name Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.create.style": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.create.style: Entry Kind Style Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.create.style"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Style Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.edit.name": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.edit.name: Entry Kind Name Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.edit.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Name Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.edit.stroke": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.edit.stroke: Entry Kind Stroke Color Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.edit.stroke"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Stroke Color Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.edit.background": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.edit.background: Entry Kind Background Color Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.edit.background"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Background Color Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.edit.default-counter": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.edit.default-counter: Default Counter Name Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.edit.default-counter"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Default Counter Name Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.edit.style": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.edit.style: Entry Kind Style Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.edit.style"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Style Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.initialize.preset": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.initialize.preset: Entry Kind Preset Selector",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.initialize.preset"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Preset Selector}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.create.name": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.create.name: Macro Kind Name Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.create.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Name Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.create.description": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.create.description: Macro Kind Description Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.create.description"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Description Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.create.stroke": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.create.stroke: Macro Kind Stroke Color Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.create.stroke"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Stroke Color Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.create.background": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.create.background: Macro Kind Background Color Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.create.background"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Background Color Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.edit.name": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.edit.name: Macro Kind Name Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.edit.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Name Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.edit.description": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.edit.description: Macro Kind Description Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.edit.description"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Description Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.edit.stroke": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.edit.stroke: Macro Kind Stroke Color Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.edit.stroke"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Stroke Color Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.edit.background": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.edit.background: Macro Kind Background Color Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.edit.background"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Background Color Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.initialize.preset": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.initialize.preset: Macro Kind Preset Selector",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.initialize.preset"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Preset Selector}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.create.title": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.create.title: Macro Package Title Input",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.create.title"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Title Input}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.name": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.name: Macro Name Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Name Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.kind": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.kind: Macro Kind Selector (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.kind"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Selector (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.package": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.package: Macro Package Selector (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.package"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Selector (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.template": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.template: Macro Template Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.template"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Template Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.name": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.name: Macro Name Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Name Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.kind": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.kind: Macro Kind Selector (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.kind"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind Selector (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.package": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.package: Macro Package Selector (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.package"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Selector (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.template": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.template: Macro Template Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.template"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Template Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.create.from": {
+      "description": "UI terminology backed by Entry ui.input.relationship.create.from: Relationship From Entry Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.create.from"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship From Entry Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.create.to": {
+      "description": "UI terminology backed by Entry ui.input.relationship.create.to: Relationship To Entry Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.create.to"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship To Entry Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.create.label": {
+      "description": "UI terminology backed by Entry ui.input.relationship.create.label: Relationship Label Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.create.label"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Label Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.edit.from": {
+      "description": "UI terminology backed by Entry ui.input.relationship.edit.from: Relationship From Entry Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.edit.from"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship From Entry Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.edit.to": {
+      "description": "UI terminology backed by Entry ui.input.relationship.edit.to: Relationship To Entry Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.edit.to"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship To Entry Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.edit.label": {
+      "description": "UI terminology backed by Entry ui.input.relationship.edit.label: Relationship Label Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.edit.label"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Label Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.snoogl.query": {
+      "description": "UI terminology backed by Entry ui.input.snoogl.query: SNoogL Query Input",
+      "source": {
+        "entries": [
+          "ui.input.snoogl.query"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Query Input}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry.edit.id": {
+      "description": "UI terminology backed by Entry ui.input.entry.edit.id: Entry ID Field (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry.edit.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry ID Field (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry.edit.title": {
+      "description": "UI terminology backed by Entry ui.input.entry.edit.title: Entry Title Field (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry.edit.title"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Title Field (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry.edit.kind": {
+      "description": "UI terminology backed by Entry ui.input.entry.edit.kind: Entry Kind Selector (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry.edit.kind"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Selector (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry.edit.content": {
+      "description": "UI terminology backed by Entry ui.input.entry.edit.content: Entry Content Editor (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.entry.edit.content"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Content Editor (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.create.id": {
+      "description": "UI terminology backed by Entry ui.input.entry-kind.create.id: Entry Kind ID Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.create.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind ID Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.create.id": {
+      "description": "UI terminology backed by Entry ui.input.macro-kind.create.id: Macro Kind ID Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.create.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind ID Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.create.file": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.create.file: Macro Package File Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.create.file"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package File Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.create.name": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.create.name: Macro Package Display Name Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.create.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Display Name Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.create.description": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.create.description: Macro Package Description Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.create.description"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Description Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.edit.file": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.edit.file: Macro Package File Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.edit.file"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package File Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.edit.name": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.edit.name: Macro Package Display Name Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.edit.name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Display Name Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro-package.edit.description": {
+      "description": "UI terminology backed by Entry ui.input.macro-package.edit.description: Macro Package Description Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro-package.edit.description"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Description Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.description": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.description: Macro Description Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.description"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Description Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.source-entry": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.source-entry: Macro Source Entry Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.source-entry"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Source Entry Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.source-url": {
+      "description": "UI terminology backed by Entry ui.input.macro.create.source-url: Macro Source URL Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.source-url"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Source URL Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.description": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.description: Macro Description Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.description"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Description Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.source-entry": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.source-entry: Macro Source Entry Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.source-entry"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Source Entry Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.source-url": {
+      "description": "UI terminology backed by Entry ui.input.macro.edit.source-url: Macro Source URL Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.source-url"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Source URL Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.create.id": {
+      "description": "UI terminology backed by Entry ui.input.relationship.create.id: Relationship ID Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.create.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship ID Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.create.metadata": {
+      "description": "UI terminology backed by Entry ui.input.relationship.create.metadata: Relationship Metadata JSON Input (Create)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.create.metadata"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Metadata JSON Input (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.edit.id": {
+      "description": "UI terminology backed by Entry ui.input.relationship.edit.id: Relationship ID Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.edit.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship ID Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.relationship.edit.metadata": {
+      "description": "UI terminology backed by Entry ui.input.relationship.edit.metadata: Relationship Metadata JSON Input (Edit)",
+      "source": {
+        "entries": [
+          "ui.input.relationship.edit.metadata"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Metadata JSON Input (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.input.snoogl.kind-filter": {
+      "description": "UI terminology backed by Entry ui.input.snoogl.kind-filter: SNoogL Kind Filter",
+      "source": {
+        "entries": [
+          "ui.input.snoogl.kind-filter"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Kind Filter}"
+        }
+      ]
+    }
+  }
+}

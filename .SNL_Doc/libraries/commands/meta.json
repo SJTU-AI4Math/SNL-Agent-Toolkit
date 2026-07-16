@@ -1,4 +1,4 @@
 {
-  "title": "Commands",
-  "description": "VS Code commands registered by the SNL Doc extension."
+  "title": "Extension Commands",
+  "description": "All VS Code commands registered by SNL-Doc-Extension."
 }

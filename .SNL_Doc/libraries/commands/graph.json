@@ -8,17 +8,52 @@
       }
     },
     {
-      "id": "node.command.snlDoc.init",
+      "id": "node.command.snlDoc.openInfoview",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.init"
+        "entryId": "command.snlDoc.openInfoview"
       }
     },
     {
-      "id": "node.command.snlDoc.openDashboard",
+      "id": "node.command.snlDoc.refreshInfoview",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openDashboard"
+        "entryId": "command.snlDoc.refreshInfoview"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.deleteEntry",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.deleteEntry"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.deleteEntryKind",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.deleteEntryKind"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.deleteMacroKind",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.deleteMacroKind"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.deleteLibrary",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.deleteLibrary"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.deleteMacroPackage",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.deleteMacroPackage"
       }
     },
     {
@@ -29,22 +64,215 @@
       }
     },
     {
+      "id": "node.command.snlDoc.revealEntryPointer",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.revealEntryPointer"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.openDashboard",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.openDashboard"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.init",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.init"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createLibrary",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createLibrary"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.initEntryKinds",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.initEntryKinds"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createEntryKind",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createEntryKind"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.initMacroKinds",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.initMacroKinds"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createMacroKind",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createMacroKind"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createEntry",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createEntry"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createMacroPackage",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createMacroPackage"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.openMacroPackage",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.openMacroPackage"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createMacro",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createMacro"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editLibrary",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editLibrary"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editEntryKind",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editEntryKind"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editMacroKind",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editMacroKind"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editEntry",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editEntry"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editMacroPackage",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editMacroPackage"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editMacro",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editMacro"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.createRelationship",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.createRelationship"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.editRelationship",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.editRelationship"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.deleteRelationship",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.deleteRelationship"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.openInfoviewGraph",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.openInfoviewGraph"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.openInfoviewGraphForLibrary",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.openInfoviewGraphForLibrary"
+      }
+    },
+    {
       "id": "node.command.snlDoc.regenerateDependencies",
       "label": "Entry",
       "props": {
         "entryId": "command.snlDoc.regenerateDependencies"
+      }
+    },
+    {
+      "id": "node.command.snlDoc.openSnoogL",
+      "label": "Entry",
+      "props": {
+        "entryId": "command.snlDoc.openSnoogL"
       }
     }
   ],
   "relationships": [
     {
       "from": "node.ui.command.palette-overview",
-      "to": "node.command.snlDoc.init",
+      "to": "node.command.snlDoc.openInfoview",
       "label": "branch"
     },
     {
       "from": "node.ui.command.palette-overview",
-      "to": "node.command.snlDoc.openDashboard",
+      "to": "node.command.snlDoc.refreshInfoview",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.deleteEntry",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.deleteEntryKind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.deleteMacroKind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.deleteLibrary",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.deleteMacroPackage",
       "label": "branch"
     },
     {
@@ -54,7 +282,127 @@
     },
     {
       "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.revealEntryPointer",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openDashboard",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.init",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createLibrary",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.initEntryKinds",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createEntryKind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.initMacroKinds",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createMacroKind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createEntry",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createMacroPackage",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openMacroPackage",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createMacro",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editLibrary",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editEntryKind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editMacroKind",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editEntry",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editMacroPackage",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editMacro",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.createRelationship",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.editRelationship",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.deleteRelationship",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openInfoviewGraph",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openInfoviewGraphForLibrary",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
       "to": "node.command.snlDoc.regenerateDependencies",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.command.palette-overview",
+      "to": "node.command.snlDoc.openSnoogL",
       "label": "branch"
     }
   ]

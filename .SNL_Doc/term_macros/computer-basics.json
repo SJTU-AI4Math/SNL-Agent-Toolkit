@@ -1,0 +1,87 @@
+{
+  "version": "0.0.3",
+  "name": "Computer Basics",
+  "description": "Keyboard and general computer/programming terminology.",
+  "macros": {
+    "crypto.randomUUID": {
+      "description": "Toolkit documentation term: crypto.randomUUID()",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "computer-basics",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{crypto.randomUUID()}"
+        }
+      ]
+    },
+    "when_false": {
+      "description": "Toolkit documentation term: when: false",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "computer-basics",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{when: false}"
+        }
+      ]
+    },
+    "Shortcut_Ctrl_click": {
+      "description": "Toolkit documentation term: Ctrl+click",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "computer-basics",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Ctrl+click}"
+        }
+      ]
+    },
+    "Shortcut_Enter": {
+      "description": "Toolkit documentation term: Enter",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "computer-basics",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Enter}"
+        }
+      ]
+    },
+    "Shortcut_Space": {
+      "description": "Toolkit documentation term: Space",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "computer-basics",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Space}"
+        }
+      ]
+    }
+  }
+}

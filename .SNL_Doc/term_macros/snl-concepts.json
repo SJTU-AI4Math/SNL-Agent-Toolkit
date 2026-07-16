@@ -1,0 +1,889 @@
+{
+  "version": "0.0.3",
+  "name": "SNL-Doc Concepts",
+  "description": "SNL schema, renderer, storage, and reusable Extension concepts.",
+  "macros": {
+    "Counter": {
+      "description": "Toolkit documentation term: Counter",
+      "source": {
+        "entries": [
+          "concept.snl.counter"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Counter}"
+        }
+      ]
+    },
+    "Entry": {
+      "description": "Toolkit documentation term: Entry",
+      "source": {
+        "entries": [
+          "concept.snl.entry"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry}"
+        }
+      ]
+    },
+    "EntryKind": {
+      "description": "Toolkit documentation term: EntryKind",
+      "source": {
+        "entries": [
+          "concept.snl.entry-kind"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{EntryKind}"
+        }
+      ]
+    },
+    "EntryRender": {
+      "description": "Toolkit documentation term: EntryRender",
+      "source": {
+        "entries": [
+          "concept.extension.entry-render"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{EntryRender}"
+        }
+      ]
+    },
+    "Entry_Kind": {
+      "description": "Toolkit documentation term: Entry Kind",
+      "source": {
+        "entries": [
+          "concept.snl.entry-kind"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind}"
+        }
+      ]
+    },
+    "Feature": {
+      "description": "Toolkit documentation term: Feature",
+      "source": {
+        "entries": [
+          "concept.snl-doc"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Feature}"
+        }
+      ]
+    },
+    "KindName_--_Title": {
+      "description": "Toolkit documentation term: <KindName> -- <Title>",
+      "source": {
+        "entries": [
+          "concept.extension.entry-title-format"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{<KindName> -- <Title>}"
+        }
+      ]
+    },
+    "Library": {
+      "description": "Toolkit documentation term: Library",
+      "source": {
+        "entries": [
+          "concept.snl.library"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library}"
+        }
+      ]
+    },
+    "MacroKind": {
+      "description": "Toolkit documentation term: MacroKind",
+      "source": {
+        "entries": [
+          "concept.snl.macro-kind"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{MacroKind}"
+        }
+      ]
+    },
+    "Macro_Kind": {
+      "description": "Toolkit documentation term: Macro Kind",
+      "source": {
+        "entries": [
+          "concept.snl.macro-kind"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind}"
+        }
+      ]
+    },
+    "SNL_Macro": {
+      "description": "Toolkit documentation term: SNL Macro",
+      "source": {
+        "entries": [
+          "concept.snl.macro"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macro}"
+        }
+      ]
+    },
+    "SNL_Macros": {
+      "description": "Toolkit documentation term: SNL Macros",
+      "source": {
+        "entries": [
+          "concept.snl.macro"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macros}"
+        }
+      ]
+    },
+    "SNL_entry_title": {
+      "description": "Toolkit documentation term: SNL — <entry title>",
+      "source": {
+        "entries": [
+          "concept.extension.entry-title-format"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL — <entry title>}"
+        }
+      ]
+    },
+    "SnlSyntaxTree": {
+      "description": "Toolkit documentation term: SnlSyntaxTree",
+      "source": {
+        "entries": [
+          "concept.snl.syntax-tree"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SnlSyntaxTree}"
+        }
+      ]
+    },
+    "defaultCounterName": {
+      "description": "Toolkit documentation term: defaultCounterName",
+      "source": {
+        "entries": [
+          "concept.snl.default-counter-name"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{defaultCounterName}"
+        }
+      ]
+    },
+    "dependency_relationship": {
+      "description": "Toolkit documentation term: dependency relationship",
+      "source": {
+        "entries": [
+          "concept.snl.dependency-relationship"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{dependency relationship}"
+        }
+      ]
+    },
+    "duplicate": {
+      "description": "Toolkit documentation term: duplicate",
+      "source": {
+        "entries": [
+          "concept.extension.operation-status"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{duplicate}"
+        }
+      ]
+    },
+    "exists": {
+      "description": "Toolkit documentation term: exists",
+      "source": {
+        "entries": [
+          "concept.extension.operation-status"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{exists}"
+        }
+      ]
+    },
+    "formatNumbering_template_k": {
+      "description": "Toolkit documentation term: formatNumbering(template, k)",
+      "source": {
+        "entries": [
+          "concept.snl.number-formatting"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{formatNumbering(template, k)}"
+        }
+      ]
+    },
+    "id_name_numbering_DSL_children": {
+      "description": "Toolkit documentation term: { id, name, numbering DSL, children[] }",
+      "source": {
+        "entries": [
+          "concept.snl.counter"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}"
+        }
+      ]
+    },
+    "package_picker": {
+      "description": "Toolkit documentation term: package picker",
+      "source": {
+        "entries": [
+          "concept.extension.package-picker"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{package picker}"
+        }
+      ]
+    },
+    "row_toolbar": {
+      "description": "Toolkit documentation term: row toolbar",
+      "source": {
+        "entries": [
+          "concept.extension.row-toolbar"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{row toolbar}"
+        }
+      ]
+    },
+    "shared_entry_pool": {
+      "description": "Toolkit documentation term: shared entry pool",
+      "source": {
+        "entries": [
+          "concept.snl.shared-entry-pool"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{shared entry pool}"
+        }
+      ]
+    },
+    "snl-native": {
+      "description": "Toolkit documentation term: snl-native",
+      "source": {
+        "entries": [
+          "concept.snl.native-renderer"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snl-native}"
+        }
+      ]
+    },
+    "tree-view_editor": {
+      "description": "Toolkit documentation term: tree-view editor",
+      "source": {
+        "entries": [
+          "concept.extension.tree-view-editor"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{tree-view editor}"
+        }
+      ]
+    },
+    "Concept.concept.snl-doc": {
+      "description": "Concept Entry handle: SNL-Doc Concepts",
+      "source": {
+        "entries": [
+          "concept.snl-doc"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL-Doc Concepts}"
+        }
+      ]
+    },
+    "Concept.concept.ui.panel": {
+      "description": "Concept Entry handle: Panel",
+      "source": {
+        "entries": [
+          "concept.ui.panel"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Panel}"
+        }
+      ]
+    },
+    "Concept.concept.ui.section": {
+      "description": "Concept Entry handle: Section",
+      "source": {
+        "entries": [
+          "concept.ui.section"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Section}"
+        }
+      ]
+    },
+    "Concept.concept.ui.button": {
+      "description": "Concept Entry handle: Button",
+      "source": {
+        "entries": [
+          "concept.ui.button"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Button}"
+        }
+      ]
+    },
+    "Concept.concept.ui.text-input": {
+      "description": "Concept Entry handle: Text Input",
+      "source": {
+        "entries": [
+          "concept.ui.text-input"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Text Input}"
+        }
+      ]
+    },
+    "Concept.concept.ui.command": {
+      "description": "Concept Entry handle: Command",
+      "source": {
+        "entries": [
+          "concept.ui.command"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Command}"
+        }
+      ]
+    },
+    "Concept.concept.snl.entry": {
+      "description": "Concept Entry handle: Entry",
+      "source": {
+        "entries": [
+          "concept.snl.entry"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry}"
+        }
+      ]
+    },
+    "Concept.concept.snl.entry-kind": {
+      "description": "Concept Entry handle: Entry Kind",
+      "source": {
+        "entries": [
+          "concept.snl.entry-kind"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind}"
+        }
+      ]
+    },
+    "Concept.concept.snl.macro": {
+      "description": "Concept Entry handle: SNL Macro",
+      "source": {
+        "entries": [
+          "concept.snl.macro"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macro}"
+        }
+      ]
+    },
+    "Concept.concept.snl.macro-kind": {
+      "description": "Concept Entry handle: SNL Macro Kind",
+      "source": {
+        "entries": [
+          "concept.snl.macro-kind"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macro Kind}"
+        }
+      ]
+    },
+    "Concept.concept.snl.library": {
+      "description": "Concept Entry handle: Library",
+      "source": {
+        "entries": [
+          "concept.snl.library"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library}"
+        }
+      ]
+    },
+    "Concept.concept.snl.counter": {
+      "description": "Concept Entry handle: Counter",
+      "source": {
+        "entries": [
+          "concept.snl.counter"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Counter}"
+        }
+      ]
+    },
+    "Concept.concept.snl.syntax-tree": {
+      "description": "Concept Entry handle: SNL Syntax Tree",
+      "source": {
+        "entries": [
+          "concept.snl.syntax-tree"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Syntax Tree}"
+        }
+      ]
+    },
+    "Concept.concept.snl.native-renderer": {
+      "description": "Concept Entry handle: SNL Native Renderer",
+      "source": {
+        "entries": [
+          "concept.snl.native-renderer"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Native Renderer}"
+        }
+      ]
+    },
+    "Concept.concept.snl.shared-entry-pool": {
+      "description": "Concept Entry handle: Shared Entry Pool",
+      "source": {
+        "entries": [
+          "concept.snl.shared-entry-pool"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Shared Entry Pool}"
+        }
+      ]
+    },
+    "Concept.concept.snl.default-counter-name": {
+      "description": "Concept Entry handle: Default Counter Name",
+      "source": {
+        "entries": [
+          "concept.snl.default-counter-name"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Default Counter Name}"
+        }
+      ]
+    },
+    "Concept.concept.snl.dependency-relationship": {
+      "description": "Concept Entry handle: Dependency Relationship",
+      "source": {
+        "entries": [
+          "concept.snl.dependency-relationship"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Dependency Relationship}"
+        }
+      ]
+    },
+    "Concept.concept.snl.number-formatting": {
+      "description": "Concept Entry handle: Counter Number Formatting",
+      "source": {
+        "entries": [
+          "concept.snl.number-formatting"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Counter Number Formatting}"
+        }
+      ]
+    },
+    "Concept.concept.extension.entry-render": {
+      "description": "Concept Entry handle: EntryRender",
+      "source": {
+        "entries": [
+          "concept.extension.entry-render"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{EntryRender}"
+        }
+      ]
+    },
+    "Concept.concept.extension.tree-view-editor": {
+      "description": "Concept Entry handle: Tree-View Editor",
+      "source": {
+        "entries": [
+          "concept.extension.tree-view-editor"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Tree-View Editor}"
+        }
+      ]
+    },
+    "Concept.concept.extension.row-toolbar": {
+      "description": "Concept Entry handle: Row Toolbar",
+      "source": {
+        "entries": [
+          "concept.extension.row-toolbar"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Row Toolbar}"
+        }
+      ]
+    },
+    "Concept.concept.extension.package-picker": {
+      "description": "Concept Entry handle: Package Picker",
+      "source": {
+        "entries": [
+          "concept.extension.package-picker"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Package Picker}"
+        }
+      ]
+    },
+    "Concept.concept.extension.entry-title-format": {
+      "description": "Concept Entry handle: Entry Title Format",
+      "source": {
+        "entries": [
+          "concept.extension.entry-title-format"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Title Format}"
+        }
+      ]
+    },
+    "Concept.concept.extension.operation-status": {
+      "description": "Concept Entry handle: Operation Result Status",
+      "source": {
+        "entries": [
+          "concept.extension.operation-status"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Operation Result Status}"
+        }
+      ]
+    }
+  }
+}

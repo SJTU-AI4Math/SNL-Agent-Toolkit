@@ -1,0 +1,1566 @@
+{
+  "version": "0.0.3",
+  "name": "Extension Commands",
+  "description": "Registered command identifiers, titles, and aliases.",
+  "macros": {
+    "Command": {
+      "description": "Toolkit documentation term: Command",
+      "source": {
+        "entries": [
+          "concept.ui.command"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Command}"
+        }
+      ]
+    },
+    "Command_Palette_Overview": {
+      "description": "Toolkit documentation term: Command Palette Overview",
+      "source": {
+        "entries": [
+          "ui.command.palette-overview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Command Palette Overview}"
+        }
+      ]
+    },
+    "SNL_Open_Dashboard": {
+      "description": "Toolkit documentation term: SNL: Open Dashboard",
+      "source": {
+        "entries": [
+          "command.snlDoc.openDashboard"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Dashboard}"
+        }
+      ]
+    },
+    "SNL_Open_SNoogL_Search": {
+      "description": "Toolkit documentation term: SNL: Open SNoogL (Search)",
+      "source": {
+        "entries": [
+          "command.snlDoc.openSnoogL"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open SNoogL (Search)}"
+        }
+      ]
+    },
+    "create": {
+      "description": "Toolkit documentation term: create*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{create*}"
+        }
+      ]
+    },
+    "delete": {
+      "description": "Toolkit documentation term: delete*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{delete*}"
+        }
+      ]
+    },
+    "edit": {
+      "description": "Toolkit documentation term: edit*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{edit*}"
+        }
+      ]
+    },
+    "init": {
+      "description": "Toolkit documentation term: init",
+      "source": {
+        "entries": [
+          "command.snlDoc.init"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{init}"
+        }
+      ]
+    },
+    "initEntryKinds": {
+      "description": "Toolkit documentation term: initEntryKinds",
+      "source": {
+        "entries": [
+          "command.snlDoc.initEntryKinds"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{initEntryKinds}"
+        }
+      ]
+    },
+    "initMacroKinds": {
+      "description": "Toolkit documentation term: initMacroKinds",
+      "source": {
+        "entries": [
+          "command.snlDoc.initMacroKinds"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{initMacroKinds}"
+        }
+      ]
+    },
+    "openDashboard": {
+      "description": "Toolkit documentation term: openDashboard",
+      "source": {
+        "entries": [
+          "command.snlDoc.openDashboard"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{openDashboard}"
+        }
+      ]
+    },
+    "openEntryInfoview": {
+      "description": "Toolkit documentation term: openEntryInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.openEntryInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{openEntryInfoview}"
+        }
+      ]
+    },
+    "openInfoview": {
+      "description": "Toolkit documentation term: openInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{openInfoview}"
+        }
+      ]
+    },
+    "openInfoviewGraph_ForLibrary": {
+      "description": "Toolkit documentation term: openInfoviewGraph[ForLibrary]",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoviewGraph",
+          "command.snlDoc.openInfoviewGraphForLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{openInfoviewGraph[ForLibrary]}"
+        }
+      ]
+    },
+    "openMacroPackage": {
+      "description": "Toolkit documentation term: openMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.openMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{openMacroPackage}"
+        }
+      ]
+    },
+    "openSnoogL": {
+      "description": "Toolkit documentation term: openSnoogL",
+      "source": {
+        "entries": [
+          "command.snlDoc.openSnoogL"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{openSnoogL}"
+        }
+      ]
+    },
+    "refreshInfoview": {
+      "description": "Toolkit documentation term: refreshInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.refreshInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{refreshInfoview}"
+        }
+      ]
+    },
+    "regenerateDependencies": {
+      "description": "Toolkit documentation term: regenerateDependencies",
+      "source": {
+        "entries": [
+          "command.snlDoc.regenerateDependencies"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{regenerateDependencies}"
+        }
+      ]
+    },
+    "revealEntryPointer": {
+      "description": "Toolkit documentation term: revealEntryPointer",
+      "source": {
+        "entries": [
+          "command.snlDoc.revealEntryPointer"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{revealEntryPointer}"
+        }
+      ]
+    },
+    "snlDoc.": {
+      "description": "Toolkit documentation term: snlDoc.*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.*}"
+        }
+      ]
+    },
+    "snlDoc.init": {
+      "description": "Toolkit documentation term: snlDoc.init",
+      "source": {
+        "entries": [
+          "command.snlDoc.init"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.init}"
+        }
+      ]
+    },
+    "snlDoc.openDashboard": {
+      "description": "Toolkit documentation term: snlDoc.openDashboard",
+      "source": {
+        "entries": [
+          "command.snlDoc.openDashboard"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openDashboard}"
+        }
+      ]
+    },
+    "snlDoc.openEntryInfoview": {
+      "description": "Toolkit documentation term: snlDoc.openEntryInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.openEntryInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openEntryInfoview}"
+        }
+      ]
+    },
+    "snlDoc.openEntryInfoview_entryId": {
+      "description": "Toolkit documentation term: snlDoc.openEntryInfoview <entryId>",
+      "source": {
+        "entries": [
+          "command.snlDoc.openEntryInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openEntryInfoview <entryId>}"
+        }
+      ]
+    },
+    "snlDoc.openInfoviewGraph": {
+      "description": "Toolkit documentation term: snlDoc.openInfoviewGraph",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoviewGraph"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openInfoviewGraph}"
+        }
+      ]
+    },
+    "snlDoc.openInfoviewGraphForLibrary": {
+      "description": "Toolkit documentation term: snlDoc.openInfoviewGraphForLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoviewGraphForLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openInfoviewGraphForLibrary}"
+        }
+      ]
+    },
+    "snlDoc.regenerateDependencies": {
+      "description": "Toolkit documentation term: snlDoc.regenerateDependencies",
+      "source": {
+        "entries": [
+          "command.snlDoc.regenerateDependencies"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.regenerateDependencies}"
+        }
+      ]
+    },
+    "snlDoc.openInfoview": {
+      "description": "Extension command identifier: snlDoc.openInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openInfoview}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openInfoview": {
+      "description": "Command Palette title for snlDoc.openInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Infoview}"
+        }
+      ]
+    },
+    "snlDoc.refreshInfoview": {
+      "description": "Extension command identifier: snlDoc.refreshInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.refreshInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.refreshInfoview}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.refreshInfoview": {
+      "description": "Command Palette title for snlDoc.refreshInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.refreshInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Refresh Infoview}"
+        }
+      ]
+    },
+    "snlDoc.deleteEntry": {
+      "description": "Extension command identifier: snlDoc.deleteEntry",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteEntry"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.deleteEntry}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.deleteEntry": {
+      "description": "Command Palette title for snlDoc.deleteEntry",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteEntry"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Delete Entry}"
+        }
+      ]
+    },
+    "snlDoc.deleteEntryKind": {
+      "description": "Extension command identifier: snlDoc.deleteEntryKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteEntryKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.deleteEntryKind}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.deleteEntryKind": {
+      "description": "Command Palette title for snlDoc.deleteEntryKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteEntryKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Delete Entry Kind}"
+        }
+      ]
+    },
+    "snlDoc.deleteMacroKind": {
+      "description": "Extension command identifier: snlDoc.deleteMacroKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteMacroKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.deleteMacroKind}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.deleteMacroKind": {
+      "description": "Command Palette title for snlDoc.deleteMacroKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteMacroKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Delete Macro Kind}"
+        }
+      ]
+    },
+    "snlDoc.deleteLibrary": {
+      "description": "Extension command identifier: snlDoc.deleteLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.deleteLibrary}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.deleteLibrary": {
+      "description": "Command Palette title for snlDoc.deleteLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Delete Library}"
+        }
+      ]
+    },
+    "snlDoc.deleteMacroPackage": {
+      "description": "Extension command identifier: snlDoc.deleteMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.deleteMacroPackage}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.deleteMacroPackage": {
+      "description": "Command Palette title for snlDoc.deleteMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Delete Macro Package}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openEntryInfoview": {
+      "description": "Command Palette title for snlDoc.openEntryInfoview",
+      "source": {
+        "entries": [
+          "command.snlDoc.openEntryInfoview"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Entry Infoview}"
+        }
+      ]
+    },
+    "snlDoc.revealEntryPointer": {
+      "description": "Extension command identifier: snlDoc.revealEntryPointer",
+      "source": {
+        "entries": [
+          "command.snlDoc.revealEntryPointer"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.revealEntryPointer}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.revealEntryPointer": {
+      "description": "Command Palette title for snlDoc.revealEntryPointer",
+      "source": {
+        "entries": [
+          "command.snlDoc.revealEntryPointer"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Reveal Entry Pointer}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openDashboard": {
+      "description": "Command Palette title for snlDoc.openDashboard",
+      "source": {
+        "entries": [
+          "command.snlDoc.openDashboard"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Dashboard}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.init": {
+      "description": "Command Palette title for snlDoc.init",
+      "source": {
+        "entries": [
+          "command.snlDoc.init"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Init}"
+        }
+      ]
+    },
+    "snlDoc.createLibrary": {
+      "description": "Extension command identifier: snlDoc.createLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.createLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createLibrary}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createLibrary": {
+      "description": "Command Palette title for snlDoc.createLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.createLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Library}"
+        }
+      ]
+    },
+    "snlDoc.initEntryKinds": {
+      "description": "Extension command identifier: snlDoc.initEntryKinds",
+      "source": {
+        "entries": [
+          "command.snlDoc.initEntryKinds"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.initEntryKinds}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.initEntryKinds": {
+      "description": "Command Palette title for snlDoc.initEntryKinds",
+      "source": {
+        "entries": [
+          "command.snlDoc.initEntryKinds"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Initialize Entry Kinds}"
+        }
+      ]
+    },
+    "snlDoc.createEntryKind": {
+      "description": "Extension command identifier: snlDoc.createEntryKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.createEntryKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createEntryKind}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createEntryKind": {
+      "description": "Command Palette title for snlDoc.createEntryKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.createEntryKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Entry Kind}"
+        }
+      ]
+    },
+    "snlDoc.initMacroKinds": {
+      "description": "Extension command identifier: snlDoc.initMacroKinds",
+      "source": {
+        "entries": [
+          "command.snlDoc.initMacroKinds"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.initMacroKinds}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.initMacroKinds": {
+      "description": "Command Palette title for snlDoc.initMacroKinds",
+      "source": {
+        "entries": [
+          "command.snlDoc.initMacroKinds"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Initialize Macro Kinds}"
+        }
+      ]
+    },
+    "snlDoc.createMacroKind": {
+      "description": "Extension command identifier: snlDoc.createMacroKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacroKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createMacroKind}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createMacroKind": {
+      "description": "Command Palette title for snlDoc.createMacroKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacroKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Macro Kind}"
+        }
+      ]
+    },
+    "snlDoc.createEntry": {
+      "description": "Extension command identifier: snlDoc.createEntry",
+      "source": {
+        "entries": [
+          "command.snlDoc.createEntry"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createEntry}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createEntry": {
+      "description": "Command Palette title for snlDoc.createEntry",
+      "source": {
+        "entries": [
+          "command.snlDoc.createEntry"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Entry}"
+        }
+      ]
+    },
+    "snlDoc.createMacroPackage": {
+      "description": "Extension command identifier: snlDoc.createMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createMacroPackage}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createMacroPackage": {
+      "description": "Command Palette title for snlDoc.createMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Macro Package}"
+        }
+      ]
+    },
+    "snlDoc.openMacroPackage": {
+      "description": "Extension command identifier: snlDoc.openMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.openMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openMacroPackage}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openMacroPackage": {
+      "description": "Command Palette title for snlDoc.openMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.openMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Macro Package…}"
+        }
+      ]
+    },
+    "snlDoc.createMacro": {
+      "description": "Extension command identifier: snlDoc.createMacro",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacro"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createMacro}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createMacro": {
+      "description": "Command Palette title for snlDoc.createMacro",
+      "source": {
+        "entries": [
+          "command.snlDoc.createMacro"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Macro}"
+        }
+      ]
+    },
+    "snlDoc.editLibrary": {
+      "description": "Extension command identifier: snlDoc.editLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.editLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editLibrary}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editLibrary": {
+      "description": "Command Palette title for snlDoc.editLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.editLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Library}"
+        }
+      ]
+    },
+    "snlDoc.editEntryKind": {
+      "description": "Extension command identifier: snlDoc.editEntryKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.editEntryKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editEntryKind}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editEntryKind": {
+      "description": "Command Palette title for snlDoc.editEntryKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.editEntryKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Entry Kind}"
+        }
+      ]
+    },
+    "snlDoc.editMacroKind": {
+      "description": "Extension command identifier: snlDoc.editMacroKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.editMacroKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editMacroKind}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editMacroKind": {
+      "description": "Command Palette title for snlDoc.editMacroKind",
+      "source": {
+        "entries": [
+          "command.snlDoc.editMacroKind"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Macro Kind}"
+        }
+      ]
+    },
+    "snlDoc.editEntry": {
+      "description": "Extension command identifier: snlDoc.editEntry",
+      "source": {
+        "entries": [
+          "command.snlDoc.editEntry"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editEntry}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editEntry": {
+      "description": "Command Palette title for snlDoc.editEntry",
+      "source": {
+        "entries": [
+          "command.snlDoc.editEntry"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Entry}"
+        }
+      ]
+    },
+    "snlDoc.editMacroPackage": {
+      "description": "Extension command identifier: snlDoc.editMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.editMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editMacroPackage}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editMacroPackage": {
+      "description": "Command Palette title for snlDoc.editMacroPackage",
+      "source": {
+        "entries": [
+          "command.snlDoc.editMacroPackage"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Macro Package}"
+        }
+      ]
+    },
+    "snlDoc.editMacro": {
+      "description": "Extension command identifier: snlDoc.editMacro",
+      "source": {
+        "entries": [
+          "command.snlDoc.editMacro"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editMacro}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editMacro": {
+      "description": "Command Palette title for snlDoc.editMacro",
+      "source": {
+        "entries": [
+          "command.snlDoc.editMacro"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Macro}"
+        }
+      ]
+    },
+    "snlDoc.createRelationship": {
+      "description": "Extension command identifier: snlDoc.createRelationship",
+      "source": {
+        "entries": [
+          "command.snlDoc.createRelationship"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.createRelationship}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.createRelationship": {
+      "description": "Command Palette title for snlDoc.createRelationship",
+      "source": {
+        "entries": [
+          "command.snlDoc.createRelationship"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Create Relationship}"
+        }
+      ]
+    },
+    "snlDoc.editRelationship": {
+      "description": "Extension command identifier: snlDoc.editRelationship",
+      "source": {
+        "entries": [
+          "command.snlDoc.editRelationship"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.editRelationship}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.editRelationship": {
+      "description": "Command Palette title for snlDoc.editRelationship",
+      "source": {
+        "entries": [
+          "command.snlDoc.editRelationship"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Edit Relationship}"
+        }
+      ]
+    },
+    "snlDoc.deleteRelationship": {
+      "description": "Extension command identifier: snlDoc.deleteRelationship",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteRelationship"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.deleteRelationship}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.deleteRelationship": {
+      "description": "Command Palette title for snlDoc.deleteRelationship",
+      "source": {
+        "entries": [
+          "command.snlDoc.deleteRelationship"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Delete Relationship}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openInfoviewGraph": {
+      "description": "Command Palette title for snlDoc.openInfoviewGraph",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoviewGraph"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Relationship Graph}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openInfoviewGraphForLibrary": {
+      "description": "Command Palette title for snlDoc.openInfoviewGraphForLibrary",
+      "source": {
+        "entries": [
+          "command.snlDoc.openInfoviewGraphForLibrary"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open Relationship Graph (Library)}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.regenerateDependencies": {
+      "description": "Command Palette title for snlDoc.regenerateDependencies",
+      "source": {
+        "entries": [
+          "command.snlDoc.regenerateDependencies"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Regenerate Dependency Relationships}"
+        }
+      ]
+    },
+    "snlDoc.openSnoogL": {
+      "description": "Extension command identifier: snlDoc.openSnoogL",
+      "source": {
+        "entries": [
+          "command.snlDoc.openSnoogL"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.openSnoogL}"
+        }
+      ]
+    },
+    "CommandTitle.snlDoc.openSnoogL": {
+      "description": "Command Palette title for snlDoc.openSnoogL",
+      "source": {
+        "entries": [
+          "command.snlDoc.openSnoogL"
+        ],
+        "urls": []
+      },
+      "kind": "command",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL: Open SNoogL (Search)}"
+        }
+      ]
+    }
+  }
+}

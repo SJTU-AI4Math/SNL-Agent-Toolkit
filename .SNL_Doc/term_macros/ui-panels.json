@@ -1,0 +1,439 @@
+{
+  "version": "0.0.3",
+  "name": "UI Panels",
+  "description": "Concrete Extension Panel terminology.",
+  "macros": {
+    "Create_Entry": {
+      "description": "Toolkit documentation term: Create Entry",
+      "source": {
+        "entries": [
+          "ui.panel.entry.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry}"
+        }
+      ]
+    },
+    "Create_Entry_Kind": {
+      "description": "Toolkit documentation term: Create Entry Kind",
+      "source": {
+        "entries": [
+          "ui.panel.entry-kind.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry Kind}"
+        }
+      ]
+    },
+    "Create_Library": {
+      "description": "Toolkit documentation term: Create Library",
+      "source": {
+        "entries": [
+          "ui.panel.library.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Library}"
+        }
+      ]
+    },
+    "Create_Macro": {
+      "description": "Toolkit documentation term: Create Macro",
+      "source": {
+        "entries": [
+          "ui.panel.macro.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro}"
+        }
+      ]
+    },
+    "Create_Macro_Kind": {
+      "description": "Toolkit documentation term: Create Macro Kind",
+      "source": {
+        "entries": [
+          "ui.panel.macro-kind.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Kind}"
+        }
+      ]
+    },
+    "Create_Macro_Package": {
+      "description": "Toolkit documentation term: Create Macro Package",
+      "source": {
+        "entries": [
+          "ui.panel.macro-package.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Package}"
+        }
+      ]
+    },
+    "Create_Relationship": {
+      "description": "Toolkit documentation term: Create Relationship",
+      "source": {
+        "entries": [
+          "ui.panel.relationship.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Relationship}"
+        }
+      ]
+    },
+    "Dashboard": {
+      "description": "Toolkit documentation term: Dashboard",
+      "source": {
+        "entries": [
+          "ui.panel.dashboard"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Dashboard}"
+        }
+      ]
+    },
+    "Edit_Entry_Kind": {
+      "description": "Toolkit documentation term: Edit Entry Kind",
+      "source": {
+        "entries": [
+          "ui.panel.entry-kind.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Entry Kind}"
+        }
+      ]
+    },
+    "Edit_Library": {
+      "description": "Toolkit documentation term: Edit Library",
+      "source": {
+        "entries": [
+          "ui.panel.library.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Library}"
+        }
+      ]
+    },
+    "Edit_Macro": {
+      "description": "Toolkit documentation term: Edit Macro",
+      "source": {
+        "entries": [
+          "ui.panel.macro.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Macro}"
+        }
+      ]
+    },
+    "Edit_Macro_Kind": {
+      "description": "Toolkit documentation term: Edit Macro Kind",
+      "source": {
+        "entries": [
+          "ui.panel.macro-kind.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Macro Kind}"
+        }
+      ]
+    },
+    "Edit_Relationship": {
+      "description": "Toolkit documentation term: Edit Relationship",
+      "source": {
+        "entries": [
+          "ui.panel.relationship.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Relationship}"
+        }
+      ]
+    },
+    "Entry_Infoview": {
+      "description": "Toolkit documentation term: Entry Infoview",
+      "source": {
+        "entries": [
+          "ui.panel.entry-infoview"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Infoview}"
+        }
+      ]
+    },
+    "Infoview": {
+      "description": "Toolkit documentation term: Infoview",
+      "source": {
+        "entries": [
+          "ui.panel.infoview"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Infoview}"
+        }
+      ]
+    },
+    "Initialize_Entry_Kinds": {
+      "description": "Toolkit documentation term: Initialize Entry Kinds",
+      "source": {
+        "entries": [
+          "ui.panel.entry-kind.initialize"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Initialize Entry Kinds}"
+        }
+      ]
+    },
+    "Initialize_Macro_Kinds": {
+      "description": "Toolkit documentation term: Initialize Macro Kinds",
+      "source": {
+        "entries": [
+          "ui.panel.macro-kind.initialize"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Initialize Macro Kinds}"
+        }
+      ]
+    },
+    "New_macro_package": {
+      "description": "Toolkit documentation term: New macro package",
+      "source": {
+        "entries": [
+          "ui.panel.macro-package.create"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{New macro package}"
+        }
+      ]
+    },
+    "Package_Panel": {
+      "description": "Toolkit documentation term: Package Panel",
+      "source": {
+        "entries": [
+          "ui.panel.macro-package"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Package Panel}"
+        }
+      ]
+    },
+    "Panel": {
+      "description": "Toolkit documentation term: Panel",
+      "source": {
+        "entries": [
+          "concept.ui.panel"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Panel}"
+        }
+      ]
+    },
+    "Relationship_Graph": {
+      "description": "Toolkit documentation term: Relationship Graph",
+      "source": {
+        "entries": [
+          "ui.panel.relationship-graph"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Graph}"
+        }
+      ]
+    },
+    "SNoogL_Search": {
+      "description": "Toolkit documentation term: SNoogL Search",
+      "source": {
+        "entries": [
+          "ui.panel.snoogl"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Search}"
+        }
+      ]
+    },
+    "Entry.ui.panel.entry.edit": {
+      "description": "UI terminology backed by Entry ui.panel.entry.edit: Edit Entry",
+      "source": {
+        "entries": [
+          "ui.panel.entry.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Entry}"
+        }
+      ]
+    },
+    "Entry.ui.panel.macro-package.edit": {
+      "description": "UI terminology backed by Entry ui.panel.macro-package.edit: Edit Macro Package",
+      "source": {
+        "entries": [
+          "ui.panel.macro-package.edit"
+        ],
+        "urls": []
+      },
+      "kind": "panel",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Macro Package}"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "version": "0.0.3",
+  "name": "Technical Literals",
+  "description": "Literal symbols, examples, statuses, and residual technical prose terms.",
+  "macros": {
+    "Literal.plus": {
+      "description": "Toolkit documentation term: +",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{+}"
+        }
+      ]
+    },
+    "Literal.dot_one": {
+      "description": "Toolkit documentation term: .1",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{.1}"
+        }
+      ]
+    },
+    "Literal.parentheses": {
+      "description": "Toolkit documentation term: ()",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{()}"
+        }
+      ]
+    },
+    "Literal.brackets": {
+      "description": "Toolkit documentation term: []",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{[]}"
+        }
+      ]
+    },
+    "Literal.at_sign": {
+      "description": "Toolkit documentation term: @",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{@}"
+        }
+      ]
+    },
+    "Literal.percent_sign": {
+      "description": "Toolkit documentation term: %",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{\\%}"
+        }
+      ]
+    },
+    "Literal.dollar_sign": {
+      "description": "Toolkit documentation term: $",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{\\$}"
+        }
+      ]
+    },
+    "Literal.one": {
+      "description": "Toolkit documentation term: 1",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{1}"
+        }
+      ]
+    },
+    "Literal.upper_A": {
+      "description": "Toolkit documentation term: A",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{A}"
+        }
+      ]
+    },
+    "Literal.lower_i": {
+      "description": "Toolkit documentation term: (i)",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{(i)}"
+        }
+      ]
+    },
+    "Literal.section_I": {
+      "description": "Toolkit documentation term: §I.",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{§I.}"
+        }
+      ]
+    },
+    "Literal.example_A": {
+      "description": "Toolkit documentation term: Ex. A.",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Ex. A.}"
+        }
+      ]
+    },
+    "Preset.Fulcrum_Math_Notes": {
+      "description": "Toolkit documentation term: Fulcrum's Math Notes",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Fulcrum's Math Notes}"
+        }
+      ]
+    }
+  }
+}

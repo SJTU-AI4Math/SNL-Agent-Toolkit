@@ -1,0 +1,279 @@
+{
+  "version": "0.0.3",
+  "name": "Filesystem",
+  "description": "Composable Path/Folder/File/JSON-key terminology.",
+  "macros": {
+    "Path.join": {
+      "description": "Binary path composition: join a Folder with a Folder or File using `/`.",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "#0\\texttt{/}#1"
+        }
+      ]
+    },
+    "Folder.SNL_Doc": {
+      "description": "Toolkit documentation term: .SNL_Doc",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{.SNL\\_Doc}"
+        }
+      ]
+    },
+    "Folder.libraries": {
+      "description": "Toolkit documentation term: libraries",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{libraries}"
+        }
+      ]
+    },
+    "Folder.term_macros": {
+      "description": "Toolkit documentation term: term_macros",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{term\\_macros}"
+        }
+      ]
+    },
+    "Folder.slug": {
+      "description": "Toolkit documentation term: <slug>",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{<slug>}"
+        }
+      ]
+    },
+    "File.config_json": {
+      "description": "Toolkit documentation term: config.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{config.json}"
+        }
+      ]
+    },
+    "File.entries_json": {
+      "description": "Toolkit documentation term: entries.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{entries.json}"
+        }
+      ]
+    },
+    "File.meta_json": {
+      "description": "Toolkit documentation term: meta.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{meta.json}"
+        }
+      ]
+    },
+    "File.graph_json": {
+      "description": "Toolkit documentation term: graph.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{graph.json}"
+        }
+      ]
+    },
+    "File.counters_json": {
+      "description": "Toolkit documentation term: counters.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{counters.json}"
+        }
+      ]
+    },
+    "File.relationships_json": {
+      "description": "Toolkit documentation term: relationships.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{relationships.json}"
+        }
+      ]
+    },
+    "File.package_json": {
+      "description": "Toolkit documentation term: package.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{package.json}"
+        }
+      ]
+    },
+    "File.slug_json": {
+      "description": "Toolkit documentation term: <slug>.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{<slug>.json}"
+        }
+      ]
+    },
+    "File.wildcard_json": {
+      "description": "Toolkit documentation term: *.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{*.json}"
+        }
+      ]
+    },
+    "JsonKey.entry_kinds": {
+      "description": "Toolkit documentation term: entry_kinds",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{entry\\_kinds}"
+        }
+      ]
+    },
+    "JsonKey.macro_kinds": {
+      "description": "Toolkit documentation term: macro_kinds",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{macro\\_kinds}"
+        }
+      ]
+    },
+    "JsonKey.contributes_commands": {
+      "description": "Toolkit documentation term: contributes.commands",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "filesystem",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{contributes.commands}"
+        }
+      ]
+    }
+  }
+}

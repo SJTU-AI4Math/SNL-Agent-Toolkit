@@ -1,0 +1,1861 @@
+{
+  "version": "0.0.3",
+  "name": "UI Buttons",
+  "description": "Concrete Extension buttons and actions.",
+  "macros": {
+    "AddBar": {
+      "description": "Toolkit documentation term: AddBar",
+      "source": {
+        "entries": [
+          "ui.button.shared.add-bar"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{AddBar}"
+        }
+      ]
+    },
+    "AddBar_dashed": {
+      "description": "Toolkit documentation term: AddBar (dashed +)",
+      "source": {
+        "entries": [
+          "ui.button.shared.add-bar"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{AddBar (dashed +)}"
+        }
+      ]
+    },
+    "Button": {
+      "description": "Toolkit documentation term: Button",
+      "source": {
+        "entries": [
+          "concept.ui.button"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Button}"
+        }
+      ]
+    },
+    "Create_X": {
+      "description": "Toolkit documentation term: + Create X",
+      "source": {
+        "entries": [
+          "ui.button.shared.add-bar"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{+ Create X}"
+        }
+      ]
+    },
+    "Delete_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Delete Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.delete"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Delete Row Toolbar Button}"
+        }
+      ]
+    },
+    "Generate_UUID": {
+      "description": "Toolkit documentation term: Generate UUID",
+      "source": {
+        "entries": [
+          "ui.button.entry.generate-uuid"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Generate UUID}"
+        }
+      ]
+    },
+    "Generate_UUID_Button": {
+      "description": "Toolkit documentation term: Generate UUID Button",
+      "source": {
+        "entries": [
+          "ui.button.entry.generate-uuid"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Generate UUID Button}"
+        }
+      ]
+    },
+    "Indent_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Indent Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.indent"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Indent Row Toolbar Button}"
+        }
+      ]
+    },
+    "Move-Up_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Move-Up Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.move-up"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Move-Up Row Toolbar Button}"
+        }
+      ]
+    },
+    "Outdent_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Outdent Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.outdent"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Outdent Row Toolbar Button}"
+        }
+      ]
+    },
+    "Regenerate_UUID": {
+      "description": "Toolkit documentation term: Regenerate UUID",
+      "source": {
+        "entries": [
+          "ui.button.entry.generate-uuid"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Regenerate UUID}"
+        }
+      ]
+    },
+    "active_toggle": {
+      "description": "Toolkit documentation term: active toggle",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.toggle-active"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{active toggle}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.view-graph": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.view-graph: View Graph Button",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.view-graph"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{View Graph Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.open-infoview": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.open-infoview: Open Infoview Button",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.open-infoview"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Open Infoview Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.libraries.entrance": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.libraries.entrance: Library Entrance (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.libraries.entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Entrance (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.libraries.create-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.libraries.create-list: Create Library Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.libraries.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Library Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entries.create-header": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entries.create-header: Create Entry Button",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entries.create-header"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entries.search": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entries.search: SNoogL: Entry Search Button",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entries.search"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL: Entry Search Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entries.entrance-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entries.entrance-list: Entry Entrance (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entries.entrance-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Entrance (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entries.create-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entries.create-list: Create Entry Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entries.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.relationships.entrance": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.relationships.entrance: Relationship Entrance (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.relationships.entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Entrance (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.relationships.create-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.relationships.create-list: Create Relationship Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.relationships.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Relationship Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.relationships.regenerate": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.relationships.regenerate: Regenerate Dependencies Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.relationships.regenerate"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Regenerate Dependencies Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.snl-macros.create-header": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.create-header: Create Macro Button",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.snl-macros.create-header"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.snl-macros.search": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.search: SNoogL: Macro Search Button",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.snl-macros.search"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL: Macro Search Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.snl-macros.package-entrance": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.package-entrance: Macro Package Entrance (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.snl-macros.package-entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Package Entrance (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.snl-macros.add-package": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.add-package: Add Package Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.snl-macros.add-package"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Package Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entry-kinds.entrance": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.entrance: Entry Kind Entrance (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entry-kinds.entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind Entrance (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entry-kinds.create-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.create-list: Create Entry Kind Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entry-kinds.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry Kind Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.entry-kinds.initialize-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.initialize-list: Initialize Entry Kinds Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entry-kinds.initialize-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Initialize Entry Kinds Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.macro-kinds.entrance": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.entrance: SNL Macro Kind Entrance (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.macro-kinds.entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Macro Kind Entrance (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.macro-kinds.create-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.create-list: Create Macro Kind Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.macro-kinds.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Kind Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.dashboard.macro-kinds.initialize-list": {
+      "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.initialize-list: Initialize Macro Kinds Button (List View)",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.macro-kinds.initialize-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Initialize Macro Kinds Button (List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.create.submit": {
+      "description": "UI terminology backed by Entry ui.button.library.create.submit: Create Library Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.library.create.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Library Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.edit.update-title": {
+      "description": "UI terminology backed by Entry ui.button.library.edit.update-title: Update Library Title Button",
+      "source": {
+        "entries": [
+          "ui.button.library.edit.update-title"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Library Title Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.counter.add-first": {
+      "description": "UI terminology backed by Entry ui.button.counter.add-first: Add First Counter Button",
+      "source": {
+        "entries": [
+          "ui.button.counter.add-first"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Add First Counter Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.tree.add-child": {
+      "description": "UI terminology backed by Entry ui.button.tree.add-child: Add Child Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.add-child"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Child Row Toolbar Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.tree.add-sibling": {
+      "description": "UI terminology backed by Entry ui.button.tree.add-sibling: Add Sibling Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.add-sibling"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Sibling Row Toolbar Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.tree.move-down": {
+      "description": "UI terminology backed by Entry ui.button.tree.move-down: Move-Down Row Toolbar Button",
+      "source": {
+        "entries": [
+          "ui.button.tree.move-down"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Move-Down Row Toolbar Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.outline.entry-entrance": {
+      "description": "UI terminology backed by Entry ui.button.library.outline.entry-entrance: Library Entry Entrance",
+      "source": {
+        "entries": [
+          "ui.button.library.outline.entry-entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Entry Entrance}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.outline.reference-create": {
+      "description": "UI terminology backed by Entry ui.button.library.outline.reference-create: Reference or Create Entry Button",
+      "source": {
+        "entries": [
+          "ui.button.library.outline.reference-create"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Reference or Create Entry Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.save": {
+      "description": "UI terminology backed by Entry ui.button.entry.save: Create Entry Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.entry.save"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry-kind.create.submit": {
+      "description": "UI terminology backed by Entry ui.button.entry-kind.create.submit: Create Entry Kind Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.entry-kind.create.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Entry Kind Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry-kind.edit.submit": {
+      "description": "UI terminology backed by Entry ui.button.entry-kind.edit.submit: Update Entry Kind Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.entry-kind.edit.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Entry Kind Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry-kind.initialize.submit": {
+      "description": "UI terminology backed by Entry ui.button.entry-kind.initialize.submit: Initialize Entry Kinds Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.entry-kind.initialize.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Initialize Entry Kinds Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-kind.create.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro-kind.create.submit: Create Macro Kind Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-kind.create.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Kind Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-kind.edit.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro-kind.edit.submit: Update Macro Kind Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-kind.edit.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Macro Kind Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-kind.initialize.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro-kind.initialize.submit: Initialize Macro Kinds Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-kind.initialize.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Initialize Macro Kinds Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.create.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.create.submit: Create Macro Package Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.create.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Package Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.macro-entrance": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.macro-entrance: Macro Entrance (Package List View)",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.macro-entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Entrance (Package List View)}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.create-macro": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.create-macro: Create Macro Button (Package Panel)",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.create-macro"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Button (Package Panel)}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.select-mode": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.select-mode: Macro Select Mode Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.select-mode"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Select Mode Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.batch-package": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.batch-package: Package as New Batch Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.batch-package"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Package as New Batch Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.batch-move": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.batch-move: Move to Package Batch Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.batch-move"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Move to Package Batch Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.batch-delete": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.batch-delete: Delete Macros Batch Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.batch-delete"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Delete Macros Batch Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro.create.submit: Create Macro Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro.edit.submit: Update Macro Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Macro Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.relationship.create.submit": {
+      "description": "UI terminology backed by Entry ui.button.relationship.create.submit: Create Relationship Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.relationship.create.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Relationship Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.relationship.edit.submit": {
+      "description": "UI terminology backed by Entry ui.button.relationship.edit.submit: Update Relationship Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.relationship.edit.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Relationship Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.snoogl.entry-result-entrance": {
+      "description": "UI terminology backed by Entry ui.button.snoogl.entry-result-entrance: SNoogL Entry Result Entrance",
+      "source": {
+        "entries": [
+          "ui.button.snoogl.entry-result-entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Entry Result Entrance}"
+        }
+      ]
+    },
+    "Entry.ui.button.snoogl.macro-result-entrance": {
+      "description": "UI terminology backed by Entry ui.button.snoogl.macro-result-entrance: SNoogL Macro Result Entrance",
+      "source": {
+        "entries": [
+          "ui.button.snoogl.macro-result-entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Macro Result Entrance}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.view-graph": {
+      "description": "UI terminology backed by Entry ui.button.infoview.view-graph: View Graph Button (Infoview)",
+      "source": {
+        "entries": [
+          "ui.button.infoview.view-graph"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{View Graph Button (Infoview)}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.edit-dashboard": {
+      "description": "UI terminology backed by Entry ui.button.infoview.edit-dashboard: Edit in Dashboard Button",
+      "source": {
+        "entries": [
+          "ui.button.infoview.edit-dashboard"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit in Dashboard Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.library-entrance": {
+      "description": "UI terminology backed by Entry ui.button.infoview.library-entrance: Library Entrance (Infoview)",
+      "source": {
+        "entries": [
+          "ui.button.infoview.library-entrance"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Library Entrance (Infoview)}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.back-libraries": {
+      "description": "UI terminology backed by Entry ui.button.infoview.back-libraries: Back to Libraries Button",
+      "source": {
+        "entries": [
+          "ui.button.infoview.back-libraries"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Back to Libraries Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.library-graph": {
+      "description": "UI terminology backed by Entry ui.button.infoview.library-graph: View Library Graph Button",
+      "source": {
+        "entries": [
+          "ui.button.infoview.library-graph"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{View Library Graph Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.edit-library": {
+      "description": "UI terminology backed by Entry ui.button.infoview.edit-library: Edit This Library Button",
+      "source": {
+        "entries": [
+          "ui.button.infoview.edit-library"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit This Library Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.infoview.outline-toggle": {
+      "description": "UI terminology backed by Entry ui.button.infoview.outline-toggle: Infoview Outline Toggle Button",
+      "source": {
+        "entries": [
+          "ui.button.infoview.outline-toggle"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Infoview Outline Toggle Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry-infoview.edit": {
+      "description": "UI terminology backed by Entry ui.button.entry-infoview.edit: Edit Entry Button (Entry Infoview)",
+      "source": {
+        "entries": [
+          "ui.button.entry-infoview.edit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Entry Button (Entry Infoview)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry-infoview.related-entry": {
+      "description": "UI terminology backed by Entry ui.button.entry-infoview.related-entry: Related Entry Entrance",
+      "source": {
+        "entries": [
+          "ui.button.entry-infoview.related-entry"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Related Entry Entrance}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.edit.view-infoview": {
+      "description": "UI terminology backed by Entry ui.button.library.edit.view-infoview: View Library in Infoview Button",
+      "source": {
+        "entries": [
+          "ui.button.library.edit.view-infoview"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{View Library in Infoview Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.counter.add-root": {
+      "description": "UI terminology backed by Entry ui.button.counter.add-root: Add Root Counter Button",
+      "source": {
+        "entries": [
+          "ui.button.counter.add-root"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Root Counter Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.outline.add-root": {
+      "description": "UI terminology backed by Entry ui.button.library.outline.add-root: Add Root Entry Reference Button",
+      "source": {
+        "entries": [
+          "ui.button.library.outline.add-root"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Root Entry Reference Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.library.outline.cancel-add": {
+      "description": "UI terminology backed by Entry ui.button.library.outline.cancel-add: Cancel Entry Reference Add Button",
+      "source": {
+        "entries": [
+          "ui.button.library.outline.cancel-add"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Cancel Entry Reference Add Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.content.snl": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.content.snl: SNL Content Tab (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.content.snl"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Content Tab (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.content.typst": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.content.typst: Typst Content Tab (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.content.typst"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Typst Content Tab (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.content.latex": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.content.latex: LaTeX Content Tab (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.content.latex"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{LaTeX Content Tab (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.content.markdown": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.content.markdown: Markdown Content Tab (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.content.markdown"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Markdown Content Tab (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.content.text": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.content.text: Text Content Tab (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.content.text"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Text Content Tab (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.snl-text-editor": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.snl-text-editor: SNL Text Editor Button (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.snl-text-editor"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Text Editor Button (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.snl-gui-editor": {
+      "description": "UI terminology backed by Entry ui.button.entry.create.snl-gui-editor: SNL GUI Editor Button (Create)",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.snl-gui-editor"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL GUI Editor Button (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.view-infoview": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.view-infoview: View Entry in Infoview Button",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.view-infoview"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{View Entry in Infoview Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.content.snl": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.content.snl: SNL Content Tab (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.content.snl"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Content Tab (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.content.typst": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.content.typst: Typst Content Tab (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.content.typst"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Typst Content Tab (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.content.latex": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.content.latex: LaTeX Content Tab (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.content.latex"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{LaTeX Content Tab (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.content.markdown": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.content.markdown: Markdown Content Tab (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.content.markdown"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Markdown Content Tab (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.content.text": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.content.text: Text Content Tab (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.content.text"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Text Content Tab (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.snl-text-editor": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.snl-text-editor: SNL Text Editor Button (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.snl-text-editor"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL Text Editor Button (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.snl-gui-editor": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.snl-gui-editor: SNL GUI Editor Button (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.snl-gui-editor"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNL GUI Editor Button (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.submit": {
+      "description": "UI terminology backed by Entry ui.button.entry.edit.submit: Update Entry Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Entry Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.edit.submit": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.edit.submit: Update Macro Package Submit Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.edit.submit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Update Macro Package Submit Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.toggle-active": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.toggle-active: Toggle Macro Package Active Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.toggle-active"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Toggle Macro Package Active Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.edit": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.edit: Edit Macro Package Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.edit"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Macro Package Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.expand-styles": {
+      "description": "UI terminology backed by Entry ui.button.macro-package.expand-styles: Expand Macro Styles Button",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.expand-styles"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Expand Macro Styles Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.create-kind": {
+      "description": "UI terminology backed by Entry ui.button.macro.create.create-kind: Create Macro Kind Button (Create)",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.create-kind"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Kind Button (Create)}"
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.create-kind": {
+      "description": "UI terminology backed by Entry ui.button.macro.edit.create-kind: Create Macro Kind Button (Edit)",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.create-kind"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Create Macro Kind Button (Edit)}"
+        }
+      ]
+    },
+    "Entry.ui.button.relationship-graph.open-entry": {
+      "description": "UI terminology backed by Entry ui.button.relationship-graph.open-entry: Open Entry Node Button",
+      "source": {
+        "entries": [
+          "ui.button.relationship-graph.open-entry"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Open Entry Node Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.relationship-graph.edit-edge": {
+      "description": "UI terminology backed by Entry ui.button.relationship-graph.edit-edge: Edit Relationship Edge Button",
+      "source": {
+        "entries": [
+          "ui.button.relationship-graph.edit-edge"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{Edit Relationship Edge Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.snoogl.entry-mode": {
+      "description": "UI terminology backed by Entry ui.button.snoogl.entry-mode: SNoogL Entry Search Mode Button",
+      "source": {
+        "entries": [
+          "ui.button.snoogl.entry-mode"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Entry Search Mode Button}"
+        }
+      ]
+    },
+    "Entry.ui.button.snoogl.macro-mode": {
+      "description": "UI terminology backed by Entry ui.button.snoogl.macro-mode: SNoogL Macro Search Mode Button",
+      "source": {
+        "entries": [
+          "ui.button.snoogl.macro-mode"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL Macro Search Mode Button}"
+        }
+      ]
+    },
+    "ButtonLabel.create_entry": {
+      "description": "Toolkit documentation term: + Create Entry",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entries.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{+ Create Entry}"
+        }
+      ]
+    },
+    "ButtonLabel.create_entry_kind": {
+      "description": "Toolkit documentation term: + Create Entry Kind",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entry-kinds.create-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{+ Create Entry Kind}"
+        }
+      ]
+    },
+    "ButtonLabel.initialize_entry_kinds": {
+      "description": "Toolkit documentation term: + Initialize Entry Kinds",
+      "source": {
+        "entries": [
+          "ui.button.dashboard.entry-kinds.initialize-list"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{+ Initialize Entry Kinds}"
+        }
+      ]
+    }
+  }
+}
