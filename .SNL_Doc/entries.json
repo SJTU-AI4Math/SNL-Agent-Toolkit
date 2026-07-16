@@ -4,7 +4,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Dashboard",
     "content": {
-      "markdown": "The top-level control surface for a `.SNL_Doc/` workspace. Opened via `SNL: Open Dashboard`. Renders four collapsible sections (Entry Kinds, SNL Macros, Entries, Libraries) with a dashed `+` AddBar at the tail of each list for creating new items. Serves as the single hub — no tree-view sidebar competes with it."
+      "snl": "%The top-level control surface for a #0 workspace. Opened via #1. Renders four collapsible sections (Entry Kinds, #2, Entries, Libraries) with a dashed #3 #4 at the tail of each list for creating new items. Serves as the single hub — no tree-view sidebar competes with it.%(Term_.SNL_Doc,SNL_Open_Dashboard,SNL_Macros,Term_,AddBar)"
     },
     "contribution_info": null,
     "pointer": null
@@ -14,7 +14,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Infoview (Picker)",
     "content": {
-      "markdown": "Legacy top-level infoview that lists all entries and lets the user pick one to render inline. Kept as a gateway into per-entry infoviews; Ctrl+click on an entry title spawns a dedicated `Entry Infoview` panel."
+      "snl": "%Legacy top-level infoview that lists all entries and lets the user pick one to render inline. Kept as a gateway into per-entry infoviews; Ctrl+click on an entry title spawns a dedicated #0 panel.%(Entry_Infoview)"
     },
     "contribution_info": null,
     "pointer": null
@@ -24,7 +24,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Entry Infoview",
     "content": {
-      "markdown": "Dedicated per-entry panel (one instance per entryId, tab title `SNL — <entry title>`). Renders the entry via `EntryRender` with SNL body and hover-popover recursion for macro references. Opened via `snlDoc.openEntryInfoview <entryId>` or Ctrl+click a title anywhere."
+      "snl": "%Dedicated per-entry panel (one instance per entryId, tab title #0). Renders the entry via #1 with SNL body and hover-popover recursion for macro references. Opened via #2 or Ctrl+click a title anywhere.%(SNL_entry_title,EntryRender,snlDoc.openEntryInfoview_entryId)"
     },
     "contribution_info": null,
     "pointer": null
@@ -34,7 +34,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Library",
     "content": {
-      "markdown": "Modal-style panel to seed a new `libraries/<slug>/` tree. Takes a title, slugifies to the directory name, writes empty `meta.json` + `graph.json` (+ `counters.json` after the counter refactor). Never overwrites — `duplicate` result if the slug exists."
+      "snl": "%Modal-style panel to seed a new #0 tree. Takes a title, slugifies to the directory name, writes empty #1 + #2 (+ #3 after the counter refactor). Never overwrites — #4 result if the slug exists.%(libraries_slug,meta.json,graph.json,counters.json,duplicate)"
     },
     "contribution_info": null,
     "pointer": null
@@ -44,7 +44,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Library",
     "content": {
-      "markdown": "The Library detail/edit view. Hosts the outline tree editor over `graph.json` and (after the counter refactor) the Counters tree editor over `counters.json`. Watches `entries.json`, `graph.json`, and `counters.json` for external edits to stay in sync. Ctrl+click on an entry-ref title jumps to that entry's Infoview."
+      "snl": "%The #0 detail/edit view. Hosts the outline tree editor over #1 and (after the counter refactor) the Counters tree editor over #2. Watches #3, #4, and #5 for external edits to stay in sync. Ctrl+click on an entry-ref title jumps to that entry's #6.%(Library,graph.json,counters.json,entries.json,graph.json,counters.json,Infoview)"
     },
     "contribution_info": null,
     "pointer": null
@@ -54,7 +54,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry",
     "content": {
-      "markdown": "Panel to author a single entry: id (manual with `Generate UUID` button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared `entries.json` pool. When invoked from a Library outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub."
+      "snl": "%#0 to author a single entry: id (manual with #1 button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,entries.json,Library)"
     },
     "contribution_info": null,
     "pointer": null
@@ -64,7 +64,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry Kind",
     "content": {
-      "markdown": "Panel to declare a new EntryKind (id, name, stroke/background colors, default counter name, style). Values persist to `config.json#entry_kinds`."
+      "snl": "%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to config.json#entry_kinds.%(Panel,EntryKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -74,7 +74,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Initialize Entry Kinds",
     "content": {
-      "markdown": "Empty-catalog bootstrap panel with a Presets dropdown (currently only `Fulcrum's Math Notes`) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty."
+      "snl": "%Empty-catalog bootstrap panel with a Presets dropdown (currently only #0) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty.%(Fulcrum_s_Math_Notes)"
     },
     "contribution_info": null,
     "pointer": null
@@ -84,7 +84,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Entry Kind",
     "content": {
-      "markdown": "Edit-mode variant of `Create Entry Kind`, keyed by kind id. Same field set. Renaming the kind name does NOT rewrite existing entries that reference it by id."
+      "snl": "%Edit-mode variant of #0, keyed by kind id. Same field set. Renaming the kind name does NOT rewrite existing entries that reference it by id.%(Create_Entry_Kind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -94,7 +94,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Kind",
     "content": {
-      "markdown": "Panel to declare a MacroKind (id, name, description, coloring). Macro kinds carry no numbering. Persists to `config.json#macro_kinds`."
+      "snl": "%#0 to declare a #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to config.json#macro_kinds.%(Panel,MacroKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -104,7 +104,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Initialize Macro Kinds",
     "content": {
-      "markdown": "Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write."
+      "snl": "%Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -114,7 +114,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro Kind",
     "content": {
-      "markdown": "Edit-mode variant of `Create Macro Kind`, keyed by kind id."
+      "snl": "%Edit-mode variant of #0, keyed by kind id.%(Create_Macro_Kind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -124,7 +124,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Package",
     "content": {
-      "markdown": "Panel to create a new `term_macros/<slug>.json` package: title and initial (possibly empty) macro list. Slug derived from title."
+      "snl": "%#0 to create a new #1 package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,term_macros_slug_.json)"
     },
     "contribution_info": null,
     "pointer": null
@@ -134,7 +134,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Package Panel",
     "content": {
-      "markdown": "The macro-package detail view — table of macros in one `term_macros/*.json` file. Supports select-mode multi-select with batch ops (Package as new / Move to package… / Delete), active-toggle header, per-row Edit, and package-picker with inline `New macro package` creation."
+      "snl": "%The macro-package detail view — table of macros in one #0 file. Supports select-mode multi-select with batch ops (Package as new / Move to package… / Delete), active-toggle header, per-row Edit, and package-picker with inline #1 creation.%(term_macros_.json,New_macro_package)"
     },
     "contribution_info": null,
     "pointer": null
@@ -144,7 +144,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro",
     "content": {
-      "markdown": "Panel to author a single macro: name, kind, and multi-format renderer templates (KaTeX-React, SNL-native, others). Live preview using the arg-placeholder macros. Inline package-picker lets you create the target package here without leaving the panel."
+      "snl": "%#0 to author a single macro: name, kind, and multi-format renderer templates (KaTeX-React, SNL-native, others). Live preview using the arg-placeholder macros. Inline package-picker lets you create the target package here without leaving the panel.%(Panel)"
     },
     "contribution_info": null,
     "pointer": null
@@ -154,7 +154,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro",
     "content": {
-      "markdown": "Edit-mode variant of Create Macro. Also hosts the GUI inductive editor — a row-tree editor for the `SnlSyntaxTree` payload of macros whose renderer uses `snl-native` templates. Only `()` and `[]` are managed by the editor; sigils (`@`, `%`, `$`) are literal per author authoring convention."
+      "snl": "%Edit-mode variant of #0. Also hosts the #1 — a row-tree editor for the #2 payload of macros whose renderer uses #3 templates. Only #4 and #5 are managed by the editor; sigils (#6, #7, #8) are literal per author authoring convention.%(Create_Macro,GUI_inductive_editor,SnlSyntaxTree,snl-native,Term__f9065fa7,Term__97d170e1,Term__9a782114,Term__4345cb1f,Term__3cdf2936)"
     },
     "contribution_info": null,
     "pointer": null
@@ -164,7 +164,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Relationship",
     "content": {
-      "markdown": "Panel to declare a semantic relationship between two entries (from, to, label). Persists to `.SNL_Doc/relationships.json`."
+      "snl": "%#0 to declare a semantic relationship between two entries (from, to, label). Persists to #1.%(Panel,Term_.SNL_Doc_relationships.json)"
     },
     "contribution_info": null,
     "pointer": null
@@ -174,7 +174,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Relationship",
     "content": {
-      "markdown": "Edit-mode variant of Create Relationship, keyed by relationship id."
+      "snl": "%Edit-mode variant of #0, keyed by relationship id.%(Create_Relationship)"
     },
     "contribution_info": null,
     "pointer": null
@@ -184,7 +184,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Relationship Graph",
     "content": {
-      "markdown": "Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: `snlDoc.openInfoviewGraph` (whole pool) and `snlDoc.openInfoviewGraphForLibrary` (single library)."
+      "snl": "%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #1 (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -194,7 +194,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "SNoogL Search",
     "content": {
-      "markdown": "Full-text search over entries + macros + libraries. Opened via `SNL: Open SNoogL (Search)`. Independent panel — not embedded in Dashboard."
+      "snl": "%Full-text search over entries + macros + libraries. Opened via #0. Independent panel — not embedded in #1.%(SNL_Open_SNoogL_Search,Dashboard)"
     },
     "contribution_info": null,
     "pointer": null
@@ -204,7 +204,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Kinds Section",
     "content": {
-      "markdown": "Dashboard section listing declared EntryKinds. Empty → single AddBar `+ Initialize Entry Kinds`. Non-empty → table (name / stroke swatch / default counter name / edit-row) plus tail AddBar `+ Create Entry Kind`."
+      "snl": "%#0 section listing declared EntryKinds. Empty → single #1 #2. Non-empty → table (name / stroke swatch / default counter name / edit-row) plus tail #3 #4.%(Dashboard,AddBar,Initialize_Entry_Kinds_c07c61e9,AddBar,Create_Entry_Kind_1ab57f44)"
     },
     "contribution_info": null,
     "pointer": null
@@ -214,7 +214,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "SNL Macros Section",
     "content": {
-      "markdown": "Dashboard section listing `term_macros/*.json` packages. Table columns: title / macro count / active toggle / actions."
+      "snl": "%#0 section listing #1 packages. Table columns: title / macro count / #2 / actions.%(Dashboard,term_macros_.json,active_toggle)"
     },
     "contribution_info": null,
     "pointer": null
@@ -224,7 +224,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entries Section",
     "content": {
-      "markdown": "Dashboard section listing all entries in the shared pool. Table (preview swatch / title / id / kind / formats populated). Empty and expanded → AddBar `+ Create Entry`. Only visible when expanded."
+      "snl": "%#0 section listing all entries in the shared pool. Table (preview swatch / title / id / kind / formats populated). Empty and expanded → #1 #2. Only visible when expanded.%(Dashboard,AddBar,Create_Entry_3fc7ffd6)"
     },
     "contribution_info": null,
     "pointer": null
@@ -234,7 +234,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Libraries Section",
     "content": {
-      "markdown": "Dashboard section listing libraries discovered by disk walk of `.SNL_Doc/libraries/`. Rows link to Edit Library."
+      "snl": "%#0 section listing libraries discovered by disk walk of #1. Rows link to #2.%(Dashboard,Term_.SNL_Doc_libraries,Edit_Library)"
     },
     "contribution_info": null,
     "pointer": null
@@ -244,7 +244,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Outline Section",
     "content": {
-      "markdown": "The tree-view editor over `graph.json` inside Edit Library. Each row = entry-ref node with `Button`-based row toolbar (↑/↓ move, indent, outdent, add child, add sibling, delete). Add form supports resolving-typed-id and — post-refactor — inserts stub + jumps to Create Entry when the id doesn't yet resolve."
+      "snl": "%The #0 over #1 inside #2. Each row = entry-ref node with #3-based #4 (↑/↓ move, indent, outdent, add child, add sibling, delete). Add form supports resolving-typed-id and — post-refactor — inserts stub + jumps to #5 when the id doesn't yet resolve.%(tree-view_editor,graph.json,Edit_Library,Button,row_toolbar,Create_Entry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -254,7 +254,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Counters Section",
     "content": {
-      "markdown": "Post-refactor: the tree-view editor over `counters.json` inside Edit Library. Same tree UI as the Outline. Each counter = `{ id, name, numbering DSL, children[] }`. EntryKinds refer to counters here by `defaultCounterName`; per-entry-ref override lives in the outline row."
+      "snl": "%Post-refactor: the #0 over #1 inside #2. Same tree UI as the Outline. Each counter = #3. EntryKinds refer to counters here by #4; per-entry-ref override lives in the outline row.%(tree-view_editor,counters.json,Edit_Library,id_name_numbering_DSL_children,defaultCounterName)"
     },
     "contribution_info": null,
     "pointer": null
@@ -264,7 +264,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Generate UUID Button",
     "content": {
-      "markdown": "In `Create Entry` next to the ID field. Fills the field with `crypto.randomUUID()`. Re-labels to `Regenerate UUID` when the field is non-empty."
+      "snl": "%In #0 next to the ID field. Fills the field with #1. Re-labels to #2 when the field is non-empty.%(Create_Entry,crypto.randomUUID,Regenerate_UUID)"
     },
     "contribution_info": null,
     "pointer": null
@@ -274,7 +274,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "AddBar (dashed +)",
     "content": {
-      "markdown": "Full-width dashed `+ Create X` bar at the end of a Dashboard list or an empty section. Hover flips to a solid focused border. Keyboard-activatable (Enter/Space)."
+      "snl": "%Full-width dashed #0 bar at the end of a #1 list or an empty section. Hover flips to a solid focused border. Keyboard-activatable (Enter/Space).%(Create_X,Dashboard)"
     },
     "contribution_info": null,
     "pointer": null
@@ -284,7 +284,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Move-Up Row Toolbar Button",
     "content": {
-      "markdown": "↑ button in the row toolbar of a tree-view editor. Moves the current row above its previous sibling within the same parent. No-op at position 0."
+      "snl": "%↑ button in the #0 of a #1. Moves the current row above its previous sibling within the same parent. No-op at position 0.%(row_toolbar,tree-view_editor)"
     },
     "contribution_info": null,
     "pointer": null
@@ -294,7 +294,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Indent Row Toolbar Button",
     "content": {
-      "markdown": "Indent button. Makes the current row the last child of its previous sibling. No-op if there is no previous sibling."
+      "snl": "%Indent button. Makes the current row the last child of its previous sibling. No-op if there is no previous sibling.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -304,7 +304,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Outdent Row Toolbar Button",
     "content": {
-      "markdown": "Outdent button. Promotes the current row to the next sibling of its parent. No-op at the root level."
+      "snl": "%Outdent button. Promotes the current row to the next sibling of its parent. No-op at the root level.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -314,7 +314,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Delete Row Toolbar Button",
     "content": {
-      "markdown": "Deletes the current row (and its subtree in tree editors). No confirmation modal — the tree state is source-controlled."
+      "snl": "%Deletes the current row (and its subtree in tree editors). No confirmation modal — the tree state is source-controlled.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -324,7 +324,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Entry ID Field",
     "content": {
-      "markdown": "Manual-input text field for a new entry's id. Semantic ids recommended; use `Generate UUID` for anonymous ones. Uniqueness in the shared pool enforced by the host on save."
+      "snl": "%Manual-input text field for a new entry's id. Semantic ids recommended; use #0 for anonymous ones. Uniqueness in the shared pool enforced by the host on save.%(Generate_UUID)"
     },
     "contribution_info": null,
     "pointer": null
@@ -334,7 +334,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Entry Title Field",
     "content": {
-      "markdown": "Free text. Displayed in the entry header (`<KindName> -- <Title>` or with counter label prefix inside a Library context)."
+      "snl": "%Free text. Displayed in the entry header (#0 or with counter label prefix inside a #1 context).%(KindName_--_Title,Library)"
     },
     "contribution_info": null,
     "pointer": null
@@ -344,7 +344,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Counter Numbering DSL Field",
     "content": {
-      "markdown": "Typst-inspired DSL string on a Counter (post-refactor) or, before the refactor, on an EntryKind. Examples: `1`, `.1`, `A`, `(i)`, `Ex. A.`, `§I.`. `formatNumbering(template, k)` yields the k-th label."
+      "snl": "%Typst-inspired DSL string on a #0 (post-refactor) or, before the refactor, on an #1. Examples: #2, #3, #4, #5, #6, #7. #8 yields the k-th label.%(Counter,EntryKind,1,Term_.1,A,i,Ex._A.,I.,formatNumbering_template_k)"
     },
     "contribution_info": null,
     "pointer": null
@@ -354,7 +354,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "Command Palette Overview",
     "content": {
-      "markdown": "The extension registers 32 `snlDoc.*` commands (see `package.json #contributes.commands`). Categories: init (`init`, `initEntryKinds`, `initMacroKinds`), create (`create*`), edit (`edit*`), delete (`delete*`), open panels (`openInfoview`, `openDashboard`, `openEntryInfoview`, `openMacroPackage`, `openSnoogL`, `openInfoviewGraph[ForLibrary]`), and utilities (`refreshInfoview`, `revealEntryPointer`, `regenerateDependencies`). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like `openEntryInfoview`) are gated with `when: false` in the palette contribution."
+      "snl": "%The extension registers 32 #0 commands (see package.json #contributes.commands). Categories: init (#1, #2, #3), create (#4), edit (#5), delete (#6), open panels (#7, #8, #9, #10, #11, #12), and utilities (#13, #14, #15). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like #16) are gated with #17 in the palette contribution.%(snlDoc.,init,initEntryKinds,initMacroKinds,create,edit,delete,openInfoview,openDashboard,openEntryInfoview,openMacroPackage,openSnoogL,openInfoviewGraph_ForLibrary,refreshInfoview,revealEntryPointer,regenerateDependencies,openEntryInfoview,when_false)"
     },
     "contribution_info": null,
     "pointer": null
@@ -364,7 +364,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.init",
     "content": {
-      "markdown": "Bootstraps `.SNL_Doc/` in the current workspace root. Writes `config.json` (v0.0.3), empty `entries.json`, empty `term_macros/` and `libraries/` directories. `exists` result when already initialized (no overwrite)."
+      "snl": "%Bootstraps #0 in the current workspace root. Writes #1 (v0.0.3), empty #2, empty #3 and #4 directories. #5 result when already initialized (no overwrite).%(Term_.SNL_Doc,config.json,entries.json,term_macros,libraries,exists)"
     },
     "contribution_info": null,
     "pointer": null
@@ -374,7 +374,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openDashboard",
     "content": {
-      "markdown": "Opens (or reveals) the singleton Dashboard panel. Beside column. Reads current config + entries + libraries on ready."
+      "snl": "%Opens (or reveals) the singleton #0 panel. Beside column. Reads current config + entries + libraries on ready.%(Dashboard)"
     },
     "contribution_info": null,
     "pointer": null
@@ -384,7 +384,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openEntryInfoview",
     "content": {
-      "markdown": "Programmatic-only. Given an entryId, opens or reveals a dedicated Entry Infoview panel keyed by that id. Dispatched by Ctrl+click on any rendered entry title."
+      "snl": "%Programmatic-only. Given an entryId, opens or reveals a dedicated #0 panel keyed by that id. Dispatched by Ctrl+click on any rendered entry title.%(Entry_Infoview)"
     },
     "contribution_info": null,
     "pointer": null
@@ -394,7 +394,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.regenerateDependencies",
     "content": {
-      "markdown": "Scans all entries for macro references and rebuilds the dependency subset of `.SNL_Doc/relationships.json`. Non-dependency relationships are preserved."
+      "snl": "%Scans all entries for macro references and rebuilds the dependency subset of #0. Non-dependency relationships are preserved.%(Term_.SNL_Doc_relationships.json)"
     },
     "contribution_info": null,
     "pointer": null

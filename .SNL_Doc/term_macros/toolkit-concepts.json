@@ -1,0 +1,2167 @@
+{
+  "version": "0.0.3",
+  "name": "Toolkit Concepts",
+  "description": "Terminology used by the Toolkit catfood documentation.",
+  "macros": {
+    "1": {
+      "description": "Toolkit documentation term: 1",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "1"
+        }
+      ]
+    },
+    "A": {
+      "description": "Toolkit documentation term: A",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "A"
+        }
+      ]
+    },
+    "AddBar": {
+      "description": "Toolkit documentation term: AddBar",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "AddBar"
+        }
+      ]
+    },
+    "AddBar_dashed": {
+      "description": "Toolkit documentation term: AddBar (dashed +)",
+      "source": {
+        "entries": [
+          "6c959a4f-f6e0-4622-beda-0fab3e15d992"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "AddBar (dashed +)"
+        }
+      ]
+    },
+    "Button": {
+      "description": "Toolkit documentation term: Button",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Button"
+        }
+      ]
+    },
+    "Command": {
+      "description": "Toolkit documentation term: Command",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Command"
+        }
+      ]
+    },
+    "Command_Palette_Overview": {
+      "description": "Toolkit documentation term: Command Palette Overview",
+      "source": {
+        "entries": [
+          "bc533b13-946f-4fb8-aa8c-268306213e3f"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Command Palette Overview"
+        }
+      ]
+    },
+    "Counter": {
+      "description": "Toolkit documentation term: Counter",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Counter"
+        }
+      ]
+    },
+    "Counter_Numbering_DSL_Field": {
+      "description": "Toolkit documentation term: Counter Numbering DSL Field",
+      "source": {
+        "entries": [
+          "9ef7618d-809e-4222-a7f1-7ae931fb9c23"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Counter Numbering DSL Field"
+        }
+      ]
+    },
+    "Counters_Section": {
+      "description": "Toolkit documentation term: Counters Section",
+      "source": {
+        "entries": [
+          "9eb85ce9-b76f-419d-a838-a32baf1e8402"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Counters Section"
+        }
+      ]
+    },
+    "Create_Entry": {
+      "description": "Toolkit documentation term: Create Entry",
+      "source": {
+        "entries": [
+          "462fb2d4-3dd1-411b-b7c7-557f408f5051"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Entry"
+        }
+      ]
+    },
+    "Create_Entry_3fc7ffd6": {
+      "description": "Toolkit documentation term: + Create Entry",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "+ Create Entry"
+        }
+      ]
+    },
+    "Create_Entry_Kind": {
+      "description": "Toolkit documentation term: Create Entry Kind",
+      "source": {
+        "entries": [
+          "638e60b0-d3bc-4e3e-9aa3-ac0476850921"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Entry Kind"
+        }
+      ]
+    },
+    "Create_Entry_Kind_1ab57f44": {
+      "description": "Toolkit documentation term: + Create Entry Kind",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "+ Create Entry Kind"
+        }
+      ]
+    },
+    "Create_Library": {
+      "description": "Toolkit documentation term: Create Library",
+      "source": {
+        "entries": [
+          "161a2844-cf64-431c-a08a-32ece3907a81"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Library"
+        }
+      ]
+    },
+    "Create_Macro": {
+      "description": "Toolkit documentation term: Create Macro",
+      "source": {
+        "entries": [
+          "f2d13d57-6485-47f3-a605-e9e896f0c226"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Macro"
+        }
+      ]
+    },
+    "Create_Macro_Kind": {
+      "description": "Toolkit documentation term: Create Macro Kind",
+      "source": {
+        "entries": [
+          "b7ba6b5c-77f8-4680-84d4-cc0d48e727d4"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Macro Kind"
+        }
+      ]
+    },
+    "Create_Macro_Package": {
+      "description": "Toolkit documentation term: Create Macro Package",
+      "source": {
+        "entries": [
+          "aba8a49c-af71-4d24-b9bf-2207d3cfbaf2"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Macro Package"
+        }
+      ]
+    },
+    "Create_Relationship": {
+      "description": "Toolkit documentation term: Create Relationship",
+      "source": {
+        "entries": [
+          "4dab78e6-c29c-49b4-b910-b71377b51962"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Create Relationship"
+        }
+      ]
+    },
+    "Create_X": {
+      "description": "Toolkit documentation term: + Create X",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "+ Create X"
+        }
+      ]
+    },
+    "Dashboard": {
+      "description": "Toolkit documentation term: Dashboard",
+      "source": {
+        "entries": [
+          "ee4f9a56-da43-4658-b214-6389cc451738"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Dashboard"
+        }
+      ]
+    },
+    "Delete_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Delete Row Toolbar Button",
+      "source": {
+        "entries": [
+          "1750f6a2-ce66-4f45-93f0-91764f075cf9"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Delete Row Toolbar Button"
+        }
+      ]
+    },
+    "Edit_Entry_Kind": {
+      "description": "Toolkit documentation term: Edit Entry Kind",
+      "source": {
+        "entries": [
+          "8683ad53-40ca-412b-bbc7-0577a7fac224"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Edit Entry Kind"
+        }
+      ]
+    },
+    "Edit_Library": {
+      "description": "Toolkit documentation term: Edit Library",
+      "source": {
+        "entries": [
+          "ed46a58f-3def-47fa-a9ac-ad3e2277d100"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Edit Library"
+        }
+      ]
+    },
+    "Edit_Macro": {
+      "description": "Toolkit documentation term: Edit Macro",
+      "source": {
+        "entries": [
+          "2007e064-3f72-4288-8b0e-5fec4c37c3cd"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Edit Macro"
+        }
+      ]
+    },
+    "Edit_Macro_Kind": {
+      "description": "Toolkit documentation term: Edit Macro Kind",
+      "source": {
+        "entries": [
+          "e49c185b-3fc0-4888-bcd4-6735a214de80"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Edit Macro Kind"
+        }
+      ]
+    },
+    "Edit_Relationship": {
+      "description": "Toolkit documentation term: Edit Relationship",
+      "source": {
+        "entries": [
+          "14d8ad20-1df9-4943-b199-be6bedc54bfa"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Edit Relationship"
+        }
+      ]
+    },
+    "Entries_Section": {
+      "description": "Toolkit documentation term: Entries Section",
+      "source": {
+        "entries": [
+          "ffad58bd-9edb-4ec0-954b-3f66e63759e0"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entries Section"
+        }
+      ]
+    },
+    "Entry": {
+      "description": "Toolkit documentation term: Entry",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entry"
+        }
+      ]
+    },
+    "EntryKind": {
+      "description": "Toolkit documentation term: EntryKind",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "EntryKind"
+        }
+      ]
+    },
+    "EntryRender": {
+      "description": "Toolkit documentation term: EntryRender",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "EntryRender"
+        }
+      ]
+    },
+    "Entry_ID_Field": {
+      "description": "Toolkit documentation term: Entry ID Field",
+      "source": {
+        "entries": [
+          "095f54de-f8f9-4d2a-936b-a4c9a001b9e8"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entry ID Field"
+        }
+      ]
+    },
+    "Entry_Infoview": {
+      "description": "Toolkit documentation term: Entry Infoview",
+      "source": {
+        "entries": [
+          "e51a5bd1-221e-4890-96fe-99fadb4eeb07"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entry Infoview"
+        }
+      ]
+    },
+    "Entry_Kind": {
+      "description": "Toolkit documentation term: Entry Kind",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entry Kind"
+        }
+      ]
+    },
+    "Entry_Kinds_Section": {
+      "description": "Toolkit documentation term: Entry Kinds Section",
+      "source": {
+        "entries": [
+          "327a206e-cc53-4b13-937c-f872856730a6"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entry Kinds Section"
+        }
+      ]
+    },
+    "Entry_Title_Field": {
+      "description": "Toolkit documentation term: Entry Title Field",
+      "source": {
+        "entries": [
+          "e6bee55a-6d4b-4a26-b517-0b66c8a68ea4"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Entry Title Field"
+        }
+      ]
+    },
+    "Ex._A.": {
+      "description": "Toolkit documentation term: Ex. A.",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Ex. A."
+        }
+      ]
+    },
+    "Feature": {
+      "description": "Toolkit documentation term: Feature",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Feature"
+        }
+      ]
+    },
+    "Fulcrum_s_Math_Notes": {
+      "description": "Toolkit documentation term: Fulcrum's Math Notes",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Fulcrum's Math Notes"
+        }
+      ]
+    },
+    "GUI_inductive_editor": {
+      "description": "Toolkit documentation term: GUI inductive editor",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "GUI inductive editor"
+        }
+      ]
+    },
+    "Generate_UUID": {
+      "description": "Toolkit documentation term: Generate UUID",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Generate UUID"
+        }
+      ]
+    },
+    "Generate_UUID_Button": {
+      "description": "Toolkit documentation term: Generate UUID Button",
+      "source": {
+        "entries": [
+          "9e131c67-72ba-4d7c-aa8f-fda2f93bf320"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Generate UUID Button"
+        }
+      ]
+    },
+    "I.": {
+      "description": "Toolkit documentation term: §I.",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "§I."
+        }
+      ]
+    },
+    "Indent_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Indent Row Toolbar Button",
+      "source": {
+        "entries": [
+          "23035b9b-a6af-4ba7-b6a1-4ef3f4f48daa"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Indent Row Toolbar Button"
+        }
+      ]
+    },
+    "Infoview": {
+      "description": "Toolkit documentation term: Infoview",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Infoview"
+        }
+      ]
+    },
+    "Infoview_Picker": {
+      "description": "Toolkit documentation term: Infoview (Picker)",
+      "source": {
+        "entries": [
+          "5ece85ce-c90d-4d76-bddc-9eeed6fc7651"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Infoview (Picker)"
+        }
+      ]
+    },
+    "Initialize_Entry_Kinds": {
+      "description": "Toolkit documentation term: Initialize Entry Kinds",
+      "source": {
+        "entries": [
+          "8abe8a70-7531-4f3d-b2a0-23c4700d5d9a"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Initialize Entry Kinds"
+        }
+      ]
+    },
+    "Initialize_Entry_Kinds_c07c61e9": {
+      "description": "Toolkit documentation term: + Initialize Entry Kinds",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "+ Initialize Entry Kinds"
+        }
+      ]
+    },
+    "Initialize_Macro_Kinds": {
+      "description": "Toolkit documentation term: Initialize Macro Kinds",
+      "source": {
+        "entries": [
+          "1f1fe393-efd2-4060-86c3-a30e527bb72d"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Initialize Macro Kinds"
+        }
+      ]
+    },
+    "KindName_--_Title": {
+      "description": "Toolkit documentation term: <KindName> -- <Title>",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "<KindName> -- <Title>"
+        }
+      ]
+    },
+    "Libraries_Section": {
+      "description": "Toolkit documentation term: Libraries Section",
+      "source": {
+        "entries": [
+          "1d64a970-206a-4551-a93c-723be9f066c7"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Libraries Section"
+        }
+      ]
+    },
+    "Library": {
+      "description": "Toolkit documentation term: Library",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Library"
+        }
+      ]
+    },
+    "MacroKind": {
+      "description": "Toolkit documentation term: MacroKind",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "MacroKind"
+        }
+      ]
+    },
+    "Macro_Kind": {
+      "description": "Toolkit documentation term: Macro Kind",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Macro Kind"
+        }
+      ]
+    },
+    "Move-Up_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Move-Up Row Toolbar Button",
+      "source": {
+        "entries": [
+          "21db87b0-a139-44ae-8ca9-9c277ec2adc3"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Move-Up Row Toolbar Button"
+        }
+      ]
+    },
+    "New_macro_package": {
+      "description": "Toolkit documentation term: New macro package",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "New macro package"
+        }
+      ]
+    },
+    "Outdent_Row_Toolbar_Button": {
+      "description": "Toolkit documentation term: Outdent Row Toolbar Button",
+      "source": {
+        "entries": [
+          "7f070bda-5b60-4b96-9299-cac6ce934ac7"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Outdent Row Toolbar Button"
+        }
+      ]
+    },
+    "Outline_Section": {
+      "description": "Toolkit documentation term: Outline Section",
+      "source": {
+        "entries": [
+          "bd6f276b-e509-4e5a-ae6c-671534ab24ae"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Outline Section"
+        }
+      ]
+    },
+    "Package_Panel": {
+      "description": "Toolkit documentation term: Package Panel",
+      "source": {
+        "entries": [
+          "31bd541c-1da1-4994-b318-9590b72973cb"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Package Panel"
+        }
+      ]
+    },
+    "Panel": {
+      "description": "Toolkit documentation term: Panel",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Panel"
+        }
+      ]
+    },
+    "Regenerate_UUID": {
+      "description": "Toolkit documentation term: Regenerate UUID",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Regenerate UUID"
+        }
+      ]
+    },
+    "Relationship_Graph": {
+      "description": "Toolkit documentation term: Relationship Graph",
+      "source": {
+        "entries": [
+          "30258f68-0359-48a4-9882-a0d5f52cd99c"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Relationship Graph"
+        }
+      ]
+    },
+    "SNL_Macro": {
+      "description": "Toolkit documentation term: SNL Macro",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNL Macro"
+        }
+      ]
+    },
+    "SNL_Macros": {
+      "description": "Toolkit documentation term: SNL Macros",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNL Macros"
+        }
+      ]
+    },
+    "SNL_Macros_Section": {
+      "description": "Toolkit documentation term: SNL Macros Section",
+      "source": {
+        "entries": [
+          "0b7122ac-c8af-464a-8acf-16dabea6d2dc"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNL Macros Section"
+        }
+      ]
+    },
+    "SNL_Open_Dashboard": {
+      "description": "Toolkit documentation term: SNL: Open Dashboard",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNL: Open Dashboard"
+        }
+      ]
+    },
+    "SNL_Open_SNoogL_Search": {
+      "description": "Toolkit documentation term: SNL: Open SNoogL (Search)",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNL: Open SNoogL (Search)"
+        }
+      ]
+    },
+    "SNL_entry_title": {
+      "description": "Toolkit documentation term: SNL — <entry title>",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNL — <entry title>"
+        }
+      ]
+    },
+    "SNoogL_Search": {
+      "description": "Toolkit documentation term: SNoogL Search",
+      "source": {
+        "entries": [
+          "68130846-602d-4212-afb9-ffbb672b1f8a"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SNoogL Search"
+        }
+      ]
+    },
+    "Section": {
+      "description": "Toolkit documentation term: Section",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Section"
+        }
+      ]
+    },
+    "SnlSyntaxTree": {
+      "description": "Toolkit documentation term: SnlSyntaxTree",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "SnlSyntaxTree"
+        }
+      ]
+    },
+    "Term_": {
+      "description": "Toolkit documentation term: +",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "+"
+        }
+      ]
+    },
+    "Term_.1": {
+      "description": "Toolkit documentation term: .1",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": ".1"
+        }
+      ]
+    },
+    "Term_.SNL_Doc": {
+      "description": "Toolkit documentation term: .SNL_Doc/",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": ".SNL\\_Doc/"
+        }
+      ]
+    },
+    "Term_.SNL_Doc_libraries": {
+      "description": "Toolkit documentation term: .SNL_Doc/libraries/",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": ".SNL\\_Doc/libraries/"
+        }
+      ]
+    },
+    "Term_.SNL_Doc_relationships.json": {
+      "description": "Toolkit documentation term: .SNL_Doc/relationships.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": ".SNL\\_Doc/relationships.json"
+        }
+      ]
+    },
+    "Term__3cdf2936": {
+      "description": "Toolkit documentation term: $",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\$"
+        }
+      ]
+    },
+    "Term__4345cb1f": {
+      "description": "Toolkit documentation term: %",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\%"
+        }
+      ]
+    },
+    "Term__97d170e1": {
+      "description": "Toolkit documentation term: []",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "[]"
+        }
+      ]
+    },
+    "Term__9a782114": {
+      "description": "Toolkit documentation term: @",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "@"
+        }
+      ]
+    },
+    "Term__f9065fa7": {
+      "description": "Toolkit documentation term: ()",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "()"
+        }
+      ]
+    },
+    "Text_Input": {
+      "description": "Toolkit documentation term: Text Input",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "Text Input"
+        }
+      ]
+    },
+    "active_toggle": {
+      "description": "Toolkit documentation term: active toggle",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "active toggle"
+        }
+      ]
+    },
+    "config.json": {
+      "description": "Toolkit documentation term: config.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "config.json"
+        }
+      ]
+    },
+    "counters.json": {
+      "description": "Toolkit documentation term: counters.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "counters.json"
+        }
+      ]
+    },
+    "create": {
+      "description": "Toolkit documentation term: create*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "create*"
+        }
+      ]
+    },
+    "crypto.randomUUID": {
+      "description": "Toolkit documentation term: crypto.randomUUID()",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "crypto.randomUUID()"
+        }
+      ]
+    },
+    "defaultCounterName": {
+      "description": "Toolkit documentation term: defaultCounterName",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "defaultCounterName"
+        }
+      ]
+    },
+    "delete": {
+      "description": "Toolkit documentation term: delete*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "delete*"
+        }
+      ]
+    },
+    "dependency_relationship": {
+      "description": "Toolkit documentation term: dependency relationship",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "dependency relationship"
+        }
+      ]
+    },
+    "duplicate": {
+      "description": "Toolkit documentation term: duplicate",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "duplicate"
+        }
+      ]
+    },
+    "edit": {
+      "description": "Toolkit documentation term: edit*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "edit*"
+        }
+      ]
+    },
+    "entries.json": {
+      "description": "Toolkit documentation term: entries.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "entries.json"
+        }
+      ]
+    },
+    "exists": {
+      "description": "Toolkit documentation term: exists",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "exists"
+        }
+      ]
+    },
+    "formatNumbering_template_k": {
+      "description": "Toolkit documentation term: formatNumbering(template, k)",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "formatNumbering(template, k)"
+        }
+      ]
+    },
+    "graph.json": {
+      "description": "Toolkit documentation term: graph.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "graph.json"
+        }
+      ]
+    },
+    "i": {
+      "description": "Toolkit documentation term: (i)",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "(i)"
+        }
+      ]
+    },
+    "id_name_numbering_DSL_children": {
+      "description": "Toolkit documentation term: { id, name, numbering DSL, children[] }",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\{ id, name, numbering DSL, children[] \\}"
+        }
+      ]
+    },
+    "init": {
+      "description": "Toolkit documentation term: init",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "init"
+        }
+      ]
+    },
+    "initEntryKinds": {
+      "description": "Toolkit documentation term: initEntryKinds",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "initEntryKinds"
+        }
+      ]
+    },
+    "initMacroKinds": {
+      "description": "Toolkit documentation term: initMacroKinds",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "initMacroKinds"
+        }
+      ]
+    },
+    "libraries": {
+      "description": "Toolkit documentation term: libraries/",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "libraries/"
+        }
+      ]
+    },
+    "libraries_slug": {
+      "description": "Toolkit documentation term: libraries/<slug>/",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "libraries/<slug>/"
+        }
+      ]
+    },
+    "meta.json": {
+      "description": "Toolkit documentation term: meta.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "meta.json"
+        }
+      ]
+    },
+    "openDashboard": {
+      "description": "Toolkit documentation term: openDashboard",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "openDashboard"
+        }
+      ]
+    },
+    "openEntryInfoview": {
+      "description": "Toolkit documentation term: openEntryInfoview",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "openEntryInfoview"
+        }
+      ]
+    },
+    "openInfoview": {
+      "description": "Toolkit documentation term: openInfoview",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "openInfoview"
+        }
+      ]
+    },
+    "openInfoviewGraph_ForLibrary": {
+      "description": "Toolkit documentation term: openInfoviewGraph[ForLibrary]",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "openInfoviewGraph[ForLibrary]"
+        }
+      ]
+    },
+    "openMacroPackage": {
+      "description": "Toolkit documentation term: openMacroPackage",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "openMacroPackage"
+        }
+      ]
+    },
+    "openSnoogL": {
+      "description": "Toolkit documentation term: openSnoogL",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "openSnoogL"
+        }
+      ]
+    },
+    "package_picker": {
+      "description": "Toolkit documentation term: package picker",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "package picker"
+        }
+      ]
+    },
+    "refreshInfoview": {
+      "description": "Toolkit documentation term: refreshInfoview",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "refreshInfoview"
+        }
+      ]
+    },
+    "regenerateDependencies": {
+      "description": "Toolkit documentation term: regenerateDependencies",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "regenerateDependencies"
+        }
+      ]
+    },
+    "revealEntryPointer": {
+      "description": "Toolkit documentation term: revealEntryPointer",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "revealEntryPointer"
+        }
+      ]
+    },
+    "row_toolbar": {
+      "description": "Toolkit documentation term: row toolbar",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "row toolbar"
+        }
+      ]
+    },
+    "shared_entry_pool": {
+      "description": "Toolkit documentation term: shared entry pool",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "shared entry pool"
+        }
+      ]
+    },
+    "snl-native": {
+      "description": "Toolkit documentation term: snl-native",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snl-native"
+        }
+      ]
+    },
+    "snlDoc.": {
+      "description": "Toolkit documentation term: snlDoc.*",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.*"
+        }
+      ]
+    },
+    "snlDoc.init": {
+      "description": "Toolkit documentation term: snlDoc.init",
+      "source": {
+        "entries": [
+          "94fb52f1-2209-4394-b807-5eb0d5256cd1"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.init"
+        }
+      ]
+    },
+    "snlDoc.openDashboard": {
+      "description": "Toolkit documentation term: snlDoc.openDashboard",
+      "source": {
+        "entries": [
+          "51695b53-74a1-44d7-ad36-a193d9096dda"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.openDashboard"
+        }
+      ]
+    },
+    "snlDoc.openEntryInfoview": {
+      "description": "Toolkit documentation term: snlDoc.openEntryInfoview",
+      "source": {
+        "entries": [
+          "706b125d-a272-45db-8131-209d0cd24a7f"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.openEntryInfoview"
+        }
+      ]
+    },
+    "snlDoc.openEntryInfoview_entryId": {
+      "description": "Toolkit documentation term: snlDoc.openEntryInfoview <entryId>",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.openEntryInfoview <entryId>"
+        }
+      ]
+    },
+    "snlDoc.openInfoviewGraph": {
+      "description": "Toolkit documentation term: snlDoc.openInfoviewGraph",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.openInfoviewGraph"
+        }
+      ]
+    },
+    "snlDoc.openInfoviewGraphForLibrary": {
+      "description": "Toolkit documentation term: snlDoc.openInfoviewGraphForLibrary",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.openInfoviewGraphForLibrary"
+        }
+      ]
+    },
+    "snlDoc.regenerateDependencies": {
+      "description": "Toolkit documentation term: snlDoc.regenerateDependencies",
+      "source": {
+        "entries": [
+          "0257c9be-c948-404c-a89f-d6491db40999"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "snlDoc.regenerateDependencies"
+        }
+      ]
+    },
+    "term_macros": {
+      "description": "Toolkit documentation term: term_macros/",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "term\\_macros/"
+        }
+      ]
+    },
+    "term_macros_.json": {
+      "description": "Toolkit documentation term: term_macros/*.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "term\\_macros/*.json"
+        }
+      ]
+    },
+    "term_macros_slug_.json": {
+      "description": "Toolkit documentation term: term_macros/<slug>.json",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "term\\_macros/<slug>.json"
+        }
+      ]
+    },
+    "tree-view_editor": {
+      "description": "Toolkit documentation term: tree-view editor",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "tree-view editor"
+        }
+      ]
+    },
+    "when_false": {
+      "description": "Toolkit documentation term: when: false",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "when: false"
+        }
+      ]
+    }
+  }
+}
