@@ -1243,54 +1243,6 @@
         }
       ]
     },
-    "Term_.SNL_Doc": {
-      "description": "Toolkit documentation term: .SNL_Doc/",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{.SNL\\_Doc/}"
-        }
-      ]
-    },
-    "Term_.SNL_Doc_libraries": {
-      "description": "Toolkit documentation term: .SNL_Doc/libraries/",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{.SNL\\_Doc/libraries/}"
-        }
-      ]
-    },
-    "Term_.SNL_Doc_relationships.json": {
-      "description": "Toolkit documentation term: .SNL_Doc/relationships.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{.SNL\\_Doc/relationships.json}"
-        }
-      ]
-    },
     "Term__3cdf2936": {
       "description": "Toolkit documentation term: $",
       "source": {
@@ -1400,38 +1352,6 @@
           "tag": "default",
           "mode": "formula_inline",
           "template": "\\texttt{active toggle}"
-        }
-      ]
-    },
-    "config.json": {
-      "description": "Toolkit documentation term: config.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{config.json}"
-        }
-      ]
-    },
-    "counters.json": {
-      "description": "Toolkit documentation term: counters.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{counters.json}"
         }
       ]
     },
@@ -1547,22 +1467,6 @@
         }
       ]
     },
-    "entries.json": {
-      "description": "Toolkit documentation term: entries.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{entries.json}"
-        }
-      ]
-    },
     "exists": {
       "description": "Toolkit documentation term: exists",
       "source": {
@@ -1592,22 +1496,6 @@
           "tag": "default",
           "mode": "formula_inline",
           "template": "\\texttt{formatNumbering(template, k)}"
-        }
-      ]
-    },
-    "graph.json": {
-      "description": "Toolkit documentation term: graph.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{graph.json}"
         }
       ]
     },
@@ -1688,54 +1576,6 @@
           "tag": "default",
           "mode": "formula_inline",
           "template": "\\texttt{initMacroKinds}"
-        }
-      ]
-    },
-    "libraries": {
-      "description": "Toolkit documentation term: libraries/",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{libraries/}"
-        }
-      ]
-    },
-    "libraries_slug": {
-      "description": "Toolkit documentation term: libraries/<slug>/",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{libraries/<slug>/}"
-        }
-      ]
-    },
-    "meta.json": {
-      "description": "Toolkit documentation term: meta.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{meta.json}"
         }
       ]
     },
@@ -2083,54 +1923,6 @@
         }
       ]
     },
-    "term_macros": {
-      "description": "Toolkit documentation term: term_macros/",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{term\\_macros/}"
-        }
-      ]
-    },
-    "term_macros_.json": {
-      "description": "Toolkit documentation term: term_macros/*.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{term\\_macros/*.json}"
-        }
-      ]
-    },
-    "term_macros_slug_.json": {
-      "description": "Toolkit documentation term: term_macros/<slug>.json",
-      "source": {
-        "entries": [],
-        "urls": []
-      },
-      "kind": "toolkit-terminology",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{term\\_macros/<slug>.json}"
-        }
-      ]
-    },
     "tree-view_editor": {
       "description": "Toolkit documentation term: tree-view editor",
       "source": {
@@ -2220,11 +2012,17 @@
         }
       ]
     },
-    "File_config_entry_kinds": {
-      "description": "Toolkit documentation term: config.json#entry_kinds",
+    "Path.join": {
+      "description": "Binary path composition: join a Folder with a Folder or File using `/`.",
       "source": {
         "entries": [
-          "638e60b0-d3bc-4e3e-9aa3-ac0476850921"
+          "161a2844-cf64-431c-a08a-32ece3907a81",
+          "aba8a49c-af71-4d24-b9bf-2207d3cfbaf2",
+          "31bd541c-1da1-4994-b318-9590b72973cb",
+          "4dab78e6-c29c-49b4-b910-b71377b51962",
+          "0b7122ac-c8af-464a-8acf-16dabea6d2dc",
+          "1d64a970-206a-4551-a93c-723be9f066c7",
+          "0257c9be-c948-404c-a89f-d6491db40999"
         ],
         "urls": []
       },
@@ -2234,15 +2032,19 @@
         {
           "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{config.json\\#entry\\_kinds}"
+          "template": "#0\\texttt{/}#1"
         }
       ]
     },
-    "File_config_macro_kinds": {
-      "description": "Toolkit documentation term: config.json#macro_kinds",
+    "Folder.SNL_Doc": {
+      "description": "Toolkit documentation term: .SNL_Doc",
       "source": {
         "entries": [
-          "b7ba6b5c-77f8-4680-84d4-cc0d48e727d4"
+          "ee4f9a56-da43-4658-b214-6389cc451738",
+          "4dab78e6-c29c-49b4-b910-b71377b51962",
+          "1d64a970-206a-4551-a93c-723be9f066c7",
+          "94fb52f1-2209-4394-b807-5eb0d5256cd1",
+          "0257c9be-c948-404c-a89f-d6491db40999"
         ],
         "urls": []
       },
@@ -2252,12 +2054,188 @@
         {
           "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{config.json\\#macro\\_kinds}"
+          "template": "\\texttt{.SNL\\_Doc}"
         }
       ]
     },
-    "File_package_contributes_commands": {
-      "description": "Toolkit documentation term: package.json#contributes.commands",
+    "Folder.libraries": {
+      "description": "Toolkit documentation term: libraries",
+      "source": {
+        "entries": [
+          "161a2844-cf64-431c-a08a-32ece3907a81",
+          "1d64a970-206a-4551-a93c-723be9f066c7",
+          "94fb52f1-2209-4394-b807-5eb0d5256cd1"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{libraries}"
+        }
+      ]
+    },
+    "Folder.term_macros": {
+      "description": "Toolkit documentation term: term_macros",
+      "source": {
+        "entries": [
+          "aba8a49c-af71-4d24-b9bf-2207d3cfbaf2",
+          "31bd541c-1da1-4994-b318-9590b72973cb",
+          "0b7122ac-c8af-464a-8acf-16dabea6d2dc",
+          "94fb52f1-2209-4394-b807-5eb0d5256cd1"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{term\\_macros}"
+        }
+      ]
+    },
+    "Folder.slug": {
+      "description": "Toolkit documentation term: <slug>",
+      "source": {
+        "entries": [
+          "161a2844-cf64-431c-a08a-32ece3907a81"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{<slug>}"
+        }
+      ]
+    },
+    "File.config_json": {
+      "description": "Toolkit documentation term: config.json",
+      "source": {
+        "entries": [
+          "638e60b0-d3bc-4e3e-9aa3-ac0476850921",
+          "b7ba6b5c-77f8-4680-84d4-cc0d48e727d4",
+          "94fb52f1-2209-4394-b807-5eb0d5256cd1"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{config.json}"
+        }
+      ]
+    },
+    "File.entries_json": {
+      "description": "Toolkit documentation term: entries.json",
+      "source": {
+        "entries": [
+          "ed46a58f-3def-47fa-a9ac-ad3e2277d100",
+          "462fb2d4-3dd1-411b-b7c7-557f408f5051",
+          "94fb52f1-2209-4394-b807-5eb0d5256cd1"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{entries.json}"
+        }
+      ]
+    },
+    "File.meta_json": {
+      "description": "Toolkit documentation term: meta.json",
+      "source": {
+        "entries": [
+          "161a2844-cf64-431c-a08a-32ece3907a81"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{meta.json}"
+        }
+      ]
+    },
+    "File.graph_json": {
+      "description": "Toolkit documentation term: graph.json",
+      "source": {
+        "entries": [
+          "161a2844-cf64-431c-a08a-32ece3907a81",
+          "ed46a58f-3def-47fa-a9ac-ad3e2277d100",
+          "bd6f276b-e509-4e5a-ae6c-671534ab24ae"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{graph.json}"
+        }
+      ]
+    },
+    "File.counters_json": {
+      "description": "Toolkit documentation term: counters.json",
+      "source": {
+        "entries": [
+          "161a2844-cf64-431c-a08a-32ece3907a81",
+          "ed46a58f-3def-47fa-a9ac-ad3e2277d100",
+          "9eb85ce9-b76f-419d-a838-a32baf1e8402"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{counters.json}"
+        }
+      ]
+    },
+    "File.relationships_json": {
+      "description": "Toolkit documentation term: relationships.json",
+      "source": {
+        "entries": [
+          "4dab78e6-c29c-49b4-b910-b71377b51962",
+          "0257c9be-c948-404c-a89f-d6491db40999"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{relationships.json}"
+        }
+      ]
+    },
+    "File.package_json": {
+      "description": "Toolkit documentation term: package.json",
       "source": {
         "entries": [
           "bc533b13-946f-4fb8-aa8c-268306213e3f"
@@ -2270,7 +2248,98 @@
         {
           "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{package.json\\#contributes.commands}"
+          "template": "\\texttt{package.json}"
+        }
+      ]
+    },
+    "File.slug_json": {
+      "description": "Toolkit documentation term: <slug>.json",
+      "source": {
+        "entries": [
+          "aba8a49c-af71-4d24-b9bf-2207d3cfbaf2"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{<slug>.json}"
+        }
+      ]
+    },
+    "File.wildcard_json": {
+      "description": "Toolkit documentation term: *.json",
+      "source": {
+        "entries": [
+          "31bd541c-1da1-4994-b318-9590b72973cb",
+          "0b7122ac-c8af-464a-8acf-16dabea6d2dc"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{*.json}"
+        }
+      ]
+    },
+    "JsonKey.entry_kinds": {
+      "description": "Toolkit documentation term: entry_kinds",
+      "source": {
+        "entries": [
+          "638e60b0-d3bc-4e3e-9aa3-ac0476850921"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{entry\\_kinds}"
+        }
+      ]
+    },
+    "JsonKey.macro_kinds": {
+      "description": "Toolkit documentation term: macro_kinds",
+      "source": {
+        "entries": [
+          "b7ba6b5c-77f8-4680-84d4-cc0d48e727d4"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{macro\\_kinds}"
+        }
+      ]
+    },
+    "JsonKey.contributes_commands": {
+      "description": "Toolkit documentation term: contributes.commands",
+      "source": {
+        "entries": [
+          "bc533b13-946f-4fb8-aa8c-268306213e3f"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "formula_inline",
+          "template": "\\texttt{contributes.commands}"
         }
       ]
     }
