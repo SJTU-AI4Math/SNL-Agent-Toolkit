@@ -4,238 +4,272 @@
       "id": "node.ui.command.palette-overview",
       "label": "Entry",
       "props": {
-        "entryId": "ui.command.palette-overview"
+        "entryId": "ui.command.palette-overview",
+        "counterId": "0f22be77-9b6b-4abc-a663-5ae678039604"
       }
     },
     {
       "id": "node.command.snlDoc.openInfoview",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openInfoview"
+        "entryId": "command.snlDoc.openInfoview",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.refreshInfoview",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.refreshInfoview"
+        "entryId": "command.snlDoc.refreshInfoview",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.deleteEntry",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.deleteEntry"
+        "entryId": "command.snlDoc.deleteEntry",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.deleteEntryKind",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.deleteEntryKind"
+        "entryId": "command.snlDoc.deleteEntryKind",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.deleteMacroKind",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.deleteMacroKind"
+        "entryId": "command.snlDoc.deleteMacroKind",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.deleteLibrary",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.deleteLibrary"
+        "entryId": "command.snlDoc.deleteLibrary",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.deleteMacroPackage",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.deleteMacroPackage"
+        "entryId": "command.snlDoc.deleteMacroPackage",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.openEntryInfoview",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openEntryInfoview"
+        "entryId": "command.snlDoc.openEntryInfoview",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.revealEntryPointer",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.revealEntryPointer"
+        "entryId": "command.snlDoc.revealEntryPointer",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.openDashboard",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openDashboard"
+        "entryId": "command.snlDoc.openDashboard",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.init",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.init"
+        "entryId": "command.snlDoc.init",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createLibrary",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createLibrary"
+        "entryId": "command.snlDoc.createLibrary",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.initEntryKinds",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.initEntryKinds"
+        "entryId": "command.snlDoc.initEntryKinds",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createEntryKind",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createEntryKind"
+        "entryId": "command.snlDoc.createEntryKind",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.initMacroKinds",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.initMacroKinds"
+        "entryId": "command.snlDoc.initMacroKinds",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createMacroKind",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createMacroKind"
+        "entryId": "command.snlDoc.createMacroKind",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createEntry",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createEntry"
+        "entryId": "command.snlDoc.createEntry",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createMacroPackage",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createMacroPackage"
+        "entryId": "command.snlDoc.createMacroPackage",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.openMacroPackage",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openMacroPackage"
+        "entryId": "command.snlDoc.openMacroPackage",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createMacro",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createMacro"
+        "entryId": "command.snlDoc.createMacro",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editLibrary",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editLibrary"
+        "entryId": "command.snlDoc.editLibrary",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editEntryKind",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editEntryKind"
+        "entryId": "command.snlDoc.editEntryKind",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editMacroKind",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editMacroKind"
+        "entryId": "command.snlDoc.editMacroKind",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editEntry",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editEntry"
+        "entryId": "command.snlDoc.editEntry",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editMacroPackage",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editMacroPackage"
+        "entryId": "command.snlDoc.editMacroPackage",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editMacro",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editMacro"
+        "entryId": "command.snlDoc.editMacro",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.createRelationship",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createRelationship"
+        "entryId": "command.snlDoc.createRelationship",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.editRelationship",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.editRelationship"
+        "entryId": "command.snlDoc.editRelationship",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.deleteRelationship",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.deleteRelationship"
+        "entryId": "command.snlDoc.deleteRelationship",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.openInfoviewGraph",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openInfoviewGraph"
+        "entryId": "command.snlDoc.openInfoviewGraph",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.openInfoviewGraphForLibrary",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openInfoviewGraphForLibrary"
+        "entryId": "command.snlDoc.openInfoviewGraphForLibrary",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.regenerateDependencies",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.regenerateDependencies"
+        "entryId": "command.snlDoc.regenerateDependencies",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     },
     {
       "id": "node.command.snlDoc.openSnoogL",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.openSnoogL"
+        "entryId": "command.snlDoc.openSnoogL",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     }
   ],
