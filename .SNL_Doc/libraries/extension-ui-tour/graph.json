@@ -1595,6 +1595,20 @@
       "props": {
         "entryId": "ui.input.snoogl.kind-filter"
       }
+    },
+    {
+      "id": "node.ui.button.dashboard.snl-macros.toggle-active",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.dashboard.snl-macros.toggle-active"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.package-picker-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.package-picker-create"
+      }
     }
   ],
   "relationships": [
@@ -2621,6 +2635,16 @@
     {
       "from": "node.ui.section.snoogl.filters",
       "to": "node.ui.input.snoogl.kind-filter",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.snl-macros",
+      "to": "node.ui.button.dashboard.snl-macros.toggle-active",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.button.macro-package.package-picker-create",
       "label": "branch"
     }
   ]

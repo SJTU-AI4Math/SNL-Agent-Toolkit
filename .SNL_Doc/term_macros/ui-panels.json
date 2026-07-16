@@ -309,24 +309,6 @@
         }
       ]
     },
-    "New_macro_package": {
-      "description": "Toolkit documentation term: New macro package",
-      "source": {
-        "entries": [
-          "ui.panel.macro-package.create"
-        ],
-        "urls": []
-      },
-      "kind": "panel",
-      "dynamic_arity": false,
-      "styles": [
-        {
-          "tag": "default",
-          "mode": "formula_inline",
-          "template": "\\texttt{New macro package}"
-        }
-      ]
-    },
     "Package_Panel": {
       "description": "Toolkit documentation term: Package Panel",
       "source": {

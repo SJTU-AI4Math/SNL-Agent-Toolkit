@@ -24,7 +24,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Entry Infoview",
     "content": {
-      "snl": "%Dedicated per-entry panel (one instance per entryId, tab title #0). Renders the entry via #Literal.one with SNL body and hover-popover recursion for macro references. Opened via #2 or #3 a title anywhere.%(SNL_entry_title,EntryRender,snlDoc.openEntryInfoview_entryId,Shortcut_Ctrl_click)"
+      "snl": "%Dedicated per-entry panel (one instance per entryId, tab title #0). Renders the entry via #1 with SNL body and hover-popover recursion for macro references. Opened via #2 or #3 a title anywhere.%(SNL_entry_title,EntryRender,snlDoc.openEntryInfoview_entryId,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
@@ -34,7 +34,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Library",
     "content": {
-      "snl": "%Modal-style panel to seed a new #0 tree. Takes a title, slugifies to the directory name, writes empty #Literal.one + #2 (+ #3 after the counter refactor). Never overwrites — #4 result if the slug exists.%(Path.join(Folder.libraries,Folder.slug),File.meta_json,File.graph_json,File.counters_json,duplicate)"
+      "snl": "%Modal-style panel to seed a new #0 tree. Takes a title, slugifies to the directory name, writes empty #1 + #2 (+ #3 after the counter refactor). Never overwrites — #4 result if the slug exists.%(Path.join(Folder.libraries,Folder.slug),File.meta_json,File.graph_json,File.counters_json,duplicate)"
     },
     "contribution_info": null,
     "pointer": null
@@ -44,7 +44,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Library",
     "content": {
-      "snl": "%The #0 detail/edit view. Hosts the outline tree editor over #Literal.one and (after the counter refactor) the Counters tree editor over #2. Watches #3, #4, and #5 for external edits to stay in sync. #7 on an entry-ref title jumps to that entry's #6.%(Library,File.graph_json,File.counters_json,File.entries_json,File.graph_json,File.counters_json,Infoview,Shortcut_Ctrl_click)"
+      "snl": "%The #0 detail/edit view. Hosts the outline tree editor over #1 and (after the counter refactor) the Counters tree editor over #2. Watches #3, #4, and #5 for external edits to stay in sync. #7 on an entry-ref title jumps to that entry's #6.%(Library,File.graph_json,File.counters_json,File.entries_json,File.graph_json,File.counters_json,Infoview,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
@@ -54,7 +54,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry",
     "content": {
-      "snl": "%#0 to author a single entry: id (manual with #Literal.one button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,File.entries_json,Library)"
+      "snl": "%#0 to author a single entry: id (manual with #1 button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,File.entries_json,Library)"
     },
     "contribution_info": null,
     "pointer": null
@@ -64,7 +64,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry Kind",
     "content": {
-      "snl": "%#0 to declare a new #Literal.one (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds)"
+      "snl": "%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds)"
     },
     "contribution_info": null,
     "pointer": null
@@ -94,7 +94,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Kind",
     "content": {
-      "snl": "%#0 to declare a new #Literal.one (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2 under #3.%(Panel,MacroKind,File.config_json,JsonKey.macro_kinds)"
+      "snl": "%#0 to declare a new #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2 under #3.%(Panel,MacroKind,File.config_json,JsonKey.macro_kinds)"
     },
     "contribution_info": null,
     "pointer": null
@@ -124,7 +124,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Package",
     "content": {
-      "snl": "%#0 to create a new #Literal.one package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,Path.join(Folder.term_macros,File.slug_json))"
+      "snl": "%#0 to create a new #1 package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,Path.join(Folder.term_macros,File.slug_json))"
     },
     "contribution_info": null,
     "pointer": null
@@ -134,7 +134,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Package Panel",
     "content": {
-      "snl": "%The macro-package detail view — table of macros in one #0 file. Supports select-mode multi-select with batch ops (Package as new / Move to package… / Delete), active-toggle header, per-row Edit, and package-picker with inline #Literal.one creation.%(Path.join(Folder.term_macros,File.wildcard_json),New_macro_package)"
+      "snl": "%The macro-package detail view — table of macros in one #0 file. Supports select-mode multi-select with batch ops (Package as new / Move to package… / Delete), active-toggle header, per-row Edit, and package-picker with inline #1 creation.%(Path.join(Folder.term_macros,File.wildcard_json),New_macro_package)"
     },
     "contribution_info": null,
     "pointer": null
@@ -154,7 +154,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro",
     "content": {
-      "snl": "%Edit-mode variant of #0. Also hosts the #Literal.one — a row-tree editor for the #2 payload of macros whose renderer uses #3 templates. Only #4 and #5 are managed by the editor; sigils (#6, #7, #8) are literal per author authoring convention.%(Create_Macro,GUI_inductive_editor,SnlSyntaxTree,snl-native,Literal.parentheses,Literal.brackets,Literal.at_sign,Literal.percent_sign,Literal.dollar_sign)"
+      "snl": "%Edit-mode variant of #0. Also hosts the #1 — a row-tree editor for the #2 payload of macros whose renderer uses #3 templates. Only #4 and #5 are managed by the editor; sigils (#6, #7, #8) are literal per author authoring convention.%(Create_Macro,GUI_inductive_editor,SnlSyntaxTree,snl-native,Literal.parentheses,Literal.brackets,Literal.at_sign,Literal.percent_sign,Literal.dollar_sign)"
     },
     "contribution_info": null,
     "pointer": null
@@ -184,7 +184,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Relationship Graph",
     "content": {
-      "snl": "%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #Literal.one (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary)"
+      "snl": "%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #1 (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -204,7 +204,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Kinds Section",
     "content": {
-      "snl": "%#0 section listing declared EntryKinds. Empty → single #Literal.one #2. Non-empty → table (name / stroke swatch / default counter name / edit-row) plus tail #3 #4.%(Dashboard,AddBar,ButtonLabel.initialize_entry_kinds,AddBar,ButtonLabel.create_entry_kind)"
+      "snl": "%#0 section listing declared EntryKinds. Empty → single #1 #2. Non-empty → table (name / stroke swatch / default counter name / edit-row) plus tail #3 #4.%(Dashboard,AddBar,ButtonLabel.initialize_entry_kinds,AddBar,ButtonLabel.create_entry_kind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -214,7 +214,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "SNL Macros Section",
     "content": {
-      "snl": "%#0 section listing #Literal.one packages. Table columns: title / macro count / #2 / actions.%(Dashboard,Path.join(Folder.term_macros,File.wildcard_json),active_toggle)"
+      "snl": "%#0 section listing #1 packages. Table columns: title / macro count / #2 / actions.%(Dashboard,Path.join(Folder.term_macros,File.wildcard_json),active_toggle)"
     },
     "contribution_info": null,
     "pointer": null
@@ -224,7 +224,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entries Section",
     "content": {
-      "snl": "%#0 section listing all entries in the shared pool. Table (preview swatch / title / id / kind / formats populated). Empty and expanded → #Literal.one #2. Only visible when expanded.%(Dashboard,AddBar,ButtonLabel.create_entry)"
+      "snl": "%#0 section listing all entries in the shared pool. Table (preview swatch / title / id / kind / formats populated). Empty and expanded → #1 #2. Only visible when expanded.%(Dashboard,AddBar,ButtonLabel.create_entry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -244,7 +244,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Outline Section",
     "content": {
-      "snl": "%The #0 over #Literal.one inside #2. Each row = entry-ref node with #3-based #4 (↑/↓ move, indent, outdent, add child, add sibling, delete). Add form supports resolving-typed-id and — post-refactor — inserts stub + jumps to #5 when the id doesn't yet resolve.%(tree-view_editor,File.graph_json,Edit_Library,Button,row_toolbar,Create_Entry)"
+      "snl": "%The #0 over #1 inside #2. Each row = entry-ref node with #3-based #4 (↑/↓ move, indent, outdent, add child, add sibling, delete). Add form supports resolving-typed-id and — post-refactor — inserts stub + jumps to #5 when the id doesn't yet resolve.%(tree-view_editor,File.graph_json,Edit_Library,Button,row_toolbar,Create_Entry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -254,7 +254,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Counters Section",
     "content": {
-      "snl": "%Post-refactor: the #0 over #Literal.one inside #2. Same tree UI as the Outline. Each counter = #3. EntryKinds refer to counters here by #4; per-entry-ref override lives in the outline row.%(tree-view_editor,File.counters_json,Edit_Library,id_name_numbering_DSL_children,defaultCounterName)"
+      "snl": "%Post-refactor: the #0 over #1 inside #2. Same tree UI as the Outline. Each counter = #3. EntryKinds refer to counters here by #4; per-entry-ref override lives in the outline row.%(tree-view_editor,File.counters_json,Edit_Library,id_name_numbering_DSL_children,defaultCounterName)"
     },
     "contribution_info": null,
     "pointer": null
@@ -274,7 +274,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "AddBar (dashed +)",
     "content": {
-      "snl": "%Full-width dashed #0 bar at the end of a #Literal.one list or an empty section. Hover flips to a solid focused border. Keyboard-activatable (#2/#3).%(Create_X,Dashboard,Shortcut_Enter,Shortcut_Space)"
+      "snl": "%Full-width dashed #0 bar at the end of a #1 list or an empty section. Hover flips to a solid focused border. Keyboard-activatable (#2/#3).%(Create_X,Dashboard,Shortcut_Enter,Shortcut_Space)"
     },
     "contribution_info": null,
     "pointer": null
@@ -334,7 +334,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Entry Title Field",
     "content": {
-      "snl": "%Free text. Displayed in the entry header (#0 or with counter label prefix inside a #Literal.one context).%(KindName_--_Title,Library)"
+      "snl": "%Free text. Displayed in the entry header (#0 or with counter label prefix inside a #1 context).%(KindName_--_Title,Library)"
     },
     "contribution_info": null,
     "pointer": null
@@ -354,7 +354,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "Command Palette Overview",
     "content": {
-      "snl": "%The extension registers 33 #0 commands (see #18 under #19). Categories: init (#Literal.one, #2, #3), create (#4), edit (#5), delete (#6), open panels (#7, #8, #9, #10, #11, #12), and utilities (#13, #14, #15). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like #16) are gated with #17 in the palette contribution.%(snlDoc.,init,initEntryKinds,initMacroKinds,create,edit,delete,openInfoview,openDashboard,openEntryInfoview,openMacroPackage,openSnoogL,openInfoviewGraph_ForLibrary,refreshInfoview,revealEntryPointer,regenerateDependencies,openEntryInfoview,when_false,File.package_json,JsonKey.contributes_commands)"
+      "snl": "%The extension registers 34 #0 commands; 33 are contributed in #18 under #19. Categories: init (#1, #2, #3), create (#4), edit (#5), delete (#6), open panels (#7, #8, #9, #10, #11, #12), and utilities (#13, #14, #15). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like #16) are gated with #17 in the palette contribution.%(snlDoc.,init,initEntryKinds,initMacroKinds,create,edit,delete,openInfoview,openDashboard,openEntryInfoview,openMacroPackage,openSnoogL,openInfoviewGraph_ForLibrary,refreshInfoview,revealEntryPointer,regenerateDependencies,openEntryInfoview,when_false,File.package_json,JsonKey.contributes_commands)"
     },
     "contribution_info": null,
     "pointer": null
@@ -364,7 +364,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.init",
     "content": {
-      "snl": "%Bootstraps #0 in the current workspace root. Writes #Literal.one (v0.0.3), empty #2, empty #3 and #4 directories. #5 result when already initialized (no overwrite).%(Folder.SNL_Doc,File.config_json,File.entries_json,Folder.term_macros,Folder.libraries,exists)"
+      "snl": "%Bootstraps #0 in the current workspace root. Writes #1 (v0.0.3), empty #2, empty #3 and #4 directories. #5 result when already initialized (no overwrite).%(Folder.SNL_Doc,File.config_json,File.entries_json,Folder.term_macros,Folder.libraries,exists)"
     },
     "contribution_info": null,
     "pointer": null
@@ -384,7 +384,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openEntryInfoview",
     "content": {
-      "snl": "%Programmatic-only. Given an entryId, opens or reveals a dedicated #0 panel keyed by that id. Dispatched by #Literal.one on any rendered entry title.%(Entry_Infoview,Shortcut_Ctrl_click)"
+      "snl": "%Programmatic-only. Given an entryId, opens or reveals a dedicated #0 panel keyed by that id. Dispatched by #1 on any rendered entry title.%(Entry_Infoview,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2855,6 +2855,36 @@
     "title": "Operation Result Status",
     "content": {
       "snl": "%Host operation statuses such as duplicate and exists.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "command.snlDoc.createMacroPickPackage",
+    "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
+    "title": "snlDoc.createMacroPickPackage",
+    "content": {
+      "snl": "%Internal Dashboard helper command that selects a package before opening Create Macro.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.dashboard.snl-macros.toggle-active",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Toggle Package Active Button (Dashboard List)",
+    "content": {
+      "snl": "%Toggles a macro package active from its Dashboard list row.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.package-picker-create",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "New Macro Package Button (Package Picker)",
+    "content": {
+      "snl": "%Creates a new macro package inline from the package picker.%"
     },
     "contribution_info": null,
     "pointer": null
