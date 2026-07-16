@@ -1,0 +1,56 @@
+{
+  "version": "0.0.3",
+  "entry_kinds": [
+    {
+      "id": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+      "name": "Panel",
+      "coloring": {
+        "stroke": "#1e88e5",
+        "background": "#e3f2fd"
+      },
+      "numbering": "1",
+      "style": ""
+    },
+    {
+      "id": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+      "name": "Section",
+      "coloring": {
+        "stroke": "#546e7a",
+        "background": "#eceff1"
+      },
+      "numbering": ".1",
+      "style": ""
+    },
+    {
+      "id": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+      "name": "Button",
+      "coloring": {
+        "stroke": "#43a047",
+        "background": "#e8f5e9"
+      },
+      "numbering": "",
+      "style": ""
+    },
+    {
+      "id": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+      "name": "Text Input",
+      "coloring": {
+        "stroke": "#8e24aa",
+        "background": "#f3e5f5"
+      },
+      "numbering": "",
+      "style": ""
+    },
+    {
+      "id": "406729f7-e18a-404d-90a3-679b9372edd1",
+      "name": "Command",
+      "coloring": {
+        "stroke": "#e64a19",
+        "background": "#fbe9e7"
+      },
+      "numbering": "",
+      "style": ""
+    }
+  ],
+  "macro_kinds": []
+}
