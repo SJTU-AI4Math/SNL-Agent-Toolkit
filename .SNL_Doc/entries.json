@@ -12,9 +12,9 @@
   {
     "id": "ui.panel.infoview",
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
-    "title": "Infoview (Picker)",
+    "title": "Infoview",
     "content": {
-      "snl": "%Legacy top-level infoview that lists all entries and lets the user pick one to render inline. Kept as a gateway into per-entry infoviews; #1 on an entry title spawns a dedicated #0 panel.%(Entry_Infoview,Shortcut_Ctrl_click)"
+      "snl": "%Reading surface with a Libraries layer and a selected-Library outline layer. Opens Library and Entry content without entering edit mode.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -630,9 +630,9 @@
     "pointer": null
   },
   {
-    "id": "ui.section.infoview.entry-picker",
+    "id": "ui.section.infoview.libraries",
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
-    "title": "Entry Picker Section",
+    "title": "Infoview Libraries Layer",
     "content": {
       "snl": "%Selects one Entry from the shared pool for inline rendering.%"
     },
@@ -640,19 +640,9 @@
     "pointer": null
   },
   {
-    "id": "ui.input.infoview.entry-picker",
-    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
-    "title": "Entry Picker Input",
-    "content": {
-      "snl": "%Picker input for choosing the Entry rendered by Infoview.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
-    "id": "ui.section.infoview.entry-render",
+    "id": "ui.section.infoview.library-reading",
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
-    "title": "Infoview Entry Render Section",
+    "title": "Infoview Library Reading Layer",
     "content": {
       "snl": "%Inline EntryRender surface for the selected Entry.%"
     },
@@ -1455,6 +1445,886 @@
     "title": "SNoogL Macro Result Entrance",
     "content": {
       "snl": "%Opens a macro result in Edit Macro.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.view-graph",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "View Graph Button (Infoview)",
+    "content": {
+      "snl": "%Opens the pool-wide Relationship Graph from Infoview.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.edit-dashboard",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Edit in Dashboard Button",
+    "content": {
+      "snl": "%Returns from Infoview to the Dashboard editing surface.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.library-entrance",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Library Entrance (Infoview)",
+    "content": {
+      "snl": "%Opens one Library in the Infoview reading layer.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.back-libraries",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Back to Libraries Button",
+    "content": {
+      "snl": "%Returns from one Library to the Infoview Libraries layer.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.library-graph",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "View Library Graph Button",
+    "content": {
+      "snl": "%Opens the Relationship Graph scoped to this Library.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.edit-library",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Edit This Library Button",
+    "content": {
+      "snl": "%Opens Edit Library for the Library being read.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.infoview.outline-toggle",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Infoview Outline Toggle Button",
+    "content": {
+      "snl": "%Expands or collapses an Entry subtree in the reading outline.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry-infoview.edit",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Edit Entry Button (Entry Infoview)",
+    "content": {
+      "snl": "%Opens Edit Entry for this dedicated Entry Infoview.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry-infoview.context",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Infoview Context Section",
+    "content": {
+      "snl": "%Shows Library context for the Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry-infoview.dependencies",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Infoview Dependencies Section",
+    "content": {
+      "snl": "%Shows dependency and related-Entry context.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry-infoview.related-entry",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Related Entry Entrance",
+    "content": {
+      "snl": "%Opens a related Entry in its own Entry Infoview.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.library.edit.view-infoview",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "View Library in Infoview Button",
+    "content": {
+      "snl": "%Opens this Library in the Infoview reading surface.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.counter.add-root",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Root Counter Button",
+    "content": {
+      "snl": "%Adds another root Counter to a non-empty Counter tree.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.library.outline.add-root",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Root Entry Reference Button",
+    "content": {
+      "snl": "%Starts the add form at the Library outline root.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.library.outline.cancel-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Cancel Entry Reference Add Button",
+    "content": {
+      "snl": "%Closes the inline Entry-reference add form without changing the outline.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.create.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Live Preview Section (Create)",
+    "content": {
+      "snl": "%Live EntryRender preview of the draft Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.create.content",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Content Section (Create)",
+    "content": {
+      "snl": "%Five-format Entry content editor.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.content.snl",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNL Content Tab (Create)",
+    "content": {
+      "snl": "%Selects the SNL Content editor for the new Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.content.typst",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Typst Content Tab (Create)",
+    "content": {
+      "snl": "%Selects the Typst Content editor for the new Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.content.latex",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "LaTeX Content Tab (Create)",
+    "content": {
+      "snl": "%Selects the LaTeX Content editor for the new Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.content.markdown",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Markdown Content Tab (Create)",
+    "content": {
+      "snl": "%Selects the Markdown Content editor for the new Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.content.text",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Text Content Tab (Create)",
+    "content": {
+      "snl": "%Selects the Text Content editor for the new Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.snl-text-editor",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNL Text Editor Button (Create)",
+    "content": {
+      "snl": "%Switches SNL content to the text editor.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.snl-gui-editor",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNL GUI Editor Button (Create)",
+    "content": {
+      "snl": "%Switches SNL content to the GUI inductive editor.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.create.contributor",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Contributor Section (Create Entry)",
+    "content": {
+      "snl": "%Edits Entry contribution metadata.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.create.pointer",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Pointer Section (Create Entry)",
+    "content": {
+      "snl": "%Edits the Entry source pointer metadata.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry.edit",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Edit Entry",
+    "content": {
+      "snl": "%Edit-mode Entry panel, loaded by semantic Entry id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry.edit.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry ID Field (Edit)",
+    "content": {
+      "snl": "%Read-only stable Entry id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry.edit.title",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry Title Field (Edit)",
+    "content": {
+      "snl": "%Editable Entry title.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry.edit.kind",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry Kind Selector (Edit)",
+    "content": {
+      "snl": "%Selects the Entry Kind.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry.edit.content",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry Content Editor (Edit)",
+    "content": {
+      "snl": "%Edits SNL, Typst, LaTeX, Markdown, or plain content.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.view-infoview",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "View Entry in Infoview Button",
+    "content": {
+      "snl": "%Opens the current Entry in its dedicated Entry Infoview.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.edit.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Live Preview Section (Edit)",
+    "content": {
+      "snl": "%Live EntryRender preview of the edited Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.edit.content",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Content Section (Edit)",
+    "content": {
+      "snl": "%Five-format Entry content editor in edit mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.content.snl",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNL Content Tab (Edit)",
+    "content": {
+      "snl": "%Selects the SNL Content editor for the existing Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.content.typst",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Typst Content Tab (Edit)",
+    "content": {
+      "snl": "%Selects the Typst Content editor for the existing Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.content.latex",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "LaTeX Content Tab (Edit)",
+    "content": {
+      "snl": "%Selects the LaTeX Content editor for the existing Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.content.markdown",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Markdown Content Tab (Edit)",
+    "content": {
+      "snl": "%Selects the Markdown Content editor for the existing Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.content.text",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Text Content Tab (Edit)",
+    "content": {
+      "snl": "%Selects the Text Content editor for the existing Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.snl-text-editor",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNL Text Editor Button (Edit)",
+    "content": {
+      "snl": "%Switches SNL content to the text editor.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.snl-gui-editor",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNL GUI Editor Button (Edit)",
+    "content": {
+      "snl": "%Switches SNL content to the GUI inductive editor.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.edit.contributor",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Contributor Section (Edit Entry)",
+    "content": {
+      "snl": "%Edits Entry contribution metadata.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.edit.pointer",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Pointer Section (Edit Entry)",
+    "content": {
+      "snl": "%Edits the Entry source pointer metadata.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.submit",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Update Entry Submit Button",
+    "content": {
+      "snl": "%Validates and updates the existing Entry.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry-kind.create.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry Kind ID Input (Create)",
+    "content": {
+      "snl": "%Stable Entry Kind id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry-kind.create.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Kind Color Preview (Create)",
+    "content": {
+      "snl": "%Previews stroke and background colors.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry-kind.edit.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Kind Color Preview (Edit)",
+    "content": {
+      "snl": "%Previews edited stroke and background colors.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-kind.create.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Kind ID Input (Create)",
+    "content": {
+      "snl": "%Stable SNL Macro Kind id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro-kind.create.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Kind Color Preview (Create)",
+    "content": {
+      "snl": "%Previews stroke and background colors.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro-kind.edit.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Kind Color Preview (Edit)",
+    "content": {
+      "snl": "%Previews edited stroke and background colors.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-package.edit",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Edit Macro Package",
+    "content": {
+      "snl": "%Edits package file/name/description metadata.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-package.create.file",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package File Input (Create)",
+    "content": {
+      "snl": "%Edits the package file.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-package.create.name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package Display Name Input (Create)",
+    "content": {
+      "snl": "%Edits the package name.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-package.create.description",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package Description Input (Create)",
+    "content": {
+      "snl": "%Edits the package description.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-package.edit.file",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package File Input (Edit)",
+    "content": {
+      "snl": "%Edits the package file.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-package.edit.name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package Display Name Input (Edit)",
+    "content": {
+      "snl": "%Edits the package name.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-package.edit.description",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package Description Input (Edit)",
+    "content": {
+      "snl": "%Edits the package description.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.edit.submit",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Update Macro Package Submit Button",
+    "content": {
+      "snl": "%Updates package metadata.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.toggle-active",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Toggle Macro Package Active Button",
+    "content": {
+      "snl": "%Enables or disables this package in the active macro database.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.edit",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Edit Macro Package Button",
+    "content": {
+      "snl": "%Opens Edit Macro Package.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.expand-styles",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Expand Macro Styles Button",
+    "content": {
+      "snl": "%Expands or collapses a macro row style table.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro-package.batch-actions",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Package Batch Actions Section",
+    "content": {
+      "snl": "%Toolbar shown while macros are selected.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro-package.transfer-modal",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Transfer Modal Section",
+    "content": {
+      "snl": "%Copy/move dialog for existing or newly-created target packages.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.description",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Description Input (Create)",
+    "content": {
+      "snl": "%Macro description field.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.create-kind",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Create Macro Kind Button (Create)",
+    "content": {
+      "snl": "%Opens Create Macro Kind without leaving the macro workflow.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro.create.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Live Preview Section (Create)",
+    "content": {
+      "snl": "%Renders the draft macro with argument overrides.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro.create.sources",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Sources Section (Create)",
+    "content": {
+      "snl": "%Declares source Entries and URLs for this macro.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.source-entry",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Source Entry Input (Create)",
+    "content": {
+      "snl": "%Selects a source Entry id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.source-url",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Source URL Input (Create)",
+    "content": {
+      "snl": "%Adds a source URL.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro.create.tags",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Tags Section (Create)",
+    "content": {
+      "snl": "%Edits macro and style tags.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.description",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Description Input (Edit)",
+    "content": {
+      "snl": "%Macro description field.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.create-kind",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Create Macro Kind Button (Edit)",
+    "content": {
+      "snl": "%Opens Create Macro Kind without leaving the macro workflow.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro.edit.preview",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Live Preview Section (Edit)",
+    "content": {
+      "snl": "%Renders the draft macro with argument overrides.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro.edit.sources",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Sources Section (Edit)",
+    "content": {
+      "snl": "%Declares source Entries and URLs for this macro.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.source-entry",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Source Entry Input (Edit)",
+    "content": {
+      "snl": "%Selects a source Entry id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.source-url",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Source URL Input (Edit)",
+    "content": {
+      "snl": "%Adds a source URL.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.macro.edit.tags",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Tags Section (Edit)",
+    "content": {
+      "snl": "%Edits macro and style tags.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.relationship.create.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Relationship ID Input (Create)",
+    "content": {
+      "snl": "%Stable semantic relationship id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.relationship.create.metadata",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Relationship Metadata JSON Input (Create)",
+    "content": {
+      "snl": "%Optional relationship metadata JSON.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.relationship.edit.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Relationship ID Input (Edit)",
+    "content": {
+      "snl": "%Stable semantic relationship id.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.relationship.edit.metadata",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Relationship Metadata JSON Input (Edit)",
+    "content": {
+      "snl": "%Optional relationship metadata JSON.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.relationship-graph.open-entry",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Open Entry Node Button",
+    "content": {
+      "snl": "%Opens the Entry represented by a graph node.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.relationship-graph.edit-edge",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Edit Relationship Edge Button",
+    "content": {
+      "snl": "%Opens Edit Relationship for a graph edge.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.snoogl.search",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "SNoogL Search Bar Section",
+    "content": {
+      "snl": "%Search mode and query controls.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.snoogl.entry-mode",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNoogL Entry Search Mode Button",
+    "content": {
+      "snl": "%Switches SNoogL to Entry search.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.snoogl.macro-mode",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNoogL Macro Search Mode Button",
+    "content": {
+      "snl": "%Switches SNoogL to macro search.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.snoogl.filters",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "SNoogL Filters Section",
+    "content": {
+      "snl": "%Kind and scope filters for search results.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.snoogl.kind-filter",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "SNoogL Kind Filter",
+    "content": {
+      "snl": "%Filters results by Entry Kind or Macro Kind.%"
     },
     "contribution_info": null,
     "pointer": null
