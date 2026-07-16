@@ -15,7 +15,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "1"
+          "template": "\\texttt{1}"
         }
       ]
     },
@@ -31,7 +31,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "A"
+          "template": "\\texttt{A}"
         }
       ]
     },
@@ -47,7 +47,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "AddBar"
+          "template": "\\texttt{AddBar}"
         }
       ]
     },
@@ -65,7 +65,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "AddBar (dashed +)"
+          "template": "\\texttt{AddBar (dashed +)}"
         }
       ]
     },
@@ -81,7 +81,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Button"
+          "template": "\\texttt{Button}"
         }
       ]
     },
@@ -97,7 +97,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Command"
+          "template": "\\texttt{Command}"
         }
       ]
     },
@@ -115,7 +115,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Command Palette Overview"
+          "template": "\\texttt{Command Palette Overview}"
         }
       ]
     },
@@ -131,7 +131,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Counter"
+          "template": "\\texttt{Counter}"
         }
       ]
     },
@@ -149,7 +149,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Counter Numbering DSL Field"
+          "template": "\\texttt{Counter Numbering DSL Field}"
         }
       ]
     },
@@ -167,7 +167,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Counters Section"
+          "template": "\\texttt{Counters Section}"
         }
       ]
     },
@@ -185,7 +185,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Entry"
+          "template": "\\texttt{Create Entry}"
         }
       ]
     },
@@ -201,7 +201,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "+ Create Entry"
+          "template": "\\texttt{+ Create Entry}"
         }
       ]
     },
@@ -219,7 +219,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Entry Kind"
+          "template": "\\texttt{Create Entry Kind}"
         }
       ]
     },
@@ -235,7 +235,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "+ Create Entry Kind"
+          "template": "\\texttt{+ Create Entry Kind}"
         }
       ]
     },
@@ -253,7 +253,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Library"
+          "template": "\\texttt{Create Library}"
         }
       ]
     },
@@ -271,7 +271,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Macro"
+          "template": "\\texttt{Create Macro}"
         }
       ]
     },
@@ -289,7 +289,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Macro Kind"
+          "template": "\\texttt{Create Macro Kind}"
         }
       ]
     },
@@ -307,7 +307,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Macro Package"
+          "template": "\\texttt{Create Macro Package}"
         }
       ]
     },
@@ -325,7 +325,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Create Relationship"
+          "template": "\\texttt{Create Relationship}"
         }
       ]
     },
@@ -341,7 +341,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "+ Create X"
+          "template": "\\texttt{+ Create X}"
         }
       ]
     },
@@ -359,7 +359,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Dashboard"
+          "template": "\\texttt{Dashboard}"
         }
       ]
     },
@@ -377,7 +377,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Delete Row Toolbar Button"
+          "template": "\\texttt{Delete Row Toolbar Button}"
         }
       ]
     },
@@ -395,7 +395,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Edit Entry Kind"
+          "template": "\\texttt{Edit Entry Kind}"
         }
       ]
     },
@@ -413,7 +413,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Edit Library"
+          "template": "\\texttt{Edit Library}"
         }
       ]
     },
@@ -431,7 +431,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Edit Macro"
+          "template": "\\texttt{Edit Macro}"
         }
       ]
     },
@@ -449,7 +449,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Edit Macro Kind"
+          "template": "\\texttt{Edit Macro Kind}"
         }
       ]
     },
@@ -467,7 +467,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Edit Relationship"
+          "template": "\\texttt{Edit Relationship}"
         }
       ]
     },
@@ -485,7 +485,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entries Section"
+          "template": "\\texttt{Entries Section}"
         }
       ]
     },
@@ -501,7 +501,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entry"
+          "template": "\\texttt{Entry}"
         }
       ]
     },
@@ -517,7 +517,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "EntryKind"
+          "template": "\\texttt{EntryKind}"
         }
       ]
     },
@@ -533,7 +533,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "EntryRender"
+          "template": "\\texttt{EntryRender}"
         }
       ]
     },
@@ -551,7 +551,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entry ID Field"
+          "template": "\\texttt{Entry ID Field}"
         }
       ]
     },
@@ -569,7 +569,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entry Infoview"
+          "template": "\\texttt{Entry Infoview}"
         }
       ]
     },
@@ -585,7 +585,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entry Kind"
+          "template": "\\texttt{Entry Kind}"
         }
       ]
     },
@@ -603,7 +603,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entry Kinds Section"
+          "template": "\\texttt{Entry Kinds Section}"
         }
       ]
     },
@@ -621,7 +621,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Entry Title Field"
+          "template": "\\texttt{Entry Title Field}"
         }
       ]
     },
@@ -637,7 +637,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Ex. A."
+          "template": "\\texttt{Ex. A.}"
         }
       ]
     },
@@ -653,7 +653,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Feature"
+          "template": "\\texttt{Feature}"
         }
       ]
     },
@@ -669,7 +669,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Fulcrum's Math Notes"
+          "template": "\\texttt{Fulcrum's Math Notes}"
         }
       ]
     },
@@ -685,7 +685,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "GUI inductive editor"
+          "template": "\\texttt{GUI inductive editor}"
         }
       ]
     },
@@ -701,7 +701,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Generate UUID"
+          "template": "\\texttt{Generate UUID}"
         }
       ]
     },
@@ -719,7 +719,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Generate UUID Button"
+          "template": "\\texttt{Generate UUID Button}"
         }
       ]
     },
@@ -735,7 +735,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "§I."
+          "template": "\\texttt{§I.}"
         }
       ]
     },
@@ -753,7 +753,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Indent Row Toolbar Button"
+          "template": "\\texttt{Indent Row Toolbar Button}"
         }
       ]
     },
@@ -769,7 +769,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Infoview"
+          "template": "\\texttt{Infoview}"
         }
       ]
     },
@@ -787,7 +787,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Infoview (Picker)"
+          "template": "\\texttt{Infoview (Picker)}"
         }
       ]
     },
@@ -805,7 +805,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Initialize Entry Kinds"
+          "template": "\\texttt{Initialize Entry Kinds}"
         }
       ]
     },
@@ -821,7 +821,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "+ Initialize Entry Kinds"
+          "template": "\\texttt{+ Initialize Entry Kinds}"
         }
       ]
     },
@@ -839,7 +839,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Initialize Macro Kinds"
+          "template": "\\texttt{Initialize Macro Kinds}"
         }
       ]
     },
@@ -855,7 +855,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "<KindName> -- <Title>"
+          "template": "\\texttt{<KindName> -- <Title>}"
         }
       ]
     },
@@ -873,7 +873,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Libraries Section"
+          "template": "\\texttt{Libraries Section}"
         }
       ]
     },
@@ -889,7 +889,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Library"
+          "template": "\\texttt{Library}"
         }
       ]
     },
@@ -905,7 +905,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "MacroKind"
+          "template": "\\texttt{MacroKind}"
         }
       ]
     },
@@ -921,7 +921,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Macro Kind"
+          "template": "\\texttt{Macro Kind}"
         }
       ]
     },
@@ -939,7 +939,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Move-Up Row Toolbar Button"
+          "template": "\\texttt{Move-Up Row Toolbar Button}"
         }
       ]
     },
@@ -955,7 +955,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "New macro package"
+          "template": "\\texttt{New macro package}"
         }
       ]
     },
@@ -973,7 +973,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Outdent Row Toolbar Button"
+          "template": "\\texttt{Outdent Row Toolbar Button}"
         }
       ]
     },
@@ -991,7 +991,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Outline Section"
+          "template": "\\texttt{Outline Section}"
         }
       ]
     },
@@ -1009,7 +1009,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Package Panel"
+          "template": "\\texttt{Package Panel}"
         }
       ]
     },
@@ -1025,7 +1025,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Panel"
+          "template": "\\texttt{Panel}"
         }
       ]
     },
@@ -1041,7 +1041,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Regenerate UUID"
+          "template": "\\texttt{Regenerate UUID}"
         }
       ]
     },
@@ -1059,7 +1059,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Relationship Graph"
+          "template": "\\texttt{Relationship Graph}"
         }
       ]
     },
@@ -1075,7 +1075,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNL Macro"
+          "template": "\\texttt{SNL Macro}"
         }
       ]
     },
@@ -1091,7 +1091,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNL Macros"
+          "template": "\\texttt{SNL Macros}"
         }
       ]
     },
@@ -1109,7 +1109,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNL Macros Section"
+          "template": "\\texttt{SNL Macros Section}"
         }
       ]
     },
@@ -1125,7 +1125,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNL: Open Dashboard"
+          "template": "\\texttt{SNL: Open Dashboard}"
         }
       ]
     },
@@ -1141,7 +1141,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNL: Open SNoogL (Search)"
+          "template": "\\texttt{SNL: Open SNoogL (Search)}"
         }
       ]
     },
@@ -1157,7 +1157,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNL — <entry title>"
+          "template": "\\texttt{SNL — <entry title>}"
         }
       ]
     },
@@ -1175,7 +1175,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SNoogL Search"
+          "template": "\\texttt{SNoogL Search}"
         }
       ]
     },
@@ -1191,7 +1191,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Section"
+          "template": "\\texttt{Section}"
         }
       ]
     },
@@ -1207,7 +1207,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "SnlSyntaxTree"
+          "template": "\\texttt{SnlSyntaxTree}"
         }
       ]
     },
@@ -1223,7 +1223,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "+"
+          "template": "\\texttt{+}"
         }
       ]
     },
@@ -1239,7 +1239,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": ".1"
+          "template": "\\texttt{.1}"
         }
       ]
     },
@@ -1255,7 +1255,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": ".SNL\\_Doc/"
+          "template": "\\texttt{.SNL\\_Doc/}"
         }
       ]
     },
@@ -1271,7 +1271,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": ".SNL\\_Doc/libraries/"
+          "template": "\\texttt{.SNL\\_Doc/libraries/}"
         }
       ]
     },
@@ -1287,7 +1287,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": ".SNL\\_Doc/relationships.json"
+          "template": "\\texttt{.SNL\\_Doc/relationships.json}"
         }
       ]
     },
@@ -1303,7 +1303,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "\\$"
+          "template": "\\texttt{\\$}"
         }
       ]
     },
@@ -1319,7 +1319,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "\\%"
+          "template": "\\texttt{\\%}"
         }
       ]
     },
@@ -1335,7 +1335,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "[]"
+          "template": "\\texttt{[]}"
         }
       ]
     },
@@ -1351,7 +1351,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "@"
+          "template": "\\texttt{@}"
         }
       ]
     },
@@ -1367,7 +1367,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "()"
+          "template": "\\texttt{()}"
         }
       ]
     },
@@ -1383,7 +1383,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "Text Input"
+          "template": "\\texttt{Text Input}"
         }
       ]
     },
@@ -1399,7 +1399,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "active toggle"
+          "template": "\\texttt{active toggle}"
         }
       ]
     },
@@ -1415,7 +1415,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "config.json"
+          "template": "\\texttt{config.json}"
         }
       ]
     },
@@ -1431,7 +1431,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "counters.json"
+          "template": "\\texttt{counters.json}"
         }
       ]
     },
@@ -1447,7 +1447,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "create*"
+          "template": "\\texttt{create*}"
         }
       ]
     },
@@ -1463,7 +1463,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "crypto.randomUUID()"
+          "template": "\\texttt{crypto.randomUUID()}"
         }
       ]
     },
@@ -1479,7 +1479,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "defaultCounterName"
+          "template": "\\texttt{defaultCounterName}"
         }
       ]
     },
@@ -1495,7 +1495,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "delete*"
+          "template": "\\texttt{delete*}"
         }
       ]
     },
@@ -1511,7 +1511,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "dependency relationship"
+          "template": "\\texttt{dependency relationship}"
         }
       ]
     },
@@ -1527,7 +1527,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "duplicate"
+          "template": "\\texttt{duplicate}"
         }
       ]
     },
@@ -1543,7 +1543,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "edit*"
+          "template": "\\texttt{edit*}"
         }
       ]
     },
@@ -1559,7 +1559,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "entries.json"
+          "template": "\\texttt{entries.json}"
         }
       ]
     },
@@ -1575,7 +1575,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "exists"
+          "template": "\\texttt{exists}"
         }
       ]
     },
@@ -1591,7 +1591,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "formatNumbering(template, k)"
+          "template": "\\texttt{formatNumbering(template, k)}"
         }
       ]
     },
@@ -1607,7 +1607,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "graph.json"
+          "template": "\\texttt{graph.json}"
         }
       ]
     },
@@ -1623,7 +1623,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "(i)"
+          "template": "\\texttt{(i)}"
         }
       ]
     },
@@ -1639,7 +1639,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "\\{ id, name, numbering DSL, children[] \\}"
+          "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}"
         }
       ]
     },
@@ -1655,7 +1655,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "init"
+          "template": "\\texttt{init}"
         }
       ]
     },
@@ -1671,7 +1671,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "initEntryKinds"
+          "template": "\\texttt{initEntryKinds}"
         }
       ]
     },
@@ -1687,7 +1687,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "initMacroKinds"
+          "template": "\\texttt{initMacroKinds}"
         }
       ]
     },
@@ -1703,7 +1703,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "libraries/"
+          "template": "\\texttt{libraries/}"
         }
       ]
     },
@@ -1719,7 +1719,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "libraries/<slug>/"
+          "template": "\\texttt{libraries/<slug>/}"
         }
       ]
     },
@@ -1735,7 +1735,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "meta.json"
+          "template": "\\texttt{meta.json}"
         }
       ]
     },
@@ -1751,7 +1751,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "openDashboard"
+          "template": "\\texttt{openDashboard}"
         }
       ]
     },
@@ -1767,7 +1767,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "openEntryInfoview"
+          "template": "\\texttt{openEntryInfoview}"
         }
       ]
     },
@@ -1783,7 +1783,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "openInfoview"
+          "template": "\\texttt{openInfoview}"
         }
       ]
     },
@@ -1799,7 +1799,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "openInfoviewGraph[ForLibrary]"
+          "template": "\\texttt{openInfoviewGraph[ForLibrary]}"
         }
       ]
     },
@@ -1815,7 +1815,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "openMacroPackage"
+          "template": "\\texttt{openMacroPackage}"
         }
       ]
     },
@@ -1831,7 +1831,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "openSnoogL"
+          "template": "\\texttt{openSnoogL}"
         }
       ]
     },
@@ -1847,7 +1847,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "package picker"
+          "template": "\\texttt{package picker}"
         }
       ]
     },
@@ -1863,7 +1863,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "refreshInfoview"
+          "template": "\\texttt{refreshInfoview}"
         }
       ]
     },
@@ -1879,7 +1879,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "regenerateDependencies"
+          "template": "\\texttt{regenerateDependencies}"
         }
       ]
     },
@@ -1895,7 +1895,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "revealEntryPointer"
+          "template": "\\texttt{revealEntryPointer}"
         }
       ]
     },
@@ -1911,7 +1911,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "row toolbar"
+          "template": "\\texttt{row toolbar}"
         }
       ]
     },
@@ -1927,7 +1927,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "shared entry pool"
+          "template": "\\texttt{shared entry pool}"
         }
       ]
     },
@@ -1943,7 +1943,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snl-native"
+          "template": "\\texttt{snl-native}"
         }
       ]
     },
@@ -1959,7 +1959,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.*"
+          "template": "\\texttt{snlDoc.*}"
         }
       ]
     },
@@ -1977,7 +1977,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.init"
+          "template": "\\texttt{snlDoc.init}"
         }
       ]
     },
@@ -1995,7 +1995,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.openDashboard"
+          "template": "\\texttt{snlDoc.openDashboard}"
         }
       ]
     },
@@ -2013,7 +2013,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.openEntryInfoview"
+          "template": "\\texttt{snlDoc.openEntryInfoview}"
         }
       ]
     },
@@ -2029,7 +2029,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.openEntryInfoview <entryId>"
+          "template": "\\texttt{snlDoc.openEntryInfoview <entryId>}"
         }
       ]
     },
@@ -2045,7 +2045,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.openInfoviewGraph"
+          "template": "\\texttt{snlDoc.openInfoviewGraph}"
         }
       ]
     },
@@ -2061,7 +2061,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.openInfoviewGraphForLibrary"
+          "template": "\\texttt{snlDoc.openInfoviewGraphForLibrary}"
         }
       ]
     },
@@ -2079,7 +2079,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "snlDoc.regenerateDependencies"
+          "template": "\\texttt{snlDoc.regenerateDependencies}"
         }
       ]
     },
@@ -2095,7 +2095,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "term\\_macros/"
+          "template": "\\texttt{term\\_macros/}"
         }
       ]
     },
@@ -2111,7 +2111,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "term\\_macros/*.json"
+          "template": "\\texttt{term\\_macros/*.json}"
         }
       ]
     },
@@ -2127,7 +2127,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "term\\_macros/<slug>.json"
+          "template": "\\texttt{term\\_macros/<slug>.json}"
         }
       ]
     },
@@ -2143,7 +2143,7 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "tree-view editor"
+          "template": "\\texttt{tree-view editor}"
         }
       ]
     },
@@ -2159,7 +2159,118 @@
         {
           "tag": "default",
           "mode": "text",
-          "template": "when: false"
+          "template": "\\texttt{when: false}"
+        }
+      ]
+    },
+    "Shortcut_Ctrl_click": {
+      "description": "Toolkit documentation term: Ctrl+click",
+      "source": {
+        "entries": [
+          "5ece85ce-c90d-4d76-bddc-9eeed6fc7651",
+          "e51a5bd1-221e-4890-96fe-99fadb4eeb07",
+          "ed46a58f-3def-47fa-a9ac-ad3e2277d100",
+          "706b125d-a272-45db-8131-209d0cd24a7f"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\texttt{Ctrl+click}"
+        }
+      ]
+    },
+    "Shortcut_Enter": {
+      "description": "Toolkit documentation term: Enter",
+      "source": {
+        "entries": [
+          "6c959a4f-f6e0-4622-beda-0fab3e15d992"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\texttt{Enter}"
+        }
+      ]
+    },
+    "Shortcut_Space": {
+      "description": "Toolkit documentation term: Space",
+      "source": {
+        "entries": [
+          "6c959a4f-f6e0-4622-beda-0fab3e15d992"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\texttt{Space}"
+        }
+      ]
+    },
+    "File_config_entry_kinds": {
+      "description": "Toolkit documentation term: config.json#entry_kinds",
+      "source": {
+        "entries": [
+          "638e60b0-d3bc-4e3e-9aa3-ac0476850921"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\texttt{config.json\\#entry\\_kinds}"
+        }
+      ]
+    },
+    "File_config_macro_kinds": {
+      "description": "Toolkit documentation term: config.json#macro_kinds",
+      "source": {
+        "entries": [
+          "b7ba6b5c-77f8-4680-84d4-cc0d48e727d4"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\texttt{config.json\\#macro\\_kinds}"
+        }
+      ]
+    },
+    "File_package_contributes_commands": {
+      "description": "Toolkit documentation term: package.json#contributes.commands",
+      "source": {
+        "entries": [
+          "bc533b13-946f-4fb8-aa8c-268306213e3f"
+        ],
+        "urls": []
+      },
+      "kind": "toolkit-terminology",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "tag": "default",
+          "mode": "text",
+          "template": "\\texttt{package.json\\#contributes.commands}"
         }
       ]
     }

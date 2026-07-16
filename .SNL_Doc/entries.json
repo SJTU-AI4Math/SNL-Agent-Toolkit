@@ -14,7 +14,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Infoview (Picker)",
     "content": {
-      "snl": "%Legacy top-level infoview that lists all entries and lets the user pick one to render inline. Kept as a gateway into per-entry infoviews; Ctrl+click on an entry title spawns a dedicated #0 panel.%(Entry_Infoview)"
+      "snl": "%Legacy top-level infoview that lists all entries and lets the user pick one to render inline. Kept as a gateway into per-entry infoviews; #1 on an entry title spawns a dedicated #0 panel.%(Entry_Infoview,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
@@ -24,7 +24,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Entry Infoview",
     "content": {
-      "snl": "%Dedicated per-entry panel (one instance per entryId, tab title #0). Renders the entry via #1 with SNL body and hover-popover recursion for macro references. Opened via #2 or Ctrl+click a title anywhere.%(SNL_entry_title,EntryRender,snlDoc.openEntryInfoview_entryId)"
+      "snl": "%Dedicated per-entry panel (one instance per entryId, tab title #0). Renders the entry via #1 with SNL body and hover-popover recursion for macro references. Opened via #2 or #3 a title anywhere.%(SNL_entry_title,EntryRender,snlDoc.openEntryInfoview_entryId,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
@@ -44,7 +44,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Library",
     "content": {
-      "snl": "%The #0 detail/edit view. Hosts the outline tree editor over #1 and (after the counter refactor) the Counters tree editor over #2. Watches #3, #4, and #5 for external edits to stay in sync. Ctrl+click on an entry-ref title jumps to that entry's #6.%(Library,graph.json,counters.json,entries.json,graph.json,counters.json,Infoview)"
+      "snl": "%The #0 detail/edit view. Hosts the outline tree editor over #1 and (after the counter refactor) the Counters tree editor over #2. Watches #3, #4, and #5 for external edits to stay in sync. #7 on an entry-ref title jumps to that entry's #6.%(Library,graph.json,counters.json,entries.json,graph.json,counters.json,Infoview,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
@@ -64,7 +64,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry Kind",
     "content": {
-      "snl": "%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to config.json#entry_kinds.%(Panel,EntryKind)"
+      "snl": "%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2.%(Panel,EntryKind,File_config_entry_kinds)"
     },
     "contribution_info": null,
     "pointer": null
@@ -94,7 +94,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Kind",
     "content": {
-      "snl": "%#0 to declare a #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to config.json#macro_kinds.%(Panel,MacroKind)"
+      "snl": "%#0 to declare a #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2.%(Panel,MacroKind,File_config_macro_kinds)"
     },
     "contribution_info": null,
     "pointer": null
@@ -274,7 +274,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "AddBar (dashed +)",
     "content": {
-      "snl": "%Full-width dashed #0 bar at the end of a #1 list or an empty section. Hover flips to a solid focused border. Keyboard-activatable (Enter/Space).%(Create_X,Dashboard)"
+      "snl": "%Full-width dashed #0 bar at the end of a #1 list or an empty section. Hover flips to a solid focused border. Keyboard-activatable (#2/#3).%(Create_X,Dashboard,Shortcut_Enter,Shortcut_Space)"
     },
     "contribution_info": null,
     "pointer": null
@@ -354,7 +354,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "Command Palette Overview",
     "content": {
-      "snl": "%The extension registers 32 #0 commands (see package.json #contributes.commands). Categories: init (#1, #2, #3), create (#4), edit (#5), delete (#6), open panels (#7, #8, #9, #10, #11, #12), and utilities (#13, #14, #15). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like #16) are gated with #17 in the palette contribution.%(snlDoc.,init,initEntryKinds,initMacroKinds,create,edit,delete,openInfoview,openDashboard,openEntryInfoview,openMacroPackage,openSnoogL,openInfoviewGraph_ForLibrary,refreshInfoview,revealEntryPointer,regenerateDependencies,openEntryInfoview,when_false)"
+      "snl": "%The extension registers 32 #0 commands (see #18). Categories: init (#1, #2, #3), create (#4), edit (#5), delete (#6), open panels (#7, #8, #9, #10, #11, #12), and utilities (#13, #14, #15). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like #16) are gated with #17 in the palette contribution.%(snlDoc.,init,initEntryKinds,initMacroKinds,create,edit,delete,openInfoview,openDashboard,openEntryInfoview,openMacroPackage,openSnoogL,openInfoviewGraph_ForLibrary,refreshInfoview,revealEntryPointer,regenerateDependencies,openEntryInfoview,when_false,File_package_contributes_commands)"
     },
     "contribution_info": null,
     "pointer": null
@@ -384,7 +384,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openEntryInfoview",
     "content": {
-      "snl": "%Programmatic-only. Given an entryId, opens or reveals a dedicated #0 panel keyed by that id. Dispatched by Ctrl+click on any rendered entry title.%(Entry_Infoview)"
+      "snl": "%Programmatic-only. Given an entryId, opens or reveals a dedicated #0 panel keyed by that id. Dispatched by #1 on any rendered entry title.%(Entry_Infoview,Shortcut_Ctrl_click)"
     },
     "contribution_info": null,
     "pointer": null
