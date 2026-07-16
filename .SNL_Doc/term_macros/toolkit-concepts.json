@@ -14,7 +14,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{1}"
         }
       ]
@@ -30,7 +30,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{A}"
         }
       ]
@@ -46,7 +46,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{AddBar}"
         }
       ]
@@ -64,7 +64,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{AddBar (dashed +)}"
         }
       ]
@@ -80,7 +80,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Button}"
         }
       ]
@@ -96,7 +96,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Command}"
         }
       ]
@@ -114,7 +114,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Command Palette Overview}"
         }
       ]
@@ -130,7 +130,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Counter}"
         }
       ]
@@ -148,7 +148,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Counter Numbering DSL Field}"
         }
       ]
@@ -166,7 +166,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Counters Section}"
         }
       ]
@@ -184,7 +184,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Entry}"
         }
       ]
@@ -200,7 +200,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{+ Create Entry}"
         }
       ]
@@ -218,7 +218,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Entry Kind}"
         }
       ]
@@ -234,7 +234,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{+ Create Entry Kind}"
         }
       ]
@@ -252,7 +252,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Library}"
         }
       ]
@@ -270,7 +270,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Macro}"
         }
       ]
@@ -288,7 +288,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Macro Kind}"
         }
       ]
@@ -306,7 +306,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Macro Package}"
         }
       ]
@@ -324,7 +324,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Create Relationship}"
         }
       ]
@@ -340,7 +340,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{+ Create X}"
         }
       ]
@@ -358,7 +358,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Dashboard}"
         }
       ]
@@ -376,7 +376,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Delete Row Toolbar Button}"
         }
       ]
@@ -394,7 +394,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Edit Entry Kind}"
         }
       ]
@@ -412,7 +412,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Edit Library}"
         }
       ]
@@ -430,7 +430,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Edit Macro}"
         }
       ]
@@ -448,7 +448,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Edit Macro Kind}"
         }
       ]
@@ -466,7 +466,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Edit Relationship}"
         }
       ]
@@ -484,7 +484,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entries Section}"
         }
       ]
@@ -500,7 +500,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entry}"
         }
       ]
@@ -516,7 +516,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{EntryKind}"
         }
       ]
@@ -532,7 +532,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{EntryRender}"
         }
       ]
@@ -550,7 +550,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entry ID Field}"
         }
       ]
@@ -568,7 +568,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entry Infoview}"
         }
       ]
@@ -584,7 +584,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entry Kind}"
         }
       ]
@@ -602,7 +602,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entry Kinds Section}"
         }
       ]
@@ -620,7 +620,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Entry Title Field}"
         }
       ]
@@ -636,7 +636,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Ex. A.}"
         }
       ]
@@ -652,7 +652,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Feature}"
         }
       ]
@@ -668,7 +668,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Fulcrum's Math Notes}"
         }
       ]
@@ -684,7 +684,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{GUI inductive editor}"
         }
       ]
@@ -700,7 +700,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Generate UUID}"
         }
       ]
@@ -718,7 +718,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Generate UUID Button}"
         }
       ]
@@ -734,7 +734,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{§I.}"
         }
       ]
@@ -752,7 +752,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Indent Row Toolbar Button}"
         }
       ]
@@ -768,7 +768,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Infoview}"
         }
       ]
@@ -786,7 +786,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Infoview (Picker)}"
         }
       ]
@@ -804,7 +804,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Initialize Entry Kinds}"
         }
       ]
@@ -820,7 +820,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{+ Initialize Entry Kinds}"
         }
       ]
@@ -838,7 +838,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Initialize Macro Kinds}"
         }
       ]
@@ -854,7 +854,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{<KindName> -- <Title>}"
         }
       ]
@@ -872,7 +872,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Libraries Section}"
         }
       ]
@@ -888,7 +888,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Library}"
         }
       ]
@@ -904,7 +904,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{MacroKind}"
         }
       ]
@@ -920,7 +920,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Macro Kind}"
         }
       ]
@@ -938,7 +938,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Move-Up Row Toolbar Button}"
         }
       ]
@@ -954,7 +954,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{New macro package}"
         }
       ]
@@ -972,7 +972,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Outdent Row Toolbar Button}"
         }
       ]
@@ -990,7 +990,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Outline Section}"
         }
       ]
@@ -1008,7 +1008,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Package Panel}"
         }
       ]
@@ -1024,7 +1024,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Panel}"
         }
       ]
@@ -1040,7 +1040,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Regenerate UUID}"
         }
       ]
@@ -1058,7 +1058,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Relationship Graph}"
         }
       ]
@@ -1074,7 +1074,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNL Macro}"
         }
       ]
@@ -1090,7 +1090,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNL Macros}"
         }
       ]
@@ -1108,7 +1108,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNL Macros Section}"
         }
       ]
@@ -1124,7 +1124,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNL: Open Dashboard}"
         }
       ]
@@ -1140,7 +1140,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNL: Open SNoogL (Search)}"
         }
       ]
@@ -1156,7 +1156,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNL — <entry title>}"
         }
       ]
@@ -1174,7 +1174,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SNoogL Search}"
         }
       ]
@@ -1190,7 +1190,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Section}"
         }
       ]
@@ -1206,7 +1206,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{SnlSyntaxTree}"
         }
       ]
@@ -1222,7 +1222,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{+}"
         }
       ]
@@ -1238,7 +1238,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{.1}"
         }
       ]
@@ -1254,7 +1254,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{.SNL\\_Doc/}"
         }
       ]
@@ -1270,7 +1270,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{.SNL\\_Doc/libraries/}"
         }
       ]
@@ -1286,7 +1286,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{.SNL\\_Doc/relationships.json}"
         }
       ]
@@ -1302,7 +1302,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{\\$}"
         }
       ]
@@ -1318,7 +1318,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{\\%}"
         }
       ]
@@ -1334,7 +1334,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{[]}"
         }
       ]
@@ -1350,7 +1350,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{@}"
         }
       ]
@@ -1366,7 +1366,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{()}"
         }
       ]
@@ -1382,7 +1382,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Text Input}"
         }
       ]
@@ -1398,7 +1398,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{active toggle}"
         }
       ]
@@ -1414,7 +1414,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{config.json}"
         }
       ]
@@ -1430,7 +1430,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{counters.json}"
         }
       ]
@@ -1446,7 +1446,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{create*}"
         }
       ]
@@ -1462,7 +1462,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{crypto.randomUUID()}"
         }
       ]
@@ -1478,7 +1478,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{defaultCounterName}"
         }
       ]
@@ -1494,7 +1494,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{delete*}"
         }
       ]
@@ -1510,7 +1510,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{dependency relationship}"
         }
       ]
@@ -1526,7 +1526,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{duplicate}"
         }
       ]
@@ -1542,7 +1542,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{edit*}"
         }
       ]
@@ -1558,7 +1558,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{entries.json}"
         }
       ]
@@ -1574,7 +1574,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{exists}"
         }
       ]
@@ -1590,7 +1590,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{formatNumbering(template, k)}"
         }
       ]
@@ -1606,7 +1606,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{graph.json}"
         }
       ]
@@ -1622,7 +1622,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{(i)}"
         }
       ]
@@ -1638,7 +1638,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}"
         }
       ]
@@ -1654,7 +1654,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{init}"
         }
       ]
@@ -1670,7 +1670,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{initEntryKinds}"
         }
       ]
@@ -1686,7 +1686,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{initMacroKinds}"
         }
       ]
@@ -1702,7 +1702,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{libraries/}"
         }
       ]
@@ -1718,7 +1718,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{libraries/<slug>/}"
         }
       ]
@@ -1734,7 +1734,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{meta.json}"
         }
       ]
@@ -1750,7 +1750,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{openDashboard}"
         }
       ]
@@ -1766,7 +1766,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{openEntryInfoview}"
         }
       ]
@@ -1782,7 +1782,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{openInfoview}"
         }
       ]
@@ -1798,7 +1798,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{openInfoviewGraph[ForLibrary]}"
         }
       ]
@@ -1814,7 +1814,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{openMacroPackage}"
         }
       ]
@@ -1830,7 +1830,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{openSnoogL}"
         }
       ]
@@ -1846,7 +1846,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{package picker}"
         }
       ]
@@ -1862,7 +1862,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{refreshInfoview}"
         }
       ]
@@ -1878,7 +1878,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{regenerateDependencies}"
         }
       ]
@@ -1894,7 +1894,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{revealEntryPointer}"
         }
       ]
@@ -1910,7 +1910,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{row toolbar}"
         }
       ]
@@ -1926,7 +1926,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{shared entry pool}"
         }
       ]
@@ -1942,7 +1942,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snl-native}"
         }
       ]
@@ -1958,7 +1958,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.*}"
         }
       ]
@@ -1976,7 +1976,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.init}"
         }
       ]
@@ -1994,7 +1994,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.openDashboard}"
         }
       ]
@@ -2012,7 +2012,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.openEntryInfoview}"
         }
       ]
@@ -2028,7 +2028,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.openEntryInfoview <entryId>}"
         }
       ]
@@ -2044,7 +2044,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.openInfoviewGraph}"
         }
       ]
@@ -2060,7 +2060,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.openInfoviewGraphForLibrary}"
         }
       ]
@@ -2078,7 +2078,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{snlDoc.regenerateDependencies}"
         }
       ]
@@ -2094,7 +2094,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{term\\_macros/}"
         }
       ]
@@ -2110,7 +2110,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{term\\_macros/*.json}"
         }
       ]
@@ -2126,7 +2126,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{term\\_macros/<slug>.json}"
         }
       ]
@@ -2142,7 +2142,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{tree-view editor}"
         }
       ]
@@ -2158,7 +2158,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{when: false}"
         }
       ]
@@ -2179,7 +2179,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Ctrl+click}"
         }
       ]
@@ -2197,7 +2197,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Enter}"
         }
       ]
@@ -2215,7 +2215,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{Space}"
         }
       ]
@@ -2233,7 +2233,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{config.json\\#entry\\_kinds}"
         }
       ]
@@ -2251,7 +2251,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{config.json\\#macro\\_kinds}"
         }
       ]
@@ -2269,7 +2269,7 @@
       "styles": [
         {
           "tag": "default",
-          "mode": "text",
+          "mode": "formula_inline",
           "template": "\\texttt{package.json\\#contributes.commands}"
         }
       ]
