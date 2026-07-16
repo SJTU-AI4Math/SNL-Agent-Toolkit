@@ -32,7 +32,7 @@ import type {
   MacroPackageEntryWithoutName,
   MacroPackageFile,
   MacroPackageStyle,
-} from '../schema/index.ts';
+} from './snl-doc-schema.ts';
 import type { LintIssue, LintReport } from './lint-report.ts';
 import {
   checkKatex,

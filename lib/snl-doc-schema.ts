@@ -9,7 +9,8 @@
  * interfaces, with all `vscode`-dependent runtime code stripped. The
  * toolkit's CLIs read/write `.SNL_Doc/` using these shapes.
  *
- * Sync procedure: see ../schema/README.md.
+ * Agent-facing schema reference and sync procedure:
+ *   ../Skills/Basics/Json_Schema.md
  *
  * ---------------------------------------------------------------------------
  * On-disk layout (mirrored from snlDoc.ts jsdoc):
@@ -18,10 +19,12 @@
  *   ├── config.json            { version, entry_kinds, macro_kinds,
  *   │                            active_macro_packages }
  *   ├── entries.json           shared entry pool — bare JSON array of EntryData
+ *   ├── relationships.json    pool-wide semantic relationships (optional)
  *   ├── term_macros/<pkg>.json macro packages (one file per package)
  *   └── libraries/<slug>/
  *       ├── meta.json          { title, description? }
- *       └── graph.json         { nodes: GraphNode[], relationships: GraphRelationship[] }
+ *       ├── graph.json         { nodes: GraphNode[], relationships: GraphRelationship[] }
+ *       └── counters.json      { counters: CounterNode[] }
  * ---------------------------------------------------------------------------
  */
 
@@ -37,16 +40,17 @@
  * - `name`: display name.
  * - `coloring.stroke`: any CSS colour; `''` / `'auto'` → theme foreground.
  * - `coloring.background`: `''` / `'transparent'` / `'none'` → transparent.
- * - `numbering`: single-level template consumed by libraryGraph.formatNumbering
- *   ('1' / 'A' / 'a' / 'I' / 'i' + literal prefix/suffix, e.g. '.1', '(A)').
- *   Multi-level templates from v0.0.3 are read as first-slot-wins.
+ * - `defaultCounterName`: name of a Library-scoped counter.
+ * - `numbering`: legacy compatibility field; current writers use counters.json.
  * - `style`: free-text style hint (currently unused by the renderer).
  */
 export interface EntryKind {
   id: string;
   name: string;
   coloring: { stroke: string; background: string };
-  numbering: string;
+  defaultCounterName?: string;
+  /** Legacy pre-counter-tree compatibility field. */
+  numbering?: string;
   style: string;
 }
 

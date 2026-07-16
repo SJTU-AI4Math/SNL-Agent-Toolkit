@@ -1,57 +1,50 @@
 # SNL Agent Toolkit
 
-CLI + agent-facing docs for authoring [SNL](https://github.com/SJTU-AI-Verse/SNL-Basics) documents inside a
-[`SNL-Doc-Extension`](https://github.com/SJTU-AI4Math/SNL-Doc-Extension) workspace, **without opening the IDE**.
+CLI and agent-facing Skills for working with [SNL](https://github.com/SJTU-AI4Math/SNL-Basics) documents inside an [`SNL-Doc-Extension`](https://github.com/SJTU-AI4Math/SNL-Doc-Extension) workspace without opening the IDE.
 
-Target consumer: a coding agent (Claude Code / Cursor / DeepSeek / whatever) running on a machine that has
-the project's `.SNL_Doc/` folder checked out but does NOT have the VS Code extension installed. Instead of
-firing UI commands, the agent uses this toolkit's CLIs to search, validate, and commit entries / macro
-packages / library graphs directly.
-
-**Status:** scaffolding. No CLIs implemented yet; see `AGENT.md` for the target UX and roadmap.
-
----
+Agents should begin with [`AGENT.md`](AGENT.md), then load the task-specific documents under [`Skills/`](Skills/README.md).
 
 ## Layout
 
-```
+```text
 SNL-Agent-Toolkit/
-├── AGENT.md                # top-level agent-facing manual (read first)
-├── docs/
-│   └── snl-syntax-primer.md   # short reference for the SNL surface syntax
-├── schema/                 # vendored TS interfaces mirroring the extension's on-disk shapes
-│   └── snlDoc.ts
-├── bin/                    # CLIs (Node ESM, single-file each)
-│   └── (empty for now)
-├── examples/               # few-shot payloads referenced by AGENT.md
-│   └── (empty for now)
+├── AGENT.md                   # short routing entry point
+├── Skills/
+│   ├── Basics/                # SNL Macro, SNL DSL, Markdown JSON schema
+│   ├── HowToRead/             # inspect an existing SNL Library
+│   ├── HowToBuild/            # large-scale NL → SNL construction
+│   └── HowToMaintain/         # modify/optimize existing Libraries and Toolkit
+├── bin/                       # executable CLI shims and implementations
+├── lib/                       # shared runtime logic and compatibility types
+├── CLI_Scripts/               # executable CLI validation/test scripts
+├── examples/                  # few-shot payloads
 └── package.json
 ```
 
-Vendoring rationale: the shared types live in `SNL-Doc-Extension/src/snlDoc.ts` and `libraryGraph.ts`.
-Rather than depending on the extension repo, we keep a **frozen snapshot** in `schema/` with the source
-commit noted in `schema/README.md`. Schema drift is a manual sync until we extract `@snl-doc/schema`.
-
 ## Install
-
-Not published yet. For now:
 
 ```bash
 git clone git@github.com:SJTU-AI4Math/SNL-Agent-Toolkit.git
 cd SNL-Agent-Toolkit
 npm install
-# invoke CLIs directly, e.g.
-# node bin/snl-search-macros.mjs --root /path/to/project 'ricci'
+npm test
 ```
 
-Once stable, the plan is to publish as `@snl-doc/agent-toolkit` on npm and let agents pull via `npx`.
+Invoke a CLI directly, for example:
 
-## Related repos
+```bash
+node bin/snl-lint-package.mjs --root /path/to/project
+```
 
-- [`SNL-Basics`](https://github.com/SJTU-AI4Math/SNL_Basics) — SNL parser / renderer library.
-- [`SNL-Doc-Extension`](https://github.com/SJTU-AI4Math/SNL-Doc-Extension) — VS Code extension that owns
-  the `.SNL_Doc/` on-disk schema. **This toolkit's schema/ folder is a vendored snapshot of that repo.**
+## Schema ownership
+
+The authoritative on-disk schema implementation belongs to `SNL-Doc-Extension`. The agent-readable Markdown reference is [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md); Toolkit-only compatibility types live in `lib/snl-doc-schema.ts`.
+
+## Related repositories
+
+- [`SNL-Basics`](https://github.com/SJTU-AI4Math/SNL-Basics) — parser and renderer.
+- [`SNL-Doc-Extension`](https://github.com/SJTU-AI4Math/SNL-Doc-Extension) — VS Code extension and authoritative `.SNL_Doc` storage behavior.
 
 ## License
 
-MIT (TBD — will match SNL-Doc-Extension once that repo picks one).
+MIT (TBD — will match SNL-Doc-Extension once that repository picks one).

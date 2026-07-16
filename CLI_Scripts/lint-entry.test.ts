@@ -1,5 +1,5 @@
 /**
- * Smoke tests for lintEntry. Runs under `node --test tests/`.
+ * Smoke tests for lintEntry. Runs under `node --test CLI_Scripts/`.
  *
  * These fixtures are inline so the test doesn't depend on any on-disk
  * .SNL_Doc/ layout. Keep them small — each named case pins down one
@@ -13,7 +13,7 @@ import type {
   EntryData,
   EntryKind,
   MacroPackageEntry,
-} from '../schema/index.ts';
+} from '../lib/snl-doc-schema.ts';
 
 const ENTRY_KINDS: EntryKind[] = [
   {

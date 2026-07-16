@@ -16,7 +16,7 @@ import { checkEntryPreview } from '../lib/entry-preview-katex.ts';
 import type {
   EntryData,
   MacroPackageEntry,
-} from '../schema/index.ts';
+} from '../lib/snl-doc-schema.ts';
 
 // A tiny macro pool that mirrors the API-doc macros involved in the
 // SnlMacroStyle.mode field.

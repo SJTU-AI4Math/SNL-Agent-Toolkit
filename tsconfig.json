@@ -14,9 +14,8 @@
   },
   "include": [
     "lib/**/*.ts",
-    "schema/**/*.ts",
     "bin/**/*.ts",
-    "tests/**/*.ts"
+    "CLI_Scripts/**/*.ts"
   ],
   "exclude": [
     "node_modules",

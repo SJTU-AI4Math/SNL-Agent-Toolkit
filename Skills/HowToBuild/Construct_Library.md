@@ -1,6 +1,8 @@
 # Construct a Library (库建构)
 
-> Use this to build `meta.json`, `graph.json`, and the branch tree.
+> Use this to build `meta.json`, `graph.json`, `counters.json`, and the branch tree.
+
+Read [`../Basics/Json_Schema.md`](../Basics/Json_Schema.md) before editing the on-disk files.
 
 ### Phase 4 — Library Construction (库建构)
 
@@ -22,6 +24,9 @@ source of truth for the library's structure; there is no separate
     (unset = placeholder for a slot you'll fill later).
   - `relationships[]` — each `{ from, to, label: 'branch' }`. A branch
     from A → B means "B is a child of A" for numbering / rendering.
+- `libraries/<slug>/counters.json` — Library-scoped counter tree. Entry
+  occurrences may select a counter by `props.counterId`; otherwise the
+  Entry Kind's `defaultCounterName` is resolved against this tree.
 
 **Tools.**
 - ⏳ `snl-outline-to-graph` (planned, not yet designed) — takes a
@@ -37,10 +42,13 @@ source of truth for the library's structure; there is no separate
 - **Placeholder nodes are legitimate.** An entry that isn't drafted
   yet can still occupy a slot in the tree — set `props.entryId`
   unset and give the node a memorable local `id`. Fill in later.
-- **Non-`branch` relationships survive round-trip but are ignored.**
-  If you want to record "Theorem X depends on Lemma Y" as data,
-  use a custom label (`depends_on`, `uses`) — the linter will warn
-  but not delete it. Future phases may consume these.
+- **Counter names should be unique within a Library.** Name lookup uses the
+  first depth-first match, so duplicates are ambiguous even when ids differ.
+- **Occurrence overrides are local.** A `counterId` on a graph node changes
+  numbering for that Library occurrence; it does not mutate the Entry Kind.
+- **Semantic relationships belong at the root.** Record `depends_on`,
+  `generalizes`, `proves`, and similar Entry-to-Entry semantics in
+  `.SNL_Doc/relationships.json`, not as custom edges in the Library outline.
 - **One library, one narrative.** A library is a curated reading
   path over a subset of the pool. If you find yourself building a
   library that references half the pool with no clear structure,

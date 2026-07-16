@@ -55,7 +55,7 @@ import {
   type LintReport,
 } from '../../lib/lint-report.ts';
 import { checkEntryPreview } from '../../lib/entry-preview-katex.ts';
-import type { EntryData } from '../../schema/index.ts';
+import type { EntryData } from '../../lib/snl-doc-schema.ts';
 
 const STRICT_FLAG: FlagSpec = {
   name: 'strict-macros',

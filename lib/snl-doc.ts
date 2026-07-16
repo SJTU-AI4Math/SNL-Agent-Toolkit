@@ -19,7 +19,7 @@ import type {
   MacroPackageEntryWithoutName,
   MacroPackageFile,
   SnlConfig,
-} from '../schema/index.ts';
+} from './snl-doc-schema.ts';
 
 // ---------------------------------------------------------------------------
 // Path helpers
