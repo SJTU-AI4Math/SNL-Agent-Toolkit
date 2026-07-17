@@ -4,7 +4,7 @@
 
 ## Principle
 
-`AGENT.md` is navigation, not a manual. Concrete knowledge and workflows live in [`Skills/`](Skills/).
+`AGENT.md` is navigation, not a manual. Concrete knowledge and workflows live in [`Skills/`](Skills/) folder.
 
 ## Start
 
@@ -12,6 +12,12 @@
 2. Load the relevant foundational references from [`Skills/Basics/`](Skills/Basics/README.md).
 3. Load the matching HowTo guide.
 4. Follow that guide's validation steps before committing.
+
+## Rules (IMPORTANT)
+
+1. Always read json schema in [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md) before editing json files.
+2. Always refer to syntax guide in [`Skills/Basics/SNL_Macro.md`](Skills/Basics/SNL_Macro.md) and [`Skills/Basics/SNL_DSL.md`](Skills/Basics/SNL_DSL.md) when editing SNL Macros and SNL DSL strings.
+3. Always run linting tools in [`CLI_Scripts/`](CLI_Scripts/) to check for data validity before committing. If any data is corrupted, fix it.
 
 ## Routing
 

@@ -1,13 +1,33 @@
-# Design terminology (术语化)
+# Terminologization (术语化)
 
-> Use this during large-scale NL → SNL construction to decide which concepts exist and who owns them.
+During *Terminologization*, extract terms from markdown natural language contents and create Term Macros in `.SNL_Doc/term_macros/*.json`. 
 
-Read [`../Basics/SNL_Macro.md`](../Basics/SNL_Macro.md) and [`../Basics/Json_Schema.md`](../Basics/Json_Schema.md) before starting. Those documents own macro syntax and field-level schema; this guide owns the build workflow.
+It is strongly advised to assign the task to subagents, as designing terms requires deliberate thinking.
+
+## Terminology for Terminologization
+
+1. A **Term (术语)** is a domain-specific signifier, signifying a specific semantic concept.
+
+2. An **Atomic Term (原子术语)** is a term without arguments. An **Abstract Term (抽象术语)** is a term with finite or dynamic arity. The process of combining abstract terms and parameters to form a concrete term is called **Term Application (术语应用)**. 
+
+    *Terminology above is borrowed from lambda calculus.*
+
+3. We use **Term Macros (术语宏)** to denote abstract terms, where arguments are represented by `#N` placeholders.
+
+4. Multiple different terms can signify the same semantic concept, a phenomenon called **Aliasing (别名)**. Therefore, a term macro contain multiple **Macro Styles (宏样式)**.
+
+**Examples**
+
+1. In Mathematics, math operators and meta-math expressions are both considered **Terms** in SNL (This is important because meta-math expressions are not considered **Terms** in formal languages like Lean 4):
+    * In math expression $A \cup B$, `#0 ∪ #1` is a math operator. It is an **Abstract Term**, the corresponding **Term Macro** is $\LaTeX$ formula macro `#0 \cup #1`.
+    * In math expression "Let $P$ be a predicate, define $\{x\mid P(x)\}$ to be ...", `Let #0, define #1 to be #2` describes the process of defining a mathematical concept, this process is not a math operator but a meta-math expression. Yet it is still a semantically specific concept and should be considered an **Abstract Term** in SNL. The corresponding **Term Macro** is text macro `Let #0, define #1 to be #2`.
+
+2. In code documentations, a variety of concepts can be considered **Terms**: 
+    * All declared variables, functions, classes, interfaces, etc. can be considered **Terms**. 
 
 ## Purpose
 
-Establish the terminology system before writing Entry bodies:
-
+Establish the terminology system before writing Entry bodies: 
 - Entry Kinds for semantic paragraph roles;
 - Macro Kinds for semantic/rendering categories;
 - term macros for reusable named concepts;
@@ -17,7 +37,7 @@ Every later build step depends on these identities.
 
 ## Inputs
 
-- the construction blueprint from [`Draft_Document.md`](Draft_Document.md);
+- the planning blueprint from the previous drafting stage;
 - existing `config.json` catalogs;
 - every active package in `term_macros/`;
 - domain vocabulary extracted from the source material.
@@ -36,7 +56,9 @@ Every later build step depends on these identities.
 
 Search active packages before inventing a name. Record collisions, synonyms, and concepts whose existing source points at the wrong Entry.
 
-### 2. Extract concepts from the blueprint
+### 2. Extract terms from the blueprint
+
+This section introduces how to detect and extract terms from natural language contents, after the completion of the drafting stage.
 
 For each planned Entry, list named concepts, operations, relations, controls, file paths, commands, or notation that should remain queryable. Do not write prose yet.
 
