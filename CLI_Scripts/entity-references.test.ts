@@ -285,6 +285,50 @@ describe('renameEntityId', () => {
     assert.equal((await findEntityReferences(root, 'entry', 'entry.new')).length, 0);
   });
 
+  it('rejects a symlinked .SNL_Doc workspace boundary', async () => {
+    const root = await fixture();
+    const doc = path.join(root, '.SNL_Doc');
+    const realDoc = path.join(root, 'external-doc');
+    await fs.rename(doc, realDoc);
+    await fs.symlink(realDoc, doc);
+    const before = await fs.readFile(path.join(realDoc, 'entries.json'), 'utf8');
+    await assert.rejects(
+      renameEntityId(root, 'entry', 'entry.old', 'entry.new'),
+      /must be a real directory, not a symlink/,
+    );
+    assert.equal(await fs.readFile(path.join(realDoc, 'entries.json'), 'utf8'), before);
+  });
+
+  it('rejects symlinked macro package files instead of silently skipping them', async () => {
+    const root = await fixture();
+    const external = path.join(root, 'external-macro.json');
+    await fs.writeFile(
+      external,
+      JSON.stringify({ version: '1', name: 'x', macros: {} }) + '\n',
+    );
+    await fs.symlink(
+      external,
+      path.join(root, '.SNL_Doc', 'term_macros', 'linked.json'),
+    );
+    await assert.rejects(
+      findEntityReferences(root, 'entry', 'entry.old'),
+      /linked\.json must not be a symlink/,
+    );
+  });
+
+  it('rejects symlinked schema directories', async () => {
+    const root = await fixture();
+    const doc = path.join(root, '.SNL_Doc');
+    const macros = path.join(doc, 'term_macros');
+    const realMacros = path.join(doc, 'term-macros-real');
+    await fs.rename(macros, realMacros);
+    await fs.symlink(realMacros, macros);
+    await assert.rejects(
+      findEntityReferences(root, 'macro', 'Macro.old'),
+      /term_macros must be a real directory, not a symlink/,
+    );
+  });
+
   it('rejects symlinked schema files', async () => {
     const root = await fixture();
     const doc = path.join(root, '.SNL_Doc');

@@ -168,12 +168,16 @@ Safety rules:
   remain traceable and renameable;
 - every schema-owned JSON file and every non-empty SNL source must parse before
   any write; malformed reference fields fail closed instead of being skipped;
-- JSON changes are source-range edits to the owning string token/property key,
-  so opaque numbers, escaping, whitespace, key order, CRLFs, and unknown fields
-  remain byte-for-byte unchanged;
-- schema files must be regular non-symlink files; their inode and content are
-  checked again immediately before installation, and original permission modes
-  are preserved;
+- JSON changes are source-range edits to the owning string token/property key;
+  every unedited token—including opaque numbers, unknown fields, whitespace,
+  key order, and CRLFs—remains byte-for-byte unchanged. The deliberately edited
+  identity/SNL string token is re-encoded as valid JSON and may normalize its
+  own prior escape spelling;
+- `.SNL_Doc`, `term_macros`, `libraries`, Library slug directories, and schema
+  files must stay within the canonical workspace and may not be symlinks;
+  reads use `O_NOFOLLOW`, temporary files use exclusive creation, parent
+  directories plus inode/content are checked again before installation, and
+  original permission modes are preserved;
 - writes use same-directory temporary files and restore already-installed
   originals if a later replacement fails. This is rollback-based multi-file
   safety, **not crash-atomic transaction semantics**: process/machine failure

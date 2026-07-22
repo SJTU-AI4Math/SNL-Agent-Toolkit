@@ -9,7 +9,7 @@ import {
   type Node as JsonNode,
   type ParseError,
 } from 'jsonc-parser';
-import { assertSnlDoc, snlDocRoot } from './snl-doc.ts';
+import { snlDocRoot } from './snl-doc.ts';
 import { parseSnlSyntaxTree } from './snl-parser.ts';
 
 export type EntityType = 'entry' | 'macro';
@@ -43,6 +43,7 @@ interface LoadedJson {
   mode: number;
   device: number;
   inode: number;
+  docRoot: string;
 }
 
 interface TextEdit {
@@ -71,9 +72,9 @@ export async function findEntityReferences(
   entityType: EntityType,
   id: string,
 ): Promise<EntityOccurrence[]> {
-  await assertSnlDoc(workspaceRoot);
+  const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
   validateNonEmptyIdentity(id);
-  const files = await loadWorkspaceJson(workspaceRoot);
+  const files = await loadWorkspaceJson(canonicalWorkspace);
   return collectOccurrences(files, entityType, id).sort(compareOccurrence);
 }
 
@@ -94,7 +95,7 @@ export async function renameEntityId(
   newId: string,
   options: { dryRun?: boolean; beforeInstall?: () => void | Promise<void> } = {},
 ): Promise<RenamePlan> {
-  await assertSnlDoc(workspaceRoot);
+  const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
   validateNonEmptyIdentity(oldId);
   validateNonEmptyIdentity(newId);
   if (entityType === 'macro' && /[@#$%\s()[\]{}]/u.test(newId)) {
@@ -104,7 +105,7 @@ export async function renameEntityId(
   }
   if (oldId === newId) throw new Error('Old and new ids are identical.');
 
-  const files = await loadWorkspaceJson(workspaceRoot);
+  const files = await loadWorkspaceJson(canonicalWorkspace);
   const occurrences = collectOccurrences(files, entityType, oldId).sort(compareOccurrence);
   const definitions = occurrences.filter((o) => o.role === 'definition');
   if (definitions.length === 0) {
@@ -174,10 +175,11 @@ export async function renameEntityId(
     const installed: typeof replacements = [];
     try {
       for (const file of replacements) {
+        await assertCanonicalDirectory(path.dirname(file.absPath), file.docRoot);
         await fs.rename(file.temp, file.absPath);
         installed.push(file);
       }
-      const verifiedFiles = await loadWorkspaceJson(workspaceRoot);
+      const verifiedFiles = await loadWorkspaceJson(canonicalWorkspace);
       const stale = collectOccurrences(verifiedFiles, entityType, oldId);
       const current = collectOccurrences(verifiedFiles, entityType, newId);
       const currentDefinitions = current.filter((o) => o.role === 'definition');
@@ -187,7 +189,7 @@ export async function renameEntityId(
         );
       }
     } catch (error) {
-      await Promise.all(installed.map((f) => fs.writeFile(f.absPath, f.raw, { encoding: 'utf8', mode: f.mode })));
+      await Promise.all(installed.map((file) => restoreOriginal(file)));
       throw error;
     }
   } finally {
@@ -504,14 +506,62 @@ function tokenizeSnl(source: string): SnlToken[] {
   return tokens;
 }
 
+async function validateWorkspaceBoundary(workspaceRoot: string): Promise<string> {
+  const requestedRoot = path.resolve(workspaceRoot);
+  let canonicalRoot: string;
+  try {
+    canonicalRoot = await fs.realpath(requestedRoot);
+  } catch {
+    throw new Error(`Workspace root does not exist: ${requestedRoot}`);
+  }
+  const rootStat = await fs.lstat(canonicalRoot);
+  if (!rootStat.isDirectory()) throw new Error(`Workspace root is not a directory: ${canonicalRoot}`);
+
+  const requestedDoc = path.join(requestedRoot, '.SNL_Doc');
+  let docStat;
+  try {
+    docStat = await fs.lstat(requestedDoc);
+  } catch {
+    throw new Error(
+      `No .SNL_Doc/ folder at ${requestedRoot}. Point --root at the workspace that contains .SNL_Doc/.`,
+    );
+  }
+  if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
+    throw new Error(`${requestedDoc} must be a real directory, not a symlink.`);
+  }
+  const canonicalDoc = await fs.realpath(requestedDoc);
+  const expectedDoc = path.join(canonicalRoot, '.SNL_Doc');
+  if (canonicalDoc !== expectedDoc) {
+    throw new Error(`${requestedDoc} escapes the canonical workspace boundary.`);
+  }
+  return canonicalRoot;
+}
+
+async function assertCanonicalDirectory(dir: string, docRoot: string): Promise<void> {
+  const stat = await fs.lstat(dir);
+  if (!stat.isDirectory() || stat.isSymbolicLink()) {
+    throw new Error(`${dir} must be a real directory, not a symlink.`);
+  }
+  const real = await fs.realpath(dir);
+  const relative = path.relative(docRoot, real);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) {
+    throw new Error(`${dir} escapes the canonical .SNL_Doc boundary.`);
+  }
+}
+
 async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
   const root = snlDocRoot(workspaceRoot);
+  await assertCanonicalDirectory(root, root);
   const candidates = ['config.json', 'entries.json', 'relationships.json'];
 
   const macroDir = path.join(root, 'term_macros');
   try {
+    await assertCanonicalDirectory(macroDir, root);
     const macroFiles = await fs.readdir(macroDir, { withFileTypes: true });
     for (const entry of macroFiles) {
+      if (entry.name.endsWith('.json') && entry.isSymbolicLink()) {
+        throw new Error(`${path.join(macroDir, entry.name)} must not be a symlink.`);
+      }
       if (entry.isFile() && entry.name.endsWith('.json')) {
         candidates.push(path.join('term_macros', entry.name));
       }
@@ -522,9 +572,14 @@ async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
 
   const libraryRoot = path.join(root, 'libraries');
   try {
+    await assertCanonicalDirectory(libraryRoot, root);
     const libraries = await fs.readdir(libraryRoot, { withFileTypes: true });
     for (const entry of libraries) {
+      if (!entry.name.startsWith('.') && entry.isSymbolicLink()) {
+        throw new Error(`${path.join(libraryRoot, entry.name)} must not be a symlink.`);
+      }
       if (entry.isDirectory() && !entry.name.startsWith('.')) {
+        await assertCanonicalDirectory(path.join(libraryRoot, entry.name), root);
         candidates.push(path.join('libraries', entry.name, 'graph.json'));
       }
     }
@@ -536,6 +591,7 @@ async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
   const loaded: LoadedJson[] = [];
   for (const relPath of unique) {
     const absPath = path.join(root, relPath);
+    await assertCanonicalDirectory(path.dirname(absPath), root);
     let raw: string;
     let stat;
     let handle;
@@ -579,6 +635,7 @@ async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
       mode: stat.mode,
       device: stat.dev,
       inode: stat.ino,
+      docRoot: root,
     });
   }
   return loaded;
@@ -675,15 +732,41 @@ function isRecord(value: unknown): value is Record<string, any> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-async function assertUnchangedRegularFile(
-  file: Pick<LoadedJson, 'absPath' | 'raw' | 'device' | 'inode'>,
-): Promise<void> {
-  const stat = await fs.lstat(file.absPath);
-  if (!stat.isFile() || stat.isSymbolicLink() || stat.dev !== file.device || stat.ino !== file.inode) {
-    throw new Error(`${file.absPath} changed identity or became a symlink during rename planning.`);
+async function restoreOriginal(file: LoadedJson): Promise<void> {
+  await assertCanonicalDirectory(path.dirname(file.absPath), file.docRoot);
+  const restoreTemp = `${file.absPath}.snl-restore-${process.pid}-${Math.random().toString(16).slice(2)}.tmp`;
+  try {
+    await fs.writeFile(restoreTemp, file.raw, {
+      encoding: 'utf8', mode: file.mode, flag: 'wx',
+    });
+    await fs.chmod(restoreTemp, file.mode);
+    await fs.rename(restoreTemp, file.absPath);
+  } finally {
+    await fs.rm(restoreTemp, { force: true });
   }
-  if ((await fs.readFile(file.absPath, 'utf8')) !== file.raw) {
-    throw new Error(`${file.absPath} changed during rename planning; refusing to overwrite it.`);
+}
+
+async function assertUnchangedRegularFile(
+  file: Pick<LoadedJson, 'absPath' | 'raw' | 'device' | 'inode' | 'docRoot'>,
+): Promise<void> {
+  await assertCanonicalDirectory(path.dirname(file.absPath), file.docRoot);
+  let handle;
+  try {
+    handle = await fs.open(file.absPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || stat.dev !== file.device || stat.ino !== file.inode) {
+      throw new Error(`${file.absPath} changed identity during rename planning.`);
+    }
+    if ((await handle.readFile('utf8')) !== file.raw) {
+      throw new Error(`${file.absPath} changed during rename planning; refusing to overwrite it.`);
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ELOOP') {
+      throw new Error(`${file.absPath} became a symlink during rename planning.`);
+    }
+    throw error;
+  } finally {
+    if (handle) await handle.close();
   }
 }
 
