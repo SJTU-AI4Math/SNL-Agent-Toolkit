@@ -17,16 +17,18 @@ describe('lintPackage', () => {
           description: 'Real numbers',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
+          tags: [],
           styles: [
-            { tag: 'default', mode: 'formula_inline', template: '\\mathbb{R}' },
+            { style_name: 'default', mode: 'formula_inline', template: '\\mathbb{R}', tags: [] },
           ],
         },
         frac: {
           description: 'fraction',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
+          tags: [],
           styles: [
-            { tag: 'default', mode: 'formula_inline', template: '\\frac{#0}{#1}' },
+            { style_name: 'default', mode: 'formula_inline', template: '\\frac{#0}{#1}', tags: [] },
           ],
         },
       },
@@ -35,7 +37,7 @@ describe('lintPackage', () => {
     assert.deepEqual(r.issues, []);
   });
 
-  it('accepts a well-formed dynamic-arity package (empty template, delimiters carry the render)', () => {
+  it('accepts a well-formed dynamic-arity package (#* and surrounding template text)', () => {
     const pkg = {
       version: '0.4.0',
       name: 'blocks',
@@ -44,14 +46,15 @@ describe('lintPackage', () => {
           description: 'ul',
           source: { entries: [], urls: [] },
           dynamic_arity: true,
+          tags: [],
           styles: [
             {
-              tag: 'default',
+              style_name: 'default',
               mode: 'block',
-              template: '',
-              variadic_left: '<ul>',
-              variadic_join: '',
-              variadic_right: '</ul>',
+              template: '<ul>#*</ul>',
+              separator: '',
+              block_template_name: 'list',
+              tags: [],
             },
           ],
         },
@@ -91,7 +94,7 @@ describe('lintPackage', () => {
     assert.ok(c.includes('macro.missing-styles'));
   });
 
-  it('errors on duplicate style tag within a macro', () => {
+  it('errors on duplicate style name within a macro', () => {
     const pkg = {
       version: '0.4.0',
       name: 'x',
@@ -101,14 +104,14 @@ describe('lintPackage', () => {
           source: { entries: [], urls: [] },
           dynamic_arity: false,
           styles: [
-            { tag: 'default', mode: 'formula_inline', template: 'a' },
-            { tag: 'default', mode: 'text', template: 'b' },
+            { style_name: 'default', mode: 'formula_inline', template: 'a' },
+            { style_name: 'default', mode: 'text', template: 'b' },
           ],
         },
       },
     };
     const r = lintPackage(pkg);
-    assert.ok(codes(r).includes('style.duplicate-tag'));
+    assert.ok(codes(r).includes('style.duplicate-name'));
   });
 
   it('errors on unknown mode', () => {
@@ -120,7 +123,7 @@ describe('lintPackage', () => {
           description: 'x',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
-          styles: [{ tag: 'default', mode: 'display', template: 'a' }],
+          styles: [{ style_name: 'default', mode: 'display', template: 'a' }],
         },
       },
     };
@@ -137,7 +140,7 @@ describe('lintPackage', () => {
           description: 'x',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
-          styles: [{ tag: 'default', mode: 'formula_inline', template: '(#*)' }],
+          styles: [{ style_name: 'default', mode: 'formula_inline', template: '(#*)' }],
         },
       },
     };
@@ -145,7 +148,7 @@ describe('lintPackage', () => {
     assert.ok(codes(r).includes('style.variadic-without-dynamic-arity'));
   });
 
-  it('warns on dynamic macro whose template is non-empty (template is ignored at render)', () => {
+  it('requires #* in every dynamic macro style template', () => {
     const pkg = {
       version: '0.4.0',
       name: 'x',
@@ -155,17 +158,17 @@ describe('lintPackage', () => {
           source: { entries: [], urls: [] },
           dynamic_arity: true,
           styles: [
-            { tag: 'default', mode: 'formula_inline', template: '\\Sigma' },
+            { style_name: 'default', mode: 'formula_inline', template: '\\Sigma' },
           ],
         },
       },
     };
     const r = lintPackage(pkg);
     const issue = r.issues.find(
-      (i) => i.code === 'style.dynamic-arity-template-ignored',
+      (i) => i.code === 'style.dynamic-arity-missing-variadic',
     );
     assert.ok(issue);
-    assert.equal(issue!.severity, 'warning');
+    assert.equal(issue!.severity, 'error');
   });
 
   it('errors on illegal placeholder', () => {
@@ -177,7 +180,7 @@ describe('lintPackage', () => {
           description: 'x',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
-          styles: [{ tag: 'default', mode: 'text', template: '#foo #-1 ok' }],
+          styles: [{ style_name: 'default', mode: 'text', template: '#foo #-1 ok' }],
         },
       },
     };
@@ -185,8 +188,26 @@ describe('lintPackage', () => {
     assert.ok(codes(r).includes('style.bad-placeholder'));
   });
 
-  // Iroha 2026-07-11 regression: `\#` is a literal `#` per
-  // fillLatexTemplate; scanTemplatePlaceholders was treating the char
+  it('accepts only canonical numeric placeholders #0 through #99', () => {
+    const lintTemplate = (template: string) => lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: false, tags: [],
+          styles: [{ style_name: 'default', mode: 'text', template, tags: [] }] },
+      },
+    });
+
+    for (const template of ['#', '##', '#00', '#100', '#999']) {
+      assert.ok(
+        codes(lintTemplate(template)).includes('style.bad-placeholder'),
+        `${template} must fail closed as a malformed placeholder`,
+      );
+    }
+    assert.ok(!codes(lintTemplate('#99')).includes('style.bad-placeholder'));
+    assert.ok(!codes(lintTemplate('literal \\# and #0')).includes('style.bad-placeholder'));
+  });
+
+  // Iroha 2026-07-11 regression: `\#` is a literal `#` per the
+  // SNL-Basics template filler; scanTemplatePlaceholders was treating the char
   // after `\#` as a placeholder start and false-positive flagging
   // color hex codes like `\textcolor{\#ea580c}{...}` as bad
   // placeholders.
@@ -201,7 +222,7 @@ describe('lintPackage', () => {
           dynamic_arity: false,
           styles: [
             {
-              tag: 'default',
+              style_name: 'default',
               mode: 'formula_inline',
               template: '\\textcolor{\\#ea580c}{\\texttt{#0}}',
             },
@@ -226,8 +247,8 @@ describe('lintPackage', () => {
           source: { entries: [], urls: [] },
           dynamic_arity: false,
           styles: [
-            { tag: 'default', mode: 'formula_inline', template: '#0 + #1' },
-            { tag: 'alt', mode: 'formula_inline', template: '#0' },
+            { style_name: 'default', mode: 'formula_inline', template: '#0 + #1' },
+            { style_name: 'alt', mode: 'formula_inline', template: '#0' },
           ],
         },
       },
@@ -236,5 +257,72 @@ describe('lintPackage', () => {
     const issue = r.issues.find((i) => i.code === 'macro.style-arity-mismatch');
     assert.ok(issue);
     assert.equal(issue!.severity, 'info');
+  });
+
+  it('requires macro and style tags arrays', () => {
+    const r = lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: false,
+          styles: [{ style_name: 'default', mode: 'text', template: '#0' }] },
+      },
+    });
+    assert.ok(codes(r).includes('macro.missing-tags'));
+    assert.ok(codes(r).includes('style.missing-tags'));
+  });
+
+  it('rejects block_template_name outside block mode', () => {
+    const r = lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: false, tags: [],
+          styles: [{ style_name: 'default', mode: 'text', template: '#0', block_template_name: 'list', tags: [] }] },
+      },
+    });
+    assert.ok(codes(r).includes('style.block-template-non-block'));
+  });
+
+  it('rejects non-string separator', () => {
+    const r = lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: true, tags: [],
+          styles: [{ style_name: 'default', mode: 'text', template: '#*', separator: 1, tags: [] }] },
+      },
+    });
+    assert.ok(codes(r).includes('style.bad-separator'));
+  });
+
+  it('rejects pre-v7 style fields even when v7 fields are also present', () => {
+    const r = lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: true, tags: [],
+          styles: [{
+            style_name: 'default', mode: 'text', template: '#*', separator: '', tags: [],
+            tag: 'legacy', variadic_join: ', ', react_renderer_key: 'list',
+          }] },
+      },
+    });
+    assert.equal(r.issues.filter((issue) => issue.code === 'style.legacy-field').length, 3);
+  });
+
+  it('enforces style-name grammar and backslash-free tags', () => {
+    const r = lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: false, tags: ['bad\\tag'],
+          styles: [{ style_name: 'not-valid!', mode: 'text', template: '#0', tags: ['bad\\tag'] }] },
+      },
+    });
+    assert.ok(codes(r).includes('style.bad-name'));
+    assert.ok(codes(r).includes('macro.bad-tags'));
+    assert.ok(codes(r).includes('style.bad-tags'));
+  });
+
+  it('rejects a non-string optional macro kind', () => {
+    const r = lintPackage({
+      version: '0.10.0', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, kind: 7,
+          dynamic_arity: false, tags: [],
+          styles: [{ style_name: 'default', mode: 'text', template: 'm', tags: [] }] },
+      },
+    });
+    assert.ok(codes(r).includes('macro.bad-kind'));
   });
 });

@@ -18,7 +18,7 @@
  *   **LaTeX synth** — the macro's `styles[i].template` field IS a
  *   KaTeX/LaTeX template with `#N` slots. For pure-composition macros
  *   (no built-in extensions like `\htmlData`, `\htmlClass`,
- *   `\mathchoice`, react_renderer_key), the template is directly valid
+ *   `\mathchoice`, or block templates), the template is directly valid
  *   LaTeX. We recursively fill child slots and return the assembled
  *   string. No `\htmlData` / index annotations — those only exist in
  *   the KaTeX-in-React output. Cat: "不用 built-in 拼 LaTeX 代码的时候
@@ -37,7 +37,7 @@
  *     approximation — sub/sup shrink to `_`/`^`, fractions become
  *     `(a)/(b)`. If an agent needs pixel-perfect preview it should hit
  *     KaTeX directly.
- *   - React-block renderers (`react_renderer_key`). Those are the
+ *   - Block renderers (`block_template_name`). Those are the
  *     "built-in with indices" side cat mentioned; they're just emitted
  *     as `[list](…)` / `[table](…)` placeholders so the surrounding
  *     structure stays legible.
@@ -325,13 +325,9 @@ function latexToText(input: string, notes: string[]): string {
 function joinVariadic(
   style: MacroPackageStyle,
   rendered: string[],
-  mode: 'latex' | 'text',
 ): string {
-  const left = style.variadic_left ?? '';
-  const right = style.variadic_right ?? '';
-  const defaultSep = mode === 'text' ? ', ' : ', ';
-  const sep = style.variadic_join ?? defaultSep;
-  return left + rendered.join(sep) + right;
+  const defaultSep = style.mode === 'text' ? '' : ', ';
+  return rendered.join(style.separator ?? defaultSep);
 }
 
 /**
@@ -357,22 +353,17 @@ function fillTemplate(
 }
 
 /**
- * Pick which style to apply. `[tag]` in the SNL source lands in
- * `mdata.styleTag`; otherwise use `styles[0]` (the declared default).
+ * Pick which style to apply. `[style_name]` in the SNL source lands in
+ * `node.style_name`; otherwise use `styles[0]` (the declared default).
  */
 function pickStyle(
   macro: MacroPackageEntry,
   node: SnlSyntaxTree,
 ): MacroPackageStyle | undefined {
-  const styleTag =
-    node.mdata &&
-    typeof node.mdata === 'object' &&
-    typeof (node.mdata as { styleTag?: unknown }).styleTag === 'string'
-      ? ((node.mdata as { styleTag: string }).styleTag)
-      : undefined;
-  if (styleTag) {
-    const s = macro.styles.find((x) => x.tag === styleTag);
-    if (s) return s;
+  if (node.style_name) {
+    const style = macro.styles.find((candidate) => candidate.style_name === node.style_name);
+    if (style) return style;
+    throw new Error(`Unknown style '${node.style_name}' for macro '${macro.name}'.`);
   }
   return macro.styles[0];
 }
@@ -393,8 +384,8 @@ function escapeIdent(name: string): string {
  * The toolkit doesn't run annotate-bind (that lives in the react view),
  * so we resolve on our own:
  *
- *   1. `envMode` set → formula/text LEAF ($…$ / %…% / $$…$$). Content
- *      is `node.name`, no children.
+ *   1. `env_mode` set → formula/text LEAF ($…$ / %…% / $$…$$). Content
+ *      is `node.macro_name`, no children.
  *   2. Name resolves in the macro pool → macro node: pick style, recurse
  *      on children, fill template.
  *   3. No children, unresolved → bare identifier (bvar/fvar fallback):
@@ -408,10 +399,10 @@ function renderNode(
   macros: Record<string, MacroPackageEntry>,
   notes: string[],
 ): string {
-  // Formula / text leaves — the parser marks these with envMode.
-  const envMode = (node as { envMode?: unknown }).envMode;
+  // Formula / text leaves — the parser marks these with env_mode.
+  const envMode = node.env_mode;
   if (typeof envMode === 'string' && envMode.length > 0) {
-    const raw = node.name ?? '';
+    const raw = node.macro_name;
     if (envMode === 'text') {
       return raw;
     }
@@ -426,7 +417,7 @@ function renderNode(
     return `$${latexToText(raw, notes)}$`;
   }
 
-  const name = node.name ?? '';
+  const name = node.macro_name;
   const children = Array.isArray(node.children) ? node.children : [];
 
   // Leaf identifier (no children, no macro match) → bare name.
@@ -458,7 +449,10 @@ function renderNode(
     values[`child${i}`] = v;
   });
   if (macro.dynamic_arity) {
-    values['children_joined'] = joinVariadic(style, renderedChildren, mode);
+    if (!style.template.includes('#*')) {
+      throw new Error(`Dynamic macro '${name}' style '${style.style_name}' requires #* in its template.`);
+    }
+    values['children_joined'] = joinVariadic(style, renderedChildren);
   }
 
   // Pick the source template. LaTeX synth prefers style.latex.synthesis

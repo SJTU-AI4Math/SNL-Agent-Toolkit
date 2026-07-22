@@ -107,8 +107,8 @@ function parseKatexError(raw: string): { message: string; position?: number } {
  * `\sqrt{...}` / subscripts / superscripts. We deliberately avoid
  * `\square` (amssymb-only, KaTeX doesn't ship it in default macros)
  * and other TeX symbols that would themselves fail to compile.
- * `#*` is filled with three placeholders joined by variadic delimiters
- * so variadic-shape templates are exercised realistically.
+ * `#*` is filled with three placeholders joined by the v7 `separator`
+ * so dynamic-template shapes are exercised realistically.
  *
  * Used by both the macro-package linter (template-only preview) and by
  * the entry linter when it needs to synthesize a KaTeX source from a
@@ -116,13 +116,11 @@ function parseKatexError(raw: string): { message: string; position?: number } {
  */
 export function fillTemplateWithPlaceholders(
   template: string,
-  variadic: { left?: string; join?: string; right?: string } = {},
+  dynamic: { separator?: string } = {},
 ): string {
   const PH = 'x';
-  const left = variadic.left ?? '';
-  const join = variadic.join ?? ', ';
-  const right = variadic.right ?? '';
-  const variadicBody = left + [PH, PH, PH].join(join) + right;
+  const separator = dynamic.separator ?? ', ';
+  const variadicBody = [PH, PH, PH].join(separator);
 
   const out: string[] = [];
   let i = 0;

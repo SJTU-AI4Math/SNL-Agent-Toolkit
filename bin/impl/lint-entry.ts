@@ -195,9 +195,9 @@ async function main(): Promise<number> {
     //
     // The package linter only checks templates in isolation (`#N` filled
     // with a neutral `x` placeholder), so it can't see that a real child
-    // — e.g. a fallback `\mathrm{formula_inline}` bound to a `\texttt{...}`
-    // slot — would break KaTeX in the surrounding mode. checkEntryPreview
-    // runs the SAME pure renderer the extension's Preview uses, then feeds
+    // — including the renderer's metadata wrapper — is invalid in a
+    // surrounding text/math command. checkEntryPreview runs the SAME pure
+    // renderer the extension's Preview uses, then feeds
     // the result through headless KaTeX. Failures become errors.
     if (checkPreview && raw && typeof raw === 'object') {
       try {

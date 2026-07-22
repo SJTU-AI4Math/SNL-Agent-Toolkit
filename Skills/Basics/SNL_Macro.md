@@ -15,7 +15,7 @@ list(item1,item2,item3)
 
 - Bare name: zero children.
 - `(…)`: ordered children.
-- `[tag]`: select a style; omission selects `styles[0]`.
+- `[style_name]`: select a style; omission selects `styles[0]`.
 - Macro names are identity keys. Treat renaming as a migration across every Entry.
 
 ## Package shape
@@ -33,11 +33,13 @@ list(item1,item2,item3)
       "dynamic_arity": false,
       "styles": [
         {
-          "tag": "default",
+          "style_name": "default",
           "mode": "formula_inline",
-          "template": "#0 \\cdot #1"
+          "template": "#0 \\cdot #1",
+          "tags": []
         }
-      ]
+      ],
+      "tags": []
     }
   }
 }
@@ -53,53 +55,55 @@ The object key is the macro name. The in-memory editor shape may repeat it as `n
 - `kind`: optional id from `config.json#macro_kinds`. If the author declares `fvar`, the UI should show the free-variable styling; consumers must not silently neutralize that declaration.
 - `dynamic_arity`: whether output is assembled from every child rather than fixed `#N` slots.
 - `styles`: non-empty ordered styles. `styles[0]` is the implicit default.
-- `tags`: optional free-text labels.
+- `tags`: required free-text label array; use `[]` when empty. Tags must not contain backslashes.
 
 ## Style fields
 
-- `tag`: unique within the macro.
+- `style_name`: unique within the macro and matching `[A-Za-z_][A-Za-z0-9_]*`.
 - `mode`: one of `formula_inline`, `formula_display`, `text`, `block`.
-- `template`: fixed-arity rendering template.
-- `variadic_left`, `variadic_join`, `variadic_right`: dynamic-arity delimiters and separator.
-- `react_renderer_key`: optional built-in React renderer.
+- `template`: rendering template; use `#N` for fixed arity and a real `#*` for dynamic arity.
+- `separator`: optional string used to join children inserted at `#*`; explicit `""` is preserved.
+- `block_template_name`: optional block-renderer dispatch key, valid only when `mode` is `block`.
+- `tags`: required free-text label array; use `[]` when empty. Tags must not contain backslashes.
 - `typst`, `latex`, `markdown`, `text`: optional per-style output backends.
 
 ## Fixed arity
 
-Use `#0`, `#1`, … in `template`:
+Use canonical `#0` through `#99` in `template`:
 
 ```json
 {
   "dynamic_arity": false,
   "styles": [
-    { "tag": "default", "mode": "formula_inline", "template": "\\frac{#0}{#1}" }
+    { "style_name": "default", "mode": "formula_inline", "template": "\\frac{#0}{#1}", "tags": [] }
   ]
 }
 ```
 
-Only numeric placeholders and `#*` are special. A literal hash must be escaped according to the template/KaTeX context.
+Only canonical `#0` through `#99` and `#*` are special. Three-or-more-digit
+indexes, leading-zero forms such as `#00`, and malformed hashes such as `##`
+are errors. Escape a literal hash as `\#`.
 
 ## Dynamic arity
 
-For current SNL-Basics rendering, a dynamic macro's body is composed from its delimiters and rendered children; the ordinary template body is ignored.
+In Macro v7, every dynamic style template must contain `#*`. The renderer replaces `#*` with all rendered children joined by `separator`, while preserving all surrounding template text.
 
 ```json
 {
   "dynamic_arity": true,
   "styles": [
     {
-      "tag": "default",
+      "style_name": "default",
       "mode": "text",
-      "template": "",
-      "variadic_left": "[",
-      "variadic_join": ", ",
-      "variadic_right": "]"
+      "template": "[#*]",
+      "separator": ", ",
+      "tags": []
     }
   ]
 }
 ```
 
-Do not put meaningful output in a dynamic macro's `template`.
+Do not use the removed `variadic_left`, `variadic_join`, or `variadic_right` fields. Put delimiters and other surrounding output directly in `template` around `#*`.
 
 ## JSON and KaTeX escaping
 
@@ -132,7 +136,24 @@ Create a macro when a concept is reused, needs semantic source links, needs hove
 node bin/snl-lint-package.mjs --root . --name package-name
 ```
 
-The linter checks package shape, style tags, modes, placeholders, dynamic/fixed consistency, and KaTeX-compilable templates. Still inspect decoded templates when backslashes are involved.
+The linter enforces Macro v7: required macro/style `tags`, valid unique `style_name`, no pre-v7 fields, dynamic `#*`, string `separator`, block-only `block_template_name`, modes, placeholders, and KaTeX-compilable templates. Still inspect decoded templates when backslashes are involved.
+
+## Migrating Toolkit package files from Macro v6
+
+SNL-Basics's canonical `migrateMacroDocument` expects a flat macro record whose
+values include `name`. Toolkit package files deliberately omit that redundant
+field because `macros` map keys are the macro identities. Do not pass a package's
+`macros` object directly to the Basics migration: the resulting names would be
+missing.
+
+Import `migrateMacroPackageV6toV7` from `lib/snl-doc-schema.ts` (implemented in
+`lib/migrate-macro-package.ts`). The adapter
+validates the package map, restores each authoritative map key as a transient
+macro `name`, invokes the canonical Basics v6→v7 migration, then removes the
+redundant value-level name. It preserves package version/metadata, unknown
+extension fields, and Toolkit output backends without mutating the input. Always
+run `lintPackage` (or `snl-lint-package`) on the migrated result before writing
+it to disk.
 
 ## Related basics
 

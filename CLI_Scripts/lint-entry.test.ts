@@ -31,7 +31,8 @@ const MACROS: Record<string, MacroPackageEntry> = {
     description: 'Real numbers',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
-    styles: [{ tag: 'default', mode: 'formula_inline', template: '\\mathbb{R}' }],
+    tags: [],
+    styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\mathbb{R}', tags: [] }],
   },
 };
 

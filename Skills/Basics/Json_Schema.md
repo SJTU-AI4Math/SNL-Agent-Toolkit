@@ -97,8 +97,9 @@ A bare array shared by every Library:
       "kind": "structure",
       "dynamic_arity": false,
       "styles": [
-        { "tag": "default", "mode": "text", "template": "group" }
-      ]
+        { "style_name": "default", "mode": "text", "template": "group", "tags": [] }
+      ],
+      "tags": []
     }
   }
 }
@@ -107,9 +108,13 @@ A bare array shared by every Library:
 - Macro map keys are stable macro identities.
 - `source.entries[]` references Entry ids.
 - `kind`, when present, references a Macro Kind id.
-- `styles` is non-empty; tags are unique within one macro.
+- `styles` is non-empty; `style_name` values are unique within one macro and follow the SNL identifier grammar.
 - Valid modes: `formula_inline`, `formula_display`, `text`, `block`.
-- Optional style fields: `variadic_left`, `variadic_join`, `variadic_right`, `react_renderer_key`, `tags`, `typst`, `latex`, `markdown`, `text`.
+- Macro and style `tags` are required arrays (use `[]` when empty) and must not contain backslashes.
+- Dynamic macros put `#*` in every style `template`; optional string `separator` joins the children and may be explicitly empty.
+- `block_template_name` is optional and valid only for `mode: "block"`.
+- Pre-v7 fields are invalid; migrate old packages with SNL-Basics before linting.
+- Toolkit-owned optional output backends are `typst`, `latex`, `markdown`, and `text`.
 
 See [`SNL_Macro.md`](SNL_Macro.md) for rendering semantics.
 

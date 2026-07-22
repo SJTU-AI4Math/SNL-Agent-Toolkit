@@ -163,39 +163,36 @@ export interface LibraryGraph {
 }
 
 // ===========================================================================
-// term_macros/<pkg>.json — macro packages
+// term_macros/<pkg>.json — Macro v7 (SNL-Basics 0.10.0)
 // ===========================================================================
 
 /**
- * One render style for a macro. A macro carries an ordered `styles[]`;
- * `styles[0]` is the implicit default used when SNL source omits `[tag]`.
- *
- * `mode` (v3): 4 flat values, replacing the old {mode, display?} pair.
- *   - `formula_inline`  — inline math
- *   - `formula_display` — display math
- *   - `text`            — inline text
- *   - `block`           — block-level container
+ * Macro v7 is owned by SNL-Basics. Re-export its canonical runtime types and
+ * migration functions rather than maintaining a second, drifting schema.
  */
-export interface MacroPackageStyle {
-  /** Style tag — the token used in `\foo[tag](...)`. Unique per macro. */
-  tag: string;
-  mode: 'formula_inline' | 'formula_display' | 'text' | 'block';
-  /**
-   * The rendering template (KaTeX / plain-text / etc.). Uses `#N` for
-   * positional children and `#*` for variadic children (only valid when
-   * the parent macro has `dynamic_arity: true`).
-   */
-  template: string;
-  /** Left delimiter for `#*` — ignored when the macro isn't dynamic_arity. */
-  variadic_left?: string;
-  /** Separator between `#*` children. Default: ', ' (formula), '' (text). */
-  variadic_join?: string;
-  /** Right delimiter for `#*` — ignored when the macro isn't dynamic_arity. */
-  variadic_right?: string;
-  react_renderer_key?: string;
-  /** Free-text labels attached to this style (backslash forbidden). */
-  tags?: string[];
-  // Consumer-owned output backends (optional per style):
+export type {
+  SnlMacro,
+  SnlMacroSource,
+  SnlMacroStyle,
+} from '../external/SNL-Basics/src/snl-macro/types.ts';
+export type {
+  MacroStyleV6,
+  MacroV6,
+} from '../external/SNL-Basics/src/schema/migrate-macro.ts';
+export {
+  isMacroDocumentV7,
+  migrateMacroDocument,
+  migrateMacroV6toV7,
+  migrateStyleV6toV7,
+} from '../external/SNL-Basics/src/schema/migrate-macro.ts';
+
+import type {
+  SnlMacro,
+  SnlMacroStyle,
+} from '../external/SNL-Basics/src/snl-macro/types.ts';
+
+/** Consumer-owned output backends preserved by Toolkit package operations. */
+export interface MacroPackageOutputBackends {
   typst?: {
     built_in: string;
     synthesis: { mode: 'formula' | 'text'; macro: string };
@@ -208,26 +205,13 @@ export interface MacroPackageStyle {
   text?: string;
 }
 
-/**
- * One macro definition inside a package. The `name` field is redundant with
- * the package-map key on disk; see {@link MacroPackageEntryWithoutName}.
- */
-export interface MacroPackageEntry {
-  name: string;
-  description: string;
-  source: { entries: string[]; urls: string[] };
-  /** Semantic kind (optional). Unset → rendered nodes default to `fvar`. */
-  kind?: string;
-  /**
-   * True when the macro's child count is not fixed. Requires the default
-   * template to contain `#*`.
-   */
-  dynamic_arity: boolean;
-  /** Ordered; `styles[0]` is the default. Tags must be unique. */
+/** Canonical SNL-Basics v7 style plus Toolkit-preserved output backends. */
+export type MacroPackageStyle = SnlMacroStyle & MacroPackageOutputBackends;
+
+/** Canonical SNL-Basics v7 macro with backend-extended styles. */
+export type MacroPackageEntry = Omit<SnlMacro, 'styles'> & {
   styles: MacroPackageStyle[];
-  /** Free-text labels attached to the macro itself (backslash forbidden). */
-  tags?: string[];
-}
+};
 
 /** MacroPackageEntry without redundant `name` (the name is the map key). */
 export type MacroPackageEntryWithoutName = Omit<MacroPackageEntry, 'name'>;
@@ -237,6 +221,14 @@ export interface MacroPackageFile {
   version: string;
   name: string;
   description?: string;
-  /** key = macro.name */
+  /** key = macro.name; the on-disk value omits the redundant name field. */
   macros: Record<string, MacroPackageEntryWithoutName>;
 }
+
+/** Safe package-shape adapter around SNL-Basics's flat-record v6→v7 migration. */
+export { migrateMacroPackageV6toV7 } from './migrate-macro-package.ts';
+export type {
+  MacroPackageEntryV6WithoutName,
+  MacroPackageFileV6,
+  MacroPackageStyleV6,
+} from './migrate-macro-package.ts';

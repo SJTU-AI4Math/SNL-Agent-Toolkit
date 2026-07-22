@@ -27,18 +27,15 @@ import katex from 'katex';
 
 import { parseSnlSyntaxTree } from '../external/SNL-Basics/src/snl-syntax-tree/parser.ts';
 import { annotateBindings } from '../external/SNL-Basics/src/snl-syntax-tree/annotate-bind.ts';
-import { resolveRootLatex } from '../external/SNL-Basics/src/snl-react-view/render-source.ts';
-import type {
-  SnlMacro,
-  SnlMacroDb,
-  SnlMacroStyle,
-} from '../external/SNL-Basics/src/snl-macro/types.ts';
-import type { SnlMacroTemplateQuery } from '../external/SNL-Basics/src/snl-syntax-tree/query.ts';
+import {
+  nodeDisplay,
+  resolveRootLatex,
+} from '../external/SNL-Basics/src/snl-react-view/render-source.ts';
+import { MacroDataDriver } from '../external/SNL-Basics/src/snl-macro/macro-data-driver.ts';
 
 import type {
   EntryData,
   MacroPackageEntry,
-  MacroPackageStyle,
 } from './snl-doc-schema.ts';
 
 export interface EntryPreviewIssue {
@@ -112,26 +109,19 @@ export async function checkEntryPreview(
       // annotate-bind can throw on malformed binder scopes — ignore
       // here; L2's parse layer usually catches those separately.
     }
-    const db: SnlMacroDb = toSnlMacroDb(opts.macros);
-    const query: SnlMacroTemplateQuery = async ({ name, node }) => {
-      const macro = db[name];
-      if (macro && macro.styles.length > 0) {
-        const style =
-          node.style == null
-            ? macro.styles[0]
-            : macro.styles.find((s) => s.tag === node.style) ??
-              macro.styles[0];
-        if (style?.template) return style.template;
-      }
-      // Same fallback fallbackLatexSymbol uses in default-query.ts.
-      if (/^[A-Za-z]+$/.test(name)) return name;
-      // Numeric literal (cat 2026-07-14 §numeral): render bare in math mode.
-      if (/^-?\d+(\.\d+)?$/.test(name)) return name;
-      return `\\mathrm{${escapeLatexText(name)}}`;
-    };
+    const driver = new MacroDataDriver({
+      queries: {
+        query_macro: async ({ macro_name }) => opts.macros[macro_name] ?? null,
+      },
+    });
     let src: string;
+    let displayMode: boolean;
     try {
-      src = await resolveRootLatex(tree, query, new Map(), db);
+      src = await resolveRootLatex(tree, driver);
+      const rootMacro = tree.env_mode
+        ? null
+        : await driver.query_macro({ macro_name: tree.macro_name });
+      displayMode = nodeDisplay(tree, rootMacro) === 'block';
     } catch (err) {
       issues.push({
         path: 'content.snl',
@@ -140,7 +130,6 @@ export async function checkEntryPreview(
       });
       return issues;
     }
-    const displayMode = rootIsDisplay(tree, db);
     const r = runKatex(src, displayMode);
     if (!r.ok) {
       issues.push({ path: 'content.snl', ...r, source: src });
@@ -194,63 +183,6 @@ function parseKatexError(raw: string): {
   return { ok: false, message: msg, position };
 }
 
-/** Same 4-mode collapse used by the ROOT display axis. */
-function rootIsDisplay(tree: any, db: SnlMacroDb): boolean {
-  const envMode = tree.envMode;
-  if (typeof envMode === 'string') return envMode === 'formula_display';
-  const macro = db[tree.name];
-  if (!macro) return false;
-  const styleTag = tree.style;
-  const style =
-    styleTag == null
-      ? macro.styles[0]
-      : macro.styles.find((s) => s.tag === styleTag) ?? macro.styles[0];
-  return style?.mode === 'formula_display';
-}
-
-/**
- * Adapt the toolkit's `MacroPackageEntry` records into the
- * `SnlMacroDb` shape the pure renderer expects. Structural equivalence:
- * MacroPackageEntry has `{name, styles[], kind?, dynamic_arity, tags?}`
- * matching `SnlMacro`, and MacroPackageStyle covers `SnlMacroStyle`.
- */
-function toSnlMacroDb(
-  macros: Record<string, MacroPackageEntry>,
-): SnlMacroDb {
-  const db: SnlMacroDb = {};
-  for (const [name, m] of Object.entries(macros)) {
-    db[name] = adaptMacro(name, m);
-  }
-  return db;
-}
-
-function adaptMacro(name: string, m: MacroPackageEntry): SnlMacro {
-  return {
-    name,
-    description: (m as any).description ?? '',
-    // SnlMacroSource in SNL-Basics is `{ entries: string[], urls: string[] }`;
-    // the pure renderer never reads it, so an empty stub is fine.
-    source: { entries: [], urls: [] },
-    kind: m.kind,
-    dynamic_arity: !!m.dynamic_arity,
-    styles: (m.styles ?? []).map(adaptStyle),
-    tags: (m as any).tags,
-  };
-}
-
-function adaptStyle(s: MacroPackageStyle): SnlMacroStyle {
-  return {
-    tag: s.tag,
-    mode: s.mode,
-    template: s.template,
-    variadic_left: s.variadic_left,
-    variadic_join: s.variadic_join,
-    variadic_right: s.variadic_right,
-    react_renderer_key: s.react_renderer_key,
-    tags: s.tags,
-  };
-}
-
 // --- title-to-KaTeX conversion --------------------------------------------
 // Mirrors webview/src/render/EntryRender.tsx: text runs become
 // `\text{…}` with escaped specials; `$…$` runs pass through as math.
@@ -261,10 +193,6 @@ function escapeForKatexText(s: string): string {
     .replace(/\^/g, '\\textasciicircum{}')
     .replace(/~/g, '\\textasciitilde{}')
     .replace(/([{}$&#_%])/g, '\\$1');
-}
-
-function escapeLatexText(raw: string): string {
-  return raw.replace(/[\\{}_$%&#^~]/g, (ch) => `\\${ch}`);
 }
 
 function titleToKatexSource(src: string): string {

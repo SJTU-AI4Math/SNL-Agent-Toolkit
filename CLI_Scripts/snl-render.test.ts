@@ -37,8 +37,9 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'infix +',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    tags: [],
     styles: [
-      { tag: 'default', mode: 'formula_inline', template: '#0 + #1' },
+      { style_name: 'default', mode: 'formula_inline', template: '#0 + #1', tags: [] },
     ],
   },
   union: {
@@ -46,8 +47,9 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'set union',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    tags: [],
     styles: [
-      { tag: 'default', mode: 'formula_inline', template: '#0 \\cup #1' },
+      { style_name: 'default', mode: 'formula_inline', template: '#0 \\cup #1', tags: [] },
     ],
   },
   frac: {
@@ -55,8 +57,9 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'fraction',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    tags: [],
     styles: [
-      { tag: 'default', mode: 'formula_inline', template: '\\frac{#0}{#1}' },
+      { style_name: 'default', mode: 'formula_inline', template: '\\frac{#0}{#1}', tags: [] },
     ],
   },
   leq: {
@@ -64,8 +67,9 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'less or equal',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    tags: [],
     styles: [
-      { tag: 'default', mode: 'formula_inline', template: '#0 \\leq #1' },
+      { style_name: 'default', mode: 'formula_inline', template: '#0 \\leq #1', tags: [] },
     ],
   },
   norm: {
@@ -73,8 +77,9 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'norm',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    tags: [],
     styles: [
-      { tag: 'default', mode: 'formula_inline', template: '\\lVert #0 \\rVert' },
+      { style_name: 'default', mode: 'formula_inline', template: '\\lVert #0 \\rVert', tags: [] },
     ],
   },
 };
@@ -107,6 +112,43 @@ describe('renderTreeAsLatex', () => {
   test('text leaves survive verbatim', () => {
     const r = synthLatex('plus(%hello%, b)', macros);
     assert.equal(r.output, 'hello + b');
+  });
+
+  test('dynamic #* templates honor separator', () => {
+    const dynamic: Record<string, MacroPackageEntry> = {
+      join: {
+        name: 'join', description: '', source: { entries: [], urls: [] },
+        dynamic_arity: true, tags: [],
+        styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\left[#*\\right]', separator: ' | ', tags: [] }],
+      },
+    };
+    assert.equal(synthLatex('join(a,b,c)', dynamic).output, '\\left[a | b | c\\right]');
+  });
+
+  test('dynamic templates preserve surrounding text and an explicit empty separator', () => {
+    const dynamic: Record<string, MacroPackageEntry> = {
+      join: {
+        name: 'join', description: '', source: { entries: [], urls: [] },
+        dynamic_arity: true, tags: [],
+        styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\left[#*\\right]', separator: '', tags: [] }],
+      },
+    };
+    assert.equal(synthLatex('join(a,b,c)', dynamic).output, '\\left[abc\\right]');
+  });
+
+  test('throws for an unknown style instead of silently using the default', () => {
+    assert.throws(() => synthLatex('plus[missing](a,b)', macros), /Unknown style 'missing'/);
+  });
+
+  test('throws when a dynamic style omits #*', () => {
+    const invalid: Record<string, MacroPackageEntry> = {
+      join: {
+        name: 'join', description: '', source: { entries: [], urls: [] },
+        dynamic_arity: true, tags: [],
+        styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\Sigma', tags: [] }],
+      },
+    };
+    assert.throws(() => synthLatex('join(a,b)', invalid), /requires #\*/);
   });
 });
 
@@ -141,8 +183,9 @@ describe('renderTreeAsText', () => {
         description: 'unmapped',
         source: { entries: [], urls: [] },
         dynamic_arity: false,
+        tags: [],
         styles: [
-          { tag: 'default', mode: 'formula_inline', template: '#0 \\weirdop #1' },
+          { style_name: 'default', mode: 'formula_inline', template: '#0 \\weirdop #1', tags: [] },
         ],
       },
     };

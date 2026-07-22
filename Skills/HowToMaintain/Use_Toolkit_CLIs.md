@@ -102,17 +102,16 @@ node bin/snl-lint-package.mjs --root . path/to/draft-pkg.json
 Checks:
 - **Schema** — top-level `version` / `name` / optional `description` /
   `macros` (name → entry map). Per macro: `description` / `source` /
-  `dynamic_arity` / non-empty `styles[]`. Per style: `tag` / `mode` /
-  `template`. Style tags unique within one macro.
-- **Template placeholders** — `#0`, `#1`, …, `#*` recognised; anything
-  else (`#foo`, `#-1`, `##`, …) is an error. `#*` is only legal when the
-  macro's `dynamic_arity` is `true`.
-- **Sanity warnings** — a dynamic-arity macro whose **default** style
-  (`styles[0]`) has a non-empty template with no `#*` gets warned
-  (variadic children won't render); styles that set `variadic_left/join/
-  right` on non-dynamic macros get warned (fields will be ignored).
-  Custom-renderer styles (with a `react_renderer_key`) or empty-template
-  styles are exempt — those bypass the template.
+  `dynamic_arity` / required `tags[]` / non-empty `styles[]`. Per style:
+  valid unique `style_name`, `mode`, `template`, and required `tags[]`.
+- **Template placeholders** — canonical `#0` through `#99` and `#*` are
+  recognised; anything else (`#foo`, `#-1`, `##`, `#00`, `#100`, …) is an
+  error. Escape a literal hash as `\#`. `#*` is only legal when the
+  macro's `dynamic_arity` is `true`; every dynamic style must contain it.
+- **Macro v7 rules** — `separator`, when present, is a string (including
+  explicit `""`); `block_template_name` is valid only in block mode; tags
+  cannot contain backslashes; pre-v7 style fields are errors rather than
+  runtime aliases.
 - **Cross-style arity** — when styles disagree on their maximum `#N`
   index, we surface an **info** note; legal (SNL fills missing children
   as empty) but often unintended — agent decides.

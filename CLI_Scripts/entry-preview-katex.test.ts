@@ -2,11 +2,9 @@
  * Quick smoke test for entry-preview-katex.
  *
  * Reproduces the visible regression: Type.literal(formula_inline) in
- * an entry's SNL body renders (via the extension's Preview) to a
- * KaTeX source containing `\mathrm{formula\_inline}` inside a
- * `\texttt{...}` (text-mode) wrapper. Under the OLD broken template
- * that would fail KaTeX with "Can't use function '\\mathrm' in text
- * mode". Under the FIXED template it compiles.
+ * an entry's SNL body inserts the child renderer's `\htmlData` wrapper.
+ * A template that places `#0` inside `\texttt{...}` makes that metadata
+ * invalid in text mode; the fixed template keeps `#0` outside and compiles.
  */
 
 import { describe, it } from 'node:test';
@@ -28,44 +26,19 @@ const FIXED_TYPE_LITERAL_TEMPLATE =
 function makeMacros(literalTemplate: string): Record<string, MacroPackageEntry> {
   return {
     'Type.judge': {
-      name: 'Type.judge',
-      description: '',
-      source: { entries: [], urls: [] },
-      dynamic_arity: false,
-      styles: [
-        {
-          tag: 'default',
-          mode: 'formula_inline',
-          template: '#0\\texttt{: }#1',
-        },
-      ],
+      name: 'Type.judge', description: '', source: { entries: [], urls: [] },
+      dynamic_arity: false, tags: [],
+      styles: [{ style_name: 'default', mode: 'formula_inline', template: '#0\\texttt{: }#1', tags: [] }],
     },
     'Type.union': {
-      name: 'Type.union',
-      description: '',
-      source: { entries: [], urls: [] },
-      dynamic_arity: true,
-      styles: [
-        {
-          tag: 'default',
-          mode: 'formula_inline',
-          template: '#*',
-          variadic_join: ' \\cup ',
-        },
-      ],
+      name: 'Type.union', description: '', source: { entries: [], urls: [] },
+      dynamic_arity: true, tags: [],
+      styles: [{ style_name: 'default', mode: 'formula_inline', template: '#*', separator: ' \\cup ', tags: [] }],
     },
     'Type.literal': {
-      name: 'Type.literal',
-      description: '',
-      source: { entries: [], urls: [] },
-      dynamic_arity: false,
-      styles: [
-        {
-          tag: 'default',
-          mode: 'formula_inline',
-          template: literalTemplate,
-        },
-      ],
+      name: 'Type.literal', description: '', source: { entries: [], urls: [] },
+      dynamic_arity: false, tags: [],
+      styles: [{ style_name: 'default', mode: 'formula_inline', template: literalTemplate, tags: [] }],
     },
   };
 }
@@ -84,7 +57,7 @@ function makeEntry(): EntryData {
 }
 
 describe('checkEntryPreview: Type.literal Preview regression', () => {
-  it('detects `\\mathrm` inside `\\texttt` when template is broken', async () => {
+  it('detects child render metadata inside `\\texttt` when template is broken', async () => {
     const issues = await checkEntryPreview(makeEntry(), {
       macros: makeMacros(BROKEN_TYPE_LITERAL_TEMPLATE),
     });
@@ -93,11 +66,8 @@ describe('checkEntryPreview: Type.literal Preview regression', () => {
       snlIssues.length > 0,
       `expected KaTeX to reject broken Type.literal preview; got 0 issues. All issues: ${JSON.stringify(issues, null, 2)}`,
     );
-    assert.match(
-      snlIssues[0].message,
-      /mathrm.*text mode|text mode.*mathrm/i,
-      `expected "Can't use function '\\mathrm' in text mode" style error; got: ${snlIssues[0].message}`,
-    );
+    assert.match(snlIssues[0].source, /\\texttt.*\\htmlData/);
+    assert.ok(snlIssues[0].message.length > 0, 'expected a concrete KaTeX parse error');
   });
 
   it('passes with the fixed template', async () => {
