@@ -1,5 +1,14 @@
+import { constants } from 'node:fs';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
+import {
+  findNodeAtLocation,
+  parseTree,
+  printParseErrorCode,
+  type JSONPath,
+  type Node as JsonNode,
+  type ParseError,
+} from 'jsonc-parser';
 import { assertSnlDoc, snlDocRoot } from './snl-doc.ts';
 import { parseSnlSyntaxTree } from './snl-parser.ts';
 
@@ -30,6 +39,16 @@ interface LoadedJson {
   relPath: string;
   raw: string;
   data: unknown;
+  tree: JsonNode;
+  mode: number;
+  device: number;
+  inode: number;
+}
+
+interface TextEdit {
+  offset: number;
+  length: number;
+  content: string;
 }
 
 interface SnlToken {
@@ -61,17 +80,19 @@ export async function findEntityReferences(
 /**
  * Rename one identity and every structured reference to it.
  *
- * All files are parsed and mutated in memory first. The function refuses a
- * missing/ambiguous source identity or a destination collision. Writes use
- * same-directory temp files; if any rename fails, already-replaced files are
- * restored from their original text before the error is rethrown.
+ * All schema-owned files are parsed and source-range edits are planned before
+ * any write. The function refuses a missing/ambiguous source identity, a
+ * destination collision, malformed schema/SNL, symlinked files, or concurrent
+ * source changes. Writes use same-directory temp files; if a replacement
+ * fails, already-installed files are restored before the error is rethrown.
+ * This rollback protocol is not crash-atomic across multiple files.
  */
 export async function renameEntityId(
   workspaceRoot: string,
   entityType: EntityType,
   oldId: string,
   newId: string,
-  options: { dryRun?: boolean } = {},
+  options: { dryRun?: boolean; beforeInstall?: () => void | Promise<void> } = {},
 ): Promise<RenamePlan> {
   await assertSnlDoc(workspaceRoot);
   validateNonEmptyIdentity(oldId);
@@ -96,23 +117,29 @@ export async function renameEntityId(
   }
   if (
     occurrences.some((o) => o.path.endsWith('.content.snl')) &&
-    !isSnlIdentifier(newId)
+    !isTraceableSnlIdentity(entityType, newId)
   ) {
     throw new Error(
       `${entityType} id '${newId}' is not representable as an SNL identifier, but '${oldId}' has SNL references.`,
     );
   }
-  const destinationOccurrences = collectOccurrences(files, entityType, newId);
+  const destinationOccurrences = collectOccurrences(files, entityType, newId, {
+    includeUnresolvedMacroTokens: entityType === 'macro',
+  });
   if (destinationOccurrences.length > 0) {
     throw new Error(
       `${entityType} id '${newId}' already appears in ${destinationOccurrences.length} structured location(s); refusing to merge two identities.`,
     );
   }
 
-  const changed = new Map<string, LoadedJson>();
+  const rewriteSnlMacroTokens = entityType !== 'macro' || macroIsActive(files, oldId);
+  const changed = new Map<string, LoadedJson & { next: string }>();
   for (const file of files) {
-    if (mutateStructuredJson(file, entityType, oldId, newId)) {
-      changed.set(file.absPath, file);
+    const edits = buildStructuredEdits(
+      file, entityType, oldId, newId, rewriteSnlMacroTokens,
+    );
+    if (edits.length > 0) {
+      changed.set(file.absPath, { ...file, next: applyTextEdits(file.raw, edits) });
     }
   }
 
@@ -127,19 +154,40 @@ export async function renameEntityId(
 
   const replacements = [...changed.values()].map((file) => ({
     ...file,
-    next: stringifyLike(file.raw, file.data),
     temp: `${file.absPath}.snl-rename-${process.pid}-${Math.random().toString(16).slice(2)}.tmp`,
   }));
   try {
-    await Promise.all(replacements.map((f) => fs.writeFile(f.temp, f.next, 'utf8')));
+    await Promise.all(
+      replacements.map(async (file) => {
+        await fs.writeFile(file.temp, file.next, {
+          encoding: 'utf8', mode: file.mode, flag: 'wx',
+        });
+        await fs.chmod(file.temp, file.mode);
+      }),
+    );
+    if (options.beforeInstall) await options.beforeInstall();
+    // Optimistic concurrency + symlink defense: refuse to install if any
+    // source changed since planning. This cannot make a multi-file commit
+    // crash-atomic, but it prevents silently overwriting cooperative edits.
+    for (const file of replacements) await assertUnchangedRegularFile(file);
+
     const installed: typeof replacements = [];
     try {
       for (const file of replacements) {
         await fs.rename(file.temp, file.absPath);
         installed.push(file);
       }
+      const verifiedFiles = await loadWorkspaceJson(workspaceRoot);
+      const stale = collectOccurrences(verifiedFiles, entityType, oldId);
+      const current = collectOccurrences(verifiedFiles, entityType, newId);
+      const currentDefinitions = current.filter((o) => o.role === 'definition');
+      if (stale.length !== 0 || current.length !== occurrences.length || currentDefinitions.length !== 1) {
+        throw new Error(
+          `Post-write verification failed: old=${stale.length}, new=${current.length}, definitions=${currentDefinitions.length}, expected=${occurrences.length}.`,
+        );
+      }
     } catch (error) {
-      await Promise.all(installed.map((f) => fs.writeFile(f.absPath, f.raw, 'utf8')));
+      await Promise.all(installed.map((f) => fs.writeFile(f.absPath, f.raw, { encoding: 'utf8', mode: f.mode })));
       throw error;
     }
   } finally {
@@ -148,13 +196,34 @@ export async function renameEntityId(
   return plan;
 }
 
+function macroIsActive(files: LoadedJson[], id: string): boolean {
+  const config = files.find((file) => file.relPath === 'config.json')?.data as any;
+  const active = Array.isArray(config?.active_macro_packages)
+    ? new Set<string>(config.active_macro_packages)
+    : null;
+  return files.some((file) => {
+    if (!file.relPath.startsWith('term_macros/')) return false;
+    const bare = path.posix.basename(file.relPath, '.json');
+    if (active && !active.has(bare)) return false;
+    const macros = (file.data as any)?.macros;
+    return isRecord(macros) && Object.prototype.hasOwnProperty.call(macros, id);
+  });
+}
+
 function collectOccurrences(
   files: LoadedJson[],
   entityType: EntityType,
   id: string,
+  options: { includeUnresolvedMacroTokens?: boolean } = {},
 ): EntityOccurrence[] {
   const out: EntityOccurrence[] = [];
-  for (const file of files) collectFileOccurrences(file, entityType, id, out);
+  const includeSnlMacroTokens =
+    entityType !== 'macro' ||
+    options.includeUnresolvedMacroTokens === true ||
+    macroIsActive(files, id);
+  for (const file of files) {
+    collectFileOccurrences(file, entityType, id, out, includeSnlMacroTokens);
+  }
   return out;
 }
 
@@ -163,6 +232,7 @@ function collectFileOccurrences(
   entityType: EntityType,
   id: string,
   out: EntityOccurrence[],
+  includeSnlMacroTokens: boolean,
 ): void {
   const data = file.data as any;
   if (file.relPath === 'entries.json' && Array.isArray(data)) {
@@ -174,6 +244,7 @@ function collectFileOccurrences(
       if (typeof snl === 'string' && snl.trim() !== '') {
         for (const ref of scanSnlReferences(snl)) {
           if (ref.entityType !== entityType || ref.id !== id) continue;
+          if (entityType === 'macro' && !includeSnlMacroTokens) continue;
           const pos = offsetPosition(snl, ref.start);
           out.push({
             ...occurrence(file, entityType, id, 'reference', `[${index}].content.snl`),
@@ -213,8 +284,7 @@ function collectFileOccurrences(
     return;
   }
 
-  if (entityType !== 'entry') return;
-  if (/^libraries\/[^/]+\/graph\.json$/.test(file.relPath) && Array.isArray(data?.nodes)) {
+  if (entityType === 'entry' && /^libraries\/[^/]+\/graph\.json$/.test(file.relPath) && Array.isArray(data?.nodes)) {
     data.nodes.forEach((node: any, index: number) => {
       if (node?.props?.entryId === id) {
         out.push(occurrence(file, entityType, id, 'reference', `nodes[${index}].props.entryId`));
@@ -222,82 +292,143 @@ function collectFileOccurrences(
     });
   } else if (file.relPath === 'relationships.json' && Array.isArray(data?.relationships)) {
     data.relationships.forEach((rel: any, index: number) => {
-      if (rel?.from === id) out.push(occurrence(file, entityType, id, 'reference', `relationships[${index}].from`));
-      if (rel?.to === id) out.push(occurrence(file, entityType, id, 'reference', `relationships[${index}].to`));
+      if (entityType === 'entry' && rel?.from === id) {
+        out.push(occurrence(file, entityType, id, 'reference', `relationships[${index}].from`));
+      }
+      if (entityType === 'entry' && rel?.to === id) {
+        out.push(occurrence(file, entityType, id, 'reference', `relationships[${index}].to`));
+      }
+      if (rel?.metadata?.generator !== 'macro-source-scan') return;
+      const witnessField = entityType === 'macro' ? 'macros' : 'postfixes';
+      const witnesses = rel.metadata[witnessField];
+      if (!Array.isArray(witnesses)) return;
+      witnesses.forEach((value: unknown, witnessIndex: number) => {
+        if (value === id) {
+          out.push(
+            occurrence(
+              file,
+              entityType,
+              id,
+              'reference',
+              `relationships[${index}].metadata.${witnessField}[${witnessIndex}]`,
+            ),
+          );
+        }
+      });
     });
   }
 }
 
-function mutateStructuredJson(
+function buildStructuredEdits(
   file: LoadedJson,
   entityType: EntityType,
   oldId: string,
   newId: string,
-): boolean {
-  let changed = false;
+  rewriteSnlMacroTokens: boolean,
+): TextEdit[] {
+  const edits: TextEdit[] = [];
   const data = file.data as any;
   if (file.relPath === 'entries.json' && Array.isArray(data)) {
-    for (const entry of data) {
+    data.forEach((entry: any, index: number) => {
       if (entityType === 'entry' && entry?.id === oldId) {
-        entry.id = newId;
-        changed = true;
+        edits.push(stringValueEdit(file, [index, 'id'], newId));
       }
-      if (typeof entry?.content?.snl === 'string' && entry.content.snl.trim() !== '') {
+      if (
+        typeof entry?.content?.snl === 'string' &&
+        entry.content.snl.trim() !== '' &&
+        (entityType !== 'macro' || rewriteSnlMacroTokens)
+      ) {
         const next = replaceSnlReferences(entry.content.snl, entityType, oldId, newId);
         if (next !== entry.content.snl) {
-          entry.content.snl = next;
-          changed = true;
+          edits.push(stringValueEdit(file, [index, 'content', 'snl'], next));
         }
       }
-    }
-    return changed;
+    });
+    return edits;
   }
 
   if (file.relPath.startsWith('term_macros/')) {
     const macros = data?.macros;
-    if (!macros || typeof macros !== 'object' || Array.isArray(macros)) return false;
+    if (!macros || typeof macros !== 'object' || Array.isArray(macros)) return edits;
     if (entityType === 'macro' && Object.prototype.hasOwnProperty.call(macros, oldId)) {
-      const renamed: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(macros)) renamed[key === oldId ? newId : key] = value;
-      data.macros = renamed;
-      changed = true;
+      edits.push(propertyKeyEdit(file, ['macros', oldId], newId));
     }
     if (entityType === 'entry') {
-      for (const macro of Object.values(data.macros) as any[]) {
+      for (const [macroId, macro] of Object.entries(macros) as Array<[string, any]>) {
         if (!Array.isArray(macro?.source?.entries)) continue;
-        macro.source.entries = macro.source.entries.map((value: unknown) => {
+        macro.source.entries.forEach((value: unknown, index: number) => {
           if (value === oldId) {
-            changed = true;
-            return newId;
+            edits.push(stringValueEdit(file, ['macros', macroId, 'source', 'entries', index], newId));
           }
-          return value;
         });
       }
     }
-    return changed;
+    return edits;
   }
 
-  if (entityType !== 'entry') return false;
-  if (/^libraries\/[^/]+\/graph\.json$/.test(file.relPath) && Array.isArray(data?.nodes)) {
-    for (const node of data.nodes) {
+  if (entityType === 'entry' && /^libraries\/[^/]+\/graph\.json$/.test(file.relPath) && Array.isArray(data?.nodes)) {
+    data.nodes.forEach((node: any, index: number) => {
       if (node?.props?.entryId === oldId) {
-        node.props.entryId = newId;
-        changed = true;
+        edits.push(stringValueEdit(file, ['nodes', index, 'props', 'entryId'], newId));
       }
-    }
+    });
   } else if (file.relPath === 'relationships.json' && Array.isArray(data?.relationships)) {
-    for (const rel of data.relationships) {
-      if (rel?.from === oldId) {
-        rel.from = newId;
-        changed = true;
+    data.relationships.forEach((rel: any, index: number) => {
+      if (entityType === 'entry' && rel?.from === oldId) {
+        edits.push(stringValueEdit(file, ['relationships', index, 'from'], newId));
       }
-      if (rel?.to === oldId) {
-        rel.to = newId;
-        changed = true;
+      if (entityType === 'entry' && rel?.to === oldId) {
+        edits.push(stringValueEdit(file, ['relationships', index, 'to'], newId));
       }
+      if (rel?.metadata?.generator !== 'macro-source-scan') return;
+      const witnessField = entityType === 'macro' ? 'macros' : 'postfixes';
+      const witnesses = rel.metadata[witnessField];
+      if (!Array.isArray(witnesses)) return;
+      witnesses.forEach((value: unknown, witnessIndex: number) => {
+        if (value === oldId) {
+          edits.push(
+            stringValueEdit(
+              file,
+              ['relationships', index, 'metadata', witnessField, witnessIndex],
+              newId,
+            ),
+          );
+        }
+      });
+    });
+  }
+  return edits;
+}
+
+function stringValueEdit(file: LoadedJson, jsonPath: JSONPath, value: string): TextEdit {
+  const node = findNodeAtLocation(file.tree, jsonPath);
+  if (!node || node.type !== 'string') {
+    throw new Error(`${file.absPath}: expected string at ${JSON.stringify(jsonPath)}.`);
+  }
+  return { offset: node.offset, length: node.length, content: JSON.stringify(value) };
+}
+
+function propertyKeyEdit(file: LoadedJson, valuePath: JSONPath, key: string): TextEdit {
+  const valueNode = findNodeAtLocation(file.tree, valuePath);
+  const keyNode = valueNode?.parent?.children?.[0];
+  if (!valueNode || valueNode.parent?.type !== 'property' || !keyNode || keyNode.type !== 'string') {
+    throw new Error(`${file.absPath}: expected property at ${JSON.stringify(valuePath)}.`);
+  }
+  return { offset: keyNode.offset, length: keyNode.length, content: JSON.stringify(key) };
+}
+
+function applyTextEdits(raw: string, edits: TextEdit[]): string {
+  const ordered = [...edits].sort((a, b) => b.offset - a.offset);
+  for (let i = 1; i < ordered.length; i++) {
+    if (ordered[i - 1].offset < ordered[i].offset + ordered[i].length) {
+      throw new Error('Internal error: overlapping JSON source edits.');
     }
   }
-  return changed;
+  let next = raw;
+  for (const edit of ordered) {
+    next = next.slice(0, edit.offset) + edit.content + next.slice(edit.offset + edit.length);
+  }
+  return next;
 }
 
 export function scanSnlReferences(source: string): SnlReference[] {
@@ -375,7 +506,7 @@ function tokenizeSnl(source: string): SnlToken[] {
 
 async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
   const root = snlDocRoot(workspaceRoot);
-  const candidates = ['entries.json', 'relationships.json'];
+  const candidates = ['config.json', 'entries.json', 'relationships.json'];
 
   const macroDir = path.join(root, 'term_macros');
   try {
@@ -406,27 +537,165 @@ async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
   for (const relPath of unique) {
     const absPath = path.join(root, relPath);
     let raw: string;
+    let stat;
+    let handle;
     try {
-      raw = await fs.readFile(absPath, 'utf8');
+      handle = await fs.open(absPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+      stat = await handle.stat();
+      if (!stat.isFile()) {
+        throw new Error(`${absPath} must be a regular, non-symlink file.`);
+      }
+      raw = await handle.readFile('utf8');
     } catch (error) {
+      if (handle) await handle.close();
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+      if ((error as NodeJS.ErrnoException).code === 'ELOOP') {
+        throw new Error(`${absPath} must be a regular, non-symlink file.`);
+      }
       throw error;
     }
+    await handle.close();
+    const errors: ParseError[] = [];
+    const tree = parseTree(raw, errors, { disallowComments: true, allowTrailingComma: false });
+    if (!tree || errors.length > 0) {
+      const detail = errors.map((e) => `${printParseErrorCode(e.error)}@${e.offset}`).join(', ');
+      throw new Error(`Failed to parse ${absPath}: ${detail || 'empty JSON document'}`);
+    }
+    validateNoDuplicateKeys(tree, absPath);
+    let data: unknown;
     try {
-      loaded.push({ absPath, relPath: relPath.split(path.sep).join('/'), raw, data: JSON.parse(raw) });
+      data = JSON.parse(raw);
     } catch (error) {
       throw new Error(`Failed to parse ${absPath}: ${(error as Error).message}`);
     }
+    const rel = relPath.split(path.sep).join('/');
+    validateSchemaShape(absPath, rel, data);
+    loaded.push({
+      absPath,
+      relPath: rel,
+      raw,
+      data,
+      tree,
+      mode: stat.mode,
+      device: stat.dev,
+      inode: stat.ino,
+    });
   }
   return loaded;
+}
+
+function validateNoDuplicateKeys(node: JsonNode, absPath: string): void {
+  if (node.type === 'object') {
+    const seen = new Set<string>();
+    for (const property of node.children ?? []) {
+      const key = property.children?.[0]?.value;
+      if (typeof key !== 'string') continue;
+      if (seen.has(key)) {
+        throw new Error(`${absPath}: duplicate JSON property ${JSON.stringify(key)} is not safe to migrate.`);
+      }
+      seen.add(key);
+    }
+  }
+  for (const child of node.children ?? []) validateNoDuplicateKeys(child, absPath);
+}
+
+function validateSchemaShape(absPath: string, relPath: string, data: unknown): void {
+  const value = data as any;
+  const fail = (message: string): never => {
+    throw new Error(`${absPath}: ${message}`);
+  };
+  if (relPath === 'config.json') {
+    if (!isRecord(value)) fail('config.json must be an object.');
+    if (
+      value.active_macro_packages !== undefined &&
+      (!Array.isArray(value.active_macro_packages) ||
+        !value.active_macro_packages.every((item: unknown) => typeof item === 'string'))
+    ) {
+      fail('config.active_macro_packages must be a string array when present.');
+    }
+    return;
+  }
+  if (relPath === 'entries.json') {
+    if (!Array.isArray(value)) fail('entries.json must be an array.');
+    value.forEach((entry: any, index: number) => {
+      if (!isRecord(entry) || typeof entry.id !== 'string' || !isRecord(entry.content)) {
+        fail(`entry ${index} must contain string id and object content.`);
+      }
+      if (entry.content.snl !== undefined && typeof entry.content.snl !== 'string') {
+        fail(`entry ${index} content.snl must be a string when present.`);
+      }
+    });
+    return;
+  }
+  if (relPath.startsWith('term_macros/')) {
+    if (!isRecord(value) || !isRecord(value.macros)) fail('macro package must contain an object macros map.');
+    for (const [name, macro] of Object.entries(value.macros) as Array<[string, any]>) {
+      if (!isRecord(macro) || !isRecord(macro.source) || !Array.isArray(macro.source.entries)) {
+        fail(`macro ${JSON.stringify(name)} must contain source.entries[].`);
+      }
+      if (!macro.source.entries.every((item: unknown) => typeof item === 'string')) {
+        fail(`macro ${JSON.stringify(name)} source.entries must contain only strings.`);
+      }
+    }
+    return;
+  }
+  if (/^libraries\/[^/]+\/graph\.json$/.test(relPath)) {
+    if (!isRecord(value) || !Array.isArray(value.nodes) || !Array.isArray(value.relationships)) {
+      fail('Library graph must contain nodes[] and relationships[].');
+    }
+    value.nodes.forEach((node: any, index: number) => {
+      if (!isRecord(node) || !isRecord(node.props)) fail(`graph node ${index} must contain object props.`);
+      if (node.props.entryId !== undefined && typeof node.props.entryId !== 'string') {
+        fail(`graph node ${index} props.entryId must be a string when present.`);
+      }
+    });
+    return;
+  }
+  if (relPath === 'relationships.json') {
+    if (!isRecord(value) || !Array.isArray(value.relationships)) {
+      fail('relationships.json must contain relationships[].');
+    }
+    value.relationships.forEach((rel: any, index: number) => {
+      if (!isRecord(rel) || typeof rel.from !== 'string' || typeof rel.to !== 'string') {
+        fail(`relationship ${index} must contain string from/to.`);
+      }
+      if (isRecord(rel.metadata) && rel.metadata.generator === 'macro-source-scan') {
+        for (const field of ['macros', 'postfixes']) {
+          const values = rel.metadata[field];
+          if (values !== undefined && (!Array.isArray(values) || !values.every((v) => typeof v === 'string'))) {
+            fail(`relationship ${index} metadata.${field} must be a string array when present.`);
+          }
+        }
+      }
+    });
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, any> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+async function assertUnchangedRegularFile(
+  file: Pick<LoadedJson, 'absPath' | 'raw' | 'device' | 'inode'>,
+): Promise<void> {
+  const stat = await fs.lstat(file.absPath);
+  if (!stat.isFile() || stat.isSymbolicLink() || stat.dev !== file.device || stat.ino !== file.inode) {
+    throw new Error(`${file.absPath} changed identity or became a symlink during rename planning.`);
+  }
+  if ((await fs.readFile(file.absPath, 'utf8')) !== file.raw) {
+    throw new Error(`${file.absPath} changed during rename planning; refusing to overwrite it.`);
+  }
 }
 
 function validateNonEmptyIdentity(id: string): void {
   if (id.trim() === '') throw new Error('Identity must be a non-empty string.');
 }
 
-function isSnlIdentifier(id: string): boolean {
-  return /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/.test(id);
+function isTraceableSnlIdentity(entityType: EntityType, id: string): boolean {
+  const pattern = entityType === 'macro'
+    ? /^[A-Za-z_\\][A-Za-z0-9_.\-]*$/
+    : /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/;
+  return pattern.test(id);
 }
 
 function occurrence(
@@ -442,12 +711,6 @@ function occurrence(
 function offsetPosition(source: string, offset: number): { line: number; column: number } {
   const before = source.slice(0, offset).split('\n');
   return { line: before.length, column: before[before.length - 1].length + 1 };
-}
-
-function stringifyLike(raw: string, data: unknown): string {
-  const indentMatch = /\n([ \t]+)\S/.exec(raw);
-  const indent = indentMatch?.[1] ?? '  ';
-  return JSON.stringify(data, null, indent) + (raw.endsWith('\n') ? '\n' : '');
 }
 
 function compareOccurrence(a: EntityOccurrence, b: EntityOccurrence): number {

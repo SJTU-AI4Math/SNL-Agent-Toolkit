@@ -134,10 +134,15 @@ node bin/snl-find-refs.mjs --root . --type macro --json Group
 
 For Entry ids, this covers the `entries.json` definition, Library graph
 `props.entryId`, pool-wide relationship `from`/`to`, macro
-`source.entries[]`, and SNL `x@entry-id` references. For Macro ids, it covers
-the package `macros` map key and actual SNL macro tokens, including
-`@BinderMacro(...)`. Style tags and `%…%` / `$…$` literal environments are not
-misreported as Macro references.
+`source.entries[]`, SNL `x@entry-id` references, and Extension-generated
+relationship `metadata.postfixes[]` witnesses. For Macro ids, it covers the
+package `macros` map key, actual SNL macro tokens, and generated relationship
+`metadata.macros[]` witnesses. Style tags and `%…%` / `$…$` literal
+environments are not misreported as Macro references. User-authored opaque
+metadata remains outside the default migration boundary. Macro package definitions
+are always reported, but SNL invocation references are attributed only to macros
+resolved from `config.active_macro_packages`; renaming an inactive macro does
+not rewrite same-spelled fallback variables.
 
 ### snl-rename-id
 
@@ -161,12 +166,24 @@ Safety rules:
 - if the old identity has SNL references, the new identity must be expressible
   by the current SNL identifier grammar; JSON-only Unicode Macro identities
   remain traceable and renameable;
-- every JSON file and every touched SNL source must parse before any write;
+- every schema-owned JSON file and every non-empty SNL source must parse before
+  any write; malformed reference fields fail closed instead of being skipped;
+- JSON changes are source-range edits to the owning string token/property key,
+  so opaque numbers, escaping, whitespace, key order, CRLFs, and unknown fields
+  remain byte-for-byte unchanged;
+- schema files must be regular non-symlink files; their inode and content are
+  checked again immediately before installation, and original permission modes
+  are preserved;
 - writes use same-directory temporary files and restore already-installed
-  originals if a later file replacement fails;
-- only schema-owned identity/reference fields and parsed SNL tokens change;
-  titles, Markdown/LaTeX/text, metadata, pointers, and unknown properties are
-  preserved rather than text-replaced;
+  originals if a later replacement fails. This is rollback-based multi-file
+  safety, **not crash-atomic transaction semantics**: process/machine failure
+  between per-file renames can still require recovery from version control;
+- only schema-owned identity/reference fields, generated relationship witness
+  arrays, and parsed SNL tokens change; titles, Markdown/LaTeX/text, arbitrary
+  user metadata, pointers, and unknown properties are not text-replaced;
+- after installation, the workspace is reloaded and checked for exactly one
+  new definition, zero stale occurrences, and the expected occurrence count;
+  verification failure triggers rollback;
 - `--dry-run` performs the complete validation and plan construction with zero
   writes.
 

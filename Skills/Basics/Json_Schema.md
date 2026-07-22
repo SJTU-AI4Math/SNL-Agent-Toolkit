@@ -202,7 +202,12 @@ This graph is pool-wide and semantic. It is distinct from each Library's structu
 - `id` is globally unique in the relationship file.
 - `from` and `to` reference Entry ids.
 - `label` is a non-empty free-form string.
-- `metadata` is opaque and must round-trip unchanged.
+- `metadata` is generally opaque and must round-trip unchanged.
+- Exception: rows with `metadata.generator: "macro-source-scan"` are
+  Extension-owned generated relationships. Their `metadata.macros[]` values are
+  Macro identities and `metadata.postfixes[]` values are Entry identities;
+  identity tracing/rename updates these known witness arrays while leaving
+  arbitrary user-authored metadata untouched.
 
 ## Identity and round-trip rules
 
