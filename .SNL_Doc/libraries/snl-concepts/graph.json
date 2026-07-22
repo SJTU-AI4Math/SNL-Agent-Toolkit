@@ -237,6 +237,34 @@
       "props": {
         "entryId": "concept.extension.recursive-popovers"
       }
+    },
+    {
+      "id": "node.concept.snl.entry-data-driver",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.entry-data-driver"
+      }
+    },
+    {
+      "id": "node.concept.snl.interaction-driver",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.interaction-driver"
+      }
+    },
+    {
+      "id": "node.concept.snl.stable-identity",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.stable-identity"
+      }
+    },
+    {
+      "id": "node.concept.snl.synchronized-rename",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.snl.synchronized-rename"
+      }
     }
   ],
   "relationships": [
@@ -403,6 +431,26 @@
     {
       "from": "node.concept.snl-doc",
       "to": "node.concept.extension.recursive-popovers",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.entry-data-driver",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.interaction-driver",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.stable-identity",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.snl.synchronized-rename",
       "label": "branch"
     }
   ]

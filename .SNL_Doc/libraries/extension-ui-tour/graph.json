@@ -729,13 +729,6 @@
       }
     },
     {
-      "id": "node.ui.input.macro-package.create.title",
-      "label": "Entry",
-      "props": {
-        "entryId": "ui.input.macro-package.create.title"
-      }
-    },
-    {
       "id": "node.ui.button.macro-package.create.submit",
       "label": "Entry",
       "props": {
@@ -771,20 +764,6 @@
       }
     },
     {
-      "id": "node.ui.button.macro-package.batch-package",
-      "label": "Entry",
-      "props": {
-        "entryId": "ui.button.macro-package.batch-package"
-      }
-    },
-    {
-      "id": "node.ui.button.macro-package.batch-move",
-      "label": "Entry",
-      "props": {
-        "entryId": "ui.button.macro-package.batch-move"
-      }
-    },
-    {
       "id": "node.ui.button.macro-package.batch-delete",
       "label": "Entry",
       "props": {
@@ -803,13 +782,6 @@
       "label": "Entry",
       "props": {
         "entryId": "ui.input.macro.create.kind"
-      }
-    },
-    {
-      "id": "node.ui.input.macro.create.package",
-      "label": "Entry",
-      "props": {
-        "entryId": "ui.input.macro.create.package"
       }
     },
     {
@@ -845,13 +817,6 @@
       "label": "Entry",
       "props": {
         "entryId": "ui.input.macro.edit.kind"
-      }
-    },
-    {
-      "id": "node.ui.input.macro.edit.package",
-      "label": "Entry",
-      "props": {
-        "entryId": "ui.input.macro.edit.package"
       }
     },
     {
@@ -1604,13 +1569,6 @@
       }
     },
     {
-      "id": "node.ui.button.macro-package.package-picker-create",
-      "label": "Entry",
-      "props": {
-        "entryId": "ui.button.macro-package.package-picker-create"
-      }
-    },
-    {
       "id": "node.ui.button.macro-package.row-delete",
       "label": "Entry",
       "props": {
@@ -1699,6 +1657,216 @@
       "label": "Entry",
       "props": {
         "entryId": "ui.input.macro.edit.block-template-name"
+      }
+    },
+    {
+      "id": "node.ui.button.macro-package.batch-transfer",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.batch-transfer"
+      }
+    },
+    {
+      "id": "node.ui.section.shared.panel-nav",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.shared.panel-nav"
+      }
+    },
+    {
+      "id": "node.ui.button.panel-nav.back-dashboard",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.panel-nav.back-dashboard"
+      }
+    },
+    {
+      "id": "node.ui.button.panel-nav.back-infoview",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.panel-nav.back-infoview"
+      }
+    },
+    {
+      "id": "node.ui.button.panel-nav.refresh",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.panel-nav.refresh"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.mode",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.mode"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.mode",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.mode"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.dynamic-arity",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.dynamic-arity"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.dynamic-arity",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.dynamic-arity"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.style-add",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.style-add"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.style-add",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.style-add"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.style-remove",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.style-remove"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.style-remove",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.style-remove"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.style-move-default",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.style-move-default"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.style-move-default",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.style-move-default"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.arg-add",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.arg-add"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.arg-add",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.arg-add"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.arg-remove",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.arg-remove"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.arg-remove",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.arg-remove"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.create.args-reset",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.create.args-reset"
+      }
+    },
+    {
+      "id": "node.ui.button.macro.edit.args-reset",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro.edit.args-reset"
+      }
+    },
+    {
+      "id": "node.ui.section.entry.create.gui-inductive",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.entry.create.gui-inductive"
+      }
+    },
+    {
+      "id": "node.ui.section.entry.edit.gui-inductive",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.entry.edit.gui-inductive"
+      }
+    },
+    {
+      "id": "node.ui.input.entry.create.gui-macro-style",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry.create.gui-macro-style"
+      }
+    },
+    {
+      "id": "node.ui.input.entry.edit.gui-macro-style",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry.edit.gui-macro-style"
+      }
+    },
+    {
+      "id": "node.ui.button.entry.create.gui-open-macro",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry.create.gui-open-macro"
+      }
+    },
+    {
+      "id": "node.ui.button.entry.edit.gui-open-macro",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry.edit.gui-open-macro"
+      }
+    },
+    {
+      "id": "node.ui.button.entry-infoview.context-related-entry",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.entry-infoview.context-related-entry"
+      }
+    },
+    {
+      "id": "node.ui.input.entry-kind.edit.id",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.entry-kind.edit.id"
+      }
+    },
+    {
+      "id": "node.ui.input.macro-kind.edit.id",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro-kind.edit.id"
       }
     }
   ],
@@ -2120,11 +2288,6 @@
     },
     {
       "from": "node.ui.panel.macro-package.create",
-      "to": "node.ui.input.macro-package.create.title",
-      "label": "branch"
-    },
-    {
-      "from": "node.ui.panel.macro-package.create",
       "to": "node.ui.button.macro-package.create.submit",
       "label": "branch"
     },
@@ -2150,16 +2313,6 @@
     },
     {
       "from": "node.ui.section.macro-package.batch-actions",
-      "to": "node.ui.button.macro-package.batch-package",
-      "label": "branch"
-    },
-    {
-      "from": "node.ui.section.macro-package.batch-actions",
-      "to": "node.ui.button.macro-package.batch-move",
-      "label": "branch"
-    },
-    {
-      "from": "node.ui.section.macro-package.batch-actions",
       "to": "node.ui.button.macro-package.batch-delete",
       "label": "branch"
     },
@@ -2171,11 +2324,6 @@
     {
       "from": "node.ui.panel.macro.create",
       "to": "node.ui.input.macro.create.kind",
-      "label": "branch"
-    },
-    {
-      "from": "node.ui.panel.macro.create",
-      "to": "node.ui.input.macro.create.package",
       "label": "branch"
     },
     {
@@ -2201,11 +2349,6 @@
     {
       "from": "node.ui.panel.macro.edit",
       "to": "node.ui.input.macro.edit.kind",
-      "label": "branch"
-    },
-    {
-      "from": "node.ui.panel.macro.edit",
-      "to": "node.ui.input.macro.edit.package",
       "label": "branch"
     },
     {
@@ -2734,11 +2877,6 @@
       "label": "branch"
     },
     {
-      "from": "node.ui.panel.macro.create",
-      "to": "node.ui.button.macro-package.package-picker-create",
-      "label": "branch"
-    },
-    {
       "from": "node.ui.section.macro-package.macros",
       "to": "node.ui.button.macro-package.row-delete",
       "label": "branch"
@@ -2801,6 +2939,151 @@
     {
       "from": "node.ui.section.macro.edit.styles",
       "to": "node.ui.input.macro.edit.block-template-name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.batch-actions",
+      "to": "node.ui.button.macro-package.batch-transfer",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.shared.panel-nav",
+      "to": "node.ui.button.panel-nav.back-dashboard",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.shared.panel-nav",
+      "to": "node.ui.button.panel-nav.back-infoview",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.shared.panel-nav",
+      "to": "node.ui.button.panel-nav.refresh",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.mode",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.mode",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.dynamic-arity",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.dynamic-arity",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.button.macro.create.style-add",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.button.macro.edit.style-add",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.button.macro.create.style-remove",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.button.macro.edit.style-remove",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.button.macro.create.style-move-default",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.button.macro.edit.style-move-default",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.preview",
+      "to": "node.ui.button.macro.create.arg-add",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.preview",
+      "to": "node.ui.button.macro.edit.arg-add",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.preview",
+      "to": "node.ui.button.macro.create.arg-remove",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.preview",
+      "to": "node.ui.button.macro.edit.arg-remove",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.preview",
+      "to": "node.ui.button.macro.create.args-reset",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.preview",
+      "to": "node.ui.button.macro.edit.args-reset",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry.create.content",
+      "to": "node.ui.section.entry.create.gui-inductive",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry.edit.content",
+      "to": "node.ui.section.entry.edit.gui-inductive",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry.create.gui-inductive",
+      "to": "node.ui.input.entry.create.gui-macro-style",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry.edit.gui-inductive",
+      "to": "node.ui.input.entry.edit.gui-macro-style",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry.create.gui-inductive",
+      "to": "node.ui.button.entry.create.gui-open-macro",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry.edit.gui-inductive",
+      "to": "node.ui.button.entry.edit.gui-open-macro",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.entry-infoview.context",
+      "to": "node.ui.button.entry-infoview.context-related-entry",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.input.entry-kind.edit.id",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.input.macro-kind.edit.id",
       "label": "branch"
     }
   ]

@@ -643,26 +643,6 @@
         }
       ]
     },
-    "Entry.ui.input.macro-package.create.title": {
-      "description": "UI terminology backed by Entry ui.input.macro-package.create.title: Macro Package Title Input",
-      "source": {
-        "entries": [
-          "ui.input.macro-package.create.title"
-        ],
-        "urls": []
-      },
-      "kind": "text-input",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Title Input}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
     "Entry.ui.input.macro.create.name": {
       "description": "UI terminology backed by Entry ui.input.macro.create.name: Macro Name Input (Create)",
       "source": {
@@ -698,26 +678,6 @@
         {
           "mode": "formula_inline",
           "template": "\\texttt{Macro Kind Selector (Create)}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
-    "Entry.ui.input.macro.create.package": {
-      "description": "UI terminology backed by Entry ui.input.macro.create.package: Macro Package Selector (Create)",
-      "source": {
-        "entries": [
-          "ui.input.macro.create.package"
-        ],
-        "urls": []
-      },
-      "kind": "text-input",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Selector (Create)}",
           "style_name": "default",
           "tags": []
         }
@@ -778,26 +738,6 @@
         {
           "mode": "formula_inline",
           "template": "\\texttt{Macro Kind Selector (Edit)}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
-    "Entry.ui.input.macro.edit.package": {
-      "description": "UI terminology backed by Entry ui.input.macro.edit.package: Macro Package Selector (Edit)",
-      "source": {
-        "entries": [
-          "ui.input.macro.edit.package"
-        ],
-        "urls": []
-      },
-      "kind": "text-input",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Selector (Edit)}",
           "style_name": "default",
           "tags": []
         }
@@ -1818,6 +1758,166 @@
         {
           "mode": "formula_inline",
           "template": "\\texttt{Block Template Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.mode": {
+      "description": "Catfood term backed by ui.input.macro.create.mode.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.mode"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Mode Selector (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.mode": {
+      "description": "Catfood term backed by ui.input.macro.edit.mode.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.mode"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Mode Selector (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.dynamic-arity": {
+      "description": "Catfood term backed by ui.input.macro.create.dynamic-arity.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.dynamic-arity"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Arity Toggle (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.dynamic-arity": {
+      "description": "Catfood term backed by ui.input.macro.edit.dynamic-arity.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.dynamic-arity"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Arity Toggle (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.entry.create.gui-macro-style": {
+      "description": "Catfood term backed by ui.input.entry.create.gui-macro-style.",
+      "source": {
+        "entries": [
+          "ui.input.entry.create.gui-macro-style"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{GUI Macro Style Input (Create Entry)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.entry.edit.gui-macro-style": {
+      "description": "Catfood term backed by ui.input.entry.edit.gui-macro-style.",
+      "source": {
+        "entries": [
+          "ui.input.entry.edit.gui-macro-style"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{GUI Macro Style Input (Edit Entry)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.entry-kind.edit.id": {
+      "description": "Catfood term backed by ui.input.entry-kind.edit.id.",
+      "source": {
+        "entries": [
+          "ui.input.entry-kind.edit.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Kind ID Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro-kind.edit.id": {
+      "description": "Catfood term backed by ui.input.macro-kind.edit.id.",
+      "source": {
+        "entries": [
+          "ui.input.macro-kind.edit.id"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind ID Input (Edit)}",
           "style_name": "default",
           "tags": []
         }

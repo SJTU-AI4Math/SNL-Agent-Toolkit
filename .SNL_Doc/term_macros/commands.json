@@ -1756,8 +1756,8 @@
         }
       ]
     },
-    "CommandTitle.snlDoc.createMacroPickPackage": {
-      "description": "Display title for the internal package-picker command.",
+    "CommandLabel.snlDoc.createMacroPickPackage": {
+      "description": "Documentation label for the internal package-picker helper; it has no contributed Command Palette title.",
       "source": {
         "entries": [
           "command.snlDoc.createMacroPickPackage"

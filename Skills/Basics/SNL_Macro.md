@@ -22,7 +22,7 @@ list(item1,item2,item3)
 
 ```json
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "Algebra",
   "description": "Algebra terminology",
   "macros": {

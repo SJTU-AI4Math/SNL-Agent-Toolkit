@@ -87,7 +87,7 @@ A bare array shared by every Library:
 
 ```json
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "Algebra",
   "description": "Algebra terms",
   "macros": {

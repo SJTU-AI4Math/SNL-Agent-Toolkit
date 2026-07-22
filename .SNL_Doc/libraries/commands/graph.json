@@ -276,7 +276,8 @@
       "id": "node.command.snlDoc.createMacroPickPackage",
       "label": "Entry",
       "props": {
-        "entryId": "command.snlDoc.createMacroPickPackage"
+        "entryId": "command.snlDoc.createMacroPickPackage",
+        "counterId": "a5cda9bf-702e-4336-af85-1d7ffe8f9eb7"
       }
     }
   ],

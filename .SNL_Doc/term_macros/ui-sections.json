@@ -962,6 +962,66 @@
           "tags": []
         }
       ]
+    },
+    "Entry.ui.section.shared.panel-nav": {
+      "description": "Catfood term backed by ui.section.shared.panel-nav.",
+      "source": {
+        "entries": [
+          "ui.section.shared.panel-nav"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Shared Panel Navigation}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.section.entry.create.gui-inductive": {
+      "description": "Catfood term backed by ui.section.entry.create.gui-inductive.",
+      "source": {
+        "entries": [
+          "ui.section.entry.create.gui-inductive"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{GUI Inductive Editor Section (Create Entry)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.section.entry.edit.gui-inductive": {
+      "description": "Catfood term backed by ui.section.entry.edit.gui-inductive.",
+      "source": {
+        "entries": [
+          "ui.section.entry.edit.gui-inductive"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{GUI Inductive Editor Section (Edit Entry)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
     }
   }
 }

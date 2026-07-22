@@ -1043,46 +1043,6 @@
         }
       ]
     },
-    "Entry.ui.button.macro-package.batch-package": {
-      "description": "UI terminology backed by Entry ui.button.macro-package.batch-package: Package as New Batch Button",
-      "source": {
-        "entries": [
-          "ui.button.macro-package.batch-package"
-        ],
-        "urls": []
-      },
-      "kind": "button",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{Package as New Batch Button}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
-    "Entry.ui.button.macro-package.batch-move": {
-      "description": "UI terminology backed by Entry ui.button.macro-package.batch-move: Move to Package Batch Button",
-      "source": {
-        "entries": [
-          "ui.button.macro-package.batch-move"
-        ],
-        "urls": []
-      },
-      "kind": "button",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{Move to Package Batch Button}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
     "Entry.ui.button.macro-package.batch-delete": {
       "description": "UI terminology backed by Entry ui.button.macro-package.batch-delete: Delete Macros Batch Button",
       "source": {
@@ -2063,26 +2023,6 @@
         }
       ]
     },
-    "New_macro_package": {
-      "description": "Toolkit documentation term: New macro package",
-      "source": {
-        "entries": [
-          "ui.button.macro-package.package-picker-create"
-        ],
-        "urls": []
-      },
-      "kind": "button",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{New macro package}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
     "Entry.ui.button.dashboard.snl-macros.toggle-active": {
       "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.toggle-active: Toggle Package Active Button (Dashboard List)",
       "source": {
@@ -2098,26 +2038,6 @@
         {
           "mode": "formula_inline",
           "template": "\\texttt{Toggle Package Active Button (Dashboard List)}",
-          "style_name": "default",
-          "tags": []
-        }
-      ]
-    },
-    "Entry.ui.button.macro-package.package-picker-create": {
-      "description": "UI terminology backed by Entry ui.button.macro-package.package-picker-create: New Macro Package Button (Package Picker)",
-      "source": {
-        "entries": [
-          "ui.button.macro-package.package-picker-create"
-        ],
-        "urls": []
-      },
-      "kind": "button",
-      "dynamic_arity": false,
-      "tags": [],
-      "styles": [
-        {
-          "mode": "formula_inline",
-          "template": "\\texttt{New Macro Package Button (Package Picker)}",
           "style_name": "default",
           "tags": []
         }
@@ -2158,6 +2078,386 @@
         {
           "mode": "formula_inline",
           "template": "\\texttt{Delete Macro Row Button}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.batch-transfer": {
+      "description": "Catfood term backed by ui.button.macro-package.batch-transfer.",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.batch-transfer"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Copy / Move Batch Button}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.panel-nav.back-dashboard": {
+      "description": "Catfood term backed by ui.button.panel-nav.back-dashboard.",
+      "source": {
+        "entries": [
+          "ui.button.panel-nav.back-dashboard"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Back to Dashboard Button}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.panel-nav.back-infoview": {
+      "description": "Catfood term backed by ui.button.panel-nav.back-infoview.",
+      "source": {
+        "entries": [
+          "ui.button.panel-nav.back-infoview"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Back to Infoview Button}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.panel-nav.refresh": {
+      "description": "Catfood term backed by ui.button.panel-nav.refresh.",
+      "source": {
+        "entries": [
+          "ui.button.panel-nav.refresh"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Refresh Panel Button}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.style-add": {
+      "description": "Catfood term backed by ui.button.macro.create.style-add.",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.style-add"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Macro Style Button (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.style-add": {
+      "description": "Catfood term backed by ui.button.macro.edit.style-add.",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.style-add"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Macro Style Button (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.style-remove": {
+      "description": "Catfood term backed by ui.button.macro.create.style-remove.",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.style-remove"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Remove Macro Style Button (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.style-remove": {
+      "description": "Catfood term backed by ui.button.macro.edit.style-remove.",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.style-remove"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Remove Macro Style Button (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.style-move-default": {
+      "description": "Catfood term backed by ui.button.macro.create.style-move-default.",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.style-move-default"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Move Style Toward Default Button (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.style-move-default": {
+      "description": "Catfood term backed by ui.button.macro.edit.style-move-default.",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.style-move-default"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Move Style Toward Default Button (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.arg-add": {
+      "description": "Catfood term backed by ui.button.macro.create.arg-add.",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.arg-add"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Preview Argument Button (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.arg-add": {
+      "description": "Catfood term backed by ui.button.macro.edit.arg-add.",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.arg-add"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Add Preview Argument Button (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.arg-remove": {
+      "description": "Catfood term backed by ui.button.macro.create.arg-remove.",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.arg-remove"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Remove Preview Argument Button (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.arg-remove": {
+      "description": "Catfood term backed by ui.button.macro.edit.arg-remove.",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.arg-remove"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Remove Preview Argument Button (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.create.args-reset": {
+      "description": "Catfood term backed by ui.button.macro.create.args-reset.",
+      "source": {
+        "entries": [
+          "ui.button.macro.create.args-reset"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Reset Preview Arguments Button (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro.edit.args-reset": {
+      "description": "Catfood term backed by ui.button.macro.edit.args-reset.",
+      "source": {
+        "entries": [
+          "ui.button.macro.edit.args-reset"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Reset Preview Arguments Button (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.entry.create.gui-open-macro": {
+      "description": "Catfood term backed by ui.button.entry.create.gui-open-macro.",
+      "source": {
+        "entries": [
+          "ui.button.entry.create.gui-open-macro"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Open Macro Editor Button (Create Entry)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.entry.edit.gui-open-macro": {
+      "description": "Catfood term backed by ui.button.entry.edit.gui-open-macro.",
+      "source": {
+        "entries": [
+          "ui.button.entry.edit.gui-open-macro"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Open Macro Editor Button (Edit Entry)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.entry-infoview.context-related-entry": {
+      "description": "Catfood term backed by ui.button.entry-infoview.context-related-entry.",
+      "source": {
+        "entries": [
+          "ui.button.entry-infoview.context-related-entry"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Context Entry Entrance}",
           "style_name": "default",
           "tags": []
         }

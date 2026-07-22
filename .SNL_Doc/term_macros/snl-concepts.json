@@ -1342,6 +1342,226 @@
           "tags": []
         }
       ]
+    },
+    "Entry.concept.snl.entry-data-driver": {
+      "description": "Catfood term backed by concept.snl.entry-data-driver.",
+      "source": {
+        "entries": [
+          "concept.snl.entry-data-driver"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{EntryDataDriver}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.concept.snl.interaction-driver": {
+      "description": "Catfood term backed by concept.snl.interaction-driver.",
+      "source": {
+        "entries": [
+          "concept.snl.interaction-driver"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{SnlInteractionDriver}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.concept.snl.stable-identity": {
+      "description": "Catfood term backed by concept.snl.stable-identity.",
+      "source": {
+        "entries": [
+          "concept.snl.stable-identity"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Stable Entity Identity}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.concept.snl.synchronized-rename": {
+      "description": "Catfood term backed by concept.snl.synchronized-rename.",
+      "source": {
+        "entries": [
+          "concept.snl.synchronized-rename"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Synchronized Rename}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Syntax_Tree_v2": {
+      "description": "Catfood term backed by concept.snl.syntax-tree.",
+      "source": {
+        "entries": [
+          "concept.snl.syntax-tree"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Syntax Tree v2}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_name": {
+      "description": "Catfood term backed by concept.snl.syntax-tree.",
+      "source": {
+        "entries": [
+          "concept.snl.syntax-tree"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{macro\\_name}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "env_mode": {
+      "description": "Catfood term backed by concept.snl.syntax-tree.",
+      "source": {
+        "entries": [
+          "concept.snl.syntax-tree"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{env\\_mode}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "EntryDataDriver": {
+      "description": "Catfood term backed by concept.snl.entry-data-driver.",
+      "source": {
+        "entries": [
+          "concept.snl.entry-data-driver"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{EntryDataDriver}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "SnlInteractionDriver": {
+      "description": "Catfood term backed by concept.snl.interaction-driver.",
+      "source": {
+        "entries": [
+          "concept.snl.interaction-driver"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{SnlInteractionDriver}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "stable_identity": {
+      "description": "Catfood term backed by concept.snl.stable-identity.",
+      "source": {
+        "entries": [
+          "concept.snl.stable-identity"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{stable identity}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "synchronized_rename": {
+      "description": "Catfood term backed by concept.snl.synchronized-rename.",
+      "source": {
+        "entries": [
+          "concept.snl.synchronized-rename"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{synchronized rename}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
     }
   }
 }

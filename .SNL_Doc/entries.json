@@ -34,7 +34,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Library",
     "content": {
-      "snl": "%Modal-style panel to seed a new #0 tree. Takes a title, slugifies to the directory name, writes empty #1 + #2 (+ #3 after the counter refactor). Never overwrites — #4 result if the slug exists.%(Path.join(Folder.libraries,Folder.slug),File.meta_json,File.graph_json,File.counters_json,duplicate)"
+      "snl": "%Creates a new Library directory from its title and slug, including empty #0, #1, and #2 files. Existing slugs are never overwritten.%(File.meta_json,File.graph_json,File.counters_json)"
     },
     "contribution_info": null,
     "pointer": null
@@ -254,7 +254,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Counters Section",
     "content": {
-      "snl": "%Post-refactor: the #0 over #1 inside #2. Same tree UI as the Outline. Each counter = #3. EntryKinds refer to counters here by #4; per-entry-ref override lives in the outline row.%(tree-view_editor,File.counters_json,Edit_Library,id_name_numbering_DSL_children,defaultCounterName)"
+      "snl": "%The tree editor over #0 inside Edit Library. Each Counter has id, name, numbering, and children; Entry Kind defaults and per-occurrence overrides resolve into this Library-scoped hierarchy.%(File.counters_json)"
     },
     "contribution_info": null,
     "pointer": null
@@ -344,7 +344,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Counter Numbering DSL Field",
     "content": {
-      "snl": "%Typst-inspired DSL string on a #0 (post-refactor) or, before the refactor, on an #1. Examples: #2, #3, #4, #5, #6, #7. #8 yields the k-th label.%(Counter,EntryKind,Literal.one,Literal.dot_one,Literal.upper_A,Literal.lower_i,Literal.example_A,Literal.section_I,formatNumbering_template_k)"
+      "snl": "%Typst-inspired numbering template stored on a Counter node. Examples include #0, #1, #2, #3, #4, and #5; formatting replaces the first ordinal slot for the Counter-local position.%(Literal.one,Literal.dot_one,Literal.upper_A,Literal.lower_i,Literal.example_A,Literal.section_I)"
     },
     "contribution_info": null,
     "pointer": null
@@ -354,7 +354,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "Command Palette Overview",
     "content": {
-      "snl": "%The extension registers 34 #0 commands; 33 are contributed in #18 under #19. Categories: init (#1, #2, #3), create (#4), edit (#5), delete (#6), open panels (#7, #8, #9, #10, #11, #12), and utilities (#13, #14, #15). Most create/edit commands take zero args from the palette and launch a webview panel; programmatic-only variants (like #16) are gated with #17 in the palette contribution.%(snlDoc.,init,initEntryKinds,initMacroKinds,create,edit,delete,openInfoview,openDashboard,openEntryInfoview,openMacroPackage,openSnoogL,openInfoviewGraph_ForLibrary,refreshInfoview,revealEntryPointer,regenerateDependencies,openEntryInfoview,when_false,File.package_json,JsonKey.contributes_commands)"
+      "snl": "%The Extension registers 34 commands: 33 are contributed through #0 under #1, while #2 is an internal helper. Palette-visible commands are distinct from hidden programmatic commands and disabled UI-only command contributions; edit/create commands that require entity ids or package files are launched from documented UI flows.%(File.package_json,JsonKey.contributes_commands,snlDoc.createMacroPickPackage)"
     },
     "contribution_info": null,
     "pointer": null
@@ -394,7 +394,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.regenerateDependencies",
     "content": {
-      "snl": "%Scans all entries for macro references and rebuilds the dependency subset of #0. Non-dependency relationships are preserved.%(Path.join(Folder.SNL_Doc,File.relationships_json))"
+      "snl": "%#0 scans all or an optional scoped set of Entries, regenerates both depends and uses_context relationships, recomputes metadata.isAtomic, and preserves user-authored plus out-of-scope generated rows in #1.%(snlDoc.regenerateDependencies,Path.join(Folder.SNL_Doc,File.relationships_json))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1090,16 +1090,6 @@
     "pointer": null
   },
   {
-    "id": "ui.input.macro-package.create.title",
-    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
-    "title": "Macro Package Title Input",
-    "content": {
-      "snl": "%Title used to derive the term_macros package filename.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
     "id": "ui.button.macro-package.create.submit",
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Package Submit Button",
@@ -1150,26 +1140,6 @@
     "pointer": null
   },
   {
-    "id": "ui.button.macro-package.batch-package",
-    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
-    "title": "Package as New Batch Button",
-    "content": {
-      "snl": "%Copies or moves selected macros into a new package.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
-    "id": "ui.button.macro-package.batch-move",
-    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
-    "title": "Move to Package Batch Button",
-    "content": {
-      "snl": "%Moves selected macros into an existing package.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
     "id": "ui.button.macro-package.batch-delete",
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Delete Macros Batch Button",
@@ -1195,16 +1165,6 @@
     "title": "Macro Kind Selector (Create)",
     "content": {
       "snl": "%Selects the SNL Macro Kind.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
-    "id": "ui.input.macro.create.package",
-    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
-    "title": "Macro Package Selector (Create)",
-    "content": {
-      "snl": "%Selects the macro package that owns this macro.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -1255,16 +1215,6 @@
     "title": "Macro Kind Selector (Edit)",
     "content": {
       "snl": "%Selects the SNL Macro Kind.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
-    "id": "ui.input.macro.edit.package",
-    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
-    "title": "Macro Package Selector (Edit)",
-    "content": {
-      "snl": "%Selects the macro package that owns this macro.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -1534,7 +1484,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Infoview Context Section",
     "content": {
-      "snl": "%Shows Library context for the Entry.%"
+      "snl": "%Lists Entries that provide x@srcEntry binding context for the current Entry.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -1544,7 +1494,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Infoview Dependencies Section",
     "content": {
-      "snl": "%Shows dependency and related-Entry context.%"
+      "snl": "%Lists macro-source dependencies with atomic or composite badges.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -1554,7 +1504,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Related Entry Entrance",
     "content": {
-      "snl": "%Opens a related Entry in its own Entry Infoview.%"
+      "snl": "%Opens a dependency Entry in its own Entry Infoview.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -2334,7 +2284,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openInfoview",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.openInfoview. Command Palette title: SNL: Open Infoview.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.openInfoview,CommandTitle.snlDoc.openInfoview)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2344,7 +2294,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.refreshInfoview",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.refreshInfoview. Command Palette title: SNL: Refresh Infoview.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.refreshInfoview,CommandTitle.snlDoc.refreshInfoview)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2354,7 +2304,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.deleteEntry",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.deleteEntry. Command Palette title: SNL: Delete Entry.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.deleteEntry,CommandTitle.snlDoc.deleteEntry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2364,7 +2314,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.deleteEntryKind",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.deleteEntryKind. Command Palette title: SNL: Delete Entry Kind.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.deleteEntryKind,CommandTitle.snlDoc.deleteEntryKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2374,7 +2324,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.deleteMacroKind",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.deleteMacroKind. Command Palette title: SNL: Delete Macro Kind.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.deleteMacroKind,CommandTitle.snlDoc.deleteMacroKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2384,7 +2334,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.deleteLibrary",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.deleteLibrary. Command Palette title: SNL: Delete Library.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.deleteLibrary,CommandTitle.snlDoc.deleteLibrary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2394,7 +2344,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.deleteMacroPackage",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.deleteMacroPackage. Command Palette title: SNL: Delete Macro Package.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.deleteMacroPackage,CommandTitle.snlDoc.deleteMacroPackage)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2404,7 +2354,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.revealEntryPointer",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.revealEntryPointer. Command Palette title: SNL: Reveal Entry Pointer.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.revealEntryPointer,CommandTitle.snlDoc.revealEntryPointer)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2414,7 +2364,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createLibrary",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createLibrary. Command Palette title: SNL: Create Library.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createLibrary,CommandTitle.snlDoc.createLibrary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2424,7 +2374,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.initEntryKinds",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.initEntryKinds. Command Palette title: SNL: Initialize Entry Kinds.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.initEntryKinds,CommandTitle.snlDoc.initEntryKinds)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2434,7 +2384,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createEntryKind",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createEntryKind. Command Palette title: SNL: Create Entry Kind.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createEntryKind,CommandTitle.snlDoc.createEntryKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2444,7 +2394,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.initMacroKinds",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.initMacroKinds. Command Palette title: SNL: Initialize Macro Kinds.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.initMacroKinds,CommandTitle.snlDoc.initMacroKinds)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2454,7 +2404,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createMacroKind",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createMacroKind. Command Palette title: SNL: Create Macro Kind.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createMacroKind,CommandTitle.snlDoc.createMacroKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2464,7 +2414,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createEntry",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createEntry. Command Palette title: SNL: Create Entry.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createEntry,CommandTitle.snlDoc.createEntry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2474,7 +2424,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createMacroPackage",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createMacroPackage. Command Palette title: SNL: Create Macro Package.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createMacroPackage,CommandTitle.snlDoc.createMacroPackage)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2484,7 +2434,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openMacroPackage",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.openMacroPackage. Command Palette title: SNL: Open Macro Package….%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.openMacroPackage,CommandTitle.snlDoc.openMacroPackage)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2494,7 +2444,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createMacro",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createMacro. Command Palette title: SNL: Create Macro.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createMacro,CommandTitle.snlDoc.createMacro)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2504,7 +2454,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editLibrary",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editLibrary. Command Palette title: SNL: Edit Library.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editLibrary,CommandTitle.snlDoc.editLibrary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2514,7 +2464,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editEntryKind",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editEntryKind. Command Palette title: SNL: Edit Entry Kind.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editEntryKind,CommandTitle.snlDoc.editEntryKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2524,7 +2474,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editMacroKind",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editMacroKind. Command Palette title: SNL: Edit Macro Kind.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editMacroKind,CommandTitle.snlDoc.editMacroKind)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2534,7 +2484,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editEntry",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editEntry. Command Palette title: SNL: Edit Entry.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editEntry,CommandTitle.snlDoc.editEntry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2544,7 +2494,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editMacroPackage",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editMacroPackage. Command Palette title: SNL: Edit Macro Package.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editMacroPackage,CommandTitle.snlDoc.editMacroPackage)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2554,7 +2504,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editMacro",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editMacro. Command Palette title: SNL: Edit Macro.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editMacro,CommandTitle.snlDoc.editMacro)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2564,7 +2514,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createRelationship",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.createRelationship. Command Palette title: SNL: Create Relationship.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createRelationship,CommandTitle.snlDoc.createRelationship)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2574,7 +2524,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.editRelationship",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.editRelationship. Command Palette title: SNL: Edit Relationship.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.editRelationship,CommandTitle.snlDoc.editRelationship)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2584,7 +2534,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.deleteRelationship",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.deleteRelationship. Command Palette title: SNL: Delete Relationship.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.deleteRelationship,CommandTitle.snlDoc.deleteRelationship)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2594,7 +2544,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openInfoviewGraph",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.openInfoviewGraph. Command Palette title: SNL: Open Relationship Graph.%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.openInfoviewGraph,CommandTitle.snlDoc.openInfoviewGraph)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2604,7 +2554,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openInfoviewGraphForLibrary",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.openInfoviewGraphForLibrary. Command Palette title: SNL: Open Relationship Graph (Library).%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.openInfoviewGraphForLibrary,CommandTitle.snlDoc.openInfoviewGraphForLibrary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2614,7 +2564,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.openSnoogL",
     "content": {
-      "snl": "%VS Code command registered as snlDoc.openSnoogL. Command Palette title: SNL: Open SNoogL (Search).%"
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.openSnoogL,CommandTitle.snlDoc.openSnoogL)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2734,7 +2684,7 @@
     "kind": "entry-kind.concept",
     "title": "Counter",
     "content": {
-      "snl": "%Library-scoped numbered Counter.%"
+      "snl": "%A Library-scoped hierarchy stored in #0. Each Counter has a stable local id, display name, numbering template, and children. An Entry occurrence uses graph.props.counterId when set, otherwise its Entry Kind resolves defaultCounterName by first depth-first name match.%(File.counters_json)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2744,7 +2694,7 @@
     "kind": "entry-kind.concept",
     "title": "SNL Syntax Tree",
     "content": {
-      "snl": "%Parsed SnlSyntaxTree representation.%"
+      "snl": "%Tree v2 is the parsed SNL representation. Nodes use #0, optional #1 and #2, semantic kind/scope metadata, and ordered children; v1 name, style, and envMode fields exist only at migration boundaries.%(macro_name,style_name,env_mode)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2774,7 +2724,7 @@
     "kind": "entry-kind.concept",
     "title": "Default Counter Name",
     "content": {
-      "snl": "%EntryKind field used to find a matching Library Counter.%"
+      "snl": "%Entry Kind field that resolves a Library Counter by first depth-first exact name match when an Entry occurrence has no explicit counterId. Duplicate Counter names are therefore ambiguous.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -2804,7 +2754,7 @@
     "kind": "entry-kind.concept",
     "title": "EntryRender",
     "content": {
-      "snl": "%Reusable Entry renderer built on one #0 and #1. SNL rendering is #2; workspace Macro Kind colors and #3 are shared across direct, preview, graph, and recursive-popover surfaces.%(EntrySurface,MacroDataDriver,Query_only_macro_rendering,Macro_Kind_palette)"
+      "snl": "%The Extension-local Entry renderer built on #0 and #1. It chooses body priority snl, markdown, latex, then text; Typst remains authorable but is not selected here. SNL rendering is query-only, receives workspace Macro Kind colors, resolves source Entries/URLs/context, and shares recursive popovers. SNL-Basics generic EntryDataDriver rendering is a separate optional route not yet consumed by the Extension.%(EntrySurface,MacroDataDriver)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2834,7 +2784,7 @@
     "kind": "entry-kind.concept",
     "title": "Package Picker",
     "content": {
-      "snl": "%Macro-package picker with inline package creation.%"
+      "snl": "%The active-package VS Code QuickPick used before Create Macro opens. It selects an existing package only; package creation is a separate command and panel.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -2864,7 +2814,7 @@
     "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
     "title": "snlDoc.createMacroPickPackage",
     "content": {
-      "snl": "%Internal Dashboard helper command that selects a package before opening Create Macro.%"
+      "snl": "%Internal helper command #0. It opens the active-package QuickPick and then launches Create Macro for the selected package; its documentation label is #1, not a contributed Command Palette title.%(snlDoc.createMacroPickPackage,CommandLabel.snlDoc.createMacroPickPackage)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2875,16 +2825,6 @@
     "title": "Toggle Package Active Button (Dashboard List)",
     "content": {
       "snl": "%Toggles a macro package active from its Dashboard list row.%"
-    },
-    "contribution_info": null,
-    "pointer": null
-  },
-  {
-    "id": "ui.button.macro-package.package-picker-create",
-    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
-    "title": "New Macro Package Button (Package Picker)",
-    "content": {
-      "snl": "%Creates a new macro package inline from the package picker.%"
     },
     "contribution_info": null,
     "pointer": null
@@ -2914,7 +2854,7 @@
     "kind": "entry-kind.concept",
     "title": "Macro Migration Boundary",
     "content": {
-      "snl": "%An explicit read-time adapter upgrades historical macro packages to #0 before exposing values to webviews. All writes emit package schema version 7, preserve consumer output backends and unknown extension fields, and reject legacy fields after the boundary.%(Macro_v7)"
+      "snl": "%Legacy documents are normalized once at input. Runtime code receives only #0 and Tree v2; writers emit current formats. Toolkit package maps temporarily restore the authoritative map key as macro name before canonical migration, then remove the redundant value-level name.%(Macro_v7)"
     },
     "contribution_info": null,
     "pointer": null
@@ -3115,6 +3055,346 @@
     "title": "Block Template Name Input (Edit)",
     "content": {
       "snl": "%Edits the block-only #0 and replaces the legacy renderer-key field on save.%(block_template_name)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.batch-transfer",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Copy / Move Batch Button",
+    "content": {
+      "snl": "%Opens the single transfer modal for copying or moving selected macros to an existing or newly described destination package.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.shared.panel-nav",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Shared Panel Navigation",
+    "content": {
+      "snl": "%Shared navigation mounted by the Extension editor and list panels. It provides refresh plus a contextual route back to Dashboard or Infoview and uses the common webview message bridge.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.panel-nav.back-dashboard",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Back to Dashboard Button",
+    "content": {
+      "snl": "%Navigates a panel back to Dashboard through the shared nav.openDashboard message.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.panel-nav.back-infoview",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Back to Infoview Button",
+    "content": {
+      "snl": "%Navigates Relationship Graph back to Infoview through the shared nav.openInfoview message.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.panel-nav.refresh",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Refresh Panel Button",
+    "content": {
+      "snl": "%Requests fresh panel context through nav.refresh; host file watchers can also refresh the same panel automatically.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.mode",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Mode Selector (Create)",
+    "content": {
+      "snl": "%Selects formula_inline, formula_display, text, or block mode for the active Macro v7 style.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.mode",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Mode Selector (Edit)",
+    "content": {
+      "snl": "%Edits the active Macro v7 style mode after historical input has crossed the migration boundary.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.dynamic-arity",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Arity Toggle (Create)",
+    "content": {
+      "snl": "%Marks the macro dynamic and replaces the ordinary template editor with left, separator, and right controls serialized around a real #0.%(Literal.hash_star)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.dynamic-arity",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Arity Toggle (Edit)",
+    "content": {
+      "snl": "%Toggles dynamic arity while preserving Macro v7 template and explicit separator semantics.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.style-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Macro Style Button (Create)",
+    "content": {
+      "snl": "%Appends a uniquely named Macro v7 style.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.style-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Macro Style Button (Edit)",
+    "content": {
+      "snl": "%Appends a uniquely named Macro v7 style in edit mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.style-remove",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Remove Macro Style Button (Create)",
+    "content": {
+      "snl": "%Removes the selected style; the only remaining style cannot be removed.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.style-remove",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Remove Macro Style Button (Edit)",
+    "content": {
+      "snl": "%Removes the selected style; the only remaining style cannot be removed.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.style-move-default",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Move Style Toward Default Button (Create)",
+    "content": {
+      "snl": "%Moves the selected style earlier; styles[0] is the implicit default.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.style-move-default",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Move Style Toward Default Button (Edit)",
+    "content": {
+      "snl": "%Moves the selected style earlier; styles[0] is the implicit default.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.arg-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Preview Argument Button (Create)",
+    "content": {
+      "snl": "%Adds a preview argument slot for a dynamic macro, up to the editor limit.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.arg-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Preview Argument Button (Edit)",
+    "content": {
+      "snl": "%Adds a preview argument slot for a dynamic macro in edit mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.arg-remove",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Remove Preview Argument Button (Create)",
+    "content": {
+      "snl": "%Removes the final dynamic preview argument slot.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.arg-remove",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Remove Preview Argument Button (Edit)",
+    "content": {
+      "snl": "%Removes the final dynamic preview argument slot.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.create.args-reset",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Reset Preview Arguments Button (Create)",
+    "content": {
+      "snl": "%Clears every preview argument source.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro.edit.args-reset",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Reset Preview Arguments Button (Edit)",
+    "content": {
+      "snl": "%Clears every preview argument source in edit mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.create.gui-inductive",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "GUI Inductive Editor Section (Create Entry)",
+    "content": {
+      "snl": "%Tree v2 editor for structured SNL Entry content. Rows query macros asynchronously, expose an explicit style field, and share child/delete/move/indent/outdent controls.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.entry.edit.gui-inductive",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "GUI Inductive Editor Section (Edit Entry)",
+    "content": {
+      "snl": "%Edit-mode Tree v2 editor with the same query-driven macro resolution and stable row identity.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry.create.gui-macro-style",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "GUI Macro Style Input (Create Entry)",
+    "content": {
+      "snl": "%Shows the resolved default style_name at low opacity until the author explicitly writes a bracketed style.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry.edit.gui-macro-style",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "GUI Macro Style Input (Edit Entry)",
+    "content": {
+      "snl": "%Edits the Tree v2 style_name and serializes an explicit bracketed style only when authored.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.create.gui-open-macro",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Open Macro Editor Button (Create Entry)",
+    "content": {
+      "snl": "%Opens Create or Edit Macro for the current GUI tree row with macro_name, env_mode, and style_name context.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry.edit.gui-open-macro",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Open Macro Editor Button (Edit Entry)",
+    "content": {
+      "snl": "%Opens Create or Edit Macro for the current GUI tree row with macro_name, env_mode, and style_name context.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.entry-infoview.context-related-entry",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Context Entry Entrance",
+    "content": {
+      "snl": "%Opens an Entry that provides x@srcEntry binding context in its own Entry Infoview.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.entry-kind.edit.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry Kind ID Input (Edit)",
+    "content": {
+      "snl": "%Displays the immutable Entry Kind id in edit mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro-kind.edit.id",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Kind ID Input (Edit)",
+    "content": {
+      "snl": "%Displays the immutable Macro Kind id in edit mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.snl.entry-data-driver",
+    "kind": "entry-kind.concept",
+    "title": "EntryDataDriver",
+    "content": {
+      "snl": "%The optional query-only Entry and Entry-Kind access boundary exported by SNL-Basics generic Entry rendering. The current Extension still owns its local EntryRender and does not yet consume this driver.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.snl.interaction-driver",
+    "kind": "entry-kind.concept",
+    "title": "SnlInteractionDriver",
+    "content": {
+      "snl": "%The injectable SNL-Basics delegated-event boundary for hover, leave, click, and Ctrl-click. The current Extension uses its recursive popover stack but does not yet instantiate this driver.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.snl.stable-identity",
+    "kind": "entry-kind.concept",
+    "title": "Stable Entity Identity",
+    "content": {
+      "snl": "%Entry ids, Macro map keys, Entry-Kind ids, Macro-Kind ids, package filenames, Library slugs, and relationship ids are stable identities rather than display labels.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.snl.synchronized-rename",
+    "kind": "entry-kind.concept",
+    "title": "Synchronized Rename",
+    "content": {
+      "snl": "%A structured rename traces definitions and references, rejects collisions, validates the workspace, applies source-range edits with rollback, and verifies one new definition with no stale owned references. It is never a raw text replacement.%"
     },
     "contribution_info": null,
     "pointer": null
