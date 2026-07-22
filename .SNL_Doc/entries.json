@@ -4,7 +4,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Dashboard",
     "content": {
-      "snl": "%The top-level control surface for a #0 workspace. Opened via #1. Renders six collapsible sections (Libraries, Entries, Relationships, #2, Entry Kinds, SNL Macro Kinds) with a dashed #3 #4 at the tail of each list for creating new items. Serves as the single hub — no tree-view sidebar competes with it.%(Folder.SNL_Doc,SNL_Open_Dashboard,SNL_Macros,Literal.plus,AddBar)"
+      "snl": "%The top-level control surface for a #0 workspace, opened via #1. It retains six collapsible entity sections and their create actions; Entry rows now include #2 badges, while shared controls standardize keyboard, disabled, busy, and destructive behavior.%(Folder.SNL_Doc,SNL_Open_Dashboard,Source_structure_metrics)"
     },
     "contribution_info": null,
     "pointer": null
@@ -14,7 +14,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Infoview",
     "content": {
-      "snl": "%Reading surface with a Libraries layer and a selected-Library outline layer. Opens Library and Entry content without entering edit mode.%"
+      "snl": "%Reading surface with Libraries and selected-Library outline layers. It opens Library and Entry content without edit mode; every Entry body uses #0, query-only macro lookup, workspace Macro Kind colors, and recursive source popovers.%(EntrySurface)"
     },
     "contribution_info": null,
     "pointer": null
@@ -24,7 +24,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Entry Infoview",
     "content": {
-      "snl": "%Dedicated per-entry panel (one instance per entryId, tab title #0). Renders the entry via #1 with SNL body and hover-popover recursion for macro references. Opened via #2 or #3 a title anywhere.%(SNL_entry_title,EntryRender,snlDoc.openEntryInfoview_entryId,Shortcut_Ctrl_click)"
+      "snl": "%Dedicated per-Entry reading panel, opened directly or by Ctrl-clicking an Entry title. It renders one #0 through #1, colors macros with the workspace palette, and supports #2 for nested Entry and macro references.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers)"
     },
     "contribution_info": null,
     "pointer": null
@@ -44,7 +44,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Library",
     "content": {
-      "snl": "%The #0 detail/edit view. Hosts the outline tree editor over #1 and (after the counter refactor) the Counters tree editor over #2. Watches #3, #4, and #5 for external edits to stay in sync. #7 on an entry-ref title jumps to that entry's #6.%(Library,File.graph_json,File.counters_json,File.entries_json,File.graph_json,File.counters_json,Infoview,Shortcut_Ctrl_click)"
+      "snl": "%The #0 detail/edit view. It retains the outline tree editor, Library counter tree, external-file synchronization, and Entry navigation; the outline now displays #1 beside SNL Entries and blocks invalid references before host submission.%(Library,Source_structure_metrics)"
     },
     "contribution_info": null,
     "pointer": null
@@ -134,7 +134,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Package Panel",
     "content": {
-      "snl": "%The macro-package detail view — table of macros in one #0 file. Supports select-mode multi-select with batch ops (Package as new / Move to package… / Delete), active-toggle header, per-row Edit, and package-picker with inline #1 creation.%(Path.join(Folder.term_macros,File.wildcard_json),New_macro_package)"
+      "snl": "%The macro-package detail view for strict #0 packages. It retains activation, style expansion, source status, multi-select transfer/delete, package editing, and inline package creation; rows now add direct Delete and render Macro Kind-colored previews through #1.%(Macro_v7,MacroDataDriver)"
     },
     "contribution_info": null,
     "pointer": null
@@ -144,7 +144,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro",
     "content": {
-      "snl": "%#0 to author a single macro: name, kind, and multi-format renderer templates (KaTeX-React, SNL-native, others). Live preview using the arg-placeholder macros. Inline package-picker lets you create the target package here without leaving the panel.%(Panel)"
+      "snl": "%#0 for authoring a macro name, package, kind, descriptions, sources, tags, output backends, and strict #1 styles. Styles use #2, required tags, a four-way mode, and a template; dynamic styles edit text around a real #3 plus #4, block styles choose #5, and live preview resolves through #6.%(Panel,Macro_v7,style_name,Literal.hash_star,separator,block_template_name,MacroDataDriver)"
     },
     "contribution_info": null,
     "pointer": null
@@ -154,7 +154,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro",
     "content": {
-      "snl": "%Edit-mode variant of #0. Also hosts the #1 — a row-tree editor for the #2 payload of macros whose renderer uses #3 templates. Only #4 and #5 are managed by the editor; sigils (#6, #7, #8) are literal per author authoring convention.%(Create_Macro,GUI_inductive_editor,SnlSyntaxTree,snl-native,Literal.parentheses,Literal.brackets,Literal.at_sign,Literal.percent_sign,Literal.dollar_sign)"
+      "snl": "%Edit-mode variant of #0 with the same source, tag, style, backend, and GUI-inductive controls. Historical packages cross #1 before the form loads, save always writes strict #2, and the Tree v2 editor preserves literal SNL sigils.%(Create_Macro,Macro_migration_boundary,Macro_v7)"
     },
     "contribution_info": null,
     "pointer": null
@@ -224,7 +224,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entries Section",
     "content": {
-      "snl": "%#0 section listing all entries in the shared pool. Table (preview swatch / title / id / kind / formats populated). Empty and expanded → #1 #2. Only visible when expanded.%(Dashboard,AddBar,ButtonLabel.create_entry)"
+      "snl": "%#0 section listing all Entries in the shared pool with preview swatch, title, id, kind, populated formats, edit/delete/create actions, and #1 for SNL rows. Cross-Entry source references are included in the metric calculation.%(Dashboard,Source_structure_metrics)"
     },
     "contribution_info": null,
     "pointer": null
@@ -244,7 +244,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Outline Section",
     "content": {
-      "snl": "%The #0 over #1 inside #2. Each row = entry-ref node with #3-based #4 (↑/↓ move, indent, outdent, add child, add sibling, delete). Add form supports resolving-typed-id and — post-refactor — inserts stub + jumps to #5 when the id doesn't yet resolve.%(tree-view_editor,File.graph_json,Edit_Library,Button,row_toolbar,Create_Entry)"
+      "snl": "%The tree-view editor over the Library graph. Rows retain expand, navigate, copy-id, add-child/sibling, move, indent/outdent, delete, and reference-or-create actions; referenced SNL Entries can display #0, shared #1 behavior governs controls, and invalid ids are rejected or routed through explicit Entry creation.%(Source_structure_metrics,Button_component)"
     },
     "contribution_info": null,
     "pointer": null
@@ -644,7 +644,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Infoview Library Reading Layer",
     "content": {
-      "snl": "%Inline EntryRender surface for the selected Entry.%"
+      "snl": "%Inline #0 for the selected Entry, sharing the same query-only macro route and recursive popover behavior as the dedicated Entry panel.%(EntrySurface)"
     },
     "contribution_info": null,
     "pointer": null
@@ -654,7 +654,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Infoview Render Section",
     "content": {
-      "snl": "%Dedicated EntryRender surface for one Entry id.%"
+      "snl": "%Dedicated #0 for one Entry id. It uses #1, workspace Macro Kind colors, and #2 for nested source navigation.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1114,7 +1114,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Macro Package Macros Section",
     "content": {
-      "snl": "%Table of macros in the current package.%"
+      "snl": "%Table of macros in the current package. Every row renders all styles through #0 with the workspace #1, exposes source status, and offers direct Edit/Delete actions.%(MacroDataDriver,Macro_Kind_palette)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1214,7 +1214,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Macro Styles Section (Create)",
     "content": {
-      "snl": "%Edits the macro style list, mode, tag, and renderer template.%"
+      "snl": "%Edits strict #0 styles: #1, mode, template, required tags, optional #2, and block-only #3.%(Macro_v7,style_name,separator,block_template_name)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1224,7 +1224,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Macro Template Input (Create)",
     "content": {
-      "snl": "%KaTeX or SNL-native renderer template for one style.%"
+      "snl": "%Macro v7 template for one style. Fixed macros use numbered positional placeholders; dynamic macros contain a real #0 joined by #1.%(Literal.hash_star,separator)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1274,7 +1274,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Macro Styles Section (Edit)",
     "content": {
-      "snl": "%Edits the macro style list, mode, tag, and renderer template.%"
+      "snl": "%Edits strict #0 styles after legacy input has crossed #1. No v6 style field is written back.%(Macro_v7,Macro_migration_boundary)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1284,7 +1284,7 @@
     "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
     "title": "Macro Template Input (Edit)",
     "content": {
-      "snl": "%KaTeX or SNL-native renderer template for one style.%"
+      "snl": "%Macro v7 template for one style. Dynamic template text is stored around a real #0 rather than in legacy variadic delimiter fields.%(Literal.hash_star)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1604,7 +1604,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Live Preview Section (Create)",
     "content": {
-      "snl": "%Live EntryRender preview of the draft Entry.%"
+      "snl": "%Live draft preview rendered through the same #0 and #1 as reading surfaces. Draft self-references resolve against the local preview pool before the persisted shared pool.%(EntrySurface,MacroDataDriver)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1774,7 +1774,7 @@
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": "Entry Live Preview Section (Edit)",
     "content": {
-      "snl": "%Live EntryRender preview of the edited Entry.%"
+      "snl": "%Live edit preview rendered through the shared #0, workspace #1, Macro Kind palette, and #2 stack used by final Entry surfaces.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2704,7 +2704,7 @@
     "kind": "entry-kind.concept",
     "title": "SNL Macro",
     "content": {
-      "snl": "%Named SNL syntax/renderer macro.%"
+      "snl": "%A named SNL syntax/rendering unit stored in the strict #0 schema. Its ordered styles use #1, required tags, one render mode and template, and either positional placeholders or a real #2 for dynamic children.%(Macro_v7,style_name,Literal.hash_star)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2714,7 +2714,7 @@
     "kind": "entry-kind.concept",
     "title": "SNL Macro Kind",
     "content": {
-      "snl": "%Palette category for SNL macros.%"
+      "snl": "%A workspace palette category for SNL macros. The resulting #0 is injected into every Entry and macro-preview render surface.%(Macro_Kind_palette)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2804,7 +2804,7 @@
     "kind": "entry-kind.concept",
     "title": "EntryRender",
     "content": {
-      "snl": "%Reusable Entry visual renderer.%"
+      "snl": "%Reusable Entry renderer built on one #0 and #1. SNL rendering is #2; workspace Macro Kind colors and #3 are shared across direct, preview, graph, and recursive-popover surfaces.%(EntrySurface,MacroDataDriver,Query_only_macro_rendering,Macro_Kind_palette)"
     },
     "contribution_info": null,
     "pointer": null
@@ -2885,6 +2885,236 @@
     "title": "New Macro Package Button (Package Picker)",
     "content": {
       "snl": "%Creates a new macro package inline from the package picker.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.macro-v7",
+    "kind": "entry-kind.concept",
+    "title": "Macro v7",
+    "content": {
+      "snl": "%The strict macro storage schema written by the current Extension. Every macro and style has a tags array; styles use #0, dynamic templates contain a real #1 joined by #2, and block mode selects a renderer with #3. Legacy v6 style fields are accepted only at the migration boundary.%(style_name,Literal.hash_star,separator,block_template_name)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.macro-data-driver",
+    "kind": "entry-kind.concept",
+    "title": "MacroDataDriver",
+    "content": {
+      "snl": "%The sole macro lookup boundary consumed by SNL-Basics views. The Extension builds one #0 whose #1 query resolves bundled and workspace macros by precedence, so renderers never receive a parallel macro database snapshot.%(MacroDataDriver,query_macro)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.macro-migration-boundary",
+    "kind": "entry-kind.concept",
+    "title": "Macro Migration Boundary",
+    "content": {
+      "snl": "%An explicit read-time adapter upgrades historical macro packages to #0 before exposing values to webviews. All writes emit package schema version 7, preserve consumer output backends and unknown extension fields, and reject legacy fields after the boundary.%(Macro_v7)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.query-only-macro-rendering",
+    "kind": "entry-kind.concept",
+    "title": "Query-Only Macro Rendering",
+    "content": {
+      "snl": "%Rendering receives macro data only through #0. Entry, graph, editor, popover, and package-preview surfaces share that query route instead of combining a database prop with a template callback.%(MacroDataDriver)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.entry-surface",
+    "kind": "entry-kind.concept",
+    "title": "EntrySurface",
+    "content": {
+      "snl": "%The single body-surface selector used by Entry reading and editing views. It chooses one available content format, then delegates SNL bodies to #0 and ordinary prose to the corresponding Markdown, LaTeX, Typst, or text renderer.%(EntryRender)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.source-structure-metrics",
+    "kind": "entry-kind.concept",
+    "title": "Source Structure Metrics",
+    "content": {
+      "snl": "%Per-Entry measurements computed from the parsed SNL tree and macro source index: semantic freedom counts unsourced nodes, while structured ratio reports the sourced-node share. Dashboard and Library views color them using #0, #1, #2, and #3.%(Setting.semanticFreedomGreenBelow,Setting.semanticFreedomRedAbove,Setting.structuredRatioRedBelow,Setting.structuredRatioGreenAtLeast)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.macro-kind-palette",
+    "kind": "entry-kind.concept",
+    "title": "Workspace Macro Kind Palette",
+    "content": {
+      "snl": "%A runtime color palette derived from workspace Macro Kinds and passed through every SNL render surface, including Entry previews, Infoview, graph popovers, and package macro previews.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.shared-ui-controls",
+    "kind": "entry-kind.concept",
+    "title": "Shared UI Controls",
+    "content": {
+      "snl": "%A common interaction layer for #0, form rows, validation feedback, empty-state actions, disclosure controls, entity-id search, and tree toolbars. It keeps keyboard, disabled, busy, and destructive behavior consistent across webviews.%(Button_component)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.webview-message-bridge",
+    "kind": "entry-kind.concept",
+    "title": "Webview Message Bridge",
+    "content": {
+      "snl": "%The shared lifecycle wrapper that acquires the VS Code API once, posts the ready handshake, installs one typed message listener, and releases it when a webview unmounts.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "concept.extension.recursive-popovers",
+    "kind": "entry-kind.concept",
+    "title": "Recursive Hover Popovers",
+    "content": {
+      "snl": "%The shared SNL-Basics interaction stack used by Entry surfaces. Nested macro and Entry references can spawn child popovers, freeze ancestors, and preserve a stable action context without rerendering all consumers on pointer movement.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.button.macro-package.row-delete",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Delete Macro Row Button",
+    "content": {
+      "snl": "%Deletes one macro directly from its package row after confirmation, without entering multi-select mode. The row action submits the existing batch-delete host message with a single macro name.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.dashboard.entry-metrics",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Source Metrics (Dashboard)",
+    "content": {
+      "snl": "%Displays semantic-freedom and structured-ratio badges for each SNL Entry in the Dashboard. Cross-Entry source references are resolved against the shared Entry pool before metrics are computed.%(Source_structure_metrics)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.section.library.entry-metrics",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry Source Metrics (Library)",
+    "content": {
+      "snl": "%Displays the same source-structure badges beside Entry references in the Library outline, using resource-aware workspace thresholds and cross-Entry source lookup.%(Source_structure_metrics)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.style-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Style Name Input (Create)",
+    "content": {
+      "snl": "%Edits #0 for the selected style. The value is required, unique within the macro, and determines the bracket selector used by SNL source.%(style_name)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.style-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Style Name Input (Edit)",
+    "content": {
+      "snl": "%Renames #0 for the selected style while preserving style order. Save writes only the Macro v7 field.%(style_name)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.template-left",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Template Left Input (Create)",
+    "content": {
+      "snl": "%Edits the template text stored before the real #0 in a dynamic Macro v7 style.%(Literal.hash_star)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.separator",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Separator Input (Create)",
+    "content": {
+      "snl": "%Edits #0, including an explicitly empty string, for children substituted at the dynamic placeholder.%(separator)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.template-right",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Template Right Input (Create)",
+    "content": {
+      "snl": "%Edits the template text stored after the real #0 in a dynamic Macro v7 style.%(Literal.hash_star)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.template-left",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Template Left Input (Edit)",
+    "content": {
+      "snl": "%Edits the text before the existing #0 after legacy delimiter fields have crossed the migration boundary.%(Literal.hash_star)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.separator",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Separator Input (Edit)",
+    "content": {
+      "snl": "%Edits the Macro v7 #0 value without replacing an explicit empty separator with a default.%(separator)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.template-right",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Template Right Input (Edit)",
+    "content": {
+      "snl": "%Edits the text after the existing #0 after legacy delimiter fields have crossed the migration boundary.%(Literal.hash_star)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.create.block-template-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Block Template Name Input (Create)",
+    "content": {
+      "snl": "%Selects or customizes the block-only #0 used by the React renderer. The field is not serialized for non-block modes.%(block_template_name)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.input.macro.edit.block-template-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Block Template Name Input (Edit)",
+    "content": {
+      "snl": "%Edits the block-only #0 and replaces the legacy renderer-key field on save.%(block_template_name)"
     },
     "contribution_info": null,
     "pointer": null

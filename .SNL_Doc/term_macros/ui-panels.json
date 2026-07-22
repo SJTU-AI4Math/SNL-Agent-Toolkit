@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "UI Panels",
   "description": "Concrete Extension Panel terminology.",
   "macros": {
@@ -13,11 +13,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry}"
+          "template": "\\texttt{Create Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -31,11 +33,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry Kind}"
+          "template": "\\texttt{Create Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -49,11 +53,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Library}"
+          "template": "\\texttt{Create Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -67,11 +73,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro}"
+          "template": "\\texttt{Create Macro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -85,11 +93,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Kind}"
+          "template": "\\texttt{Create Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -103,11 +113,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Package}"
+          "template": "\\texttt{Create Macro Package}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -121,11 +133,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Relationship}"
+          "template": "\\texttt{Create Relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -139,11 +153,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Dashboard}"
+          "template": "\\texttt{Dashboard}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -157,11 +173,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Entry Kind}"
+          "template": "\\texttt{Edit Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -175,11 +193,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Library}"
+          "template": "\\texttt{Edit Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -193,11 +213,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Macro}"
+          "template": "\\texttt{Edit Macro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -211,11 +233,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Macro Kind}"
+          "template": "\\texttt{Edit Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -229,11 +253,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Relationship}"
+          "template": "\\texttt{Edit Relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -247,11 +273,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Infoview}"
+          "template": "\\texttt{Entry Infoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -265,11 +293,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Infoview}"
+          "template": "\\texttt{Infoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -283,11 +313,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Initialize Entry Kinds}"
+          "template": "\\texttt{Initialize Entry Kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -301,11 +333,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Initialize Macro Kinds}"
+          "template": "\\texttt{Initialize Macro Kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -319,11 +353,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Package Panel}"
+          "template": "\\texttt{Package Panel}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -337,11 +373,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Panel}"
+          "template": "\\texttt{Panel}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -355,11 +393,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Graph}"
+          "template": "\\texttt{Relationship Graph}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -373,11 +413,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Search}"
+          "template": "\\texttt{SNoogL Search}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -391,11 +433,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Entry}"
+          "template": "\\texttt{Edit Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -409,11 +453,13 @@
       },
       "kind": "panel",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Macro Package}"
+          "template": "\\texttt{Edit Macro Package}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

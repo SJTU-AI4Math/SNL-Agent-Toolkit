@@ -167,6 +167,76 @@
       "props": {
         "entryId": "concept.extension.operation-status"
       }
+    },
+    {
+      "id": "node.concept.extension.macro-v7",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.macro-v7"
+      }
+    },
+    {
+      "id": "node.concept.extension.macro-data-driver",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.macro-data-driver"
+      }
+    },
+    {
+      "id": "node.concept.extension.macro-migration-boundary",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.macro-migration-boundary"
+      }
+    },
+    {
+      "id": "node.concept.extension.query-only-macro-rendering",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.query-only-macro-rendering"
+      }
+    },
+    {
+      "id": "node.concept.extension.entry-surface",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.entry-surface"
+      }
+    },
+    {
+      "id": "node.concept.extension.source-structure-metrics",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.source-structure-metrics"
+      }
+    },
+    {
+      "id": "node.concept.extension.macro-kind-palette",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.macro-kind-palette"
+      }
+    },
+    {
+      "id": "node.concept.extension.shared-ui-controls",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.shared-ui-controls"
+      }
+    },
+    {
+      "id": "node.concept.extension.webview-message-bridge",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.webview-message-bridge"
+      }
+    },
+    {
+      "id": "node.concept.extension.recursive-popovers",
+      "label": "Entry",
+      "props": {
+        "entryId": "concept.extension.recursive-popovers"
+      }
     }
   ],
   "relationships": [
@@ -283,6 +353,56 @@
     {
       "from": "node.concept.snl-doc",
       "to": "node.concept.extension.operation-status",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.macro-v7",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.macro-data-driver",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.macro-migration-boundary",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.query-only-macro-rendering",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.entry-surface",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.source-structure-metrics",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.macro-kind-palette",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.shared-ui-controls",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.webview-message-bridge",
+      "label": "branch"
+    },
+    {
+      "from": "node.concept.snl-doc",
+      "to": "node.concept.extension.recursive-popovers",
       "label": "branch"
     }
   ]

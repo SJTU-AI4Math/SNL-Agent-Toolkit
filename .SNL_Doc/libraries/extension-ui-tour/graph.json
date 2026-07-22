@@ -1609,6 +1609,97 @@
       "props": {
         "entryId": "ui.button.macro-package.package-picker-create"
       }
+    },
+    {
+      "id": "node.ui.button.macro-package.row-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.button.macro-package.row-delete"
+      }
+    },
+    {
+      "id": "node.ui.section.dashboard.entry-metrics",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.dashboard.entry-metrics"
+      }
+    },
+    {
+      "id": "node.ui.section.library.entry-metrics",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.section.library.entry-metrics"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.style-name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.style-name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.style-name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.style-name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.template-left",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.template-left"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.separator",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.separator"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.template-right",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.template-right"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.template-left",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.template-left"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.separator",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.separator"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.template-right",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.template-right"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.create.block-template-name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.create.block-template-name"
+      }
+    },
+    {
+      "id": "node.ui.input.macro.edit.block-template-name",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.input.macro.edit.block-template-name"
+      }
     }
   ],
   "relationships": [
@@ -2645,6 +2736,71 @@
     {
       "from": "node.ui.panel.macro.create",
       "to": "node.ui.button.macro-package.package-picker-create",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro-package.macros",
+      "to": "node.ui.button.macro-package.row-delete",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.dashboard.entries",
+      "to": "node.ui.section.dashboard.entry-metrics",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.library.outline",
+      "to": "node.ui.section.library.entry-metrics",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.style-name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.style-name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.template-left",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.separator",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.template-right",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.template-left",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.separator",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.template-right",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.create.styles",
+      "to": "node.ui.input.macro.create.block-template-name",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.section.macro.edit.styles",
+      "to": "node.ui.input.macro.edit.block-template-name",
       "label": "branch"
     }
   ]

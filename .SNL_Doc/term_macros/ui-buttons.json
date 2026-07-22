@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "UI Buttons",
   "description": "Concrete Extension buttons and actions.",
   "macros": {
@@ -13,11 +13,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{AddBar}"
+          "template": "\\texttt{AddBar}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -31,11 +33,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{AddBar (dashed +)}"
+          "template": "\\texttt{AddBar (dashed +)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -49,11 +53,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Button}"
+          "template": "\\texttt{Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -67,11 +73,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{+ Create X}"
+          "template": "\\texttt{+ Create X}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -85,11 +93,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Delete Row Toolbar Button}"
+          "template": "\\texttt{Delete Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -103,11 +113,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Generate UUID}"
+          "template": "\\texttt{Generate UUID}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -121,11 +133,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Generate UUID Button}"
+          "template": "\\texttt{Generate UUID Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -139,11 +153,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Indent Row Toolbar Button}"
+          "template": "\\texttt{Indent Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -157,11 +173,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Move-Up Row Toolbar Button}"
+          "template": "\\texttt{Move-Up Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -175,11 +193,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Outdent Row Toolbar Button}"
+          "template": "\\texttt{Outdent Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -193,11 +213,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Regenerate UUID}"
+          "template": "\\texttt{Regenerate UUID}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -211,11 +233,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{active toggle}"
+          "template": "\\texttt{active toggle}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -229,11 +253,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{View Graph Button}"
+          "template": "\\texttt{View Graph Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -247,11 +273,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Open Infoview Button}"
+          "template": "\\texttt{Open Infoview Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -265,11 +293,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Entrance (List View)}"
+          "template": "\\texttt{Library Entrance (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -283,11 +313,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Library Button (List View)}"
+          "template": "\\texttt{Create Library Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -301,11 +333,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry Button}"
+          "template": "\\texttt{Create Entry Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -319,11 +353,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL: Entry Search Button}"
+          "template": "\\texttt{SNoogL: Entry Search Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -337,11 +373,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Entrance (List View)}"
+          "template": "\\texttt{Entry Entrance (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -355,11 +393,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry Button (List View)}"
+          "template": "\\texttt{Create Entry Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -373,11 +413,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Entrance (List View)}"
+          "template": "\\texttt{Relationship Entrance (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -391,11 +433,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Relationship Button (List View)}"
+          "template": "\\texttt{Create Relationship Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -409,11 +453,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Regenerate Dependencies Button (List View)}"
+          "template": "\\texttt{Regenerate Dependencies Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -427,11 +473,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Button}"
+          "template": "\\texttt{Create Macro Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -445,11 +493,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL: Macro Search Button}"
+          "template": "\\texttt{SNoogL: Macro Search Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -463,11 +513,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Entrance (List View)}"
+          "template": "\\texttt{Macro Package Entrance (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -481,11 +533,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Add Package Button (List View)}"
+          "template": "\\texttt{Add Package Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -499,11 +553,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Entrance (List View)}"
+          "template": "\\texttt{Entry Kind Entrance (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -517,11 +573,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry Kind Button (List View)}"
+          "template": "\\texttt{Create Entry Kind Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -535,11 +593,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Initialize Entry Kinds Button (List View)}"
+          "template": "\\texttt{Initialize Entry Kinds Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -553,11 +613,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macro Kind Entrance (List View)}"
+          "template": "\\texttt{SNL Macro Kind Entrance (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -571,11 +633,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Kind Button (List View)}"
+          "template": "\\texttt{Create Macro Kind Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -589,11 +653,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Initialize Macro Kinds Button (List View)}"
+          "template": "\\texttt{Initialize Macro Kinds Button (List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -607,11 +673,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Library Submit Button}"
+          "template": "\\texttt{Create Library Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -625,11 +693,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Library Title Button}"
+          "template": "\\texttt{Update Library Title Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -643,11 +713,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Add First Counter Button}"
+          "template": "\\texttt{Add First Counter Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -661,11 +733,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Add Child Row Toolbar Button}"
+          "template": "\\texttt{Add Child Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -679,11 +753,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Add Sibling Row Toolbar Button}"
+          "template": "\\texttt{Add Sibling Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -697,11 +773,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Move-Down Row Toolbar Button}"
+          "template": "\\texttt{Move-Down Row Toolbar Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -715,11 +793,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Entry Entrance}"
+          "template": "\\texttt{Library Entry Entrance}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -733,11 +813,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Reference or Create Entry Button}"
+          "template": "\\texttt{Reference or Create Entry Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -751,11 +833,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry Submit Button}"
+          "template": "\\texttt{Create Entry Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -769,11 +853,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Entry Kind Submit Button}"
+          "template": "\\texttt{Create Entry Kind Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -787,11 +873,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Entry Kind Submit Button}"
+          "template": "\\texttt{Update Entry Kind Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -805,11 +893,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Initialize Entry Kinds Submit Button}"
+          "template": "\\texttt{Initialize Entry Kinds Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -823,11 +913,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Kind Submit Button}"
+          "template": "\\texttt{Create Macro Kind Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -841,11 +933,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Macro Kind Submit Button}"
+          "template": "\\texttt{Update Macro Kind Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -859,11 +953,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Initialize Macro Kinds Submit Button}"
+          "template": "\\texttt{Initialize Macro Kinds Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -877,11 +973,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Package Submit Button}"
+          "template": "\\texttt{Create Macro Package Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -895,11 +993,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Entrance (Package List View)}"
+          "template": "\\texttt{Macro Entrance (Package List View)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -913,11 +1013,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Button (Package Panel)}"
+          "template": "\\texttt{Create Macro Button (Package Panel)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -931,11 +1033,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Select Mode Button}"
+          "template": "\\texttt{Macro Select Mode Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -949,11 +1053,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Package as New Batch Button}"
+          "template": "\\texttt{Package as New Batch Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -967,11 +1073,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Move to Package Batch Button}"
+          "template": "\\texttt{Move to Package Batch Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -985,11 +1093,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Delete Macros Batch Button}"
+          "template": "\\texttt{Delete Macros Batch Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1003,11 +1113,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Submit Button}"
+          "template": "\\texttt{Create Macro Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1021,11 +1133,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Macro Submit Button}"
+          "template": "\\texttt{Update Macro Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1039,11 +1153,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Relationship Submit Button}"
+          "template": "\\texttt{Create Relationship Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1057,11 +1173,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Relationship Submit Button}"
+          "template": "\\texttt{Update Relationship Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1075,11 +1193,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Entry Result Entrance}"
+          "template": "\\texttt{SNoogL Entry Result Entrance}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1093,11 +1213,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Macro Result Entrance}"
+          "template": "\\texttt{SNoogL Macro Result Entrance}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1111,11 +1233,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{View Graph Button (Infoview)}"
+          "template": "\\texttt{View Graph Button (Infoview)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1129,11 +1253,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit in Dashboard Button}"
+          "template": "\\texttt{Edit in Dashboard Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1147,11 +1273,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Entrance (Infoview)}"
+          "template": "\\texttt{Library Entrance (Infoview)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1165,11 +1293,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Back to Libraries Button}"
+          "template": "\\texttt{Back to Libraries Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1183,11 +1313,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{View Library Graph Button}"
+          "template": "\\texttt{View Library Graph Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1201,11 +1333,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit This Library Button}"
+          "template": "\\texttt{Edit This Library Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1219,11 +1353,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Infoview Outline Toggle Button}"
+          "template": "\\texttt{Infoview Outline Toggle Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1237,11 +1373,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Entry Button (Entry Infoview)}"
+          "template": "\\texttt{Edit Entry Button (Entry Infoview)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1255,11 +1393,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Related Entry Entrance}"
+          "template": "\\texttt{Related Entry Entrance}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1273,11 +1413,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{View Library in Infoview Button}"
+          "template": "\\texttt{View Library in Infoview Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1291,11 +1433,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Add Root Counter Button}"
+          "template": "\\texttt{Add Root Counter Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1309,11 +1453,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Add Root Entry Reference Button}"
+          "template": "\\texttt{Add Root Entry Reference Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1327,11 +1473,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Cancel Entry Reference Add Button}"
+          "template": "\\texttt{Cancel Entry Reference Add Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1345,11 +1493,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Content Tab (Create)}"
+          "template": "\\texttt{SNL Content Tab (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1363,11 +1513,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Typst Content Tab (Create)}"
+          "template": "\\texttt{Typst Content Tab (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1381,11 +1533,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{LaTeX Content Tab (Create)}"
+          "template": "\\texttt{LaTeX Content Tab (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1399,11 +1553,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Markdown Content Tab (Create)}"
+          "template": "\\texttt{Markdown Content Tab (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1417,11 +1573,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Text Content Tab (Create)}"
+          "template": "\\texttt{Text Content Tab (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1435,11 +1593,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Text Editor Button (Create)}"
+          "template": "\\texttt{SNL Text Editor Button (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1453,11 +1613,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL GUI Editor Button (Create)}"
+          "template": "\\texttt{SNL GUI Editor Button (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1471,11 +1633,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{View Entry in Infoview Button}"
+          "template": "\\texttt{View Entry in Infoview Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1489,11 +1653,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Content Tab (Edit)}"
+          "template": "\\texttt{SNL Content Tab (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1507,11 +1673,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Typst Content Tab (Edit)}"
+          "template": "\\texttt{Typst Content Tab (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1525,11 +1693,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{LaTeX Content Tab (Edit)}"
+          "template": "\\texttt{LaTeX Content Tab (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1543,11 +1713,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Markdown Content Tab (Edit)}"
+          "template": "\\texttt{Markdown Content Tab (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1561,11 +1733,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Text Content Tab (Edit)}"
+          "template": "\\texttt{Text Content Tab (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1579,11 +1753,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Text Editor Button (Edit)}"
+          "template": "\\texttt{SNL Text Editor Button (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1597,11 +1773,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL GUI Editor Button (Edit)}"
+          "template": "\\texttt{SNL GUI Editor Button (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1615,11 +1793,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Entry Submit Button}"
+          "template": "\\texttt{Update Entry Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1633,11 +1813,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Update Macro Package Submit Button}"
+          "template": "\\texttt{Update Macro Package Submit Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1651,11 +1833,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Toggle Macro Package Active Button}"
+          "template": "\\texttt{Toggle Macro Package Active Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1669,11 +1853,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Macro Package Button}"
+          "template": "\\texttt{Edit Macro Package Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1687,11 +1873,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Expand Macro Styles Button}"
+          "template": "\\texttt{Expand Macro Styles Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1705,11 +1893,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Kind Button (Create)}"
+          "template": "\\texttt{Create Macro Kind Button (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1723,11 +1913,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Create Macro Kind Button (Edit)}"
+          "template": "\\texttt{Create Macro Kind Button (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1741,11 +1933,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Open Entry Node Button}"
+          "template": "\\texttt{Open Entry Node Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1759,11 +1953,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Edit Relationship Edge Button}"
+          "template": "\\texttt{Edit Relationship Edge Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1777,11 +1973,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Entry Search Mode Button}"
+          "template": "\\texttt{SNoogL Entry Search Mode Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1795,11 +1993,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Macro Search Mode Button}"
+          "template": "\\texttt{SNoogL Macro Search Mode Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1813,11 +2013,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{+ Create Entry}"
+          "template": "\\texttt{+ Create Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1831,11 +2033,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{+ Create Entry Kind}"
+          "template": "\\texttt{+ Create Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1849,11 +2053,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{+ Initialize Entry Kinds}"
+          "template": "\\texttt{+ Initialize Entry Kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1867,11 +2073,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{New macro package}"
+          "template": "\\texttt{New macro package}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1885,11 +2093,13 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Toggle Package Active Button (Dashboard List)}"
+          "template": "\\texttt{Toggle Package Active Button (Dashboard List)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1903,11 +2113,53 @@
       },
       "kind": "button",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{New Macro Package Button (Package Picker)}"
+          "template": "\\texttt{New Macro Package Button (Package Picker)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Delete_macro_row": {
+      "description": "Catfood term backed by ui.button.macro-package.row-delete.",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.row-delete"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Delete macro}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.button.macro-package.row-delete": {
+      "description": "Catfood term backed by ui.button.macro-package.row-delete.",
+      "source": {
+        "entries": [
+          "ui.button.macro-package.row-delete"
+        ],
+        "urls": []
+      },
+      "kind": "button",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Delete Macro Row Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

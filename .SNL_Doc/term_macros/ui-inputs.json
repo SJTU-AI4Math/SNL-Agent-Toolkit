@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "UI Inputs",
   "description": "Concrete text/select input terminology.",
   "macros": {
@@ -13,11 +13,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Counter Numbering DSL Field}"
+          "template": "\\texttt{Counter Numbering DSL Field}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -31,11 +33,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry ID Field}"
+          "template": "\\texttt{Entry ID Field}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -49,11 +53,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Title Field}"
+          "template": "\\texttt{Entry Title Field}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -67,11 +73,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Text Input}"
+          "template": "\\texttt{Text Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -85,11 +93,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Title Input}"
+          "template": "\\texttt{Library Title Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -103,11 +113,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Slug Input (Read Only)}"
+          "template": "\\texttt{Library Slug Input (Read Only)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -121,11 +133,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Title Input (Edit)}"
+          "template": "\\texttt{Library Title Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -139,11 +153,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Counter Name Input}"
+          "template": "\\texttt{Counter Name Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -157,11 +173,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Entry Reference ID Input}"
+          "template": "\\texttt{Library Entry Reference ID Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -175,11 +193,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library Entry Counter Selector}"
+          "template": "\\texttt{Library Entry Counter Selector}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -193,11 +213,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Selector}"
+          "template": "\\texttt{Entry Kind Selector}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -211,11 +233,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Content Editor}"
+          "template": "\\texttt{Entry Content Editor}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -229,11 +253,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Name Input (Create)}"
+          "template": "\\texttt{Entry Kind Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -247,11 +273,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Stroke Color Input (Create)}"
+          "template": "\\texttt{Entry Kind Stroke Color Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -265,11 +293,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Background Color Input (Create)}"
+          "template": "\\texttt{Entry Kind Background Color Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -283,11 +313,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Default Counter Name Input (Create)}"
+          "template": "\\texttt{Default Counter Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -301,11 +333,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Style Input (Create)}"
+          "template": "\\texttt{Entry Kind Style Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -319,11 +353,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Name Input (Edit)}"
+          "template": "\\texttt{Entry Kind Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -337,11 +373,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Stroke Color Input (Edit)}"
+          "template": "\\texttt{Entry Kind Stroke Color Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -355,11 +393,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Background Color Input (Edit)}"
+          "template": "\\texttt{Entry Kind Background Color Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -373,11 +413,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Default Counter Name Input (Edit)}"
+          "template": "\\texttt{Default Counter Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -391,11 +433,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Style Input (Edit)}"
+          "template": "\\texttt{Entry Kind Style Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -409,11 +453,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Preset Selector}"
+          "template": "\\texttt{Entry Kind Preset Selector}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -427,11 +473,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Name Input (Create)}"
+          "template": "\\texttt{Macro Kind Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -445,11 +493,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Description Input (Create)}"
+          "template": "\\texttt{Macro Kind Description Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -463,11 +513,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Stroke Color Input (Create)}"
+          "template": "\\texttt{Macro Kind Stroke Color Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -481,11 +533,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Background Color Input (Create)}"
+          "template": "\\texttt{Macro Kind Background Color Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -499,11 +553,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Name Input (Edit)}"
+          "template": "\\texttt{Macro Kind Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -517,11 +573,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Description Input (Edit)}"
+          "template": "\\texttt{Macro Kind Description Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -535,11 +593,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Stroke Color Input (Edit)}"
+          "template": "\\texttt{Macro Kind Stroke Color Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -553,11 +613,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Background Color Input (Edit)}"
+          "template": "\\texttt{Macro Kind Background Color Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -571,11 +633,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Preset Selector}"
+          "template": "\\texttt{Macro Kind Preset Selector}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -589,11 +653,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Title Input}"
+          "template": "\\texttt{Macro Package Title Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -607,11 +673,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Name Input (Create)}"
+          "template": "\\texttt{Macro Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -625,11 +693,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Selector (Create)}"
+          "template": "\\texttt{Macro Kind Selector (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -643,11 +713,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Selector (Create)}"
+          "template": "\\texttt{Macro Package Selector (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -661,11 +733,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Template Input (Create)}"
+          "template": "\\texttt{Macro Template Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -679,11 +753,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Name Input (Edit)}"
+          "template": "\\texttt{Macro Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -697,11 +773,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Selector (Edit)}"
+          "template": "\\texttt{Macro Kind Selector (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -715,11 +793,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Selector (Edit)}"
+          "template": "\\texttt{Macro Package Selector (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -733,11 +813,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Template Input (Edit)}"
+          "template": "\\texttt{Macro Template Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -751,11 +833,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship From Entry Input (Create)}"
+          "template": "\\texttt{Relationship From Entry Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -769,11 +853,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship To Entry Input (Create)}"
+          "template": "\\texttt{Relationship To Entry Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -787,11 +873,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Label Input (Create)}"
+          "template": "\\texttt{Relationship Label Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -805,11 +893,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship From Entry Input (Edit)}"
+          "template": "\\texttt{Relationship From Entry Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -823,11 +913,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship To Entry Input (Edit)}"
+          "template": "\\texttt{Relationship To Entry Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -841,11 +933,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Label Input (Edit)}"
+          "template": "\\texttt{Relationship Label Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -859,11 +953,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Query Input}"
+          "template": "\\texttt{SNoogL Query Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -877,11 +973,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry ID Field (Edit)}"
+          "template": "\\texttt{Entry ID Field (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -895,11 +993,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Title Field (Edit)}"
+          "template": "\\texttt{Entry Title Field (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -913,11 +1013,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Selector (Edit)}"
+          "template": "\\texttt{Entry Kind Selector (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -931,11 +1033,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Content Editor (Edit)}"
+          "template": "\\texttt{Entry Content Editor (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -949,11 +1053,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind ID Input (Create)}"
+          "template": "\\texttt{Entry Kind ID Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -967,11 +1073,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind ID Input (Create)}"
+          "template": "\\texttt{Macro Kind ID Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -985,11 +1093,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package File Input (Create)}"
+          "template": "\\texttt{Macro Package File Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1003,11 +1113,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Display Name Input (Create)}"
+          "template": "\\texttt{Macro Package Display Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1021,11 +1133,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Description Input (Create)}"
+          "template": "\\texttt{Macro Package Description Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1039,11 +1153,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package File Input (Edit)}"
+          "template": "\\texttt{Macro Package File Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1057,11 +1173,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Display Name Input (Edit)}"
+          "template": "\\texttt{Macro Package Display Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1075,11 +1193,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Description Input (Edit)}"
+          "template": "\\texttt{Macro Package Description Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1093,11 +1213,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Description Input (Create)}"
+          "template": "\\texttt{Macro Description Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1111,11 +1233,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Source Entry Input (Create)}"
+          "template": "\\texttt{Macro Source Entry Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1129,11 +1253,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Source URL Input (Create)}"
+          "template": "\\texttt{Macro Source URL Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1147,11 +1273,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Description Input (Edit)}"
+          "template": "\\texttt{Macro Description Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1165,11 +1293,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Source Entry Input (Edit)}"
+          "template": "\\texttt{Macro Source Entry Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1183,11 +1313,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Source URL Input (Edit)}"
+          "template": "\\texttt{Macro Source URL Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1201,11 +1333,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship ID Input (Create)}"
+          "template": "\\texttt{Relationship ID Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1219,11 +1353,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Metadata JSON Input (Create)}"
+          "template": "\\texttt{Relationship Metadata JSON Input (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1237,11 +1373,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship ID Input (Edit)}"
+          "template": "\\texttt{Relationship ID Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1255,11 +1393,13 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Metadata JSON Input (Edit)}"
+          "template": "\\texttt{Relationship Metadata JSON Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1273,11 +1413,413 @@
       },
       "kind": "text-input",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Kind Filter}"
+          "template": "\\texttt{SNoogL Kind Filter}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_create_style_name": {
+      "description": "Catfood term backed by ui.input.macro.create.style-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.style-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Style Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.style-name": {
+      "description": "Catfood term backed by ui.input.macro.create.style-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.style-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Style Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_edit_style_name": {
+      "description": "Catfood term backed by ui.input.macro.edit.style-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.style-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Style Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.style-name": {
+      "description": "Catfood term backed by ui.input.macro.edit.style-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.style-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Style Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_create_template_left": {
+      "description": "Catfood term backed by ui.input.macro.create.template-left.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.template-left"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Left Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.template-left": {
+      "description": "Catfood term backed by ui.input.macro.create.template-left.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.template-left"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Left Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_create_separator": {
+      "description": "Catfood term backed by ui.input.macro.create.separator.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.separator"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Separator Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.separator": {
+      "description": "Catfood term backed by ui.input.macro.create.separator.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.separator"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Separator Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_create_template_right": {
+      "description": "Catfood term backed by ui.input.macro.create.template-right.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.template-right"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Right Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.template-right": {
+      "description": "Catfood term backed by ui.input.macro.create.template-right.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.template-right"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Right Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_edit_template_left": {
+      "description": "Catfood term backed by ui.input.macro.edit.template-left.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.template-left"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Left Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.template-left": {
+      "description": "Catfood term backed by ui.input.macro.edit.template-left.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.template-left"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Left Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_edit_separator": {
+      "description": "Catfood term backed by ui.input.macro.edit.separator.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.separator"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Separator Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.separator": {
+      "description": "Catfood term backed by ui.input.macro.edit.separator.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.separator"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Separator Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_edit_template_right": {
+      "description": "Catfood term backed by ui.input.macro.edit.template-right.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.template-right"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Right Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.template-right": {
+      "description": "Catfood term backed by ui.input.macro.edit.template-right.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.template-right"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Dynamic Template Right Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_create_block_template_name": {
+      "description": "Catfood term backed by ui.input.macro.create.block-template-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.block-template-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Block Template Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.create.block-template-name": {
+      "description": "Catfood term backed by ui.input.macro.create.block-template-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.create.block-template-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Block Template Name Input (Create)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "macro_edit_block_template_name": {
+      "description": "Catfood term backed by ui.input.macro.edit.block-template-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.block-template-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Block Template Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.input.macro.edit.block-template-name": {
+      "description": "Catfood term backed by ui.input.macro.edit.block-template-name.",
+      "source": {
+        "entries": [
+          "ui.input.macro.edit.block-template-name"
+        ],
+        "urls": []
+      },
+      "kind": "text-input",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Block Template Name Input (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

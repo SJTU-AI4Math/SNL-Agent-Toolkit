@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "SNL-Doc Concepts",
   "description": "SNL schema, renderer, storage, and reusable Extension concepts.",
   "macros": {
@@ -13,11 +13,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Counter}"
+          "template": "\\texttt{Counter}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -31,11 +33,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry}"
+          "template": "\\texttt{Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -49,11 +53,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{EntryKind}"
+          "template": "\\texttt{EntryKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -67,11 +73,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{EntryRender}"
+          "template": "\\texttt{EntryRender}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -85,11 +93,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind}"
+          "template": "\\texttt{Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -103,11 +113,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Feature}"
+          "template": "\\texttt{Feature}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -121,11 +133,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{<KindName> -- <Title>}"
+          "template": "\\texttt{<KindName> -- <Title>}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -139,11 +153,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library}"
+          "template": "\\texttt{Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -157,11 +173,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{MacroKind}"
+          "template": "\\texttt{MacroKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -175,11 +193,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind}"
+          "template": "\\texttt{Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -193,11 +213,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macro}"
+          "template": "\\texttt{SNL Macro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -211,11 +233,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macros}"
+          "template": "\\texttt{SNL Macros}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -229,11 +253,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL — <entry title>}"
+          "template": "\\texttt{SNL — <entry title>}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -247,11 +273,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SnlSyntaxTree}"
+          "template": "\\texttt{SnlSyntaxTree}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -265,11 +293,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{defaultCounterName}"
+          "template": "\\texttt{defaultCounterName}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -283,11 +313,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{dependency relationship}"
+          "template": "\\texttt{dependency relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -301,11 +333,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{duplicate}"
+          "template": "\\texttt{duplicate}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -319,11 +353,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{exists}"
+          "template": "\\texttt{exists}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -337,11 +373,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{formatNumbering(template, k)}"
+          "template": "\\texttt{formatNumbering(template, k)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -355,11 +393,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}"
+          "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -373,11 +413,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{package picker}"
+          "template": "\\texttt{package picker}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -391,11 +433,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{row toolbar}"
+          "template": "\\texttt{row toolbar}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -409,11 +453,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{shared entry pool}"
+          "template": "\\texttt{shared entry pool}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -427,11 +473,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snl-native}"
+          "template": "\\texttt{snl-native}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -445,11 +493,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{tree-view editor}"
+          "template": "\\texttt{tree-view editor}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -463,11 +513,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL-Doc Concepts}"
+          "template": "\\texttt{SNL-Doc Concepts}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -481,11 +533,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Panel}"
+          "template": "\\texttt{Panel}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -499,11 +553,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Section}"
+          "template": "\\texttt{Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -517,11 +573,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Button}"
+          "template": "\\texttt{Button}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -535,11 +593,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Text Input}"
+          "template": "\\texttt{Text Input}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -553,11 +613,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Command}"
+          "template": "\\texttt{Command}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -571,11 +633,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry}"
+          "template": "\\texttt{Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -589,11 +653,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind}"
+          "template": "\\texttt{Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -607,11 +673,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macro}"
+          "template": "\\texttt{SNL Macro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -625,11 +693,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macro Kind}"
+          "template": "\\texttt{SNL Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -643,11 +713,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Library}"
+          "template": "\\texttt{Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -661,11 +733,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Counter}"
+          "template": "\\texttt{Counter}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -679,11 +753,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Syntax Tree}"
+          "template": "\\texttt{SNL Syntax Tree}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -697,11 +773,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Native Renderer}"
+          "template": "\\texttt{SNL Native Renderer}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -715,11 +793,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Shared Entry Pool}"
+          "template": "\\texttt{Shared Entry Pool}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -733,11 +813,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Default Counter Name}"
+          "template": "\\texttt{Default Counter Name}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -751,11 +833,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Dependency Relationship}"
+          "template": "\\texttt{Dependency Relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -769,11 +853,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Counter Number Formatting}"
+          "template": "\\texttt{Counter Number Formatting}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -787,11 +873,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{EntryRender}"
+          "template": "\\texttt{EntryRender}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -805,11 +893,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Tree-View Editor}"
+          "template": "\\texttt{Tree-View Editor}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -823,11 +913,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Row Toolbar}"
+          "template": "\\texttt{Row Toolbar}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -841,11 +933,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Package Picker}"
+          "template": "\\texttt{Package Picker}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -859,11 +953,13 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Title Format}"
+          "template": "\\texttt{Entry Title Format}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -877,11 +973,373 @@
       },
       "kind": "snl-concept",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Operation Result Status}"
+          "template": "\\texttt{Operation Result Status}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Macro_v7": {
+      "description": "Catfood term for Macro v7.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-v7"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro v7}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "style_name": {
+      "description": "Catfood term for Macro v7.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-v7"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{style\\_name}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "separator": {
+      "description": "Catfood term for Macro v7.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-v7"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{separator}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "block_template_name": {
+      "description": "Catfood term for Macro v7.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-v7"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{block\\_template\\_name}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "MacroDataDriver": {
+      "description": "Catfood term for MacroDataDriver.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-data-driver"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{MacroDataDriver}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "query_macro": {
+      "description": "Catfood term for MacroDataDriver.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-data-driver"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{query\\_macro}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Macro_migration_boundary": {
+      "description": "Catfood term for Macro Migration Boundary.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-migration-boundary"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{macro migration boundary}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Query_only_macro_rendering": {
+      "description": "Catfood term for Query-Only Macro Rendering.",
+      "source": {
+        "entries": [
+          "concept.extension.query-only-macro-rendering"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{query-only macro rendering}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "EntrySurface": {
+      "description": "Catfood term for EntrySurface.",
+      "source": {
+        "entries": [
+          "concept.extension.entry-surface"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{EntrySurface}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Source_structure_metrics": {
+      "description": "Catfood term for Source Structure Metrics.",
+      "source": {
+        "entries": [
+          "concept.extension.source-structure-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{source structure metrics}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Macro_Kind_palette": {
+      "description": "Catfood term for Workspace Macro Kind Palette.",
+      "source": {
+        "entries": [
+          "concept.extension.macro-kind-palette"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Macro Kind palette}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Button_component": {
+      "description": "Catfood term for Shared UI Controls.",
+      "source": {
+        "entries": [
+          "concept.extension.shared-ui-controls"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Button}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Webview_message_bridge": {
+      "description": "Catfood term for Webview Message Bridge.",
+      "source": {
+        "entries": [
+          "concept.extension.webview-message-bridge"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{webview message bridge}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Recursive_hover_popovers": {
+      "description": "Catfood term for Recursive Hover Popovers.",
+      "source": {
+        "entries": [
+          "concept.extension.recursive-popovers"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{recursive hover popovers}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Setting.semanticFreedomGreenBelow": {
+      "description": "VS Code setting snlDoc.metrics.semanticFreedomGreenBelow.",
+      "source": {
+        "entries": [
+          "concept.extension.source-structure-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.metrics.semanticFreedomGreenBelow}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Setting.semanticFreedomRedAbove": {
+      "description": "VS Code setting snlDoc.metrics.semanticFreedomRedAbove.",
+      "source": {
+        "entries": [
+          "concept.extension.source-structure-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.metrics.semanticFreedomRedAbove}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Setting.structuredRatioRedBelow": {
+      "description": "VS Code setting snlDoc.metrics.structuredRatioRedBelow.",
+      "source": {
+        "entries": [
+          "concept.extension.source-structure-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.metrics.structuredRatioRedBelow}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Setting.structuredRatioGreenAtLeast": {
+      "description": "VS Code setting snlDoc.metrics.structuredRatioGreenAtLeast.",
+      "source": {
+        "entries": [
+          "concept.extension.source-structure-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{snlDoc.metrics.structuredRatioGreenAtLeast}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

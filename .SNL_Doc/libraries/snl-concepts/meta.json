@@ -1,4 +1,4 @@
 {
   "title": "SNL-Doc Concepts",
-  "description": "Concepts and reusable mechanisms provided by SNL-Doc and its Extension."
+  "description": "Current SNL-Doc and Extension concepts, including Macro v7, migration boundaries, query-only rendering, source metrics, shared UI controls, and recursive popovers."
 }

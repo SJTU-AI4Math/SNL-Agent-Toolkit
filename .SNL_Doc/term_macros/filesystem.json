@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "Filesystem",
   "description": "Composable Path/Folder/File/JSON-key terminology.",
   "macros": {
@@ -11,11 +11,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "#0\\texttt{/}#1"
+          "template": "#0\\texttt{/}#1",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -27,11 +29,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{.SNL\\_Doc}"
+          "template": "\\texttt{.SNL\\_Doc}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -43,11 +47,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{libraries}"
+          "template": "\\texttt{libraries}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -59,11 +65,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{term\\_macros}"
+          "template": "\\texttt{term\\_macros}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -75,11 +83,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{<slug>}"
+          "template": "\\texttt{<slug>}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -91,11 +101,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{config.json}"
+          "template": "\\texttt{config.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -107,11 +119,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{entries.json}"
+          "template": "\\texttt{entries.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -123,11 +137,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{meta.json}"
+          "template": "\\texttt{meta.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -139,11 +155,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{graph.json}"
+          "template": "\\texttt{graph.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -155,11 +173,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{counters.json}"
+          "template": "\\texttt{counters.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -171,11 +191,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{relationships.json}"
+          "template": "\\texttt{relationships.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -187,11 +209,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{package.json}"
+          "template": "\\texttt{package.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -203,11 +227,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{<slug>.json}"
+          "template": "\\texttt{<slug>.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -219,11 +245,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{*.json}"
+          "template": "\\texttt{*.json}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -235,11 +263,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{entry\\_kinds}"
+          "template": "\\texttt{entry\\_kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -251,11 +281,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{macro\\_kinds}"
+          "template": "\\texttt{macro\\_kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -267,11 +299,13 @@
       },
       "kind": "filesystem",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{contributes.commands}"
+          "template": "\\texttt{contributes.commands}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

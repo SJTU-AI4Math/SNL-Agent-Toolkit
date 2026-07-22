@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "Computer Basics",
   "description": "Keyboard and general computer/programming terminology.",
   "macros": {
@@ -11,11 +11,13 @@
       },
       "kind": "computer-basics",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{crypto.randomUUID()}"
+          "template": "\\texttt{crypto.randomUUID()}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -27,11 +29,13 @@
       },
       "kind": "computer-basics",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{when: false}"
+          "template": "\\texttt{when: false}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -43,11 +47,13 @@
       },
       "kind": "computer-basics",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Ctrl+click}"
+          "template": "\\texttt{Ctrl+click}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -59,11 +65,13 @@
       },
       "kind": "computer-basics",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Enter}"
+          "template": "\\texttt{Enter}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -75,11 +83,13 @@
       },
       "kind": "computer-basics",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Space}"
+          "template": "\\texttt{Space}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

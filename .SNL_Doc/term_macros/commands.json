@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "Extension Commands",
   "description": "Registered command identifiers, titles, and aliases.",
   "macros": {
@@ -13,11 +13,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Command}"
+          "template": "\\texttt{Command}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -31,11 +33,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Command Palette Overview}"
+          "template": "\\texttt{Command Palette Overview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -49,11 +53,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Dashboard}"
+          "template": "\\texttt{SNL: Open Dashboard}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -67,11 +73,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open SNoogL (Search)}"
+          "template": "\\texttt{SNL: Open SNoogL (Search)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -83,11 +91,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{create*}"
+          "template": "\\texttt{create*}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -99,11 +109,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{delete*}"
+          "template": "\\texttt{delete*}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -115,11 +127,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{edit*}"
+          "template": "\\texttt{edit*}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -133,11 +147,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{init}"
+          "template": "\\texttt{init}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -151,11 +167,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{initEntryKinds}"
+          "template": "\\texttt{initEntryKinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -169,11 +187,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{initMacroKinds}"
+          "template": "\\texttt{initMacroKinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -187,11 +207,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{openDashboard}"
+          "template": "\\texttt{openDashboard}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -205,11 +227,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{openEntryInfoview}"
+          "template": "\\texttt{openEntryInfoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -223,11 +247,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{openInfoview}"
+          "template": "\\texttt{openInfoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -242,11 +268,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{openInfoviewGraph[ForLibrary]}"
+          "template": "\\texttt{openInfoviewGraph[ForLibrary]}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -260,11 +288,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{openMacroPackage}"
+          "template": "\\texttt{openMacroPackage}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -278,11 +308,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{openSnoogL}"
+          "template": "\\texttt{openSnoogL}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -296,11 +328,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{refreshInfoview}"
+          "template": "\\texttt{refreshInfoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -314,11 +348,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{regenerateDependencies}"
+          "template": "\\texttt{regenerateDependencies}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -332,11 +368,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{revealEntryPointer}"
+          "template": "\\texttt{revealEntryPointer}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -348,11 +386,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.*}"
+          "template": "\\texttt{snlDoc.*}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -366,11 +406,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.init}"
+          "template": "\\texttt{snlDoc.init}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -384,11 +426,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openDashboard}"
+          "template": "\\texttt{snlDoc.openDashboard}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -402,11 +446,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openEntryInfoview}"
+          "template": "\\texttt{snlDoc.openEntryInfoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -420,11 +466,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openEntryInfoview <entryId>}"
+          "template": "\\texttt{snlDoc.openEntryInfoview <entryId>}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -438,11 +486,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openInfoviewGraph}"
+          "template": "\\texttt{snlDoc.openInfoviewGraph}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -456,11 +506,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openInfoviewGraphForLibrary}"
+          "template": "\\texttt{snlDoc.openInfoviewGraphForLibrary}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -474,11 +526,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.regenerateDependencies}"
+          "template": "\\texttt{snlDoc.regenerateDependencies}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -492,11 +546,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openInfoview}"
+          "template": "\\texttt{snlDoc.openInfoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -510,11 +566,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Infoview}"
+          "template": "\\texttt{SNL: Open Infoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -528,11 +586,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.refreshInfoview}"
+          "template": "\\texttt{snlDoc.refreshInfoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -546,11 +606,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Refresh Infoview}"
+          "template": "\\texttt{SNL: Refresh Infoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -564,11 +626,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.deleteEntry}"
+          "template": "\\texttt{snlDoc.deleteEntry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -582,11 +646,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Delete Entry}"
+          "template": "\\texttt{SNL: Delete Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -600,11 +666,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.deleteEntryKind}"
+          "template": "\\texttt{snlDoc.deleteEntryKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -618,11 +686,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Delete Entry Kind}"
+          "template": "\\texttt{SNL: Delete Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -636,11 +706,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.deleteMacroKind}"
+          "template": "\\texttt{snlDoc.deleteMacroKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -654,11 +726,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Delete Macro Kind}"
+          "template": "\\texttt{SNL: Delete Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -672,11 +746,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.deleteLibrary}"
+          "template": "\\texttt{snlDoc.deleteLibrary}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -690,11 +766,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Delete Library}"
+          "template": "\\texttt{SNL: Delete Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -708,11 +786,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.deleteMacroPackage}"
+          "template": "\\texttt{snlDoc.deleteMacroPackage}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -726,11 +806,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Delete Macro Package}"
+          "template": "\\texttt{SNL: Delete Macro Package}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -744,11 +826,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Entry Infoview}"
+          "template": "\\texttt{SNL: Open Entry Infoview}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -762,11 +846,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.revealEntryPointer}"
+          "template": "\\texttt{snlDoc.revealEntryPointer}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -780,11 +866,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Reveal Entry Pointer}"
+          "template": "\\texttt{SNL: Reveal Entry Pointer}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -798,11 +886,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Dashboard}"
+          "template": "\\texttt{SNL: Open Dashboard}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -816,11 +906,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Init}"
+          "template": "\\texttt{SNL: Init}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -834,11 +926,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createLibrary}"
+          "template": "\\texttt{snlDoc.createLibrary}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -852,11 +946,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Library}"
+          "template": "\\texttt{SNL: Create Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -870,11 +966,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.initEntryKinds}"
+          "template": "\\texttt{snlDoc.initEntryKinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -888,11 +986,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Initialize Entry Kinds}"
+          "template": "\\texttt{SNL: Initialize Entry Kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -906,11 +1006,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createEntryKind}"
+          "template": "\\texttt{snlDoc.createEntryKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -924,11 +1026,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Entry Kind}"
+          "template": "\\texttt{SNL: Create Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -942,11 +1046,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.initMacroKinds}"
+          "template": "\\texttt{snlDoc.initMacroKinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -960,11 +1066,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Initialize Macro Kinds}"
+          "template": "\\texttt{SNL: Initialize Macro Kinds}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -978,11 +1086,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createMacroKind}"
+          "template": "\\texttt{snlDoc.createMacroKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -996,11 +1106,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Macro Kind}"
+          "template": "\\texttt{SNL: Create Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1014,11 +1126,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createEntry}"
+          "template": "\\texttt{snlDoc.createEntry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1032,11 +1146,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Entry}"
+          "template": "\\texttt{SNL: Create Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1050,11 +1166,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createMacroPackage}"
+          "template": "\\texttt{snlDoc.createMacroPackage}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1068,11 +1186,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Macro Package}"
+          "template": "\\texttt{SNL: Create Macro Package}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1086,11 +1206,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openMacroPackage}"
+          "template": "\\texttt{snlDoc.openMacroPackage}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1104,11 +1226,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Macro Package…}"
+          "template": "\\texttt{SNL: Open Macro Package…}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1122,11 +1246,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createMacro}"
+          "template": "\\texttt{snlDoc.createMacro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1140,11 +1266,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Macro}"
+          "template": "\\texttt{SNL: Create Macro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1158,11 +1286,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editLibrary}"
+          "template": "\\texttt{snlDoc.editLibrary}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1176,11 +1306,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Library}"
+          "template": "\\texttt{SNL: Edit Library}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1194,11 +1326,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editEntryKind}"
+          "template": "\\texttt{snlDoc.editEntryKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1212,11 +1346,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Entry Kind}"
+          "template": "\\texttt{SNL: Edit Entry Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1230,11 +1366,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editMacroKind}"
+          "template": "\\texttt{snlDoc.editMacroKind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1248,11 +1386,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Macro Kind}"
+          "template": "\\texttt{SNL: Edit Macro Kind}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1266,11 +1406,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editEntry}"
+          "template": "\\texttt{snlDoc.editEntry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1284,11 +1426,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Entry}"
+          "template": "\\texttt{SNL: Edit Entry}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1302,11 +1446,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editMacroPackage}"
+          "template": "\\texttt{snlDoc.editMacroPackage}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1320,11 +1466,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Macro Package}"
+          "template": "\\texttt{SNL: Edit Macro Package}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1338,11 +1486,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editMacro}"
+          "template": "\\texttt{snlDoc.editMacro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1356,11 +1506,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Macro}"
+          "template": "\\texttt{SNL: Edit Macro}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1374,11 +1526,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createRelationship}"
+          "template": "\\texttt{snlDoc.createRelationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1392,11 +1546,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Relationship}"
+          "template": "\\texttt{SNL: Create Relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1410,11 +1566,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.editRelationship}"
+          "template": "\\texttt{snlDoc.editRelationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1428,11 +1586,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Edit Relationship}"
+          "template": "\\texttt{SNL: Edit Relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1446,11 +1606,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.deleteRelationship}"
+          "template": "\\texttt{snlDoc.deleteRelationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1464,11 +1626,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Delete Relationship}"
+          "template": "\\texttt{SNL: Delete Relationship}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1482,11 +1646,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Relationship Graph}"
+          "template": "\\texttt{SNL: Open Relationship Graph}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1500,11 +1666,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open Relationship Graph (Library)}"
+          "template": "\\texttt{SNL: Open Relationship Graph (Library)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1518,11 +1686,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Regenerate Dependency Relationships}"
+          "template": "\\texttt{SNL: Regenerate Dependency Relationships}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1536,11 +1706,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.openSnoogL}"
+          "template": "\\texttt{snlDoc.openSnoogL}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1554,11 +1726,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Open SNoogL (Search)}"
+          "template": "\\texttt{SNL: Open SNoogL (Search)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1572,11 +1746,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{snlDoc.createMacroPickPackage}"
+          "template": "\\texttt{snlDoc.createMacroPickPackage}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -1590,11 +1766,13 @@
       },
       "kind": "command",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL: Create Macro (Select Package)}"
+          "template": "\\texttt{SNL: Create Macro (Select Package)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }

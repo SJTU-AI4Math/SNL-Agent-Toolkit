@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "7",
   "name": "UI Sections",
   "description": "Concrete Extension Section terminology.",
   "macros": {
@@ -13,11 +13,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Counters Section}"
+          "template": "\\texttt{Counters Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -31,11 +33,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entries Section}"
+          "template": "\\texttt{Entries Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -49,11 +53,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kinds Section}"
+          "template": "\\texttt{Entry Kinds Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -67,11 +73,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{GUI inductive editor}"
+          "template": "\\texttt{GUI inductive editor}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -85,11 +93,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Libraries Section}"
+          "template": "\\texttt{Libraries Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -103,11 +113,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Outline Section}"
+          "template": "\\texttt{Outline Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -121,11 +133,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macros Section}"
+          "template": "\\texttt{SNL Macros Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -139,11 +153,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Section}"
+          "template": "\\texttt{Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -157,11 +173,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationships Section}"
+          "template": "\\texttt{Relationships Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -175,11 +193,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNL Macro Kinds Section}"
+          "template": "\\texttt{SNL Macro Kinds Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -193,11 +213,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Infoview Render Section}"
+          "template": "\\texttt{Entry Infoview Render Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -211,11 +233,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Macros Section}"
+          "template": "\\texttt{Macro Package Macros Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -229,11 +253,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Styles Section (Create)}"
+          "template": "\\texttt{Macro Styles Section (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -247,11 +273,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Styles Section (Edit)}"
+          "template": "\\texttt{Macro Styles Section (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -265,11 +293,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{GUI Inductive Editor Section}"
+          "template": "\\texttt{GUI Inductive Editor Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -283,11 +313,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Relationship Graph Canvas Section}"
+          "template": "\\texttt{Relationship Graph Canvas Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -301,11 +333,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Entry Results Section}"
+          "template": "\\texttt{SNoogL Entry Results Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -319,11 +353,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Macro Results Section}"
+          "template": "\\texttt{SNoogL Macro Results Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -337,11 +373,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Infoview Libraries Layer}"
+          "template": "\\texttt{Infoview Libraries Layer}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -355,11 +393,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Infoview Library Reading Layer}"
+          "template": "\\texttt{Infoview Library Reading Layer}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -373,11 +413,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Infoview Context Section}"
+          "template": "\\texttt{Entry Infoview Context Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -391,11 +433,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Infoview Dependencies Section}"
+          "template": "\\texttt{Entry Infoview Dependencies Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -409,11 +453,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Live Preview Section (Create)}"
+          "template": "\\texttt{Entry Live Preview Section (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -427,11 +473,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Content Section (Create)}"
+          "template": "\\texttt{Entry Content Section (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -445,11 +493,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Contributor Section (Create Entry)}"
+          "template": "\\texttt{Contributor Section (Create Entry)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -463,11 +513,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Pointer Section (Create Entry)}"
+          "template": "\\texttt{Pointer Section (Create Entry)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -481,11 +533,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Live Preview Section (Edit)}"
+          "template": "\\texttt{Entry Live Preview Section (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -499,11 +553,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Content Section (Edit)}"
+          "template": "\\texttt{Entry Content Section (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -517,11 +573,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Contributor Section (Edit Entry)}"
+          "template": "\\texttt{Contributor Section (Edit Entry)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -535,11 +593,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Pointer Section (Edit Entry)}"
+          "template": "\\texttt{Pointer Section (Edit Entry)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -553,11 +613,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Color Preview (Create)}"
+          "template": "\\texttt{Entry Kind Color Preview (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -571,11 +633,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Entry Kind Color Preview (Edit)}"
+          "template": "\\texttt{Entry Kind Color Preview (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -589,11 +653,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Color Preview (Create)}"
+          "template": "\\texttt{Macro Kind Color Preview (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -607,11 +673,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Kind Color Preview (Edit)}"
+          "template": "\\texttt{Macro Kind Color Preview (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -625,11 +693,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Package Batch Actions Section}"
+          "template": "\\texttt{Macro Package Batch Actions Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -643,11 +713,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Transfer Modal Section}"
+          "template": "\\texttt{Macro Transfer Modal Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -661,11 +733,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Live Preview Section (Create)}"
+          "template": "\\texttt{Macro Live Preview Section (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -679,11 +753,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Sources Section (Create)}"
+          "template": "\\texttt{Macro Sources Section (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -697,11 +773,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Tags Section (Create)}"
+          "template": "\\texttt{Macro Tags Section (Create)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -715,11 +793,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Live Preview Section (Edit)}"
+          "template": "\\texttt{Macro Live Preview Section (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -733,11 +813,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Sources Section (Edit)}"
+          "template": "\\texttt{Macro Sources Section (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -751,11 +833,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{Macro Tags Section (Edit)}"
+          "template": "\\texttt{Macro Tags Section (Edit)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -769,11 +853,13 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Search Bar Section}"
+          "template": "\\texttt{SNoogL Search Bar Section}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     },
@@ -787,11 +873,93 @@
       },
       "kind": "section",
       "dynamic_arity": false,
+      "tags": [],
       "styles": [
         {
-          "tag": "default",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL Filters Section}"
+          "template": "\\texttt{SNoogL Filters Section}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Dashboard_entry_metrics": {
+      "description": "Catfood term backed by ui.section.dashboard.entry-metrics.",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.entry-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry source metrics}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.section.dashboard.entry-metrics": {
+      "description": "Catfood term backed by ui.section.dashboard.entry-metrics.",
+      "source": {
+        "entries": [
+          "ui.section.dashboard.entry-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Source Metrics (Dashboard)}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Library_entry_metrics": {
+      "description": "Catfood term backed by ui.section.library.entry-metrics.",
+      "source": {
+        "entries": [
+          "ui.section.library.entry-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry source metrics}",
+          "style_name": "default",
+          "tags": []
+        }
+      ]
+    },
+    "Entry.ui.section.library.entry-metrics": {
+      "description": "Catfood term backed by ui.section.library.entry-metrics.",
+      "source": {
+        "entries": [
+          "ui.section.library.entry-metrics"
+        ],
+        "urls": []
+      },
+      "kind": "section",
+      "dynamic_arity": false,
+      "tags": [],
+      "styles": [
+        {
+          "mode": "formula_inline",
+          "template": "\\texttt{Entry Source Metrics (Library)}",
+          "style_name": "default",
+          "tags": []
         }
       ]
     }
