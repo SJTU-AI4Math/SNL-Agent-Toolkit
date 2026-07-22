@@ -4,13 +4,15 @@
 
 ## Part B — Toolkit CLIs
 
-### Status: P0 linters shipped
+### Status: reference-safe maintenance CLIs shipped
 
 - ✅ **`snl-lint-entry`** — schema + SNL syntax + identifier resolution for EntryData JSON payloads.
 - ✅ **`snl-lint-graph`** — schema + label vocabulary + branch-tree integrity for library graph.json.
 - ✅ **`snl-lint-package`** — schema + template placeholder rules for macro package files.
+- ✅ **`snl-find-refs`** — trace every structured definition/reference to an Entry or Macro id.
+- ✅ **`snl-rename-id`** — collision-checked global Entry/Macro id rename with dry-run and rollback.
 - ⏳ **`snl-commit-batch`** — atomic merge of validated payloads into .SNL_Doc/.
-- ⏳ **Read CLIs (P1)** — `snl-entry-get`, `snl-macro-get`, `snl-macro-find`, `snl-list-*`.
+- ⏳ **Other Read CLIs (P1)** — `snl-entry-get`, `snl-macro-get`, `snl-macro-find`, `snl-list-*`.
 
 ### snl-lint-entry
 
@@ -118,6 +120,55 @@ Checks:
 Note: cross-package name collisions and workspace-wide activation are NOT
 checked here (the linter is file-local). Those checks will fold into
 `snl-commit-batch` (P0.5).
+
+### snl-find-refs
+
+Trace a stable Entry or Macro identity across every structured location in the
+workspace:
+
+```bash
+node bin/snl-find-refs.mjs --root . --type entry algebra.def.group
+node bin/snl-find-refs.mjs --root . --type macro Group
+node bin/snl-find-refs.mjs --root . --type macro --json Group
+```
+
+For Entry ids, this covers the `entries.json` definition, Library graph
+`props.entryId`, pool-wide relationship `from`/`to`, macro
+`source.entries[]`, and SNL `x@entry-id` references. For Macro ids, it covers
+the package `macros` map key and actual SNL macro tokens, including
+`@BinderMacro(...)`. Style tags and `%…%` / `$…$` literal environments are not
+misreported as Macro references.
+
+### snl-rename-id
+
+Synchronously rename one Entry or Macro identity and all references found by
+`snl-find-refs`:
+
+```bash
+# Always inspect first.
+node bin/snl-rename-id.mjs --root . --type entry --dry-run old.entry new.entry
+
+# Apply after reviewing the plan.
+node bin/snl-rename-id.mjs --root . --type entry old.entry new.entry
+node bin/snl-rename-id.mjs --root . --type macro OldMacro NewMacro
+```
+
+Safety rules:
+
+- the old identity must have exactly one definition;
+- the destination must not already occur as either a definition or a reference
+  (renaming never merges two identities);
+- if the old identity has SNL references, the new identity must be expressible
+  by the current SNL identifier grammar; JSON-only Unicode Macro identities
+  remain traceable and renameable;
+- every JSON file and every touched SNL source must parse before any write;
+- writes use same-directory temporary files and restore already-installed
+  originals if a later file replacement fails;
+- only schema-owned identity/reference fields and parsed SNL tokens change;
+  titles, Markdown/LaTeX/text, metadata, pointers, and unknown properties are
+  preserved rather than text-replaced;
+- `--dry-run` performs the complete validation and plan construction with zero
+  writes.
 
 ### Common flag conventions
 

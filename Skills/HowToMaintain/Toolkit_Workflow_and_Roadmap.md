@@ -9,9 +9,11 @@ Drafting → Terminologization → Entry Prefabrication → Library
 Construction → Semantic Indexation). This section tracks the
 CLI-execution shape those phases will take once tooling is complete.
 
-**Current CLI-execution shape (partial).** Each phase's write-side is
-still manual JSON authoring; the CLIs so far only lint. Target loop
-once `snl-commit-batch` (P0.5) and P1 read CLIs land:
+**Current CLI-execution shape (partial).** Draft creation and batch insertion are
+still manual JSON authoring, but validation and identity maintenance are now
+tooled: the three linters validate drafts, `snl-find-refs` inspects Entry/Macro
+identity usage, and `snl-rename-id` performs a checked synchronized migration.
+Target loop once `snl-commit-batch` (P0.5) and the remaining P1 read CLIs land:
 
 1. For each phase, materialise its deliverables as JSON files in a
    scratch dir (outside `.SNL_Doc/`).
@@ -31,8 +33,12 @@ fails, drop the scratch dir and retry.
 
 ## Roadmap
 
-**P0 — Linters (in progress).** `snl-lint-entry` shipped; `snl-lint-graph`
-and `snl-lint-package` up next.
+**P0 — Linters (shipped).** `snl-lint-entry`, `snl-lint-graph`, and
+`snl-lint-package` are available.
+
+**P0.25 — Identity maintenance (shipped).** `snl-find-refs` traces structured
+Entry/Macro definitions and references; `snl-rename-id` applies synchronized,
+collision-checked renames with dry-run and rollback.
 
 **P0.5 — Atomic commit.** `snl-commit-batch` — accepts a directory of validated
 payloads, re-lints against the current on-disk state, and writes only if

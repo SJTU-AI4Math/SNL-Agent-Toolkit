@@ -5,9 +5,11 @@
   "type": "module",
   "private": true,
   "bin": {
+    "snl-find-refs": "./bin/snl-find-refs.mjs",
     "snl-lint-entry": "./bin/snl-lint-entry.mjs",
     "snl-lint-graph": "./bin/snl-lint-graph.mjs",
-    "snl-lint-package": "./bin/snl-lint-package.mjs"
+    "snl-lint-package": "./bin/snl-lint-package.mjs",
+    "snl-rename-id": "./bin/snl-rename-id.mjs"
   },
   "scripts": {
     "test": "tsx --test CLI_Scripts/*.test.ts",

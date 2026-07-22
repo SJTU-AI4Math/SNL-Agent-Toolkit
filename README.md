@@ -34,7 +34,12 @@ Invoke a CLI directly, for example:
 
 ```bash
 node bin/snl-lint-package.mjs --root /path/to/project
+node bin/snl-find-refs.mjs --root /path/to/project --type entry algebra.def.group
+node bin/snl-rename-id.mjs --root /path/to/project --type entry --dry-run old.id new.id
 ```
+
+See [`Skills/HowToMaintain/Use_Toolkit_CLIs.md`](Skills/HowToMaintain/Use_Toolkit_CLIs.md)
+for the full lint, reference-tracing, and synchronized-rename workflows.
 
 ## Schema ownership
 

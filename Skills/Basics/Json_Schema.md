@@ -218,6 +218,14 @@ Never silently change:
 
 Readers should tolerate unknown fields and writers should preserve them unless a migration explicitly owns their removal.
 
+When an identity really must change, do not hand-edit one file or run a raw
+text replacement. Use `snl-find-refs` to inspect its structured definition and
+references, then `snl-rename-id --dry-run` followed by `snl-rename-id` to apply
+a collision-checked synchronized migration. The Toolkit owns Entry references
+in Library graphs, pool relationships, macro provenance, and SNL `x@entry-id`;
+it owns Macro references in package map keys and SNL macro tokens. Opaque
+metadata and non-SNL prose are deliberately outside that migration boundary.
+
 ## Source-of-truth synchronization
 
 When `SNL-Doc-Extension/src/snlDoc.ts` or `src/libraryGraph.ts` changes:
