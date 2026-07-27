@@ -119,6 +119,10 @@ For technical text terms, author the escaping explicitly (`_`, `{`, `}`, `%`, `$
 
 ## Naming and packaging
 
+The concrete naming standard is per-document, declared in that document's
+`.SNL_Doc/CONVENTIONS.md`. Read it before adding a name; see
+[`../HowToBuild/Terminologization.md`](../HowToBuild/Terminologization.md) step 4.
+
 - Prefer semantic ASCII names that will remain stable.
 - Use dotted qualification when the domain needs it: `DivRing.div.frac`.
 - Split packages by domain or ownership, not arbitrary file size.

@@ -44,6 +44,7 @@ Every later build step depends on these identities.
 
 ## Deliverables
 
+- `.SNL_Doc/CONVENTIONS.md` — the document's own naming and ownership standard (see step 4);
 - `config.json#entry_kinds` updated only for genuinely new roles;
 - `config.json#macro_kinds` updated only for genuinely new semantic categories;
 - domain-owned `term_macros/<package>.json` files;
@@ -68,11 +69,37 @@ Create a macro when a concept is reused, needs source links, needs hover/query b
 
 ### 4. Assign stable names and ownership
 
-- Prefer semantic ASCII names.
-- Use dotted qualification when ambiguity is plausible.
-- Treat names as lifetime identities.
+The Toolkit deliberately does **not** prescribe a single global naming scheme.
+Different documents have different source traditions, and a scheme imposed from
+outside would be wrong for most of them. What the Toolkit does require is that
+each document **declare its own scheme, in writing, inside its own workspace**,
+before the first macro is named.
+
+Write that declaration to `.SNL_Doc/CONVENTIONS.md` and keep it authoritative.
+It must fix at least:
+
+- the macro-name grammar the document uses, including whether dotted
+  qualification is mandatory and what the qualifier means (package? domain?
+  namespace of the defining theory?);
+- the package-splitting rule, and which package owns a concept when two could
+  claim it;
+- the style-name vocabulary, so `[display]`, `[inline]`, `[paren]` mean the same
+  thing everywhere;
+- the Entry-id grammar, since `source.entries` links macros to Entries;
+- the casing rule for multi-word slugs.
+
+Then hold the line:
+
+- Prefer semantic ASCII names inside whatever grammar was declared.
+- Treat names as lifetime identities; renaming is a migration
+  (`snl-find-refs` then `snl-rename-id`), never a hand edit.
 - Split packages by domain/ownership, not arbitrary size.
 - Keep one authoritative owner for each macro.
+
+An agent joining an existing document reads `.SNL_Doc/CONVENTIONS.md` first and
+conforms. If the file is missing, the first thing to produce in this stage is
+that file — reconstructed from the names already on disk, then confirmed with
+the author — not a new macro.
 
 ### 5. Design styles
 
@@ -92,4 +119,4 @@ Resolve package-local errors and workspace-wide name collisions before Entry aut
 
 ## Exit criteria
 
-Terminologization is complete when Entry authors can write each planned Entry without making new naming, package-ownership, kind, or style decisions. If authoring uncovers a missing reusable concept, pause and return here rather than embedding dead notation.
+Terminologization is complete when `.SNL_Doc/CONVENTIONS.md` exists and Entry authors can write each planned Entry without making new naming, package-ownership, kind, or style decisions. If authoring uncovers a missing reusable concept, pause and return here rather than embedding dead notation.
