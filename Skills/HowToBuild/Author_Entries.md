@@ -10,8 +10,8 @@ Materialize the full planned Entry set before prose writing drifts the document 
 
 ## Inputs
 
-- Entry blueprint from [`Draft_Document.md`](Draft_Document.md);
-- kinds and concept ownership from [`Design_Terminology.md`](Design_Terminology.md);
+- Entry blueprint from [`Drafting.md`](Drafting.md);
+- kinds and concept ownership from [`Terminologization.md`](Terminologization.md);
 - current shared `entries.json` pool;
 - target Library outline.
 
@@ -98,6 +98,26 @@ For an Entry already present in the pool, use a temporary `.SNL_Doc` lint root w
 - an empty `entries.json`.
 
 This avoids the expected duplicate-id diagnostic while retaining schema, macro-resolution, and Preview checks.
+
+**`snl-lint-entry` takes one Entry object per file.** It rejects an array, so
+`.SNL_Doc/entries.json` cannot be passed to it directly. To sweep the whole
+pool, explode it into one file per Entry inside the temporary lint root and pass
+them all in a single invocation:
+
+```bash
+python3 - <<'PY'
+import json, os
+src = '.SNL_Doc/entries.json'
+os.makedirs('/tmp/lintroot/drafts', exist_ok=True)
+for i, entry in enumerate(json.load(open(src))):
+    json.dump(entry, open(f'/tmp/lintroot/drafts/e{i}.json', 'w'), ensure_ascii=False)
+PY
+node bin/snl-lint-entry.mjs --root /tmp/lintroot /tmp/lintroot/drafts/*.json
+```
+
+Copying the pool into the temporary root instead would resurrect the duplicate-id
+diagnostic on every row, so keep that `entries.json` empty and rely on the
+`snl.src-dangling` info notes to catch genuinely broken `x@entry-id` postfixes.
 
 ## Exit criteria
 
