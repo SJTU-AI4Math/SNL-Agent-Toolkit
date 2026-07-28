@@ -1868,9 +1868,21 @@
       "props": {
         "entryId": "ui.input.macro-kind.edit.id"
       }
+    },
+    {
+      "id": "n_1",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.dashboard.img"
+      }
     }
   ],
   "relationships": [
+    {
+      "from": "node.ui.panel.dashboard",
+      "to": "n_1",
+      "label": "branch"
+    },
     {
       "from": "node.ui.panel.dashboard",
       "to": "node.ui.button.dashboard.view-graph",
@@ -1904,11 +1916,6 @@
     {
       "from": "node.ui.panel.dashboard",
       "to": "node.ui.section.dashboard.entry-kinds",
-      "label": "branch"
-    },
-    {
-      "from": "node.ui.panel.dashboard",
-      "to": "node.ui.section.dashboard.macro-kinds",
       "label": "branch"
     },
     {
@@ -3084,6 +3091,11 @@
     {
       "from": "node.ui.panel.macro-kind.edit",
       "to": "node.ui.input.macro-kind.edit.id",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.dashboard",
+      "to": "node.ui.section.dashboard.macro-kinds",
       "label": "branch"
     }
   ]

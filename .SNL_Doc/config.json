@@ -8,8 +8,8 @@
         "stroke": "#1e88e5",
         "background": "#e3f2fd"
       },
-      "style": "",
-      "defaultCounterName": "Panel"
+      "defaultCounterName": "Panel",
+      "style": ""
     },
     {
       "id": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
@@ -18,8 +18,8 @@
         "stroke": "#546e7a",
         "background": "#eceff1"
       },
-      "style": "",
-      "defaultCounterName": "section"
+      "defaultCounterName": "section",
+      "style": ""
     },
     {
       "id": "a7b50172-f82e-4adb-85cc-f085fda132ff",
@@ -28,8 +28,8 @@
         "stroke": "#43a047",
         "background": "#e8f5e9"
       },
-      "style": "",
-      "defaultCounterName": "function"
+      "defaultCounterName": "function",
+      "style": ""
     },
     {
       "id": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
@@ -38,8 +38,8 @@
         "stroke": "#8e24aa",
         "background": "#f3e5f5"
       },
-      "style": "",
-      "defaultCounterName": "function"
+      "defaultCounterName": "function",
+      "style": ""
     },
     {
       "id": "406729f7-e18a-404d-90a3-679b9372edd1",
@@ -48,8 +48,8 @@
         "stroke": "#e64a19",
         "background": "#fbe9e7"
       },
-      "style": "",
-      "defaultCounterName": "Command"
+      "defaultCounterName": "Command",
+      "style": ""
     },
     {
       "id": "entry-kind.concept",
@@ -58,8 +58,18 @@
         "stroke": "#6a1b9a",
         "background": "#f3e5f5"
       },
-      "style": "",
-      "defaultCounterName": ""
+      "defaultCounterName": "",
+      "style": ""
+    },
+    {
+      "id": "img",
+      "name": "Image",
+      "coloring": {
+        "stroke": "#888888",
+        "background": "#eeeeee"
+      },
+      "defaultCounterName": "1",
+      "style": ""
     }
   ],
   "macro_kinds": [

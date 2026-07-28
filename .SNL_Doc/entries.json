@@ -4,7 +4,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Dashboard",
     "content": {
-      "snl": "%The top-level control surface for a #0 workspace, opened via #1. It retains six collapsible entity sections and their create actions; Entry rows now include #2 badges, while shared controls standardize keyboard, disabled, busy, and destructive behavior.%(Folder.SNL_Doc,SNL_Open_Dashboard,Source_structure_metrics)"
+      "snl": "%The top-level #0 for a #1 workspace, opened via #2. It retains six collapsible entity sections and their create actions; Entry rows now include #3 badges, while shared controls standardize keyboard, disabled, busy, and destructive behavior.%(%control surface%@ui.panel.dashboard.img,Folder.SNL_Doc,SNL_Open_Dashboard,Source_structure_metrics)"
     },
     "contribution_info": null,
     "pointer": null
@@ -3395,6 +3395,16 @@
     "title": "Synchronized Rename",
     "content": {
       "snl": "%A structured rename traces definitions and references, rejects collisions, validates the workspace, applies source-range edits with rollback, and verifies one new definition with no stale owned references. It is never a raw text replacement.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.dashboard.img",
+    "kind": "img",
+    "title": "Dashboard Image",
+    "content": {
+      "markdown": "![](assets/Dashboard-Panel.png)"
     },
     "contribution_info": null,
     "pointer": null

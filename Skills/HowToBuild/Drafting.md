@@ -13,20 +13,26 @@
 
     **Examples**
 
-    What's terminology (GOOD): 
+    **What's terminology (GOOD):**
 
-    **M is a monad** is defined to contain the following operations:
-    1. `pure (A : Type) : A -> M A`
-    2. `map (A,B : Type) : M A -> (A -> M B) -> M B`
-    3. `flatten / join (A : Type) : M (M A) : M A`
+    > **M is a monad** is defined to contain the following operations:
+    > 1. `pure (A : Type) : A -> M A`
+    > 2. `map (A,B : Type) : M A -> (A -> M B) -> M B`
+    > 3. `flatten / join (A : Type) : M (M A) : M A`
 
     *Someone ignorant of functional programming should gain immediate, specific and appliable knowledge after reading the above entry. `pure`, `map`, `flatten`, `(_ : _)`, `_ -> _` are all formal terms used in functional programming, so the above expression is informative.*
 
-    What's intuitive description (BAD):
+    **What's intuitive description (BAD):**
 
-    Monad is a very, very important concept in functional programming, and is such a brilliant design in the history of computer science. Monads are used to manage functions with side effects, and we can convert instructional code into functional code by using monads...
+    > Monad is a very, very important concept in functional programming, and is such a brilliant design in the history of computer science. Monads are used to manage functions with side effects, and we can convert instructional code into functional code by using monads...
 
     *Someone ignorant of functional programming still have little appliable knowledge about "What's a monad" after reading the above entry. "very, very important", "brilliant design", "manage" are all general words that can appear anywhere, they do not provide specific information about functional programming.*
+
+    **How to deal with intuitive descriptions:**
+
+    > **(Definition Entry)** **A Monad** is defined to be...
+    
+    > **(Remark Entry)** Monad manages side effects in functional programming...
 
     *Although intuitive descriptions cannot provide detailed knowledge about the concept, they are often necessary for thorough comprehension if combined with formal definitions. So we write them in remark entries after the formal entries.*
 

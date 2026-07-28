@@ -26,6 +26,16 @@ During *Terminologization*, extract terms from markdown natural language content
 
 You should refer to [Terminologization Guide](Terminologization.md) for detailed guidance.
 
+## Entry Prefabrication (条目预制)
+
+## Library Construction (库建构)
+
+## Semantic Indexation (建立语义索引)
+
+## Checklist
+
+
+
 ### The five phases
 
 | # | Phase (EN)               | Phase (CN)   | Produces                                     |

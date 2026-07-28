@@ -4,6 +4,8 @@ During *Terminologization*, extract terms from markdown natural language content
 
 It is strongly advised to assign the task to subagents, as designing terms requires deliberate thinking.
 
+Since basic terminology within a given domain is widely shared among different documents, it is recommended to search for existing term macro packages before building new ones.
+
 ## Terminology for Terminologization
 
 1. A **Term (术语)** is a domain-specific signifier, signifying a specific semantic concept.
@@ -16,6 +18,8 @@ It is strongly advised to assign the task to subagents, as designing terms requi
 
 4. Multiple different terms can signify the same semantic concept, a phenomenon called **Aliasing (别名)**. Therefore, a term macro contain multiple **Macro Styles (宏样式)**.
 
+**Methodology**
+
 **Examples**
 
 1. In Mathematics, math operators and meta-math expressions are both considered **Terms** in SNL (This is important because meta-math expressions are not considered **Terms** in formal languages like Lean 4):
@@ -23,7 +27,8 @@ It is strongly advised to assign the task to subagents, as designing terms requi
     * In math expression "Let $P$ be a predicate, define $\{x\mid P(x)\}$ to be ...", `Let #0, define #1 to be #2` describes the process of defining a mathematical concept, this process is not a math operator but a meta-math expression. Yet it is still a semantically specific concept and should be considered an **Abstract Term** in SNL. The corresponding **Term Macro** is text macro `Let #0, define #1 to be #2`.
 
 2. In code documentations, a variety of concepts can be considered **Terms**: 
-    * All declared variables, functions, classes, interfaces, etc. can be considered **Terms**. 
+    * All identifieres, including names of declared variables, functions, classes, interfaces, etc. can be considered **Terms**.
+    * Syntax rules, including keywords, macros, operators, etc. of a programming language can be considered **Terms**, which are often **Abstract Terms** as they usually carry semantic information together with identifiers.
 
 ## Purpose
 
