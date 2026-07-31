@@ -139,7 +139,11 @@ function lintMacroEntry(name: string, raw: unknown, issues: LintIssue[], checkKa
       issues.push({ severity: 'warning', code: 'style.separator-unused', message: `${stylePath}.separator is ignored when the macro is not dynamic_arity.`, path: `${stylePath}.separator` });
     }
 
-    if (checkKatexEnabled && style.template.length > 0 && typeof style.mode === 'string' && templateNeedsKatex(style.mode, style.template) && scan.badTokens.length === 0) {
+    // Partial macros are rendering fragments: they may intentionally contain
+    // syntax (for example an `&`-prefixed aligned row) that is valid only after
+    // a parent macro has embedded it. Keep all structural validation above,
+    // but do not pretend the fragment is a standalone KaTeX document.
+    if (checkKatexEnabled && macro.kind !== 'partial' && style.template.length > 0 && typeof style.mode === 'string' && templateNeedsKatex(style.mode, style.template) && scan.badTokens.length === 0) {
       const filled = fillTemplateWithPlaceholders(style.template, { separator: typeof style.separator === 'string' ? style.separator : undefined });
       const result = checkKatex(filled, { displayMode: style.mode === 'formula_display' });
       if (!result.ok) {

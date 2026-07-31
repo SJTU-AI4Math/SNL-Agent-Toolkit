@@ -237,6 +237,33 @@ describe('lintPackage', () => {
     );
   });
 
+  it('allows composition-only partial macros to be KaTeX-incomplete in isolation', () => {
+    const partial = {
+      version: '0.10.0', name: 'x', macros: {
+        fragment: {
+          description: 'an aligned-row fragment that only compiles inside its parent',
+          source: { entries: [], urls: [] }, kind: 'partial',
+          dynamic_arity: true, tags: [],
+          styles: [{
+            style_name: 'default', mode: 'formula_display',
+            template: '& =#*', separator: '\\\\ & =', tags: [],
+          }],
+        },
+      },
+    };
+    const ordinary = structuredClone(partial);
+    ordinary.macros.fragment.kind = 'rule';
+    const unrelatedKind = structuredClone(partial);
+    unrelatedKind.macros.fragment.kind = 'fragment';
+    const malformedPartial = structuredClone(partial);
+    malformedPartial.macros.fragment.styles[0].template = '& =x';
+
+    assert.ok(codes(lintPackage(ordinary)).includes('style.katex-compile'));
+    assert.ok(codes(lintPackage(unrelatedKind)).includes('style.katex-compile'));
+    assert.ok(!codes(lintPackage(partial)).includes('style.katex-compile'));
+    assert.ok(codes(lintPackage(malformedPartial)).includes('style.dynamic-arity-missing-variadic'));
+  });
+
   it('info-notes cross-style arity mismatch', () => {
     const pkg = {
       version: '0.4.0',

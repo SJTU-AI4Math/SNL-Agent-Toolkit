@@ -10,6 +10,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { renderTreeAsLatex, renderTreeAsText } from '../lib/snl-render.ts';
+import { checkKatex } from '../lib/katex-check.ts';
 import { tryParseSnlSyntaxTree } from '../lib/snl-parser.ts';
 import type { MacroPackageEntry } from '../lib/snl-doc-schema.ts';
 
@@ -123,6 +124,33 @@ describe('renderTreeAsLatex', () => {
       },
     };
     assert.equal(synthLatex('join(a,b,c)', dynamic).output, '\\left[a | b | c\\right]');
+  });
+
+  test('composition-only partial becomes valid KaTeX inside its parent macro', () => {
+    const composed: Record<string, MacroPackageEntry> = {
+      calc: {
+        name: 'calc', description: '', source: { entries: [], urls: [] },
+        kind: 'rule', dynamic_arity: false, tags: [],
+        styles: [{
+          style_name: 'default', mode: 'formula_display',
+          template: '\\text{Calculating: }\\begin{aligned}#0#1\\end{aligned}', tags: [],
+        }],
+      },
+      'calc-partial': {
+        name: 'calc-partial', description: '', source: { entries: [], urls: [] },
+        kind: 'partial', dynamic_arity: true, tags: [],
+        styles: [{
+          style_name: 'default', mode: 'formula_display',
+          template: '& =#*', separator: '\\\\ & =', tags: [],
+        }],
+      },
+    };
+    const r = synthLatex('calc(a,calc-partial(b,c,d))', composed);
+    assert.equal(
+      r.output,
+      '\\text{Calculating: }\\begin{aligned}a& =b\\\\ & =c\\\\ & =d\\end{aligned}',
+    );
+    assert.equal(checkKatex(r.output, { displayMode: true }).ok, true);
   });
 
   test('dynamic templates preserve surrounding text and an explicit empty separator', () => {
