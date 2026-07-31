@@ -14,7 +14,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Infoview",
     "content": {
-      "snl": "PanelDescription(%Reading surface with Libraries and selected-Library outline layers. It opens Library and Entry content without edit mode; every Entry body uses #0, query-only macro lookup, workspace Macro Kind colors, and recursive source popovers.%(EntrySurface),%Contains #0 and #1.%(Entry.ui.section.infoview.libraries,Entry.ui.section.infoview.library-reading),RunVSCodeCommand(CommandTitle.snlDoc.openInfoview),NotDocumented)"
+      "snl": "PanelDescription(%Reading surface with Libraries and selected-Library outline layers. It opens Library and Entry content without edit mode; every Entry body uses #0, query-only macro lookup, workspace Macro Kind colors, and recursive source popovers.%(EntrySurface),%Contains #0 and #1.%(Entry.ui.section.infoview.libraries,Entry.ui.section.infoview.library-reading),RunVSCodeCommand(CommandTitle.snlDoc.openInfoview),%Image%@ui.panel.infoview.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -24,7 +24,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Entry Infoview",
     "content": {
-      "snl": "PanelDescription(%Dedicated per-Entry reading panel, opened directly or by Ctrl-clicking an Entry title. It renders one #0 through #1, colors macros with the workspace palette, and supports #2 for nested Entry and macro references.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers),%Contains #0, #1, #2, and an edit action.%(Entry.ui.section.entry-infoview.entry-render,Entry.ui.section.entry-infoview.context,Entry.ui.section.entry-infoview.dependencies),RunVSCodeCommand(snlDoc.openEntryInfoview_entryId),NotDocumented)"
+      "snl": "PanelDescription(%Dedicated per-Entry reading panel, opened directly or by Ctrl-clicking an Entry title. It renders one #0 through #1, colors macros with the workspace palette, and supports #2 for nested Entry and macro references.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers),%Contains #0, #1, #2, and an edit action.%(Entry.ui.section.entry-infoview.entry-render,Entry.ui.section.entry-infoview.context,Entry.ui.section.entry-infoview.dependencies),RunVSCodeCommand(snlDoc.openEntryInfoview_entryId),%Image%@ui.panel.entry-infoview.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -34,7 +34,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Library",
     "content": {
-      "snl": "PanelDescription(%Creates a new Library directory from its title and slug, including empty #0, #1, and #2 files. Existing slugs are never overwritten.%(File.meta_json,File.graph_json,File.counters_json),%Contains a Library title input and a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createLibrary),NotDocumented)"
+      "snl": "PanelDescription(%Creates a new Library directory from its title and slug, including empty #0, #1, and #2 files. Existing slugs are never overwritten.%(File.meta_json,File.graph_json,File.counters_json),%Contains a Library title input and a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createLibrary),%Image%@ui.panel.library.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -44,7 +44,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Library",
     "content": {
-      "snl": "PanelDescription(%The #0 detail/edit view. It retains the outline tree editor, Library counter tree, external-file synchronization, and Entry navigation; the outline now displays #1 beside SNL Entries and blocks invalid references before host submission.%(Library,Source_structure_metrics),%Contains #0, #1, slug/title inputs, title-update action, and an Infoview action.%(Outline_Section,Counters_Section),RunVSCodeCommand(CommandTitle.snlDoc.editLibrary),NotDocumented)"
+      "snl": "PanelDescription(%The #0 detail/edit view. It retains the outline tree editor, Library counter tree, external-file synchronization, and Entry navigation; the outline now displays #1 beside SNL Entries and blocks invalid references before host submission.%(Library,Source_structure_metrics),%Contains #0, #1, slug/title inputs, title-update action, and an Infoview action.%(Outline_Section,Counters_Section),RunVSCodeCommand(CommandTitle.snlDoc.editLibrary),%Image%@ui.panel.library.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -54,7 +54,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry",
     "content": {
-      "snl": "PanelDescription(%#0 to author a single entry: id (manual with #1 button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,File.entries_json,Library),%Contains #0, #1, #2, #3, id/title/kind inputs, UUID generation, and save actions.%(Entry.ui.section.entry.create.preview,Entry.ui.section.entry.create.content,Entry.ui.section.entry.create.contributor,Entry.ui.section.entry.create.pointer),RunVSCodeCommand(CommandTitle.snlDoc.createEntry),NotDocumented)"
+      "snl": "PanelDescription(%#0 to author a single entry: id (manual with #1 button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,File.entries_json,Library),%Contains #0, #1, #2, #3, id/title/kind inputs, UUID generation, and save actions.%(Entry.ui.section.entry.create.preview,Entry.ui.section.entry.create.content,Entry.ui.section.entry.create.contributor,Entry.ui.section.entry.create.pointer),RunVSCodeCommand(CommandTitle.snlDoc.createEntry),%Image%@ui.panel.entry.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -64,7 +64,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry Kind",
     "content": {
-      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createEntryKind),NotDocumented)"
+      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createEntryKind),%Image%@ui.panel.entry-kind.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -74,7 +74,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Initialize Entry Kinds",
     "content": {
-      "snl": "PanelDescription(%Empty-catalog bootstrap panel with a Presets dropdown (currently only #0) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty.%(Preset.Fulcrum_Math_Notes),%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initEntryKinds),NotDocumented)"
+      "snl": "PanelDescription(%Empty-catalog bootstrap panel with a Presets dropdown (currently only #0) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty.%(Preset.Fulcrum_Math_Notes),%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initEntryKinds),%Image%@ui.panel.entry-kind.initialize.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -84,7 +84,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Entry Kind",
     "content": {
-      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by kind id. Same field set. Renaming the kind name does NOT rewrite existing entries that reference it by id.%(Create_Entry_Kind),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.edit.preview),RunVSCodeCommand(CommandTitle.snlDoc.editEntryKind),NotDocumented)"
+      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by kind id. Same field set. Renaming the kind name does NOT rewrite existing entries that reference it by id.%(Create_Entry_Kind),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.edit.preview),RunVSCodeCommand(CommandTitle.snlDoc.editEntryKind),%Image%@ui.panel.entry-kind.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -94,7 +94,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Kind",
     "content": {
-      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2 under #3.%(Panel,MacroKind,File.config_json,JsonKey.macro_kinds),%Contains #0, id/name/description/color inputs, and a submit action.%(Entry.ui.section.macro-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createMacroKind),NotDocumented)"
+      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2 under #3.%(Panel,MacroKind,File.config_json,JsonKey.macro_kinds),%Contains #0, id/name/description/color inputs, and a submit action.%(Entry.ui.section.macro-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createMacroKind),%Image%@ui.panel.macro-kind.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -104,7 +104,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Initialize Macro Kinds",
     "content": {
-      "snl": "PanelDescription(%Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write.%,%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initMacroKinds),NotDocumented)"
+      "snl": "PanelDescription(%Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write.%,%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initMacroKinds),%Image%@ui.panel.macro-kind.initialize.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -114,7 +114,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro Kind",
     "content": {
-      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by kind id.%(Create_Macro_Kind),%Contains #0, id/name/description/color inputs, and a submit action.%(Entry.ui.section.macro-kind.edit.preview),RunVSCodeCommand(CommandTitle.snlDoc.editMacroKind),NotDocumented)"
+      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by kind id.%(Create_Macro_Kind),%Contains #0, id/name/description/color inputs, and a submit action.%(Entry.ui.section.macro-kind.edit.preview),RunVSCodeCommand(CommandTitle.snlDoc.editMacroKind),%Image%@ui.panel.macro-kind.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -124,7 +124,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Package",
     "content": {
-      "snl": "PanelDescription(%#0 to create a new #1 package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,Path.join(Folder.term_macros,File.slug_json)),%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createMacroPackage),NotDocumented)"
+      "snl": "PanelDescription(%#0 to create a new #1 package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,Path.join(Folder.term_macros,File.slug_json)),%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createMacroPackage),%Image%@ui.panel.macro-package.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -134,7 +134,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Package Panel",
     "content": {
-      "snl": "PanelDescription(%The macro-package detail view for strict #0 packages. It retains activation, style expansion, source status, multi-select transfer/delete, package editing, and inline package creation; rows now add direct Delete and render Macro Kind-colored previews through #1.%(Macro_v7,MacroDataDriver),%Contains #0, #1, #2, package activation, and package-edit actions.%(Entry.ui.section.macro-package.macros,Entry.ui.section.macro-package.batch-actions,Entry.ui.section.macro-package.transfer-modal),RunVSCodeCommand(CommandTitle.snlDoc.openMacroPackage),NotDocumented)"
+      "snl": "PanelDescription(%The macro-package detail view for strict #0 packages. It retains activation, style expansion, source status, multi-select transfer/delete, package editing, and inline package creation; rows now add direct Delete and render Macro Kind-colored previews through #1.%(Macro_v7,MacroDataDriver),%Contains #0, #1, #2, package activation, and package-edit actions.%(Entry.ui.section.macro-package.macros,Entry.ui.section.macro-package.batch-actions,Entry.ui.section.macro-package.transfer-modal),RunVSCodeCommand(CommandTitle.snlDoc.openMacroPackage),%Image%@ui.panel.macro-package.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -144,7 +144,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro",
     "content": {
-      "snl": "PanelDescription(%#0 for authoring a macro name, package, kind, descriptions, sources, tags, output backends, and strict #1 styles. Styles use #2, required tags, a four-way mode, and a template; dynamic styles edit text around a real #3 plus #4, block styles choose #5, and live preview resolves through #6.%(Panel,Macro_v7,style_name,Literal.hash_star,separator,block_template_name,MacroDataDriver),%Contains #0, #1, #2, #3, macro name/kind/description inputs, create-kind action, and submit action.%(Entry.ui.section.macro.create.styles,Entry.ui.section.macro.create.preview,Entry.ui.section.macro.create.sources,Entry.ui.section.macro.create.tags),RunVSCodeCommand(CommandTitle.snlDoc.createMacro),NotDocumented)"
+      "snl": "PanelDescription(%#0 for authoring a macro name, package, kind, descriptions, sources, tags, output backends, and strict #1 styles. Styles use #2, required tags, a four-way mode, and a template; dynamic styles edit text around a real #3 plus #4, block styles choose #5, and live preview resolves through #6.%(Panel,Macro_v7,style_name,Literal.hash_star,separator,block_template_name,MacroDataDriver),%Contains #0, #1, #2, #3, macro name/kind/description inputs, create-kind action, and submit action.%(Entry.ui.section.macro.create.styles,Entry.ui.section.macro.create.preview,Entry.ui.section.macro.create.sources,Entry.ui.section.macro.create.tags),RunVSCodeCommand(CommandTitle.snlDoc.createMacro),%Image%@ui.panel.macro.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -154,7 +154,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro",
     "content": {
-      "snl": "PanelDescription(%Edit-mode variant of #0 with the same source, tag, style, backend, and GUI-inductive controls. Historical packages cross #1 before the form loads, save always writes strict #2, and the Tree v2 editor preserves literal SNL sigils.%(Create_Macro,Macro_migration_boundary,Macro_v7),%Contains #0, #1, #2, #3, #4, macro name/kind/description inputs, create-kind action, and submit action.%(Entry.ui.section.macro.edit.styles,Entry.ui.section.macro.edit.preview,Entry.ui.section.macro.edit.sources,Entry.ui.section.macro.edit.tags,Entry.ui.section.macro.edit.gui-inductive),RunVSCodeCommand(CommandTitle.snlDoc.editMacro),NotDocumented)"
+      "snl": "PanelDescription(%Edit-mode variant of #0 with the same source, tag, style, backend, and GUI-inductive controls. Historical packages cross #1 before the form loads, save always writes strict #2, and the Tree v2 editor preserves literal SNL sigils.%(Create_Macro,Macro_migration_boundary,Macro_v7),%Contains #0, #1, #2, #3, #4, macro name/kind/description inputs, create-kind action, and submit action.%(Entry.ui.section.macro.edit.styles,Entry.ui.section.macro.edit.preview,Entry.ui.section.macro.edit.sources,Entry.ui.section.macro.edit.tags,Entry.ui.section.macro.edit.gui-inductive),RunVSCodeCommand(CommandTitle.snlDoc.editMacro),%Image%@ui.panel.macro.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -164,7 +164,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Relationship",
     "content": {
-      "snl": "PanelDescription(%#0 to declare a semantic relationship between two entries (from, to, label). Persists to #1.%(Panel,Path.join(Folder.SNL_Doc,File.relationships_json)),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createRelationship),NotDocumented)"
+      "snl": "PanelDescription(%#0 to declare a semantic relationship between two entries (from, to, label). Persists to #1.%(Panel,Path.join(Folder.SNL_Doc,File.relationships_json)),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createRelationship),%Image%@ui.panel.relationship.create.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -174,7 +174,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Relationship",
     "content": {
-      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by relationship id.%(Create_Relationship),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editRelationship),NotDocumented)"
+      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by relationship id.%(Create_Relationship),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editRelationship),%Image%@ui.panel.relationship.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -184,7 +184,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Relationship Graph",
     "content": {
-      "snl": "PanelDescription(%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #1 (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary),%Contains #0.%(Entry.ui.section.relationship-graph.canvas),%#0 or #1.%(RunVSCodeCommand(CommandTitle.snlDoc.openInfoviewGraph),RunVSCodeCommand(CommandTitle.snlDoc.openInfoviewGraphForLibrary)),NotDocumented)"
+      "snl": "PanelDescription(%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #1 (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary),%Contains #0.%(Entry.ui.section.relationship-graph.canvas),%#0 or #1.%(RunVSCodeCommand(CommandTitle.snlDoc.openInfoviewGraph),RunVSCodeCommand(CommandTitle.snlDoc.openInfoviewGraphForLibrary)),%Image%@ui.panel.relationship-graph.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -194,7 +194,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "SNoogL Search",
     "content": {
-      "snl": "PanelDescription(%Full-text search over entries + macros + libraries. Opened via #0. Independent panel — not embedded in #1.%(SNL_Open_SNoogL_Search,Dashboard),%Contains #0, #1, #2, and #3.%(Entry.ui.section.snoogl.entry-results,Entry.ui.section.snoogl.macro-results,Entry.ui.section.snoogl.search,Entry.ui.section.snoogl.filters),RunVSCodeCommand(SNL_Open_SNoogL_Search),NotDocumented)"
+      "snl": "PanelDescription(%Full-text search over entries + macros + libraries. Opened via #0. Independent panel — not embedded in #1.%(SNL_Open_SNoogL_Search,Dashboard),%Contains #0, #1, #2, and #3.%(Entry.ui.section.snoogl.entry-results,Entry.ui.section.snoogl.macro-results,Entry.ui.section.snoogl.search,Entry.ui.section.snoogl.filters),RunVSCodeCommand(SNL_Open_SNoogL_Search),%Image%@ui.panel.snoogl.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1664,7 +1664,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Entry",
     "content": {
-      "snl": "PanelDescription(%Edit-mode Entry panel, loaded by semantic Entry id.%,%Contains #0, #1, #2, #3, Entry id/title/kind/content inputs, Infoview action, and submit action.%(Entry.ui.section.entry.edit.preview,Entry.ui.section.entry.edit.content,Entry.ui.section.entry.edit.contributor,Entry.ui.section.entry.edit.pointer),RunVSCodeCommand(CommandTitle.snlDoc.editEntry),NotDocumented)"
+      "snl": "PanelDescription(%Edit-mode Entry panel, loaded by semantic Entry id.%,%Contains #0, #1, #2, #3, Entry id/title/kind/content inputs, Infoview action, and submit action.%(Entry.ui.section.entry.edit.preview,Entry.ui.section.entry.edit.content,Entry.ui.section.entry.edit.contributor,Entry.ui.section.entry.edit.pointer),RunVSCodeCommand(CommandTitle.snlDoc.editEntry),%Image%@ui.panel.entry.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1904,7 +1904,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro Package",
     "content": {
-      "snl": "PanelDescription(%Edits package file/name/description metadata.%,%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editMacroPackage),NotDocumented)"
+      "snl": "PanelDescription(%Edits package file/name/description metadata.%,%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editMacroPackage),%Image%@ui.panel.macro-package.edit.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -3405,6 +3405,216 @@
     "title": "Dashboard Image",
     "content": {
       "markdown": "![](assets/Dashboard-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.infoview.img",
+    "kind": "img",
+    "title": "Infoview Image",
+    "content": {
+      "markdown": "![](assets/Infoview-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry-infoview.img",
+    "kind": "img",
+    "title": "Entry Infoview Image",
+    "content": {
+      "markdown": "![](assets/Entry-Infoview-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.library.create.img",
+    "kind": "img",
+    "title": "Create Library Image",
+    "content": {
+      "markdown": "![](assets/Create-Library-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.library.edit.img",
+    "kind": "img",
+    "title": "Edit Library Image",
+    "content": {
+      "markdown": "![](assets/Edit-Library-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry.create.img",
+    "kind": "img",
+    "title": "Create Entry Image",
+    "content": {
+      "markdown": "![](assets/Create-Entry-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry-kind.create.img",
+    "kind": "img",
+    "title": "Create Entry Kind Image",
+    "content": {
+      "markdown": "![](assets/Create-Entry-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry-kind.initialize.img",
+    "kind": "img",
+    "title": "Initialize Entry Kinds Image",
+    "content": {
+      "markdown": "![](assets/Initialize-Entry-Kinds-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry-kind.edit.img",
+    "kind": "img",
+    "title": "Edit Entry Kind Image",
+    "content": {
+      "markdown": "![](assets/Edit-Entry-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-kind.create.img",
+    "kind": "img",
+    "title": "Create Macro Kind Image",
+    "content": {
+      "markdown": "![](assets/Create-Macro-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-kind.initialize.img",
+    "kind": "img",
+    "title": "Initialize Macro Kinds Image",
+    "content": {
+      "markdown": "![](assets/Initialize-Macro-Kinds-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-kind.edit.img",
+    "kind": "img",
+    "title": "Edit Macro Kind Image",
+    "content": {
+      "markdown": "![](assets/Edit-Macro-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-package.create.img",
+    "kind": "img",
+    "title": "Create Macro Package Image",
+    "content": {
+      "markdown": "![](assets/Create-Macro-Package-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-package.img",
+    "kind": "img",
+    "title": "Package Panel Image",
+    "content": {
+      "markdown": "![](assets/Package-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro.create.img",
+    "kind": "img",
+    "title": "Create Macro Image",
+    "content": {
+      "markdown": "![](assets/Create-Macro-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro.edit.img",
+    "kind": "img",
+    "title": "Edit Macro Image",
+    "content": {
+      "markdown": "![](assets/Edit-Macro-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.relationship.create.img",
+    "kind": "img",
+    "title": "Create Relationship Image",
+    "content": {
+      "markdown": "![](assets/Create-Relationship-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.relationship.edit.img",
+    "kind": "img",
+    "title": "Edit Relationship Image",
+    "content": {
+      "markdown": "![](assets/Edit-Relationship-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.relationship-graph.img",
+    "kind": "img",
+    "title": "Relationship Graph Image",
+    "content": {
+      "markdown": "![](assets/Relationship-Graph-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.snoogl.img",
+    "kind": "img",
+    "title": "SNoogL Search Image",
+    "content": {
+      "markdown": "![](assets/SNoogL-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.entry.edit.img",
+    "kind": "img",
+    "title": "Edit Entry Image",
+    "content": {
+      "markdown": "![](assets/Edit-Entry-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null
+  },
+  {
+    "id": "ui.panel.macro-package.edit.img",
+    "kind": "img",
+    "title": "Edit Macro Package Image",
+    "content": {
+      "markdown": "![](assets/Edit-Macro-Package-Panel.png)"
     },
     "contribution_info": null,
     "pointer": null
