@@ -1875,6 +1875,153 @@
       "props": {
         "entryId": "ui.panel.dashboard.img"
       }
+    },
+    {
+      "id": "node.ui.panel.infoview.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.infoview.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.entry-infoview.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.entry-infoview.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.library.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.library.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.library.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.library.edit.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.entry.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.entry.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.entry-kind.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.entry-kind.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.entry-kind.initialize.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.entry-kind.initialize.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.entry-kind.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.entry-kind.edit.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro-kind.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro-kind.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro-kind.initialize.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro-kind.initialize.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro-kind.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro-kind.edit.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro-package.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro-package.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro-package.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro-package.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro.edit.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.relationship.create.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.relationship.create.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.relationship.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.relationship.edit.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.relationship-graph.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.relationship-graph.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.snoogl.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.snoogl.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.entry.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.entry.edit.img"
+      }
+    },
+    {
+      "id": "node.ui.panel.macro-package.edit.img",
+      "label": "Entry",
+      "props": {
+        "entryId": "ui.panel.macro-package.edit.img"
+      }
     }
   ],
   "relationships": [
@@ -3096,6 +3243,111 @@
     {
       "from": "node.ui.panel.dashboard",
       "to": "node.ui.section.dashboard.macro-kinds",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.infoview",
+      "to": "node.ui.panel.infoview.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-infoview",
+      "to": "node.ui.panel.entry-infoview.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.create",
+      "to": "node.ui.panel.library.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.library.edit",
+      "to": "node.ui.panel.library.edit.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.create",
+      "to": "node.ui.panel.entry.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.create",
+      "to": "node.ui.panel.entry-kind.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.initialize",
+      "to": "node.ui.panel.entry-kind.initialize.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry-kind.edit",
+      "to": "node.ui.panel.entry-kind.edit.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.create",
+      "to": "node.ui.panel.macro-kind.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.initialize",
+      "to": "node.ui.panel.macro-kind.initialize.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-kind.edit",
+      "to": "node.ui.panel.macro-kind.edit.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-package.create",
+      "to": "node.ui.panel.macro-package.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-package",
+      "to": "node.ui.panel.macro-package.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.create",
+      "to": "node.ui.panel.macro.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro.edit",
+      "to": "node.ui.panel.macro.edit.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.create",
+      "to": "node.ui.panel.relationship.create.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship.edit",
+      "to": "node.ui.panel.relationship.edit.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.relationship-graph",
+      "to": "node.ui.panel.relationship-graph.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.snoogl",
+      "to": "node.ui.panel.snoogl.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.entry.edit",
+      "to": "node.ui.panel.entry.edit.img",
+      "label": "branch"
+    },
+    {
+      "from": "node.ui.panel.macro-package.edit",
+      "to": "node.ui.panel.macro-package.edit.img",
       "label": "branch"
     }
   ]
