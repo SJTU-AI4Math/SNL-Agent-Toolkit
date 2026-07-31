@@ -4,7 +4,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Dashboard",
     "content": {
-      "snl": "PanelDescription(%The primary control panel of SNL documentation in the repository, containing entrances to most of the editors.%,,RunVSCodeCommand(SNL_Open_Dashboard),%Image%@ui.panel.dashboard.img)"
+      "snl": "PanelDescription(%The primary control panel of SNL documentation in the repository, containing entrances to most of the editors.%,%Six entity sections: #0, #1, #2, #3, #4, and #5; plus graph and Infoview opening actions.%(Libraries_Section,Entries_Section,Entry.ui.section.dashboard.relationships,SNL_Macros_Section,Entry_Kinds_Section,Entry.ui.section.dashboard.macro-kinds),RunVSCodeCommand(SNL_Open_Dashboard),%Image%@ui.panel.dashboard.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -14,7 +14,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Infoview",
     "content": {
-      "snl": "%Reading surface with Libraries and selected-Library outline layers. It opens Library and Entry content without edit mode; every Entry body uses #0, query-only macro lookup, workspace Macro Kind colors, and recursive source popovers.%(EntrySurface)"
+      "snl": "PanelDescription(%Reading surface with Libraries and selected-Library outline layers. It opens Library and Entry content without edit mode; every Entry body uses #0, query-only macro lookup, workspace Macro Kind colors, and recursive source popovers.%(EntrySurface),%Contains #0 and #1.%(Entry.ui.section.infoview.libraries,Entry.ui.section.infoview.library-reading),RunVSCodeCommand(CommandTitle.snlDoc.openInfoview),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -24,7 +24,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Entry Infoview",
     "content": {
-      "snl": "%Dedicated per-Entry reading panel, opened directly or by Ctrl-clicking an Entry title. It renders one #0 through #1, colors macros with the workspace palette, and supports #2 for nested Entry and macro references.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers)"
+      "snl": "PanelDescription(%Dedicated per-Entry reading panel, opened directly or by Ctrl-clicking an Entry title. It renders one #0 through #1, colors macros with the workspace palette, and supports #2 for nested Entry and macro references.%(EntrySurface,MacroDataDriver,Recursive_hover_popovers),%Contains #0, #1, #2, and an edit action.%(Entry.ui.section.entry-infoview.entry-render,Entry.ui.section.entry-infoview.context,Entry.ui.section.entry-infoview.dependencies),RunVSCodeCommand(snlDoc.openEntryInfoview_entryId),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -34,7 +34,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Library",
     "content": {
-      "snl": "%Creates a new Library directory from its title and slug, including empty #0, #1, and #2 files. Existing slugs are never overwritten.%(File.meta_json,File.graph_json,File.counters_json)"
+      "snl": "PanelDescription(%Creates a new Library directory from its title and slug, including empty #0, #1, and #2 files. Existing slugs are never overwritten.%(File.meta_json,File.graph_json,File.counters_json),%Contains a Library title input and a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createLibrary),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -44,7 +44,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Library",
     "content": {
-      "snl": "%The #0 detail/edit view. It retains the outline tree editor, Library counter tree, external-file synchronization, and Entry navigation; the outline now displays #1 beside SNL Entries and blocks invalid references before host submission.%(Library,Source_structure_metrics)"
+      "snl": "PanelDescription(%The #0 detail/edit view. It retains the outline tree editor, Library counter tree, external-file synchronization, and Entry navigation; the outline now displays #1 beside SNL Entries and blocks invalid references before host submission.%(Library,Source_structure_metrics),%Contains #0, #1, slug/title inputs, title-update action, and an Infoview action.%(Outline_Section,Counters_Section),RunVSCodeCommand(CommandTitle.snlDoc.editLibrary),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -54,7 +54,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry",
     "content": {
-      "snl": "%#0 to author a single entry: id (manual with #1 button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,File.entries_json,Library)"
+      "snl": "PanelDescription(%#0 to author a single entry: id (manual with #1 button), kind, title, and content across five format tabs (SNL, Typst, LaTeX, Markdown, plain). Persists to the shared #2 pool. When invoked from a #3 outline with a typed-but-unresolved id, seeds the id field so save-then-return resolves the stub.%(Panel,Generate_UUID,File.entries_json,Library),%Contains #0, #1, #2, #3, id/title/kind inputs, UUID generation, and save actions.%(Entry.ui.section.entry.create.preview,Entry.ui.section.entry.create.content,Entry.ui.section.entry.create.contributor,Entry.ui.section.entry.create.pointer),RunVSCodeCommand(CommandTitle.snlDoc.createEntry),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -64,7 +64,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Entry Kind",
     "content": {
-      "snl": "%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds)"
+      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createEntryKind),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -74,7 +74,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Initialize Entry Kinds",
     "content": {
-      "snl": "%Empty-catalog bootstrap panel with a Presets dropdown (currently only #0) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty.%(Preset.Fulcrum_Math_Notes)"
+      "snl": "PanelDescription(%Empty-catalog bootstrap panel with a Presets dropdown (currently only #0) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty.%(Preset.Fulcrum_Math_Notes),%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initEntryKinds),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -84,7 +84,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Entry Kind",
     "content": {
-      "snl": "%Edit-mode variant of #0, keyed by kind id. Same field set. Renaming the kind name does NOT rewrite existing entries that reference it by id.%(Create_Entry_Kind)"
+      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by kind id. Same field set. Renaming the kind name does NOT rewrite existing entries that reference it by id.%(Create_Entry_Kind),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.edit.preview),RunVSCodeCommand(CommandTitle.snlDoc.editEntryKind),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -94,7 +94,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Kind",
     "content": {
-      "snl": "%#0 to declare a new #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2 under #3.%(Panel,MacroKind,File.config_json,JsonKey.macro_kinds)"
+      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, description, coloring). Macro kinds carry no numbering. Persists to #2 under #3.%(Panel,MacroKind,File.config_json,JsonKey.macro_kinds),%Contains #0, id/name/description/color inputs, and a submit action.%(Entry.ui.section.macro-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createMacroKind),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -104,7 +104,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Initialize Macro Kinds",
     "content": {
-      "snl": "%Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write.%"
+      "snl": "PanelDescription(%Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write.%,%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initMacroKinds),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -114,7 +114,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro Kind",
     "content": {
-      "snl": "%Edit-mode variant of #0, keyed by kind id.%(Create_Macro_Kind)"
+      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by kind id.%(Create_Macro_Kind),%Contains #0, id/name/description/color inputs, and a submit action.%(Entry.ui.section.macro-kind.edit.preview),RunVSCodeCommand(CommandTitle.snlDoc.editMacroKind),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -124,7 +124,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro Package",
     "content": {
-      "snl": "%#0 to create a new #1 package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,Path.join(Folder.term_macros,File.slug_json))"
+      "snl": "PanelDescription(%#0 to create a new #1 package: title and initial (possibly empty) macro list. Slug derived from title.%(Panel,Path.join(Folder.term_macros,File.slug_json)),%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createMacroPackage),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -134,7 +134,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Package Panel",
     "content": {
-      "snl": "%The macro-package detail view for strict #0 packages. It retains activation, style expansion, source status, multi-select transfer/delete, package editing, and inline package creation; rows now add direct Delete and render Macro Kind-colored previews through #1.%(Macro_v7,MacroDataDriver)"
+      "snl": "PanelDescription(%The macro-package detail view for strict #0 packages. It retains activation, style expansion, source status, multi-select transfer/delete, package editing, and inline package creation; rows now add direct Delete and render Macro Kind-colored previews through #1.%(Macro_v7,MacroDataDriver),%Contains #0, #1, #2, package activation, and package-edit actions.%(Entry.ui.section.macro-package.macros,Entry.ui.section.macro-package.batch-actions,Entry.ui.section.macro-package.transfer-modal),RunVSCodeCommand(CommandTitle.snlDoc.openMacroPackage),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -144,7 +144,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Macro",
     "content": {
-      "snl": "%#0 for authoring a macro name, package, kind, descriptions, sources, tags, output backends, and strict #1 styles. Styles use #2, required tags, a four-way mode, and a template; dynamic styles edit text around a real #3 plus #4, block styles choose #5, and live preview resolves through #6.%(Panel,Macro_v7,style_name,Literal.hash_star,separator,block_template_name,MacroDataDriver)"
+      "snl": "PanelDescription(%#0 for authoring a macro name, package, kind, descriptions, sources, tags, output backends, and strict #1 styles. Styles use #2, required tags, a four-way mode, and a template; dynamic styles edit text around a real #3 plus #4, block styles choose #5, and live preview resolves through #6.%(Panel,Macro_v7,style_name,Literal.hash_star,separator,block_template_name,MacroDataDriver),%Contains #0, #1, #2, #3, macro name/kind/description inputs, create-kind action, and submit action.%(Entry.ui.section.macro.create.styles,Entry.ui.section.macro.create.preview,Entry.ui.section.macro.create.sources,Entry.ui.section.macro.create.tags),RunVSCodeCommand(CommandTitle.snlDoc.createMacro),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -154,7 +154,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro",
     "content": {
-      "snl": "%Edit-mode variant of #0 with the same source, tag, style, backend, and GUI-inductive controls. Historical packages cross #1 before the form loads, save always writes strict #2, and the Tree v2 editor preserves literal SNL sigils.%(Create_Macro,Macro_migration_boundary,Macro_v7)"
+      "snl": "PanelDescription(%Edit-mode variant of #0 with the same source, tag, style, backend, and GUI-inductive controls. Historical packages cross #1 before the form loads, save always writes strict #2, and the Tree v2 editor preserves literal SNL sigils.%(Create_Macro,Macro_migration_boundary,Macro_v7),%Contains #0, #1, #2, #3, #4, macro name/kind/description inputs, create-kind action, and submit action.%(Entry.ui.section.macro.edit.styles,Entry.ui.section.macro.edit.preview,Entry.ui.section.macro.edit.sources,Entry.ui.section.macro.edit.tags,Entry.ui.section.macro.edit.gui-inductive),RunVSCodeCommand(CommandTitle.snlDoc.editMacro),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -164,7 +164,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Create Relationship",
     "content": {
-      "snl": "%#0 to declare a semantic relationship between two entries (from, to, label). Persists to #1.%(Panel,Path.join(Folder.SNL_Doc,File.relationships_json))"
+      "snl": "PanelDescription(%#0 to declare a semantic relationship between two entries (from, to, label). Persists to #1.%(Panel,Path.join(Folder.SNL_Doc,File.relationships_json)),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createRelationship),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -174,7 +174,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Relationship",
     "content": {
-      "snl": "%Edit-mode variant of #0, keyed by relationship id.%(Create_Relationship)"
+      "snl": "PanelDescription(%Edit-mode variant of #0, keyed by relationship id.%(Create_Relationship),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editRelationship),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -184,7 +184,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Relationship Graph",
     "content": {
-      "snl": "%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #1 (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary)"
+      "snl": "PanelDescription(%Visualization of the pool-wide (or library-scoped) semantic graph — entries as nodes, relationships as directed edges. Two scopes: #0 (whole pool) and #1 (single library).%(snlDoc.openInfoviewGraph,snlDoc.openInfoviewGraphForLibrary),%Contains #0.%(Entry.ui.section.relationship-graph.canvas),%#0 or #1.%(RunVSCodeCommand(CommandTitle.snlDoc.openInfoviewGraph),RunVSCodeCommand(CommandTitle.snlDoc.openInfoviewGraphForLibrary)),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -194,7 +194,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "SNoogL Search",
     "content": {
-      "snl": "%Full-text search over entries + macros + libraries. Opened via #0. Independent panel — not embedded in #1.%(SNL_Open_SNoogL_Search,Dashboard)"
+      "snl": "PanelDescription(%Full-text search over entries + macros + libraries. Opened via #0. Independent panel — not embedded in #1.%(SNL_Open_SNoogL_Search,Dashboard),%Contains #0, #1, #2, and #3.%(Entry.ui.section.snoogl.entry-results,Entry.ui.section.snoogl.macro-results,Entry.ui.section.snoogl.search,Entry.ui.section.snoogl.filters),RunVSCodeCommand(SNL_Open_SNoogL_Search),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -264,7 +264,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Generate UUID Button",
     "content": {
-      "snl": "%In #0 next to the ID field. Fills the field with #1. Re-labels to #2 when the field is non-empty.%(Create_Entry,crypto.randomUUID,Regenerate_UUID)"
+      "snl": "ButtonDescription(%Located in #0 beside the ID field; it relabels to #1 when the field is non-empty.%(Create_Entry,Regenerate_UUID),GenerateValueFor(crypto.randomUUID,Entry_ID_Field))"
     },
     "contribution_info": null,
     "pointer": null
@@ -284,7 +284,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Move-Up Row Toolbar Button",
     "content": {
-      "snl": "%↑ button in the #0 of a #1. Moves the current row above its previous sibling within the same parent. No-op at position 0.%(row_toolbar,tree-view_editor)"
+      "snl": "ButtonDescription(%An ↑ button in the #0 of a #1; it is a no-op at position 0.%(row_toolbar,tree-view_editor),MoveTreeRow(%above its previous sibling within the same parent%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -294,7 +294,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Indent Row Toolbar Button",
     "content": {
-      "snl": "%Indent button. Makes the current row the last child of its previous sibling. No-op if there is no previous sibling.%"
+      "snl": "ButtonDescription(%It is a no-op when there is no previous sibling.%,MoveTreeRow(%under its previous sibling as the last child%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -304,7 +304,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Outdent Row Toolbar Button",
     "content": {
-      "snl": "%Outdent button. Promotes the current row to the next sibling of its parent. No-op at the root level.%"
+      "snl": "ButtonDescription(%It is a no-op at the root level.%,MoveTreeRow(%after its parent as the next sibling%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -314,7 +314,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Delete Row Toolbar Button",
     "content": {
-      "snl": "%Deletes the current row (and its subtree in tree editors). No confirmation modal — the tree state is source-controlled.%"
+      "snl": "ButtonDescription(%There is no confirmation modal because the tree state is source-controlled.%,DeleteTreeRow)"
     },
     "contribution_info": null,
     "pointer": null
@@ -404,7 +404,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "View Graph Button",
     "content": {
-      "snl": "ButtonPress(OpenPanel(Relationship_Graph[library]($\\texttt{global}$)))"
+      "snl": "ButtonPress(OpenPanel(Relationship_Graph($\\texttt{global}$)))"
     },
     "contribution_info": null,
     "pointer": null
@@ -444,7 +444,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Library Entrance (List View)",
     "content": {
-      "snl": "%Literal.upper_A Library row in the Dashboard list; opens Edit Library for that Library.%"
+      "snl": "ButtonDescription(%A Library row in the Dashboard list.%,OpenPanelFor(Edit_Library,%that Library%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -454,7 +454,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Library Button (List View)",
     "content": {
-      "snl": "%The full-width Create Library AddBar at the end of the Libraries list.%"
+      "snl": "ButtonDescription(%The full-width AddBar at the end of the Libraries list.%,OpenPanel(Create_Library))"
     },
     "contribution_info": null,
     "pointer": null
@@ -464,7 +464,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Entry Button",
     "content": {
-      "snl": "%Header action that opens Create Entry without expanding the Entries section.%"
+      "snl": "ButtonDescription(%A header action that does not expand the Entries section.%,OpenPanel(Create_Entry))"
     },
     "contribution_info": null,
     "pointer": null
@@ -474,7 +474,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL: Entry Search Button",
     "content": {
-      "snl": "ButtonPress(OpenPanel(SNoogL[mode](Entry)))"
+      "snl": "ButtonPress(OpenPanel(SNoogL(Entry)))"
     },
     "contribution_info": null,
     "pointer": null
@@ -484,7 +484,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Entry Entrance (List View)",
     "content": {
-      "snl": "%An Entry row in the Dashboard list; opens Edit Entry for that Entry.%"
+      "snl": "ButtonDescription(%An Entry row in the Dashboard list.%,OpenPanelFor(Entry.ui.panel.entry.edit,%that Entry%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -494,7 +494,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Entry Button (List View)",
     "content": {
-      "snl": "%The full-width Create Entry AddBar at the end of the Entries list.%"
+      "snl": "ButtonDescription(%The full-width AddBar at the end of the Entries list.%,OpenPanel(Create_Entry))"
     },
     "contribution_info": null,
     "pointer": null
@@ -504,7 +504,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Relationship Entrance (List View)",
     "content": {
-      "snl": "%Literal.upper_A Relationship row in the Dashboard list; opens Edit Relationship.%"
+      "snl": "ButtonDescription(%A Relationship row in the Dashboard list.%,OpenPanelFor(Edit_Relationship,%that Relationship%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -514,7 +514,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Relationship Button (List View)",
     "content": {
-      "snl": "%The full-width Create Relationship AddBar at the end of the Relationships list.%"
+      "snl": "ButtonDescription(%The full-width AddBar at the end of the Relationships list.%,OpenPanel(Create_Relationship))"
     },
     "contribution_info": null,
     "pointer": null
@@ -524,7 +524,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Regenerate Dependencies Button (List View)",
     "content": {
-      "snl": "%Rebuilds dependency relationships from macro sources.%"
+      "snl": "ButtonDescription(%This rebuilds dependency relationships from macro sources.%,RunVSCodeCommand(snlDoc.regenerateDependencies))"
     },
     "contribution_info": null,
     "pointer": null
@@ -534,7 +534,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Button",
     "content": {
-      "snl": "%Header action that selects a package and opens Create Macro.%"
+      "snl": "ButtonDescription(%A header action that selects a macro package.%,RunVSCodeCommand(snlDoc.createMacroPickPackage))"
     },
     "contribution_info": null,
     "pointer": null
@@ -544,7 +544,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL: Macro Search Button",
     "content": {
-      "snl": "%Header action that opens SNoogL focused on macro search.%"
+      "snl": "ButtonDescription(%A header action.%,OpenPanel(SNoogL(SNL_Macro)))"
     },
     "contribution_info": null,
     "pointer": null
@@ -554,7 +554,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Macro Package Entrance (List View)",
     "content": {
-      "snl": "%Literal.upper_A macro-package row; opens its Package Panel.%"
+      "snl": "ButtonDescription(%A macro-package row.%,OpenPanelFor(Package_Panel,%that package%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -564,7 +564,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Package Button (List View)",
     "content": {
-      "snl": "%The full-width Add Package bar at the end of the SNL Macros list.%"
+      "snl": "ButtonDescription(%The full-width Add Package bar at the end of the SNL Macros list.%,OpenPanel(Create_Macro_Package))"
     },
     "contribution_info": null,
     "pointer": null
@@ -574,7 +574,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Entry Kind Entrance (List View)",
     "content": {
-      "snl": "%An Entry Kind row; opens Edit Entry Kind.%"
+      "snl": "ButtonDescription(%An Entry Kind row.%,OpenPanelFor(Edit_Entry_Kind,%that Entry Kind%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -584,7 +584,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Entry Kind Button (List View)",
     "content": {
-      "snl": "%The full-width Create Entry Kind bar when kinds exist.%"
+      "snl": "ButtonDescription(%The full-width Create Entry Kind bar shown when kinds exist.%,OpenPanel(Create_Entry_Kind))"
     },
     "contribution_info": null,
     "pointer": null
@@ -594,7 +594,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Initialize Entry Kinds Button (List View)",
     "content": {
-      "snl": "%The empty-state AddBar that opens Initialize Entry Kinds.%"
+      "snl": "ButtonDescription(%The empty-state AddBar.%,OpenPanel(Initialize_Entry_Kinds))"
     },
     "contribution_info": null,
     "pointer": null
@@ -604,7 +604,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL Macro Kind Entrance (List View)",
     "content": {
-      "snl": "%An SNL Macro Kind row; opens Edit Macro Kind.%"
+      "snl": "ButtonDescription(%An SNL Macro Kind row.%,OpenPanelFor(Edit_Macro_Kind,%that SNL Macro Kind%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -614,7 +614,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Kind Button (List View)",
     "content": {
-      "snl": "%The full-width Create Macro Kind bar when kinds exist.%"
+      "snl": "ButtonDescription(%The full-width Create Macro Kind bar shown when kinds exist.%,OpenPanel(Create_Macro_Kind))"
     },
     "contribution_info": null,
     "pointer": null
@@ -624,7 +624,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Initialize Macro Kinds Button (List View)",
     "content": {
-      "snl": "%The empty-state AddBar that opens Initialize Macro Kinds.%"
+      "snl": "ButtonDescription(%The empty-state AddBar.%,OpenPanel(Initialize_Macro_Kinds))"
     },
     "contribution_info": null,
     "pointer": null
@@ -674,7 +674,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Library Submit Button",
     "content": {
-      "snl": "%Creates the Library directory and its metadata, graph, and counters files.%"
+      "snl": "ButtonPress(CreateEntity(%a Library directory with metadata, graph, and counters files%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -704,7 +704,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Library Title Button",
     "content": {
-      "snl": "%Persists the edited Library title.%"
+      "snl": "ButtonPress(PersistValue(%the edited Library title%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -724,7 +724,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add First Counter Button",
     "content": {
-      "snl": "%Creates the first root Counter when the Counter tree is empty.%"
+      "snl": "ButtonDescription(%This action is available when the Counter tree is empty.%,AddTreeRow(%the first root Counter%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -734,7 +734,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Child Row Toolbar Button",
     "content": {
-      "snl": "%Adds a child below the current tree row.%"
+      "snl": "ButtonPress(AddTreeRow(%a child below the current row%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -744,7 +744,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Sibling Row Toolbar Button",
     "content": {
-      "snl": "%Adds a sibling after the current tree row.%"
+      "snl": "ButtonPress(AddTreeRow(%a sibling after the current row%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -754,7 +754,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Move-Down Row Toolbar Button",
     "content": {
-      "snl": "%Moves the current row below its next sibling.%"
+      "snl": "ButtonPress(MoveTreeRow(%below its next sibling%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -764,7 +764,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Library Entry Entrance",
     "content": {
-      "snl": "%An Entry reference row; opens Edit Entry for the referenced Entry.%"
+      "snl": "ButtonDescription(%An Entry reference row.%,OpenPanelFor(Entry.ui.panel.entry.edit,%the referenced Entry%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -794,7 +794,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Reference or Create Entry Button",
     "content": {
-      "snl": "%References an existing Entry, or inserts a pending stub and opens Create Entry.%"
+      "snl": "ButtonPress(ReferenceOrCreateEntry)"
     },
     "contribution_info": null,
     "pointer": null
@@ -824,7 +824,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Entry Submit Button",
     "content": {
-      "snl": "%Validates and writes the new Entry into the shared pool.%"
+      "snl": "ButtonPress(ValidateAndCreateEntity(%the Entry in the shared pool%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -884,7 +884,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Entry Kind Submit Button",
     "content": {
-      "snl": "%Creates the Entry Kind in config.json.%"
+      "snl": "ButtonPress(CreateEntity(%the Entry Kind in config.json%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -944,7 +944,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Entry Kind Submit Button",
     "content": {
-      "snl": "%Updates the Entry Kind in config.json.%"
+      "snl": "ButtonPress(UpdateEntity(%the Entry Kind in config.json%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -964,7 +964,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Initialize Entry Kinds Submit Button",
     "content": {
-      "snl": "%Applies the selected Entry Kind preset.%"
+      "snl": "ButtonPress(ApplySelectedPreset(%Entry Kind%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1014,7 +1014,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Kind Submit Button",
     "content": {
-      "snl": "%Creates the SNL Macro Kind in config.json.%"
+      "snl": "ButtonPress(CreateEntity(%the SNL Macro Kind in config.json%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1064,7 +1064,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Macro Kind Submit Button",
     "content": {
-      "snl": "%Updates the SNL Macro Kind in config.json.%"
+      "snl": "ButtonPress(UpdateEntity(%the SNL Macro Kind in config.json%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1084,7 +1084,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Initialize Macro Kinds Submit Button",
     "content": {
-      "snl": "%Applies the selected SNL Macro Kind preset.%"
+      "snl": "ButtonPress(ApplySelectedPreset(%SNL Macro Kind%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1094,7 +1094,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Package Submit Button",
     "content": {
-      "snl": "%Creates an empty SNL macro package.%"
+      "snl": "ButtonPress(CreateEntity(%an empty SNL macro package%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1114,7 +1114,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Macro Entrance (Package List View)",
     "content": {
-      "snl": "%Literal.upper_A macro row; opens Edit Macro.%"
+      "snl": "ButtonDescription(%A macro row.%,OpenPanelFor(Edit_Macro,%that macro%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1124,7 +1124,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Button (Package Panel)",
     "content": {
-      "snl": "%Opens Create Macro preselected to this package.%"
+      "snl": "ButtonPress(OpenPanelFor(Create_Macro,%this package%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1134,7 +1134,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Macro Select Mode Button",
     "content": {
-      "snl": "%Enables multi-select and the batch-operation toolbar.%"
+      "snl": "ButtonPress(EnableInterfaceState(%multi-select and the batch-operation toolbar%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1144,7 +1144,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Delete Macros Batch Button",
     "content": {
-      "snl": "%Deletes selected macros from the package.%"
+      "snl": "ButtonPress(DeleteSelectedItems(%macros from the package%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1194,7 +1194,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Submit Button",
     "content": {
-      "snl": "%Creates the macro in its package.%"
+      "snl": "ButtonPress(CreateEntity(%the macro in its package%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1244,7 +1244,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Macro Submit Button",
     "content": {
-      "snl": "%Updates the macro in its package.%"
+      "snl": "ButtonPress(UpdateEntity(%the macro in its package%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1294,7 +1294,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Relationship Submit Button",
     "content": {
-      "snl": "%Creates the semantic relationship.%"
+      "snl": "ButtonPress(CreateEntity(%the semantic relationship%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1334,7 +1334,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Relationship Submit Button",
     "content": {
-      "snl": "%Updates the semantic relationship.%"
+      "snl": "ButtonPress(UpdateEntity(%the semantic relationship%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1374,7 +1374,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL Entry Result Entrance",
     "content": {
-      "snl": "%Opens an Entry result in Edit Entry or Entry Infoview.%"
+      "snl": "ButtonPress(OpenOneOfFor(Entry.ui.panel.entry.edit,Entry_Infoview,%the Entry result%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1394,7 +1394,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL Macro Result Entrance",
     "content": {
-      "snl": "%Opens a macro result in Edit Macro.%"
+      "snl": "ButtonPress(OpenPanelFor(Edit_Macro,%the macro result%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1404,7 +1404,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "View Graph Button (Infoview)",
     "content": {
-      "snl": "%Opens the pool-wide Relationship Graph from Infoview.%"
+      "snl": "ButtonPress(OpenPanel(Relationship_Graph($\\texttt{global}$)))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1414,7 +1414,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Edit in Dashboard Button",
     "content": {
-      "snl": "%Returns from Infoview to the Dashboard editing surface.%"
+      "snl": "ButtonDescription(%This returns from Infoview to the Dashboard editing surface.%,NavigateBackTo(%the Dashboard editing surface%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1424,7 +1424,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Library Entrance (Infoview)",
     "content": {
-      "snl": "%Opens one Library in the Infoview reading layer.%"
+      "snl": "ButtonPress(OpenPanelFor(Infoview,%the selected Library%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1434,7 +1434,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Back to Libraries Button",
     "content": {
-      "snl": "%Returns from one Library to the Infoview Libraries layer.%"
+      "snl": "ButtonDescription(%This returns from one Library to the Infoview Libraries layer.%,NavigateBackTo(%the Infoview Libraries layer%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1444,7 +1444,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "View Library Graph Button",
     "content": {
-      "snl": "%Opens the Relationship Graph scoped to this Library.%"
+      "snl": "ButtonPress(OpenPanel(Relationship_Graph(%this Library%)))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1454,7 +1454,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Edit This Library Button",
     "content": {
-      "snl": "%Opens Edit Library for the Library being read.%"
+      "snl": "ButtonPress(OpenPanelFor(Edit_Library,%the Library being read%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1464,7 +1464,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Infoview Outline Toggle Button",
     "content": {
-      "snl": "%Expands or collapses an Entry subtree in the reading outline.%"
+      "snl": "ButtonPress(Toggle(%the expanded state of an Entry subtree in the reading outline%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1474,7 +1474,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Edit Entry Button (Entry Infoview)",
     "content": {
-      "snl": "%Opens Edit Entry for this dedicated Entry Infoview.%"
+      "snl": "ButtonPress(OpenPanelFor(Entry.ui.panel.entry.edit,%the current Entry%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1504,7 +1504,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Related Entry Entrance",
     "content": {
-      "snl": "%Opens a dependency Entry in its own Entry Infoview.%"
+      "snl": "ButtonPress(OpenPanelFor(Entry_Infoview,%the dependency Entry%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1514,7 +1514,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "View Library in Infoview Button",
     "content": {
-      "snl": "%Opens this Library in the Infoview reading surface.%"
+      "snl": "ButtonPress(OpenPanelFor(Infoview,%this Library%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1524,7 +1524,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Root Counter Button",
     "content": {
-      "snl": "%Adds another root Counter to a non-empty Counter tree.%"
+      "snl": "ButtonDescription(%This action is available when the Counter tree is non-empty.%,AddTreeRow(%another root Counter%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1534,7 +1534,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Root Entry Reference Button",
     "content": {
-      "snl": "%Starts the add form at the Library outline root.%"
+      "snl": "ButtonPress(StartAddForm(%the Library outline root%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1544,7 +1544,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Cancel Entry Reference Add Button",
     "content": {
-      "snl": "%Closes the inline Entry-reference add form without changing the outline.%"
+      "snl": "ButtonDescription(%The outline remains unchanged.%,CloseInterface(%the inline Entry-reference add form%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1574,7 +1574,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL Content Tab (Create)",
     "content": {
-      "snl": "%Selects the SNL Content editor for the new Entry.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SelectContentFormat(%SNL%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1584,7 +1584,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Typst Content Tab (Create)",
     "content": {
-      "snl": "%Selects the Typst Content editor for the new Entry.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SelectContentFormat(%Typst%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1594,7 +1594,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "LaTeX Content Tab (Create)",
     "content": {
-      "snl": "%Selects the LaTeX Content editor for the new Entry.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SelectContentFormat(%LaTeX%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1604,7 +1604,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Markdown Content Tab (Create)",
     "content": {
-      "snl": "%Selects the Markdown Content editor for the new Entry.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SelectContentFormat(%Markdown%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1614,7 +1614,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Text Content Tab (Create)",
     "content": {
-      "snl": "%Selects the Text Content editor for the new Entry.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SelectContentFormat(%Text%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1624,7 +1624,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL Text Editor Button (Create)",
     "content": {
-      "snl": "%Switches SNL content to the text editor.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SetInterfaceMode(%SNL content%,%the text editor%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1634,7 +1634,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL GUI Editor Button (Create)",
     "content": {
-      "snl": "%Switches SNL content to the GUI inductive editor.%"
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SetInterfaceMode(%SNL content%,GUI_inductive_editor))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1664,7 +1664,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Entry",
     "content": {
-      "snl": "%Edit-mode Entry panel, loaded by semantic Entry id.%"
+      "snl": "PanelDescription(%Edit-mode Entry panel, loaded by semantic Entry id.%,%Contains #0, #1, #2, #3, Entry id/title/kind/content inputs, Infoview action, and submit action.%(Entry.ui.section.entry.edit.preview,Entry.ui.section.entry.edit.content,Entry.ui.section.entry.edit.contributor,Entry.ui.section.entry.edit.pointer),RunVSCodeCommand(CommandTitle.snlDoc.editEntry),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1714,7 +1714,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "View Entry in Infoview Button",
     "content": {
-      "snl": "%Opens the current Entry in its dedicated Entry Infoview.%"
+      "snl": "ButtonPress(OpenPanelFor(Entry_Infoview,%the current Entry%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1744,7 +1744,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL Content Tab (Edit)",
     "content": {
-      "snl": "%Selects the SNL Content editor for the existing Entry.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SelectContentFormat(%SNL%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1754,7 +1754,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Typst Content Tab (Edit)",
     "content": {
-      "snl": "%Selects the Typst Content editor for the existing Entry.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SelectContentFormat(%Typst%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1764,7 +1764,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "LaTeX Content Tab (Edit)",
     "content": {
-      "snl": "%Selects the LaTeX Content editor for the existing Entry.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SelectContentFormat(%LaTeX%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1774,7 +1774,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Markdown Content Tab (Edit)",
     "content": {
-      "snl": "%Selects the Markdown Content editor for the existing Entry.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SelectContentFormat(%Markdown%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1784,7 +1784,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Text Content Tab (Edit)",
     "content": {
-      "snl": "%Selects the Text Content editor for the existing Entry.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SelectContentFormat(%Text%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1794,7 +1794,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL Text Editor Button (Edit)",
     "content": {
-      "snl": "%Switches SNL content to the text editor.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SetInterfaceMode(%SNL content%,%the text editor%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1804,7 +1804,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNL GUI Editor Button (Edit)",
     "content": {
-      "snl": "%Switches SNL content to the GUI inductive editor.%"
+      "snl": "ButtonDescription(%This applies to the existing Entry.%,SetInterfaceMode(%SNL content%,GUI_inductive_editor))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1834,7 +1834,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Entry Submit Button",
     "content": {
-      "snl": "%Validates and updates the existing Entry.%"
+      "snl": "ButtonPress(ValidateAndUpdateEntity(%the existing Entry%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1904,7 +1904,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Edit Macro Package",
     "content": {
-      "snl": "%Edits package file/name/description metadata.%"
+      "snl": "PanelDescription(%Edits package file/name/description metadata.%,%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editMacroPackage),NotDocumented)"
     },
     "contribution_info": null,
     "pointer": null
@@ -1974,7 +1974,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Update Macro Package Submit Button",
     "content": {
-      "snl": "%Updates package metadata.%"
+      "snl": "ButtonPress(UpdateEntity(%macro package metadata%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1984,7 +1984,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Toggle Macro Package Active Button",
     "content": {
-      "snl": "%Enables or disables this package in the active macro database.%"
+      "snl": "ButtonPress(Toggle(%this package in the active macro database%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -1994,7 +1994,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Edit Macro Package Button",
     "content": {
-      "snl": "%Opens Edit Macro Package.%"
+      "snl": "ButtonPress(OpenPanel(Entry.ui.panel.macro-package.edit))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2004,7 +2004,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Expand Macro Styles Button",
     "content": {
-      "snl": "%Expands or collapses a macro row style table.%"
+      "snl": "ButtonPress(Toggle(%the macro row style table%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2044,7 +2044,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Kind Button (Create)",
     "content": {
-      "snl": "%Opens Create Macro Kind without leaving the macro workflow.%"
+      "snl": "ButtonDescription(%The macro workflow remains open.%,OpenPanel(Create_Macro_Kind))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2114,7 +2114,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Create Macro Kind Button (Edit)",
     "content": {
-      "snl": "%Opens Create Macro Kind without leaving the macro workflow.%"
+      "snl": "ButtonDescription(%The macro workflow remains open.%,OpenPanel(Create_Macro_Kind))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2214,7 +2214,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Open Entry Node Button",
     "content": {
-      "snl": "%Opens the Entry represented by a graph node.%"
+      "snl": "ButtonPress(OpenPanelFor(Entry_Infoview,%the Entry represented by the graph node%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2224,7 +2224,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Edit Relationship Edge Button",
     "content": {
-      "snl": "%Opens Edit Relationship for a graph edge.%"
+      "snl": "ButtonPress(OpenPanelFor(Edit_Relationship,%the graph edge%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2244,7 +2244,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL Entry Search Mode Button",
     "content": {
-      "snl": "%Switches SNoogL to Entry search.%"
+      "snl": "ButtonPress(SelectSearchMode(SNoogL_Search,Entry))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2254,7 +2254,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL Macro Search Mode Button",
     "content": {
-      "snl": "%Switches SNoogL to macro search.%"
+      "snl": "ButtonPress(SelectSearchMode(SNoogL_Search,SNL_Macro))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2824,7 +2824,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Toggle Package Active Button (Dashboard List)",
     "content": {
-      "snl": "%Toggles a macro package active from its Dashboard list row.%"
+      "snl": "ButtonDescription(%A macro-package row action in the Dashboard list.%,Toggle(%the package active state%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -2934,7 +2934,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Delete Macro Row Button",
     "content": {
-      "snl": "%Deletes one macro directly from its package row after confirmation, without entering multi-select mode. The row action submits the existing batch-delete host message with a single macro name.%"
+      "snl": "ButtonDescription(%This bypasses multi-select and submits the existing batch-delete host message with one macro name.%,DeleteItemAfterConfirmation(%the macro in this package row%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3064,7 +3064,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Copy / Move Batch Button",
     "content": {
-      "snl": "%Opens the single transfer modal for copying or moving selected macros to an existing or newly described destination package.%"
+      "snl": "ButtonDescription(%The single transfer modal supports copying or moving selected macros to an existing or newly described destination package.%,OpenUIElement(%that modal%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3084,7 +3084,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Back to Dashboard Button",
     "content": {
-      "snl": "%Navigates a panel back to Dashboard through the shared nav.openDashboard message.%"
+      "snl": "ButtonDescription(%Navigation uses the shared nav.openDashboard message.%,NavigateBackTo(Dashboard))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3094,7 +3094,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Back to Infoview Button",
     "content": {
-      "snl": "%Navigates Relationship Graph back to Infoview through the shared nav.openInfoview message.%"
+      "snl": "ButtonDescription(%From Relationship Graph, navigation uses the shared nav.openInfoview message.%,NavigateBackTo(Infoview))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3104,7 +3104,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Refresh Panel Button",
     "content": {
-      "snl": "%Requests fresh panel context through nav.refresh; host file watchers can also refresh the same panel automatically.%"
+      "snl": "ButtonDescription(%The request uses nav.refresh; host file watchers can refresh the same panel automatically.%,RefreshPanelContext)"
     },
     "contribution_info": null,
     "pointer": null
@@ -3154,7 +3154,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Macro Style Button (Create)",
     "content": {
-      "snl": "%Appends a uniquely named Macro v7 style.%"
+      "snl": "ButtonPress(AddItem(%a uniquely named Macro v7 style%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3164,7 +3164,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Macro Style Button (Edit)",
     "content": {
-      "snl": "%Appends a uniquely named Macro v7 style in edit mode.%"
+      "snl": "ButtonDescription(%This action runs in edit mode.%,AddItem(%a uniquely named Macro v7 style%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3174,7 +3174,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Remove Macro Style Button (Create)",
     "content": {
-      "snl": "%Removes the selected style; the only remaining style cannot be removed.%"
+      "snl": "ButtonDescription(%The only remaining style cannot be removed.%,RemoveItem(%the selected style%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3184,7 +3184,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Remove Macro Style Button (Edit)",
     "content": {
-      "snl": "%Removes the selected style; the only remaining style cannot be removed.%"
+      "snl": "ButtonDescription(%The only remaining style cannot be removed.%,RemoveItem(%the selected style%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3194,7 +3194,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Move Style Toward Default Button (Create)",
     "content": {
-      "snl": "%Moves the selected style earlier; styles[0] is the implicit default.%"
+      "snl": "ButtonDescription(%styles[0] is the implicit default.%,MoveItemTowardDefault(%the selected style%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3204,7 +3204,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Move Style Toward Default Button (Edit)",
     "content": {
-      "snl": "%Moves the selected style earlier; styles[0] is the implicit default.%"
+      "snl": "ButtonDescription(%styles[0] is the implicit default.%,MoveItemTowardDefault(%the selected style%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3214,7 +3214,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Preview Argument Button (Create)",
     "content": {
-      "snl": "%Adds a preview argument slot for a dynamic macro, up to the editor limit.%"
+      "snl": "ButtonDescription(%The editor limit still applies.%,AddItem(%a dynamic-macro preview argument slot%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3224,7 +3224,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Add Preview Argument Button (Edit)",
     "content": {
-      "snl": "%Adds a preview argument slot for a dynamic macro in edit mode.%"
+      "snl": "ButtonDescription(%This action runs in edit mode.%,AddItem(%a dynamic-macro preview argument slot%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3234,7 +3234,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Remove Preview Argument Button (Create)",
     "content": {
-      "snl": "%Removes the final dynamic preview argument slot.%"
+      "snl": "ButtonPress(RemoveItem(%the final dynamic preview argument slot%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3244,7 +3244,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Remove Preview Argument Button (Edit)",
     "content": {
-      "snl": "%Removes the final dynamic preview argument slot.%"
+      "snl": "ButtonDescription(%This action runs in edit mode.%,RemoveItem(%the final dynamic preview argument slot%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3254,7 +3254,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Reset Preview Arguments Button (Create)",
     "content": {
-      "snl": "%Clears every preview argument source.%"
+      "snl": "ButtonPress(ResetItems(%all preview argument sources%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3264,7 +3264,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Reset Preview Arguments Button (Edit)",
     "content": {
-      "snl": "%Clears every preview argument source in edit mode.%"
+      "snl": "ButtonDescription(%This action runs in edit mode.%,ResetItems(%all preview argument sources%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3314,7 +3314,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Open Macro Editor Button (Create Entry)",
     "content": {
-      "snl": "%Opens Create or Edit Macro for the current GUI tree row with macro_name, env_mode, and style_name context.%"
+      "snl": "ButtonPress(OpenOneOfFor(Create_Macro,Edit_Macro,%the current GUI tree row with macro_name, env_mode, and style_name context%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3324,7 +3324,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Open Macro Editor Button (Edit Entry)",
     "content": {
-      "snl": "%Opens Create or Edit Macro for the current GUI tree row with macro_name, env_mode, and style_name context.%"
+      "snl": "ButtonPress(OpenOneOfFor(Create_Macro,Edit_Macro,%the current GUI tree row with macro_name, env_mode, and style_name context%))"
     },
     "contribution_info": null,
     "pointer": null
@@ -3334,7 +3334,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Context Entry Entrance",
     "content": {
-      "snl": "%Opens an Entry that provides x@srcEntry binding context in its own Entry Infoview.%"
+      "snl": "ButtonPress(OpenPanelFor(Entry_Infoview,%an Entry that provides x@srcEntry binding context%))"
     },
     "contribution_info": null,
     "pointer": null

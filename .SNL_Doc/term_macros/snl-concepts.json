@@ -1591,29 +1591,7 @@
           "markdown": "",
           "text": "",
           "mode": "formula_inline",
-          "template": "\\texttt{SNoogL}"
-        },
-        {
-          "style_name": "mode",
-          "tags": [],
-          "typst": {
-            "built_in": "",
-            "synthesis": {
-              "mode": "formula",
-              "macro": ""
-            }
-          },
-          "latex": {
-            "built_in": "",
-            "synthesis": {
-              "mode": "formula",
-              "macro": ""
-            }
-          },
-          "markdown": "",
-          "text": "",
-          "mode": "formula_inline",
-          "template": "\\texttt{SNoogL (} #0\\texttt{ mode)}"
+          "template": "\\texttt{SNoogL (}#0\\texttt{ mode)}"
         }
       ],
       "tags": []

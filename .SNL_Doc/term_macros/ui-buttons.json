@@ -2491,7 +2491,7 @@
           "markdown": "",
           "text": "",
           "mode": "text",
-          "template": "When pressed, #0."
+          "template": "Pressing it will #0."
         }
       ],
       "tags": []
