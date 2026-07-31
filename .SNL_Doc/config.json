@@ -156,14 +156,15 @@
     }
   ],
   "active_macro_packages": [
-    "ui-panels",
-    "ui-sections",
+    "commands",
+    "computer-basics",
+    "filesystem",
+    "literals",
+    "snl-concepts",
     "ui-buttons",
     "ui-inputs",
-    "commands",
-    "snl-concepts",
-    "filesystem",
-    "computer-basics",
-    "literals"
+    "ui-panels",
+    "ui-sections",
+    "UIbasic"
   ]
 }

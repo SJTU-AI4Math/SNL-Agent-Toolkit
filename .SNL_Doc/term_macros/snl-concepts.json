@@ -1,7 +1,6 @@
 {
   "version": "7",
   "name": "SNL-Doc Concepts",
-  "description": "SNL schema, renderer, storage, and reusable Extension concepts.",
   "macros": {
     "Counter": {
       "description": "Toolkit documentation term: Counter",
@@ -1562,6 +1561,63 @@
           "tags": []
         }
       ]
+    },
+    "SNoogL": {
+      "description": "",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "snl-concept",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "style_name": "default",
+          "tags": [],
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": "",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL}"
+        },
+        {
+          "style_name": "mode",
+          "tags": [],
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": "",
+          "mode": "formula_inline",
+          "template": "\\texttt{SNoogL (} #0\\texttt{ mode)}"
+        }
+      ],
+      "tags": []
     }
-  }
+  },
+  "description": "SNL schema, renderer, storage, and reusable Extension concepts."
 }

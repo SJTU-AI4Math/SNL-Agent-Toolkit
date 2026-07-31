@@ -4,7 +4,7 @@
     "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
     "title": "Dashboard",
     "content": {
-      "snl": "%The top-level #0 for a #1 workspace, opened via #2. It retains six collapsible entity sections and their create actions; Entry rows now include #3 badges, while shared controls standardize keyboard, disabled, busy, and destructive behavior.%(%control surface%@ui.panel.dashboard.img,Folder.SNL_Doc,SNL_Open_Dashboard,Source_structure_metrics)"
+      "snl": "PanelDescription(%The primary control panel of SNL documentation in the repository, containing entrances to most of the editors.%,,RunVSCodeCommand(SNL_Open_Dashboard),%Image%@ui.panel.dashboard.img)"
     },
     "contribution_info": null,
     "pointer": null
@@ -404,7 +404,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "View Graph Button",
     "content": {
-      "snl": "%Opens the pool-wide Relationship Graph from the Dashboard header.%"
+      "snl": "ButtonPress(OpenPanel(Relationship_Graph[library]($\\texttt{global}$)))"
     },
     "contribution_info": null,
     "pointer": null
@@ -414,7 +414,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "Open Infoview Button",
     "content": {
-      "snl": "%Opens the Infoview reading surface from the Dashboard header.%"
+      "snl": "ButtonPress(OpenPanel(Infoview))"
     },
     "contribution_info": null,
     "pointer": null
@@ -474,7 +474,7 @@
     "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
     "title": "SNoogL: Entry Search Button",
     "content": {
-      "snl": "%Header action that opens SNoogL focused on Entry search.%"
+      "snl": "ButtonPress(OpenPanel(SNoogL[mode](Entry)))"
     },
     "contribution_info": null,
     "pointer": null

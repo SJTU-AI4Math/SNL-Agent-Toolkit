@@ -1,7 +1,6 @@
 {
   "version": "7",
   "name": "UI Panels",
-  "description": "Concrete Extension Panel terminology.",
   "macros": {
     "Create_Entry": {
       "description": "Toolkit documentation term: Create Entry",
@@ -399,7 +398,45 @@
           "mode": "formula_inline",
           "template": "\\texttt{Relationship Graph}",
           "style_name": "default",
-          "tags": []
+          "tags": [],
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": ""
+        },
+        {
+          "style_name": "library",
+          "tags": [],
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": "",
+          "mode": "formula_inline",
+          "template": "\\texttt{Relationship Graph (}#0\\texttt{)}"
         }
       ]
     },
@@ -463,5 +500,6 @@
         }
       ]
     }
-  }
+  },
+  "description": "Concrete Extension Panel terminology."
 }

@@ -1,7 +1,6 @@
 {
   "version": "7",
   "name": "UI Buttons",
-  "description": "Concrete Extension buttons and actions.",
   "macros": {
     "AddBar": {
       "description": "Toolkit documentation term: AddBar",
@@ -2462,6 +2461,41 @@
           "tags": []
         }
       ]
+    },
+    "ButtonPress": {
+      "description": "",
+      "source": {
+        "entries": [],
+        "urls": []
+      },
+      "kind": "literal",
+      "dynamic_arity": false,
+      "styles": [
+        {
+          "style_name": "default",
+          "tags": [],
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": "",
+          "mode": "text",
+          "template": "When pressed, #0."
+        }
+      ],
+      "tags": []
     }
-  }
+  },
+  "description": "Concrete Extension buttons and actions."
 }
