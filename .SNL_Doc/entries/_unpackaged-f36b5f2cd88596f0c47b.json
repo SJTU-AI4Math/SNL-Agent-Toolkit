@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.row-toolbar",
+    "kind": "entry-kind.concept",
+    "title": "Row Toolbar",
+    "content": {
+      "snl": "%Hover-revealed structural toolbar for tree rows.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

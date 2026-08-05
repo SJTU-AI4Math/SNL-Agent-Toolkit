@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "Catfood term backed by ui.input.macro.edit.style-name.",
+    "source": {
+      "entries": [
+        "ui.input.macro.edit.style-name"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Macro Style Name Input (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "macro_edit_style_name",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

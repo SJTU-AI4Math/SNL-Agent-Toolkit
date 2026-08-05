@@ -1,10 +1,10 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { lintPackage } from '../lib/lint-package.ts';
-import { migrateMacroPackageV6toV7 } from '../lib/snl-doc-schema.ts';
+import { migrateMacroPackageV6toV8 } from '../lib/snl-doc-schema.ts';
 
-describe('migrateMacroPackageV6toV7', () => {
-  it('restores each map key as the transient macro name and produces lint-clean v7', () => {
+describe('migrateMacroPackageV6toV8', () => {
+  it('restores each map key as the transient macro name and produces lint-clean v8', () => {
     const v6 = {
       version: '0.9.7',
       name: 'legacy-demo',
@@ -30,9 +30,9 @@ describe('migrateMacroPackageV6toV7', () => {
       },
     } as const;
 
-    const migrated = migrateMacroPackageV6toV7(v6);
+    const migrated = migrateMacroPackageV6toV8(v6);
 
-    assert.equal(migrated.version, '0.9.7');
+    assert.equal(migrated.version, '8');
     assert.equal('name' in migrated.macros.List, false);
     assert.equal(migrated.macros.List.styles[0].style_name, 'default');
     assert.equal(migrated.macros.List.styles[0].template, '<ul>#*</ul>');
@@ -46,11 +46,11 @@ describe('migrateMacroPackageV6toV7', () => {
 
   it('rejects malformed package maps instead of silently dropping data', () => {
     assert.throws(
-      () => migrateMacroPackageV6toV7({ version: '0.9.0', name: 'bad', macros: [] }),
+      () => migrateMacroPackageV6toV8({ version: '0.9.0', name: 'bad', macros: [] }),
       /macros must be an object map/,
     );
     assert.throws(
-      () => migrateMacroPackageV6toV7({ version: '0.9.0', name: 'bad', macros: { Missing: null } }),
+      () => migrateMacroPackageV6toV8({ version: '0.9.0', name: 'bad', macros: { Missing: null } }),
       /macros\.Missing must be an object/,
     );
   });

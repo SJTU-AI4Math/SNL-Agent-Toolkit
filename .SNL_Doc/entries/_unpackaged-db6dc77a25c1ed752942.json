@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-package.img",
+    "kind": "img",
+    "title": "Package Panel Image",
+    "content": {
+      "markdown": "![](assets/Package-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

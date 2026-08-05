@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.package-picker",
+    "kind": "entry-kind.concept",
+    "title": "Package Picker",
+    "content": {
+      "snl": "%The active-package VS Code QuickPick used before Create Macro opens. It selects an existing package only; package creation is a separate command and panel.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

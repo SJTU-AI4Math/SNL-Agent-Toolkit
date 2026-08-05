@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "Toolkit documentation term: Initialize Entry Kinds",
+    "source": {
+      "entries": [
+        "ui.panel.entry-kind.initialize"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Initialize Entry Kinds}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Initialize_Entry_Kinds",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

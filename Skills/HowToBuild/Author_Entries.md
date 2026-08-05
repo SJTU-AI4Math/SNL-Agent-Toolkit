@@ -1,6 +1,6 @@
 # Author Entries (条目预制)
 
-> Use this during large-scale NL → SNL construction to create the shared Entry pool and fill macro-first `content.snl`.
+> Use this during large-scale NL → SNL construction to create per-entity Entry files and fill macro-first `content.snl`.
 
 Read [`../Basics/Json_Schema.md`](../Basics/Json_Schema.md), [`../Basics/SNL_DSL.md`](../Basics/SNL_DSL.md), and [`../Basics/SNL_Macro.md`](../Basics/SNL_Macro.md) before authoring. Those files own syntax and field semantics; this guide owns the build procedure.
 
@@ -12,7 +12,7 @@ Materialize the full planned Entry set before prose writing drifts the document 
 
 - Entry blueprint from [`Drafting.md`](Drafting.md);
 - kinds and concept ownership from [`Terminologization.md`](Terminologization.md);
-- current shared `entries.json` pool;
+- current `entries/*.json` entity pool and target Package;
 - target Library outline.
 
 ## Phase A — prefabricate records
@@ -21,12 +21,18 @@ Create every planned record with identity and classification fixed:
 
 ```json
 {
-  "id": "topology.def.continuous",
-  "kind": "definition",
-  "title": "Continuous function",
-  "content": {},
-  "contribution_info": null,
-  "pointer": null
+  "format": "snl-entry",
+  "version": 1,
+  "package": "Topology",
+  "entry": {
+    "id": "topology.def.continuous",
+    "package": "Topology",
+    "kind": "definition",
+    "title": "Continuous function",
+    "content": {},
+    "contribution_info": null,
+    "pointer": null
+  }
 }
 ```
 
@@ -47,7 +53,7 @@ Examples:
 - `topology.thm.continuousComposition.proof`
 - `linearAlgebra.def.linearMap.pointfree`
 
-Ids must be non-empty and globally unique in `entries.json`. Keep them ASCII, case-consistent, shell-safe, and human-readable. UUIDs are acceptable for machine-only bulk imports, not the default for hand-maintained libraries.
+Ids must be non-empty and globally unique across `entries/*.json`. Keep them ASCII, case-consistent, shell-safe, and human-readable. The filename must be computed with `entryEntityPath(packageId, id)`; never invent it manually. UUIDs are acceptable for machine-only bulk imports, not the default for hand-maintained libraries.
 
 ## Phase B — write `content.snl`
 
@@ -91,32 +97,32 @@ A draft Entry whose id is not yet committed can be linted directly:
 node bin/snl-lint-entry.mjs --root . --strict-macros draft-entry.json
 ```
 
-For an Entry already present in the pool, use a temporary `.SNL_Doc` lint root with:
+For an Entry already present in the pool, extract the inner `entry` object to a draft file and use a temporary `.SNL_Doc` lint root with:
 
 - the same `config.json`;
 - the same active macro packages;
-- an empty `entries.json`.
+- the same Package manifests and Macro entities;
+- an empty `entries/` directory.
 
 This avoids the expected duplicate-id diagnostic while retaining schema, macro-resolution, and Preview checks.
 
-**`snl-lint-entry` takes one Entry object per file.** It rejects an array, so
-`.SNL_Doc/entries.json` cannot be passed to it directly. To sweep the whole
-pool, explode it into one file per Entry inside the temporary lint root and pass
-them all in a single invocation:
+**`snl-lint-entry` takes one inner Entry object per file, not an envelope.** To
+sweep the whole pool, extract `.entry` from every entity into a temporary draft
+directory and pass all drafts in one invocation:
 
 ```bash
 python3 - <<'PY'
-import json, os
-src = '.SNL_Doc/entries.json'
+import glob, json, os
 os.makedirs('/tmp/lintroot/drafts', exist_ok=True)
-for i, entry in enumerate(json.load(open(src))):
+for i, src in enumerate(sorted(glob.glob('.SNL_Doc/entries/*.json'))):
+    entry = json.load(open(src))['entry']
     json.dump(entry, open(f'/tmp/lintroot/drafts/e{i}.json', 'w'), ensure_ascii=False)
 PY
 node bin/snl-lint-entry.mjs --root /tmp/lintroot /tmp/lintroot/drafts/*.json
 ```
 
 Copying the pool into the temporary root instead would resurrect the duplicate-id
-diagnostic on every row, so keep that `entries.json` empty and rely on the
+diagnostic on every row, so keep `entries/` empty and rely on the
 `snl.src-dangling` info notes to catch genuinely broken `x@entry-id` postfixes.
 
 ## Exit criteria

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.library.outline.counter: Library Entry Counter Selector",
+    "source": {
+      "entries": [
+        "ui.input.library.outline.counter"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Library Entry Counter Selector}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.library.outline.counter",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

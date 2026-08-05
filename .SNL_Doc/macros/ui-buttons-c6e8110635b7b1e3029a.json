@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.infoview.outline-toggle: Infoview Outline Toggle Button",
+    "source": {
+      "entries": [
+        "ui.button.infoview.outline-toggle"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Infoview Outline Toggle Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.infoview.outline-toggle",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

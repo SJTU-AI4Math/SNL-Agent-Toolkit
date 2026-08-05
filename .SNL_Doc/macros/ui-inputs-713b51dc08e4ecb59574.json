@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "Catfood term backed by ui.input.macro.create.dynamic-arity.",
+    "source": {
+      "entries": [
+        "ui.input.macro.create.dynamic-arity"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Dynamic Arity Toggle (Create)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.macro.create.dynamic-arity",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

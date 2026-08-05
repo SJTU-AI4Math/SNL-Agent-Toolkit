@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.entry-kind.create",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Create Entry Kind",
+    "content": {
+      "snl": "PanelDescription(%#0 to declare a new #1 (id, name, stroke/background colors, default counter name, style). Values persist to #2 under #3.%(Panel,EntryKind,File.config_json,JsonKey.entry_kinds),%Contains #0, id/name/color/default-counter/style inputs, and a submit action.%(Entry.ui.section.entry-kind.create.preview),RunVSCodeCommand(CommandTitle.snlDoc.createEntryKind),%Image%@ui.panel.entry-kind.create.img)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

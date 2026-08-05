@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.tree-view-editor",
+    "kind": "entry-kind.concept",
+    "title": "Tree-View Editor",
+    "content": {
+      "snl": "%Generic tree editor shared by Entries and Counters.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

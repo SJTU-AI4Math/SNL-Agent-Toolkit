@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.dashboard.entry-kinds.entrance",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Entry Kind Entrance (List View)",
+    "content": {
+      "snl": "ButtonDescription(%An Entry Kind row.%,OpenPanelFor(Edit_Entry_Kind,%that Entry Kind%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Per-entity Macro envelope directory.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{macros}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Folder.macros",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

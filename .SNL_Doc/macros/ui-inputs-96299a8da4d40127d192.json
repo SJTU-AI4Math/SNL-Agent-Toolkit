@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "Catfood term backed by ui.input.macro.create.separator.",
+    "source": {
+      "entries": [
+        "ui.input.macro.create.separator"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Dynamic Separator Input (Create)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "macro_create_separator",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

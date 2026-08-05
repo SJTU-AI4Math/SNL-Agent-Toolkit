@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.library.edit.view-infoview: View Library in Infoview Button",
+    "source": {
+      "entries": [
+        "ui.button.library.edit.view-infoview"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{View Library in Infoview Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.library.edit.view-infoview",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

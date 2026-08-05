@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.macro-kind.edit.submit: Update Macro Kind Submit Button",
+    "source": {
+      "entries": [
+        "ui.button.macro-kind.edit.submit"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Update Macro Kind Submit Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.macro-kind.edit.submit",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

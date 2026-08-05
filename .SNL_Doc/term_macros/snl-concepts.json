@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "SNL-Doc Concepts",
   "macros": {
     "Counter": {
@@ -20,7 +20,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry": {
       "description": "Toolkit documentation term: Entry",
@@ -40,7 +43,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "EntryKind": {
       "description": "Toolkit documentation term: EntryKind",
@@ -60,7 +66,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "EntryRender": {
       "description": "Toolkit documentation term: EntryRender",
@@ -80,7 +89,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry_Kind": {
       "description": "Toolkit documentation term: Entry Kind",
@@ -100,7 +112,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Feature": {
       "description": "Toolkit documentation term: Feature",
@@ -120,7 +135,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "KindName_--_Title": {
       "description": "Toolkit documentation term: <KindName> -- <Title>",
@@ -140,7 +158,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Library": {
       "description": "Toolkit documentation term: Library",
@@ -160,7 +181,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "MacroKind": {
       "description": "Toolkit documentation term: MacroKind",
@@ -180,7 +204,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Macro_Kind": {
       "description": "Toolkit documentation term: Macro Kind",
@@ -200,7 +227,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNL_Macro": {
       "description": "Toolkit documentation term: SNL Macro",
@@ -220,7 +250,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNL_Macros": {
       "description": "Toolkit documentation term: SNL Macros",
@@ -240,7 +273,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNL_entry_title": {
       "description": "Toolkit documentation term: SNL — <entry title>",
@@ -260,7 +296,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SnlSyntaxTree": {
       "description": "Toolkit documentation term: SnlSyntaxTree",
@@ -280,7 +319,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "defaultCounterName": {
       "description": "Toolkit documentation term: defaultCounterName",
@@ -300,7 +342,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "dependency_relationship": {
       "description": "Toolkit documentation term: dependency relationship",
@@ -320,7 +365,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "duplicate": {
       "description": "Toolkit documentation term: duplicate",
@@ -340,7 +388,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "exists": {
       "description": "Toolkit documentation term: exists",
@@ -360,7 +411,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "formatNumbering_template_k": {
       "description": "Toolkit documentation term: formatNumbering(template, k)",
@@ -380,7 +434,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "id_name_numbering_DSL_children": {
       "description": "Toolkit documentation term: { id, name, numbering DSL, children[] }",
@@ -400,7 +457,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "package_picker": {
       "description": "Toolkit documentation term: package picker",
@@ -420,7 +480,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "row_toolbar": {
       "description": "Toolkit documentation term: row toolbar",
@@ -440,7 +503,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "shared_entry_pool": {
       "description": "Toolkit documentation term: shared entry pool",
@@ -460,7 +526,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snl-native": {
       "description": "Toolkit documentation term: snl-native",
@@ -480,7 +549,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "tree-view_editor": {
       "description": "Toolkit documentation term: tree-view editor",
@@ -500,7 +572,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl-doc": {
       "description": "Concept Entry handle: SNL-Doc Concepts",
@@ -520,7 +595,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.ui.panel": {
       "description": "Concept Entry handle: Panel",
@@ -540,7 +618,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.ui.section": {
       "description": "Concept Entry handle: Section",
@@ -560,7 +641,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.ui.button": {
       "description": "Concept Entry handle: Button",
@@ -580,7 +664,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.ui.text-input": {
       "description": "Concept Entry handle: Text Input",
@@ -600,7 +687,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.ui.command": {
       "description": "Concept Entry handle: Command",
@@ -620,7 +710,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.entry": {
       "description": "Concept Entry handle: Entry",
@@ -640,7 +733,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.entry-kind": {
       "description": "Concept Entry handle: Entry Kind",
@@ -660,7 +756,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.macro": {
       "description": "Concept Entry handle: SNL Macro",
@@ -680,7 +779,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.macro-kind": {
       "description": "Concept Entry handle: SNL Macro Kind",
@@ -700,7 +802,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.library": {
       "description": "Concept Entry handle: Library",
@@ -720,7 +825,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.counter": {
       "description": "Concept Entry handle: Counter",
@@ -740,7 +848,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.syntax-tree": {
       "description": "Concept Entry handle: SNL Syntax Tree",
@@ -760,7 +871,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.native-renderer": {
       "description": "Concept Entry handle: SNL Native Renderer",
@@ -780,7 +894,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.shared-entry-pool": {
       "description": "Concept Entry handle: Shared Entry Pool",
@@ -800,7 +917,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.default-counter-name": {
       "description": "Concept Entry handle: Default Counter Name",
@@ -820,7 +940,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.dependency-relationship": {
       "description": "Concept Entry handle: Dependency Relationship",
@@ -840,7 +963,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.snl.number-formatting": {
       "description": "Concept Entry handle: Counter Number Formatting",
@@ -860,7 +986,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.extension.entry-render": {
       "description": "Concept Entry handle: EntryRender",
@@ -880,7 +1009,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.extension.tree-view-editor": {
       "description": "Concept Entry handle: Tree-View Editor",
@@ -900,7 +1032,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.extension.row-toolbar": {
       "description": "Concept Entry handle: Row Toolbar",
@@ -920,7 +1055,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.extension.package-picker": {
       "description": "Concept Entry handle: Package Picker",
@@ -940,7 +1078,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.extension.entry-title-format": {
       "description": "Concept Entry handle: Entry Title Format",
@@ -960,7 +1101,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Concept.concept.extension.operation-status": {
       "description": "Concept Entry handle: Operation Result Status",
@@ -980,7 +1124,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Macro_v7": {
       "description": "Catfood term for Macro v7.",
@@ -1000,7 +1147,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "style_name": {
       "description": "Catfood term for Macro v7.",
@@ -1020,7 +1170,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "separator": {
       "description": "Catfood term for Macro v7.",
@@ -1040,7 +1193,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "block_template_name": {
       "description": "Catfood term for Macro v7.",
@@ -1060,7 +1216,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "MacroDataDriver": {
       "description": "Catfood term for MacroDataDriver.",
@@ -1080,7 +1239,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "query_macro": {
       "description": "Catfood term for MacroDataDriver.",
@@ -1100,7 +1262,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Macro_migration_boundary": {
       "description": "Catfood term for Macro Migration Boundary.",
@@ -1120,7 +1285,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Query_only_macro_rendering": {
       "description": "Catfood term for Query-Only Macro Rendering.",
@@ -1140,7 +1308,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "EntrySurface": {
       "description": "Catfood term for EntrySurface.",
@@ -1160,7 +1331,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Source_structure_metrics": {
       "description": "Catfood term for Source Structure Metrics.",
@@ -1180,7 +1354,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Macro_Kind_palette": {
       "description": "Catfood term for Workspace Macro Kind Palette.",
@@ -1200,7 +1377,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Button_component": {
       "description": "Catfood term for Shared UI Controls.",
@@ -1220,7 +1400,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Webview_message_bridge": {
       "description": "Catfood term for Webview Message Bridge.",
@@ -1240,7 +1423,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Recursive_hover_popovers": {
       "description": "Catfood term for Recursive Hover Popovers.",
@@ -1260,7 +1446,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Setting.semanticFreedomGreenBelow": {
       "description": "VS Code setting snlDoc.metrics.semanticFreedomGreenBelow.",
@@ -1280,7 +1469,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Setting.semanticFreedomRedAbove": {
       "description": "VS Code setting snlDoc.metrics.semanticFreedomRedAbove.",
@@ -1300,7 +1492,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Setting.structuredRatioRedBelow": {
       "description": "VS Code setting snlDoc.metrics.structuredRatioRedBelow.",
@@ -1320,7 +1515,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Setting.structuredRatioGreenAtLeast": {
       "description": "VS Code setting snlDoc.metrics.structuredRatioGreenAtLeast.",
@@ -1340,7 +1538,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.concept.snl.entry-data-driver": {
       "description": "Catfood term backed by concept.snl.entry-data-driver.",
@@ -1360,7 +1561,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.concept.snl.interaction-driver": {
       "description": "Catfood term backed by concept.snl.interaction-driver.",
@@ -1380,7 +1584,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.concept.snl.stable-identity": {
       "description": "Catfood term backed by concept.snl.stable-identity.",
@@ -1400,7 +1607,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.concept.snl.synchronized-rename": {
       "description": "Catfood term backed by concept.snl.synchronized-rename.",
@@ -1420,7 +1630,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Syntax_Tree_v2": {
       "description": "Catfood term backed by concept.snl.syntax-tree.",
@@ -1440,7 +1653,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_name": {
       "description": "Catfood term backed by concept.snl.syntax-tree.",
@@ -1460,7 +1676,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "env_mode": {
       "description": "Catfood term backed by concept.snl.syntax-tree.",
@@ -1480,7 +1699,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "EntryDataDriver": {
       "description": "Catfood term backed by concept.snl.entry-data-driver.",
@@ -1500,7 +1722,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SnlInteractionDriver": {
       "description": "Catfood term backed by concept.snl.interaction-driver.",
@@ -1520,7 +1745,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "stable_identity": {
       "description": "Catfood term backed by concept.snl.stable-identity.",
@@ -1540,7 +1768,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "synchronized_rename": {
       "description": "Catfood term backed by concept.snl.synchronized-rename.",
@@ -1560,7 +1791,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNoogL": {
       "description": "",
@@ -1594,7 +1828,10 @@
           "template": "\\texttt{SNoogL (}#0\\texttt{ mode)}"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     }
   },
   "description": "SNL schema, renderer, storage, and reusable Extension concepts."

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.library.outline.reference-create: Reference or Create Entry Button",
+    "source": {
+      "entries": [
+        "ui.button.library.outline.reference-create"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Reference or Create Entry Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.library.outline.reference-create",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

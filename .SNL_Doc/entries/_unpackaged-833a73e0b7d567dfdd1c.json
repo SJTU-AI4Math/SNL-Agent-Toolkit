@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.ui.text-input",
+    "kind": "entry-kind.concept",
+    "title": "Text Input",
+    "content": {
+      "snl": "%Literal.upper_A text or selector input control.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

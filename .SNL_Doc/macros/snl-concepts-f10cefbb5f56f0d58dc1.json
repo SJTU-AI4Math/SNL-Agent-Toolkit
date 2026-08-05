@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Concept Entry handle: SNL-Doc Concepts",
+    "source": {
+      "entries": [
+        "concept.snl-doc"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNL-Doc Concepts}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Concept.concept.snl-doc",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

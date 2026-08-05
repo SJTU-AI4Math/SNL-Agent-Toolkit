@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.tree.move-up",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Move-Up Row Toolbar Button",
+    "content": {
+      "snl": "ButtonDescription(%An ↑ button in the #0 of a #1; it is a no-op at position 0.%(row_toolbar,tree-view_editor),MoveTreeRow(%above its previous sibling within the same parent%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

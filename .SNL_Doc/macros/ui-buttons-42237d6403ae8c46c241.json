@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.initialize-list: Initialize Entry Kinds Button (List View)",
+    "source": {
+      "entries": [
+        "ui.button.dashboard.entry-kinds.initialize-list"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Initialize Entry Kinds Button (List View)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.dashboard.entry-kinds.initialize-list",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

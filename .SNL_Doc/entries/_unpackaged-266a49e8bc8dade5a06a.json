@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.counter",
+    "kind": "entry-kind.concept",
+    "title": "Counter",
+    "content": {
+      "snl": "%A Library-scoped hierarchy stored in #0. Each Counter has a stable local id, display name, numbering template, and children. An Entry occurrence uses graph.props.counterId when set, otherwise its Entry Kind resolves defaultCounterName by first depth-first name match.%(File.counters_json)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

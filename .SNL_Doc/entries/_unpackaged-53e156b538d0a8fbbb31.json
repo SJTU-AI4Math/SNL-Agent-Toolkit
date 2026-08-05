@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.operation-status",
+    "kind": "entry-kind.concept",
+    "title": "Operation Result Status",
+    "content": {
+      "snl": "%Host operation statuses such as duplicate and exists.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

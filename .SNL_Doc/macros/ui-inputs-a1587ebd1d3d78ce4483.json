@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.macro.create.name: Macro Name Input (Create)",
+    "source": {
+      "entries": [
+        "ui.input.macro.create.name"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Macro Name Input (Create)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.macro.create.name",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

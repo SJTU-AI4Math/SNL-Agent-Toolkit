@@ -8,6 +8,13 @@ import {
   renameEntityId,
   scanSnlReferences,
 } from '../lib/entity-references.ts';
+import {
+  entryEntityPath,
+  macroEntityPath,
+  makeEntityStorageReceipt,
+  packageManifestPath,
+} from '../lib/entity-storage.ts';
+import { migrateMacroPackageV6toV8 } from '../lib/migrate-macro-package.ts';
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -57,6 +64,55 @@ async function fixture(): Promise<string> {
     version: 1,
     relationships: [{ id: 'r', from: 'entry.old', to: 'entry.user', label: 'uses', metadata: { keep: 'entry.old' } }],
   }, null, 2) + '\n');
+  return root;
+}
+
+async function entityFixture(): Promise<string> {
+  const root = await fixture();
+  const doc = path.join(root, '.SNL_Doc');
+  const entries = JSON.parse(await fs.readFile(path.join(doc, 'entries.json'), 'utf8'));
+  const legacyEntries = structuredClone(entries);
+  const legacyPackage = JSON.parse(
+    await fs.readFile(path.join(doc, 'term_macros/demo.json'), 'utf8'),
+  );
+  const pkg = migrateMacroPackageV6toV8(legacyPackage);
+  await fs.mkdir(path.join(doc, 'entries'));
+  await fs.mkdir(path.join(doc, 'macros'));
+  await fs.mkdir(path.join(doc, 'packages'));
+  for (const entry of entries) {
+    entry.package = '_unpackaged';
+    await fs.writeFile(
+      path.join(doc, entryEntityPath('_unpackaged', entry.id)),
+      JSON.stringify({ format: 'snl-entry', version: 1, package: '_unpackaged', entry }, null, 2) + '\n',
+    );
+  }
+  await fs.writeFile(
+    path.join(doc, packageManifestPath('demo')),
+    JSON.stringify({ format: 'snl-package', version: 1, id: 'demo', name: 'Demo', description: '' }, null, 2) + '\n',
+  );
+  await fs.writeFile(
+    path.join(doc, packageManifestPath('_unpackaged')),
+    JSON.stringify({ format: 'snl-package', version: 1, id: '_unpackaged', name: 'Unpackaged', description: '' }, null, 2) + '\n',
+  );
+  for (const [name, value] of Object.entries(pkg.macros)) {
+    await fs.writeFile(
+      path.join(doc, macroEntityPath('demo', name)),
+      JSON.stringify({ format: 'snl-macro', version: 1, package: 'demo', macro: { name, ...(value as object) } }, null, 2) + '\n',
+    );
+  }
+  await fs.writeFile(
+    path.join(doc, 'config.json'),
+    JSON.stringify({
+      version: '0.0.6',
+      active_macro_packages: ['demo'],
+      entity_storage: {
+        version: 1,
+        legacy_backup_version: '0.0.5',
+        entry_default_package: '_unpackaged',
+        receipt: makeEntityStorageReceipt(legacyEntries, new Map([['demo.json', legacyPackage]]), true),
+      },
+    }, null, 2) + '\n',
+  );
   return root;
 }
 
@@ -339,6 +395,72 @@ describe('renameEntityId', () => {
     await assert.rejects(
       findEntityReferences(root, 'entry', 'entry.old'),
       /regular, non-symlink file/,
+    );
+  });
+
+  it('renames per-entity Entry and Macro identities together with their hash-derived files', async () => {
+    const root = await entityFixture();
+    const doc = path.join(root, '.SNL_Doc');
+    const oldEntry = path.join(doc, entryEntityPath('_unpackaged', 'entry.old'));
+    const newEntry = path.join(doc, entryEntityPath('_unpackaged', 'entry.new'));
+    const oldMacro = path.join(doc, macroEntityPath('demo', 'Macro.old'));
+    const newMacro = path.join(doc, macroEntityPath('demo', 'Macro.new'));
+
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.old')).filter((r) => r.role === 'definition').length, 1);
+    await renameEntityId(root, 'entry', 'entry.old', 'entry.new');
+    await assert.rejects(() => fs.stat(oldEntry), { code: 'ENOENT' });
+    assert.equal(JSON.parse(await fs.readFile(newEntry, 'utf8')).entry.id, 'entry.new');
+
+    await renameEntityId(root, 'macro', 'Macro.old', 'Macro.new');
+    await assert.rejects(() => fs.stat(oldMacro), { code: 'ENOENT' });
+    assert.equal(JSON.parse(await fs.readFile(newMacro, 'utf8')).macro.name, 'Macro.new');
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.new')).filter((r) => r.role === 'definition').length, 1);
+    assert.equal((await findEntityReferences(root, 'macro', 'Macro.new')).filter((r) => r.role === 'definition').length, 1);
+
+    const frozenEntries = await fs.readFile(path.join(doc, 'entries.json'), 'utf8');
+    const frozenMacros = await fs.readFile(path.join(doc, 'term_macros/demo.json'), 'utf8');
+    assert.match(frozenEntries, /entry\.old/);
+    assert.match(frozenMacros, /Macro\.old/);
+    await assert.rejects(() => fs.stat(path.join(doc, '.data-write.lock')), { code: 'ENOENT' });
+  });
+
+  it('preserves a non-cooperative write that lands between entity rename installs', async () => {
+    const root = await entityFixture();
+    const doc = path.join(root, '.SNL_Doc');
+    const graph = path.join(doc, 'libraries/demo/graph.json');
+    const oldEntry = path.join(doc, entryEntityPath('_unpackaged', 'entry.old'));
+    const newEntry = path.join(doc, entryEntityPath('_unpackaged', 'entry.new'));
+    await assert.rejects(
+      renameEntityId(root, 'entry', 'entry.old', 'entry.new', {
+        beforeInstallFile: async (relativePath) => {
+          if (relativePath === 'libraries/demo/graph.json') {
+            await fs.appendFile(graph, ' ');
+          }
+        },
+      }),
+      /changed during rename planning/,
+    );
+    assert.match(await fs.readFile(graph, 'utf8'), / $/);
+    assert.equal(JSON.parse(await fs.readFile(oldEntry, 'utf8')).entry.id, 'entry.old');
+    await assert.rejects(() => fs.stat(newEntry), { code: 'ENOENT' });
+  });
+
+  it('reports both the install failure and every rollback failure', async () => {
+    const root = await entityFixture();
+    const graph = path.join(root, '.SNL_Doc/libraries/demo/graph.json');
+    await assert.rejects(
+      renameEntityId(root, 'entry', 'entry.old', 'entry.new', {
+        beforeInstallFile: async (relativePath) => {
+          if (relativePath === 'libraries/demo/graph.json') await fs.appendFile(graph, ' ');
+        },
+        beforeRestoreFile: async () => {
+          throw new Error('simulated rollback failure');
+        },
+      }),
+      (error: Error) =>
+        /changed during rename planning/.test(error.message) &&
+        /rollback failed/i.test(error.message) &&
+        /simulated rollback failure/.test(error.message),
     );
   });
 

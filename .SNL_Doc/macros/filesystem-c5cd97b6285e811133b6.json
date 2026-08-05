@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Binary path composition: join a Folder with a Folder or File using `/`.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "#0\\texttt{/}#1",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Path.join",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

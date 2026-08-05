@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.entry.create.content.markdown",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Markdown Content Tab (Create)",
+    "content": {
+      "snl": "ButtonDescription(%This applies to the new Entry.%,SelectContentFormat(%Markdown%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Extension command identifier: snlDoc.deleteRelationship",
+    "source": {
+      "entries": [
+        "command.snlDoc.deleteRelationship"
+      ],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{snlDoc.deleteRelationship}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "snlDoc.deleteRelationship",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

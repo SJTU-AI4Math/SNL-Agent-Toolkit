@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Catfood term backed by ui.button.macro.create.args-reset.",
+    "source": {
+      "entries": [
+        "ui.button.macro.create.args-reset"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Reset Preview Arguments Button (Create)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.macro.create.args-reset",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

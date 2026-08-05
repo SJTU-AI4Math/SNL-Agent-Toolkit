@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.macro.edit.source-url: Macro Source URL Input (Edit)",
+    "source": {
+      "entries": [
+        "ui.input.macro.edit.source-url"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Macro Source URL Input (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.macro.edit.source-url",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

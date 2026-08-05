@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "0.0.6",
   "entry_kinds": [
     {
       "id": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
@@ -156,6 +156,7 @@
     }
   ],
   "active_macro_packages": [
+    "UIbasic",
     "commands",
     "computer-basics",
     "filesystem",
@@ -164,7 +165,20 @@
     "ui-buttons",
     "ui-inputs",
     "ui-panels",
-    "ui-sections",
-    "UIbasic"
-  ]
+    "ui-sections"
+  ],
+  "entity_storage": {
+    "version": 1,
+    "legacy_backup_version": "0.0.5",
+    "entry_default_package": "_unpackaged",
+    "receipt": {
+      "legacy_backup_present": true,
+      "legacy_entries_present": true,
+      "entry_count": 362,
+      "macro_package_count": 10,
+      "macro_count": 532,
+      "entries_digest": "03467c7e2572c2f58e26f23da7f409e488eb296deec7285d1fe34dd1af8926fd",
+      "macro_packages_digest": "2a62ed4e533f88d37292b0ecc035c184035ba403ea820bb6f60ba3cd2d56b59c"
+    }
+  }
 }

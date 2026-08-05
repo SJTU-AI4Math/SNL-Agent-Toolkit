@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.synchronized-rename",
+    "kind": "entry-kind.concept",
+    "title": "Synchronized Rename",
+    "content": {
+      "snl": "%A structured rename traces definitions and references, rejects collisions, validates the workspace, applies source-range edits with rollback, and verifies one new definition with no stale owned references. It is never a raw text replacement.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

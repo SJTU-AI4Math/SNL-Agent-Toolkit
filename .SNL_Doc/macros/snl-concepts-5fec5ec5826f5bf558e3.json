@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term backed by concept.snl.stable-identity.",
+    "source": {
+      "entries": [
+        "concept.snl.stable-identity"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{stable identity}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "stable_identity",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

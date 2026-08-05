@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Toolkit documentation term: + Create Entry Kind",
+    "source": {
+      "entries": [
+        "ui.button.dashboard.entry-kinds.create-list"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{+ Create Entry Kind}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "ButtonLabel.create_entry_kind",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

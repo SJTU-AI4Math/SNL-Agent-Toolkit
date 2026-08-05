@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry.edit.submit: Update Entry Submit Button",
+    "source": {
+      "entries": [
+        "ui.button.entry.edit.submit"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Update Entry Submit Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry.edit.submit",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

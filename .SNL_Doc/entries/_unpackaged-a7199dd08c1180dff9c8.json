@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.infoview.back-libraries",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Back to Libraries Button",
+    "content": {
+      "snl": "ButtonDescription(%This returns from one Library to the Infoview Libraries layer.%,NavigateBackTo(%the Infoview Libraries layer%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

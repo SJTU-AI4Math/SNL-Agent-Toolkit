@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "UIbasic",
+  "macro": {
+    "description": "Open a UI surface that is not necessarily a panel.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "literal",
+    "dynamic_arity": false,
+    "styles": [
+      {
+        "style_name": "default",
+        "tags": [],
+        "mode": "text",
+        "template": "open #0"
+      }
+    ],
+    "tags": [],
+    "name": "OpenUIElement",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-/** Lint a `.SNL_Doc/term_macros/<pkg>.json` Macro-v7 package. */
+/** Lint the synthetic Package view assembled from per-entity Macro storage. */
 import type {
   MacroPackageEntryWithoutName,
   MacroPackageFile,
@@ -76,6 +76,12 @@ function lintMacroEntry(name: string, raw: unknown, issues: LintIssue[], checkKa
   } else if (macro.tags.some((tag) => tag.includes('\\'))) {
     issues.push({ severity: 'error', code: 'macro.bad-tags', message: `${path}.tags must not contain backslashes.`, path: `${path}.tags` });
   }
+  const defaultStyle = (macro as Record<string, unknown>).default_style;
+  if (defaultStyle === undefined) {
+    issues.push({ severity: 'error', code: 'macro.missing-default-style', message: `${path}.default_style must be a language → style-name object.`, path: `${path}.default_style` });
+  } else if (!isRecord(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== 'string')) {
+    issues.push({ severity: 'error', code: 'macro.bad-default-style', message: `${path}.default_style must map language keys to style-name strings.`, path: `${path}.default_style` });
+  }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
     issues.push({ severity: 'error', code: 'macro.missing-styles', message: `${path}.styles must be a non-empty array.`, path: `${path}.styles` });
     return;
@@ -92,7 +98,7 @@ function lintMacroEntry(name: string, raw: unknown, issues: LintIssue[], checkKa
     const style = rawStyle as Partial<MacroPackageStyle>;
     for (const field of LEGACY_STYLE_FIELDS) {
       if (Object.prototype.hasOwnProperty.call(rawStyle, field)) {
-        issues.push({ severity: 'error', code: 'style.legacy-field', message: `${stylePath}.${field} is a pre-v7 field and is not allowed. Migrate the package to Macro v7.`, path: `${stylePath}.${field}` });
+        issues.push({ severity: 'error', code: 'style.legacy-field', message: `${stylePath}.${field} is a pre-v7 field and is not allowed by Macro v8. Migrate the package.`, path: `${stylePath}.${field}` });
       }
     }
     if (typeof style.style_name !== 'string' || style.style_name === '') {
@@ -151,6 +157,14 @@ function lintMacroEntry(name: string, raw: unknown, issues: LintIssue[], checkKa
       }
     }
   });
+
+  if (isRecord(defaultStyle)) {
+    for (const [language, styleName] of Object.entries(defaultStyle)) {
+      if (!language.trim() || typeof styleName !== 'string' || !seenNames.has(styleName)) {
+        issues.push({ severity: 'error', code: 'macro.bad-default-style', message: `${path}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path}.default_style` });
+      }
+    }
+  }
 
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
     issues.push({ severity: 'info', code: 'macro.style-arity-mismatch', message: `${path}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a, b) => a - b).join(', ')}). This is legal but may be an oversight.`, path: `${path}.styles` });

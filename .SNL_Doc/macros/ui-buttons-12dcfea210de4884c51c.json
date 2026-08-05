@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Catfood term backed by ui.button.panel-nav.back-infoview.",
+    "source": {
+      "entries": [
+        "ui.button.panel-nav.back-infoview"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Back to Infoview Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.panel-nav.back-infoview",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

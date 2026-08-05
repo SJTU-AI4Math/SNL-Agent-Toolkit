@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: { id, name, numbering DSL, children[] }",
+    "source": {
+      "entries": [
+        "concept.snl.counter"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "id_name_numbering_DSL_children",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

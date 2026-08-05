@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Command Palette title for snlDoc.createLibrary",
+    "source": {
+      "entries": [
+        "command.snlDoc.createLibrary"
+      ],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNL: Create Library}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "CommandTitle.snlDoc.createLibrary",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

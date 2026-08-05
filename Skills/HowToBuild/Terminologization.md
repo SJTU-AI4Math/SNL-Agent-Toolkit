@@ -1,6 +1,6 @@
 # Terminologization (术语化)
 
-During *Terminologization*, extract terms from markdown natural language contents and create Term Macros in `.SNL_Doc/term_macros/*.json`. 
+During *Terminologization*, extract terms from markdown natural language contents and create per-entity Term Macros in `.SNL_Doc/macros/*.json`.
 
 It is strongly advised to assign the task to subagents, as designing terms requires deliberate thinking.
 
@@ -44,7 +44,7 @@ Every later build step depends on these identities.
 
 - the planning blueprint from the previous drafting stage;
 - existing `config.json` catalogs;
-- every active package in `term_macros/`;
+- every active Package manifest and its Macro entities;
 - domain vocabulary extracted from the source material.
 
 ## Deliverables
@@ -52,7 +52,7 @@ Every later build step depends on these identities.
 - `.SNL_Doc/CONVENTIONS.md` — the document's own naming and ownership standard (see step 4);
 - `config.json#entry_kinds` updated only for genuinely new roles;
 - `config.json#macro_kinds` updated only for genuinely new semantic categories;
-- domain-owned `term_macros/<package>.json` files;
+- domain-owned `packages/<PackageId>-<hash>.json` manifests and `macros/<PackageId>-<hash>.json` entities;
 - `active_macro_packages` containing every package required by planned Entries;
 - a concept → macro name → owning package table for Entry authors.
 

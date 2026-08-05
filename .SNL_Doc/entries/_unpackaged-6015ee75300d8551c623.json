@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.relationship-graph.img",
+    "kind": "img",
+    "title": "Relationship Graph Image",
+    "content": {
+      "markdown": "![](assets/Relationship-Graph-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.section.entry-infoview.entry-render: Entry Infoview Render Section",
+    "source": {
+      "entries": [
+        "ui.section.entry-infoview.entry-render"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Entry Infoview Render Section}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.entry-infoview.entry-render",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Toolkit documentation term: snlDoc.openInfoviewGraph",
+    "source": {
+      "entries": [
+        "command.snlDoc.openInfoviewGraph"
+      ],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{snlDoc.openInfoviewGraph}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "snlDoc.openInfoviewGraph",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

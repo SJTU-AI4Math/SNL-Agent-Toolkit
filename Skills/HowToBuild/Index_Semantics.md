@@ -12,7 +12,7 @@ defining entry; agents can trace concept dependencies.
 
 **Deliverables (edits to phase-2 macro packages).**
 - For each `MacroPackageEntry`, fill in `source`:
-  - `entries: string[]` — one or more entry ids (from `entries.json`)
+  - `entries: string[]` — one or more globally unique Entry ids (from `entries/*.json`)
     that define / axiomatize / introduce this concept. Usually the
     Definition entry for the concept, sometimes plus a Theorem that
     justifies the notation.
@@ -22,7 +22,7 @@ defining entry; agents can trace concept dependencies.
 
 **Tools.**
 - ✅ `snl-lint-package` — validates schema, but does NOT currently
-  check that `source.entries[]` ids resolve in `entries.json`. That
+  check that `source.entries[]` ids resolve in the live Entry entity pool. That
   check is planned; until then, cross-check by hand.
 - ⏳ `snl-commit-batch`.
 

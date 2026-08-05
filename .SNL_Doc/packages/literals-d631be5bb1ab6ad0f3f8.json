@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "literals",
+  "name": "Technical Literals",
+  "description": "Literal symbols, examples, statuses, and residual technical prose terms."
+}

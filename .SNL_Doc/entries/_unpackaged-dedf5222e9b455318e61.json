@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-package.edit",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Edit Macro Package",
+    "content": {
+      "snl": "PanelDescription(%Edits package file/name/description metadata.%,%Contains file, name, and description inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.editMacroPackage),%Image%@ui.panel.macro-package.edit.img)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

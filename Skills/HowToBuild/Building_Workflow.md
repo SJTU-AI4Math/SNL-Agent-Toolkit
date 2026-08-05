@@ -16,13 +16,13 @@ Drafting process includes two separate stages: **Independent Markdown Planning (
 
 1. During *Independent Markdown Planning*, write the document draft of the contents to be built in a Markdown file `.SNL_Doc/Plans/Draft_<Name>.md`;
 
-2. During *Entrification*, for each entry in the draft, create an entry in `.SNL_Doc/entries.json` according to the data prepared in the markdown file during the planning stage.
+2. During *Entrification*, for each entry in the draft, create one hash-named `.SNL_Doc/entries/*.json` envelope in its Package.
 
 You should refer to [Drafting Guide](Drafting.md) for detailed guidance. 
 
 ## Terminologization (术语化)
 
-During *Terminologization*, extract terms from markdown natural language contents and create Term Macros in `.SNL_Doc/term_macros/*.json`. 
+During *Terminologization*, extract terms from markdown natural language contents and create one `.SNL_Doc/macros/*.json` entity per Term Macro under an explicit Package.
 
 You should refer to [Terminologization Guide](Terminologization.md) for detailed guidance.
 
@@ -41,7 +41,7 @@ You should refer to [Terminologization Guide](Terminologization.md) for detailed
 | # | Phase (EN)               | Phase (CN)   | Produces                                     |
 |---|--------------------------|--------------|----------------------------------------------|
 | 1 | Drafting                 | 起稿         | scratch `.md` outline + prose                |
-| 2 | Terminologization        | 术语化       | `config.json#entry_kinds` + `macro_kinds`; `term_macros/*.json` |
-| 3 | Entry Prefabrication     | 条目预制     | `entries.json` (ids + kinds + titles, content optional) |
+| 2 | Terminologization        | 术语化       | `config.json#entry_kinds` + `macro_kinds`; `packages/*.json`; `macros/*.json` |
+| 3 | Entry Prefabrication     | 条目预制     | `entries/*.json` envelopes (ids + Package + kinds + titles, content optional) |
 | 4 | Library Construction     | 库建构       | `libraries/<slug>/{meta,graph}.json` (branch tree over entries) |
 | 5 | Semantic Indexation      | 建立语义索引 | each macro's `source: { entries[], urls[] }` filled in |

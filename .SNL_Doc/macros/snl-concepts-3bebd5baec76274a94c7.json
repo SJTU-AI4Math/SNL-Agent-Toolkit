@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Concept Entry handle: Dependency Relationship",
+    "source": {
+      "entries": [
+        "concept.snl.dependency-relationship"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Dependency Relationship}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Concept.concept.snl.dependency-relationship",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

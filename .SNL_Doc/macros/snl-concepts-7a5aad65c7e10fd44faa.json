@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term for Webview Message Bridge.",
+    "source": {
+      "entries": [
+        "concept.extension.webview-message-bridge"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{webview message bridge}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Webview_message_bridge",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

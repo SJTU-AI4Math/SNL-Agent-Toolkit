@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "Toolkit documentation term: Entry Infoview",
+    "source": {
+      "entries": [
+        "ui.panel.entry-infoview"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Entry Infoview}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry_Infoview",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

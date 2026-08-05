@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.dependency-relationship",
+    "kind": "entry-kind.concept",
+    "title": "Dependency Relationship",
+    "content": {
+      "snl": "%Generated relationship induced by macro sources.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

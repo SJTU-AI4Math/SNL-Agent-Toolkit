@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.entry.edit.view-infoview",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "View Entry in Infoview Button",
+    "content": {
+      "snl": "ButtonPress(OpenPanelFor(Entry_Infoview,%the current Entry%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

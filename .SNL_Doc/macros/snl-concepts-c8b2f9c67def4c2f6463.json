@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: defaultCounterName",
+    "source": {
+      "entries": [
+        "concept.snl.default-counter-name"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{defaultCounterName}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "defaultCounterName",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

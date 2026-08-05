@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "command.snlDoc.createMacroKind",
+    "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
+    "title": "snlDoc.createMacroKind",
+    "content": {
+      "snl": "%VS Code command registered as #0. Command Palette title: #1.%(snlDoc.createMacroKind,CommandTitle.snlDoc.createMacroKind)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

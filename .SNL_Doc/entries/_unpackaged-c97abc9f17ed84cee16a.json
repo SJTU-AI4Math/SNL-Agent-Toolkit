@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.entry.save",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Create Entry Submit Button",
+    "content": {
+      "snl": "ButtonPress(ValidateAndCreateEntity(%the Entry in the shared pool%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

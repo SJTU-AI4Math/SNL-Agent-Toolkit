@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.section.macro.edit.styles: Macro Styles Section (Edit)",
+    "source": {
+      "entries": [
+        "ui.section.macro.edit.styles"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Macro Styles Section (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.macro.edit.styles",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

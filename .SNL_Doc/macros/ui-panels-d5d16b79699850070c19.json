@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "Toolkit documentation term: Package Panel",
+    "source": {
+      "entries": [
+        "ui.panel.macro-package"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Package Panel}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Package_Panel",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

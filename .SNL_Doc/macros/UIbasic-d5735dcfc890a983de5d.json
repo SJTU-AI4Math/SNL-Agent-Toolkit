@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "UIbasic",
+  "macro": {
+    "description": "Remove an item.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "literal",
+    "dynamic_arity": false,
+    "styles": [
+      {
+        "style_name": "default",
+        "tags": [],
+        "mode": "text",
+        "template": "remove #0"
+      }
+    ],
+    "tags": [],
+    "name": "RemoveItem",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.dashboard.macro-kinds.create-list",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Create Macro Kind Button (List View)",
+    "content": {
+      "snl": "ButtonDescription(%The full-width Create Macro Kind bar shown when kinds exist.%,OpenPanel(Create_Macro_Kind))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

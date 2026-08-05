@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Catfood term backed by ui.button.macro.edit.style-move-default.",
+    "source": {
+      "entries": [
+        "ui.button.macro.edit.style-move-default"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Move Style Toward Default Button (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.macro.edit.style-move-default",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

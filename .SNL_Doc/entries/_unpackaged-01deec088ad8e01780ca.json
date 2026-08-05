@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.macro-package.expand-styles",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Expand Macro Styles Button",
+    "content": {
+      "snl": "ButtonPress(Toggle(%the macro row style table%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

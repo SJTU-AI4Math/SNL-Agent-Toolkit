@@ -18,8 +18,8 @@ A maintenance task should change the requested behavior while preserving unrelat
 
 ## 2. Choose the owning artifact
 
-- prose or semantic tree → `entries.json`;
-- macro rendering or concept identity → owning `term_macros/<package>.json`;
+- prose or semantic tree → the owning `entries/*.json` envelope;
+- macro rendering or concept identity → the owning `macros/*.json` entity and Package manifest;
 - Entry/Marco Kind metadata and activation → `config.json`;
 - Library structure or occurrence override → `libraries/<slug>/graph.json`;
 - numbering hierarchy → `libraries/<slug>/counters.json`;

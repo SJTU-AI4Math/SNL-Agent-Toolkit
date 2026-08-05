@@ -6,7 +6,7 @@ Read [`../Basics/Json_Schema.md`](../Basics/Json_Schema.md), [`../Basics/SNL_DSL
 
 ## 1. Establish the workspace
 
-Confirm the workspace root contains `.SNL_Doc/config.json` and `.SNL_Doc/entries.json`. Treat all ids and package filenames as identity keys; do not infer meaning from display titles alone.
+Confirm the workspace root contains `.SNL_Doc/config.json` plus live `packages/`, `entries/`, and `macros/` entity directories. Treat Package ids and entity identities as keys; ignore frozen `entries.json` / `term_macros/` migration backups.
 
 ## 2. Choose a Library
 
@@ -28,7 +28,7 @@ From `graph.json`:
 4. traverse roots in `nodes[]` order;
 5. traverse children in `relationships[]` declaration order using depth-first search.
 
-A graph node is an occurrence in this Library. Resolve `node.props.entryId` against the shared `entries.json` pool. A node without `entryId` is a placeholder, not a broken Entry.
+A graph node is an occurrence in this Library. Resolve `node.props.entryId` against the global live Entry entity pool. A node without `entryId` is a placeholder, not a broken Entry.
 
 ## 4. Resolve numbering
 
@@ -44,7 +44,7 @@ Duplicate counter names are ambiguous and should be reported, not guessed around
 
 ## 5. Read Entry content
 
-Resolve the Entry record from `entries.json` and prefer `content.snl` for semantic inspection.
+Resolve the Entry envelope by inner `entry.id` and prefer `entry.content.snl` for semantic inspection.
 
 - Parse it as one SNL tree.
 - For each plain identifier, check active macro packages.
@@ -55,7 +55,7 @@ Other content fields are mirror/export surfaces and may not preserve the same se
 
 ## 6. Resolve macros
 
-Read `config.active_macro_packages`. Load matching files from `term_macros/` and merge their `macros` maps.
+Read `config.active_macro_packages`. Load matching Package manifests and their Macro entities, then apply active-Package precedence by `macro.name`.
 
 For a macro occurrence:
 
@@ -80,7 +80,7 @@ node bin/snl-lint-graph.mjs --root . --slug <library>
 node bin/snl-lint-package.mjs --root .
 ```
 
-For a suspicious Entry, copy it to a draft file and run `snl-lint-entry`. Existing committed Entries need a temporary lint root with an empty `entries.json` to avoid the expected duplicate-id diagnostic.
+For a suspicious Entry, copy the envelope's inner `entry` object to a draft file and run `snl-lint-entry`. Existing committed Entries need a temporary lint root with an empty `entries/` directory to avoid the expected duplicate-id diagnostic.
 
 ## Output of a reading task
 

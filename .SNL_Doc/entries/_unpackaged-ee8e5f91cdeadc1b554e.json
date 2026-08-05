@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.relationship.create",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Create Relationship",
+    "content": {
+      "snl": "PanelDescription(%#0 to declare a semantic relationship between two entries (from, to, label). Persists to #1.%(Panel,Path.join(Folder.SNL_Doc,File.relationships_json)),%Contains id, from, to, label, and metadata inputs plus a submit action.%,RunVSCodeCommand(CommandTitle.snlDoc.createRelationship),%Image%@ui.panel.relationship.create.img)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

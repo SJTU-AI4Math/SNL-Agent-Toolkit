@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.infoview.edit-dashboard: Edit in Dashboard Button",
+    "source": {
+      "entries": [
+        "ui.button.infoview.edit-dashboard"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Edit in Dashboard Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.infoview.edit-dashboard",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

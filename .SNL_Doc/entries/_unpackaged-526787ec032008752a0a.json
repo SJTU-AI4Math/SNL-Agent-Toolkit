@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.macro.create.style-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Style Name Input (Create)",
+    "content": {
+      "snl": "%Edits #0 for the selected style. The value is required, unique within the macro, and determines the bracket selector used by SNL source.%(style_name)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

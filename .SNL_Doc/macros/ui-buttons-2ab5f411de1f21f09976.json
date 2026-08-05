@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry.create.content.latex: LaTeX Content Tab (Create)",
+    "source": {
+      "entries": [
+        "ui.button.entry.create.content.latex"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{LaTeX Content Tab (Create)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry.create.content.latex",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

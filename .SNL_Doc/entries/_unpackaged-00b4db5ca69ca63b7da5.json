@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.relationship.create.img",
+    "kind": "img",
+    "title": "Create Relationship Image",
+    "content": {
+      "markdown": "![](assets/Create-Relationship-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

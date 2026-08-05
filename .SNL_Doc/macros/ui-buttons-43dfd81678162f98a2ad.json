@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.relationship.edit.submit: Update Relationship Submit Button",
+    "source": {
+      "entries": [
+        "ui.button.relationship.edit.submit"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Update Relationship Submit Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.relationship.edit.submit",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Toolkit documentation term: snlDoc.*",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{snlDoc.*}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "snlDoc.",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

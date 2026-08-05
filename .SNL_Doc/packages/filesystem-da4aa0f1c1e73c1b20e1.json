@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "filesystem",
+  "name": "Filesystem",
+  "description": "Composable Path/Folder/File/JSON-key terminology."
+}

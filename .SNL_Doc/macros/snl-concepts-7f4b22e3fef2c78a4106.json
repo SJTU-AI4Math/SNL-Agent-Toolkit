@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term backed by concept.snl.synchronized-rename.",
+    "source": {
+      "entries": [
+        "concept.snl.synchronized-rename"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Synchronized Rename}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.concept.snl.synchronized-rename",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "Toolkit documentation term: Counter Numbering DSL Field",
+    "source": {
+      "entries": [
+        "ui.input.counter.numbering"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Counter Numbering DSL Field}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Counter_Numbering_DSL_Field",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

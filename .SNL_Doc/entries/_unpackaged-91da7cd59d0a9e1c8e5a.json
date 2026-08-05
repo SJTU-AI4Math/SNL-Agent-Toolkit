@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-kind.create.img",
+    "kind": "img",
+    "title": "Create Macro Kind Image",
+    "content": {
+      "markdown": "![](assets/Create-Macro-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

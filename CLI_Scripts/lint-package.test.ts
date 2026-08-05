@@ -17,6 +17,7 @@ describe('lintPackage', () => {
           description: 'Real numbers',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
+          default_style: { en: 'default' },
           tags: [],
           styles: [
             { style_name: 'default', mode: 'formula_inline', template: '\\mathbb{R}', tags: [] },
@@ -26,6 +27,7 @@ describe('lintPackage', () => {
           description: 'fraction',
           source: { entries: [], urls: [] },
           dynamic_arity: false,
+          default_style: { en: 'default' },
           tags: [],
           styles: [
             { style_name: 'default', mode: 'formula_inline', template: '\\frac{#0}{#1}', tags: [] },
@@ -46,6 +48,7 @@ describe('lintPackage', () => {
           description: 'ul',
           source: { entries: [], urls: [] },
           dynamic_arity: true,
+          default_style: { en: 'default' },
           tags: [],
           styles: [
             {
@@ -284,6 +287,19 @@ describe('lintPackage', () => {
     const issue = r.issues.find((i) => i.code === 'macro.style-arity-mismatch');
     assert.ok(issue);
     assert.equal(issue!.severity, 'info');
+  });
+
+  it('requires v8 default_style mappings to resolve to declared styles', () => {
+    const base = {
+      version: '8', name: 'x', macros: {
+        m: { description: '', source: { entries: [], urls: [] }, dynamic_arity: false, tags: [],
+          styles: [{ style_name: 'default', mode: 'text', template: 'm', tags: [] }] },
+      },
+    };
+    assert.ok(codes(lintPackage(base)).includes('macro.missing-default-style'));
+    const dangling: any = structuredClone(base);
+    dangling.macros.m.default_style = { en: 'missing' };
+    assert.ok(codes(lintPackage(dangling)).includes('macro.bad-default-style'));
   });
 
   it('requires macro and style tags arrays', () => {

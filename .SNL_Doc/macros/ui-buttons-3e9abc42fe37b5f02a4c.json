@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Catfood term backed by ui.button.macro-package.row-delete.",
+    "source": {
+      "entries": [
+        "ui.button.macro-package.row-delete"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Delete Macro Row Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.macro-package.row-delete",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

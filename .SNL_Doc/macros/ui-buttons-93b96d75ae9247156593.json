@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Toolkit documentation term: Regenerate UUID",
+    "source": {
+      "entries": [
+        "ui.button.entry.generate-uuid"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Regenerate UUID}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Regenerate_UUID",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

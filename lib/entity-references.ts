@@ -9,8 +9,15 @@ import {
   type Node as JsonNode,
   type ParseError,
 } from 'jsonc-parser';
-import { snlDocRoot } from './snl-doc.ts';
+import {
+  readActiveMacros,
+  readEntries,
+  snlDocRoot,
+  usesEntityStorage,
+} from './snl-doc.ts';
+import { entryEntityPath, macroEntityPath, packageManifestPath } from './entity-storage.ts';
 import { parseSnlSyntaxTree } from './snl-parser.ts';
+import { withWorkspaceDataLock } from './workspace-data-lock.ts';
 
 export type EntityType = 'entry' | 'macro';
 export type OccurrenceRole = 'definition' | 'reference';
@@ -88,14 +95,37 @@ export async function findEntityReferences(
  * fails, already-installed files are restored before the error is rethrown.
  * This rollback protocol is not crash-atomic across multiple files.
  */
+interface RenameOptions {
+  dryRun?: boolean;
+  beforeInstall?: () => void | Promise<void>;
+  /** Test hook for deterministic non-cooperative write interleavings. */
+  beforeInstallFile?: (relativePath: string) => void | Promise<void>;
+  /** Test hook for deterministic rollback failures. */
+  beforeRestoreFile?: (relativePath: string) => void | Promise<void>;
+}
+
 export async function renameEntityId(
   workspaceRoot: string,
   entityType: EntityType,
   oldId: string,
   newId: string,
-  options: { dryRun?: boolean; beforeInstall?: () => void | Promise<void> } = {},
+  options: RenameOptions = {},
 ): Promise<RenamePlan> {
   const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
+  if (options.dryRun) {
+    return renameEntityIdUnlocked(canonicalWorkspace, entityType, oldId, newId, options);
+  }
+  return withWorkspaceDataLock(canonicalWorkspace, `rename ${entityType} identity`, () =>
+    renameEntityIdUnlocked(canonicalWorkspace, entityType, oldId, newId, options));
+}
+
+async function renameEntityIdUnlocked(
+  canonicalWorkspace: string,
+  entityType: EntityType,
+  oldId: string,
+  newId: string,
+  options: RenameOptions,
+): Promise<RenamePlan> {
   validateNonEmptyIdentity(oldId);
   validateNonEmptyIdentity(newId);
   if (entityType === 'macro' && /[@#$%\s()[\]{}]/u.test(newId)) {
@@ -134,13 +164,26 @@ export async function renameEntityId(
   }
 
   const rewriteSnlMacroTokens = entityType !== 'macro' || macroIsActive(files, oldId);
-  const changed = new Map<string, LoadedJson & { next: string }>();
+  const changed = new Map<string, LoadedJson & { next: string; targetAbsPath: string; targetRelPath: string }>();
   for (const file of files) {
     const edits = buildStructuredEdits(
       file, entityType, oldId, newId, rewriteSnlMacroTokens,
     );
     if (edits.length > 0) {
-      changed.set(file.absPath, { ...file, next: applyTextEdits(file.raw, edits) });
+      let targetRelPath = file.relPath;
+      if (entityType === 'entry' && /^entries\/[^/]+\.json$/.test(file.relPath) &&
+          (file.data as any)?.entry?.id === oldId) {
+        targetRelPath = entryEntityPath((file.data as any).package, newId);
+      } else if (entityType === 'macro' && /^macros\/[^/]+\.json$/.test(file.relPath) &&
+                 (file.data as any)?.macro?.name === oldId) {
+        targetRelPath = macroEntityPath((file.data as any).package, newId);
+      }
+      changed.set(file.absPath, {
+        ...file,
+        next: applyTextEdits(file.raw, edits),
+        targetAbsPath: path.join(file.docRoot, targetRelPath),
+        targetRelPath,
+      });
     }
   }
 
@@ -149,17 +192,21 @@ export async function renameEntityId(
     oldId,
     newId,
     occurrences,
-    changedFiles: [...changed.values()].map((f) => f.relPath).sort(),
+    changedFiles: [...changed.values()].map((f) => f.targetRelPath).sort(),
   };
   if (options.dryRun || changed.size === 0) return plan;
 
   const replacements = [...changed.values()].map((file) => ({
     ...file,
-    temp: `${file.absPath}.snl-rename-${process.pid}-${Math.random().toString(16).slice(2)}.tmp`,
+    temp: `${file.targetAbsPath}.snl-rename-${process.pid}-${Math.random().toString(16).slice(2)}.tmp`,
   }));
   try {
     await Promise.all(
       replacements.map(async (file) => {
+        await assertCanonicalDirectory(path.dirname(file.targetAbsPath), file.docRoot);
+        if (file.targetAbsPath !== file.absPath && await pathExistsNoFollow(file.targetAbsPath)) {
+          throw new Error(`Rename destination already exists: ${file.targetAbsPath}.`);
+        }
         await fs.writeFile(file.temp, file.next, {
           encoding: 'utf8', mode: file.mode, flag: 'wx',
         });
@@ -175,9 +222,23 @@ export async function renameEntityId(
     const installed: typeof replacements = [];
     try {
       for (const file of replacements) {
-        await assertCanonicalDirectory(path.dirname(file.absPath), file.docRoot);
-        await fs.rename(file.temp, file.absPath);
-        installed.push(file);
+        if (options.beforeInstallFile) await options.beforeInstallFile(file.relPath);
+        await assertUnchangedRegularFile(file);
+        await assertCanonicalDirectory(path.dirname(file.targetAbsPath), file.docRoot);
+        if (file.targetAbsPath !== file.absPath && await pathExistsNoFollow(file.targetAbsPath)) {
+          throw new Error(`Rename destination already exists: ${file.targetAbsPath}.`);
+        }
+        if (file.targetAbsPath === file.absPath) {
+          await fs.rename(file.temp, file.absPath);
+          installed.push(file);
+        } else {
+          // Hard-link installation is no-clobber: a concurrent destination
+          // creation fails with EEXIST instead of being silently overwritten.
+          await fs.link(file.temp, file.targetAbsPath);
+          installed.push(file);
+          await fs.rm(file.temp);
+          await fs.rm(file.absPath);
+        }
       }
       const verifiedFiles = await loadWorkspaceJson(canonicalWorkspace);
       const stale = collectOccurrences(verifiedFiles, entityType, oldId);
@@ -189,7 +250,23 @@ export async function renameEntityId(
         );
       }
     } catch (error) {
-      await Promise.all(installed.map((file) => restoreOriginal(file)));
+      const rollbackFailures = (await Promise.all(installed.map(async (file) => {
+        try {
+          if (options.beforeRestoreFile) await options.beforeRestoreFile(file.relPath);
+          await restoreReplacement(file);
+          return null;
+        } catch (rollbackError) {
+          return `${file.relPath}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`;
+        }
+      }))).filter((message): message is string => message !== null);
+      if (rollbackFailures.length > 0) {
+        const original = error instanceof Error ? error.message : String(error);
+        const combined = new Error(
+          `${original} Rollback failed for ${rollbackFailures.join('; ')}. Workspace may be inconsistent.`,
+        ) as Error & { cause?: unknown };
+        combined.cause = error;
+        throw combined;
+      }
       throw error;
     }
   } finally {
@@ -204,6 +281,11 @@ function macroIsActive(files: LoadedJson[], id: string): boolean {
     ? new Set<string>(config.active_macro_packages)
     : null;
   return files.some((file) => {
+    if (file.relPath.startsWith('macros/')) {
+      const packageId = (file.data as any)?.package;
+      if (typeof packageId !== 'string' || (active && !active.has(packageId))) return false;
+      return (file.data as any)?.macro?.name === id;
+    }
     if (!file.relPath.startsWith('term_macros/')) return false;
     const bare = path.posix.basename(file.relPath, '.json');
     if (active && !active.has(bare)) return false;
@@ -237,6 +319,43 @@ function collectFileOccurrences(
   includeSnlMacroTokens: boolean,
 ): void {
   const data = file.data as any;
+  if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
+    const entry = data?.entry;
+    if (entityType === 'entry' && entry?.id === id) {
+      out.push(occurrence(file, entityType, id, 'definition', 'entry.id'));
+    }
+    const snl = entry?.content?.snl;
+    if (typeof snl === 'string' && snl.trim() !== '') {
+      for (const ref of scanSnlReferences(snl)) {
+        if (ref.entityType !== entityType || ref.id !== id) continue;
+        if (entityType === 'macro' && !includeSnlMacroTokens) continue;
+        const pos = offsetPosition(snl, ref.start);
+        out.push({
+          ...occurrence(file, entityType, id, 'reference', 'entry.content.snl'),
+          offset: ref.start,
+          snlLine: pos.line,
+          snlColumn: pos.column,
+        });
+      }
+    }
+    return;
+  }
+
+  if (/^macros\/[^/]+\.json$/.test(file.relPath)) {
+    const macro = data?.macro;
+    if (entityType === 'macro' && macro?.name === id) {
+      out.push(occurrence(file, entityType, id, 'definition', 'macro.name'));
+    }
+    if (entityType === 'entry' && Array.isArray(macro?.source?.entries)) {
+      macro.source.entries.forEach((entryId: unknown, index: number) => {
+        if (entryId === id) {
+          out.push(occurrence(file, entityType, id, 'reference', `macro.source.entries[${index}]`));
+        }
+      });
+    }
+    return;
+  }
+
   if (file.relPath === 'entries.json' && Array.isArray(data)) {
     data.forEach((entry: any, index: number) => {
       if (entityType === 'entry' && entry?.id === id) {
@@ -330,6 +449,38 @@ function buildStructuredEdits(
 ): TextEdit[] {
   const edits: TextEdit[] = [];
   const data = file.data as any;
+  if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
+    const entry = data?.entry;
+    if (entityType === 'entry' && entry?.id === oldId) {
+      edits.push(stringValueEdit(file, ['entry', 'id'], newId));
+    }
+    if (
+      typeof entry?.content?.snl === 'string' && entry.content.snl.trim() !== '' &&
+      (entityType !== 'macro' || rewriteSnlMacroTokens)
+    ) {
+      const next = replaceSnlReferences(entry.content.snl, entityType, oldId, newId);
+      if (next !== entry.content.snl) {
+        edits.push(stringValueEdit(file, ['entry', 'content', 'snl'], next));
+      }
+    }
+    return edits;
+  }
+
+  if (/^macros\/[^/]+\.json$/.test(file.relPath)) {
+    const macro = data?.macro;
+    if (entityType === 'macro' && macro?.name === oldId) {
+      edits.push(stringValueEdit(file, ['macro', 'name'], newId));
+    }
+    if (entityType === 'entry' && Array.isArray(macro?.source?.entries)) {
+      macro.source.entries.forEach((value: unknown, index: number) => {
+        if (value === oldId) {
+          edits.push(stringValueEdit(file, ['macro', 'source', 'entries', index], newId));
+        }
+      });
+    }
+    return edits;
+  }
+
   if (file.relPath === 'entries.json' && Array.isArray(data)) {
     data.forEach((entry: any, index: number) => {
       if (entityType === 'entry' && entry?.id === oldId) {
@@ -549,25 +700,67 @@ async function assertCanonicalDirectory(dir: string, docRoot: string): Promise<v
   }
 }
 
-async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
-  const root = snlDocRoot(workspaceRoot);
-  await assertCanonicalDirectory(root, root);
-  const candidates = ['config.json', 'entries.json', 'relationships.json'];
-
-  const macroDir = path.join(root, 'term_macros');
+async function workspaceUsesEntityStorage(root: string): Promise<boolean> {
+  const configPath = path.join(root, 'config.json');
+  let handle;
   try {
-    await assertCanonicalDirectory(macroDir, root);
-    const macroFiles = await fs.readdir(macroDir, { withFileTypes: true });
-    for (const entry of macroFiles) {
+    handle = await fs.open(configPath, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw new Error(`${configPath} must be a regular, non-symlink file.`);
+    const config = JSON.parse(await handle.readFile('utf8')) as unknown;
+    return usesEntityStorage(config);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    if ((error as NodeJS.ErrnoException).code === 'ELOOP') {
+      throw new Error(`${configPath} must be a regular, non-symlink file.`);
+    }
+    throw error;
+  } finally {
+    if (handle) await handle.close();
+  }
+}
+
+async function appendJsonDirectoryCandidates(
+  root: string,
+  relativeDirectory: string,
+  candidates: string[],
+): Promise<void> {
+  const directory = path.join(root, relativeDirectory);
+  try {
+    await assertCanonicalDirectory(directory, root);
+    for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
+      const absolute = path.join(directory, entry.name);
       if (entry.name.endsWith('.json') && entry.isSymbolicLink()) {
-        throw new Error(`${path.join(macroDir, entry.name)} must not be a symlink.`);
+        throw new Error(`${absolute} must not be a symlink.`);
       }
       if (entry.isFile() && entry.name.endsWith('.json')) {
-        candidates.push(path.join('term_macros', entry.name));
+        candidates.push(path.join(relativeDirectory, entry.name));
       }
     }
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+  }
+}
+
+async function loadWorkspaceJson(workspaceRoot: string): Promise<LoadedJson[]> {
+  const root = snlDocRoot(workspaceRoot);
+  await assertCanonicalDirectory(root, root);
+  const entityStorage = await workspaceUsesEntityStorage(root);
+  const candidates = ['config.json', 'relationships.json'];
+
+  if (entityStorage) {
+    // Reference discovery/writes share the same strict topology gate as the
+    // public readers; never operate on a partial current workspace.
+    await Promise.all([
+      readEntries(workspaceRoot),
+      readActiveMacros(workspaceRoot),
+    ]);
+    await appendJsonDirectoryCandidates(root, 'packages', candidates);
+    await appendJsonDirectoryCandidates(root, 'entries', candidates);
+    await appendJsonDirectoryCandidates(root, 'macros', candidates);
+  } else {
+    candidates.push('entries.json');
+    await appendJsonDirectoryCandidates(root, 'term_macros', candidates);
   }
 
   const libraryRoot = path.join(root, 'libraries');
@@ -672,6 +865,38 @@ function validateSchemaShape(absPath: string, relPath: string, data: unknown): v
     }
     return;
   }
+  if (/^packages\/[^/]+\.json$/.test(relPath)) {
+    if (!isRecord(value) || value.format !== 'snl-package' || value.version !== 1 ||
+        typeof value.id !== 'string' || typeof value.name !== 'string' || typeof value.description !== 'string') {
+      fail('Package manifest must use the snl-package v1 envelope.');
+    }
+    if (relPath !== packageManifestPath(value.id)) fail('Package manifest path does not match its logical identity.');
+    return;
+  }
+  if (/^entries\/[^/]+\.json$/.test(relPath)) {
+    if (!isRecord(value) || value.format !== 'snl-entry' || value.version !== 1 ||
+        typeof value.package !== 'string' || !isRecord(value.entry) ||
+        typeof value.entry.id !== 'string' || !isRecord(value.entry.content) ||
+        value.entry.package !== value.package) {
+      fail('Entry entity must use the snl-entry v1 envelope with matching Package identity.');
+    }
+    if (relPath !== entryEntityPath(value.package, value.entry.id)) fail('Entry entity path does not match its logical identity.');
+    if (value.entry.content.snl !== undefined && typeof value.entry.content.snl !== 'string') {
+      fail('Entry content.snl must be a string when present.');
+    }
+    return;
+  }
+  if (/^macros\/[^/]+\.json$/.test(relPath)) {
+    if (!isRecord(value) || value.format !== 'snl-macro' || value.version !== 1 ||
+        typeof value.package !== 'string' || !isRecord(value.macro) ||
+        typeof value.macro.name !== 'string' || !isRecord(value.macro.source) ||
+        !Array.isArray(value.macro.source.entries) ||
+        !value.macro.source.entries.every((item: unknown) => typeof item === 'string')) {
+      fail('Macro entity must use the snl-macro v1 envelope with source.entries[].');
+    }
+    if (relPath !== macroEntityPath(value.package, value.macro.name)) fail('Macro entity path does not match its logical identity.');
+    return;
+  }
   if (relPath === 'entries.json') {
     if (!Array.isArray(value)) fail('entries.json must be an array.');
     value.forEach((entry: any, index: number) => {
@@ -730,6 +955,47 @@ function validateSchemaShape(absPath: string, relPath: string, data: unknown): v
 
 function isRecord(value: unknown): value is Record<string, any> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+async function pathExistsNoFollow(file: string): Promise<boolean> {
+  try {
+    await fs.lstat(file);
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    throw error;
+  }
+}
+
+async function assertFileContent(filePath: string, expected: string, label: string): Promise<void> {
+  let handle;
+  try {
+    handle = await fs.open(filePath, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || (await handle.readFile('utf8')) !== expected) {
+      throw new Error(`${label} changed concurrently; refusing destructive rollback: ${filePath}.`);
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ELOOP') {
+      throw new Error(`${label} became a symlink; refusing destructive rollback: ${filePath}.`);
+    }
+    throw error;
+  } finally {
+    if (handle) await handle.close();
+  }
+}
+
+async function restoreReplacement(
+  file: LoadedJson & { targetAbsPath: string; next: string },
+): Promise<void> {
+  await assertFileContent(file.targetAbsPath, file.next, 'Installed rename output');
+  if (file.targetAbsPath !== file.absPath) {
+    if (await pathExistsNoFollow(file.absPath)) {
+      throw new Error(`Rename source reappeared concurrently; refusing destructive rollback: ${file.absPath}.`);
+    }
+    await fs.rm(file.targetAbsPath);
+  }
+  await restoreOriginal(file);
 }
 
 async function restoreOriginal(file: LoadedJson): Promise<void> {

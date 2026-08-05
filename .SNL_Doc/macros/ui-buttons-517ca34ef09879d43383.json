@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Toolkit documentation term: Button",
+    "source": {
+      "entries": [
+        "concept.ui.button"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Button",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

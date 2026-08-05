@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Toolkit documentation term: term_macros",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{term\\_macros}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Folder.term_macros",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

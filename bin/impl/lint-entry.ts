@@ -9,8 +9,8 @@
  *   3. If errors → agent fixes them (schema or SNL parse) and retries.
  *   4. If only warnings → agent decides whether to register new macros
  *      or fix references, then either fixes or explicitly accepts.
- *   5. On clean lint → the commit CLI (future) merges into
- *      `.SNL_Doc/entries.json`.
+ *   5. On clean lint → the commit CLI (future) writes a hash-named
+ *      `.SNL_Doc/entries/*.json` envelope.
  *
  * The lint context (entry_kinds, macro pool, sibling entries) is loaded
  * from `<--root>/.SNL_Doc/`. Pass `--root <workspace>` when the CLI's cwd
@@ -150,11 +150,31 @@ async function main(): Promise<number> {
     return 2;
   }
 
-  const [entryKinds, macros, siblingEntries] = await Promise.all([
-    readEntryKinds(root),
-    readActiveMacros(root),
-    readEntries(root),
-  ]);
+  let entryKinds;
+  let macros;
+  let siblingEntries;
+  try {
+    [entryKinds, macros, siblingEntries] = await Promise.all([
+      readEntryKinds(root),
+      readActiveMacros(root),
+      readEntries(root),
+    ]);
+  } catch (err) {
+    const reports: LintReport[] = [{
+      file: path.join(root, '.SNL_Doc'),
+      issues: [{
+        severity: 'error',
+        code: 'file.read',
+        message: (err as Error).message,
+      }],
+    }];
+    if (asJson) {
+      process.stdout.write(JSON.stringify({ reports }, null, 2) + '\n');
+    } else {
+      process.stdout.write(formatReport(reports) + '\n');
+    }
+    return 1;
+  }
 
   const reports: LintReport[] = [];
   interface SynthPayload {
@@ -183,10 +203,36 @@ async function main(): Promise<number> {
       continue;
     }
 
+    const envelope = raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? raw as Record<string, unknown>
+      : null;
+    if (envelope?.format === 'snl-entry') {
+      const entry = envelope.entry;
+      if (envelope.version !== 1 || typeof envelope.package !== 'string' ||
+          !entry || typeof entry !== 'object' || Array.isArray(entry) ||
+          (entry as Record<string, unknown>).package !== envelope.package) {
+        reports.push({
+          file: abs,
+          issues: [{
+            severity: 'error',
+            code: 'file.schema',
+            message: 'Invalid snl-entry envelope: version/package/inner Entry package must agree.',
+          }],
+        });
+        continue;
+      }
+      raw = entry;
+    }
+
+    const currentId = raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>).id
+      : undefined;
     const report = lintEntry(raw, {
       entryKinds,
       macros,
-      siblingEntries,
+      siblingEntries: typeof currentId === 'string'
+        ? siblingEntries.filter((entry) => entry.id !== currentId)
+        : siblingEntries,
       strictMacros,
     });
     report.file = abs;

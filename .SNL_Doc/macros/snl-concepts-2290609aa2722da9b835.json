@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: SNL — <entry title>",
+    "source": {
+      "entries": [
+        "concept.extension.entry-title-format"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNL — <entry title>}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "SNL_entry_title",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

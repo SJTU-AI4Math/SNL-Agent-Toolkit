@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-kind.initialize",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Initialize Macro Kinds",
+    "content": {
+      "snl": "PanelDescription(%Empty-catalog bootstrap for macro kinds. Analog to Init Entry Kinds — presets seed a starter set in a single write.%,%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initMacroKinds),%Image%@ui.panel.macro-kind.initialize.img)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

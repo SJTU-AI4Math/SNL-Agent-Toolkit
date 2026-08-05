@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.macro.create.template-left",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Dynamic Template Left Input (Create)",
+    "content": {
+      "snl": "%Edits the template text stored before the real #0 in a dynamic Macro v8 style.%(Literal.hash_star)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

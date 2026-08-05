@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "ui-sections",
+  "name": "UI Sections",
+  "description": "Concrete Extension Section terminology."
+}

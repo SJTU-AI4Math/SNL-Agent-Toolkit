@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.macro.create.arg-remove",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Remove Preview Argument Button (Create)",
+    "content": {
+      "snl": "ButtonPress(RemoveItem(%the final dynamic preview argument slot%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

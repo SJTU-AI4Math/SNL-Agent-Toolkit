@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Per-entity Entry envelope directory.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{entries}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Folder.entries",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

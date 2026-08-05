@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.section.snoogl.search: SNoogL Search Bar Section",
+    "source": {
+      "entries": [
+        "ui.section.snoogl.search"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNoogL Search Bar Section}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.snoogl.search",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.entrance: SNL Macro Kind Entrance (List View)",
+    "source": {
+      "entries": [
+        "ui.button.dashboard.macro-kinds.entrance"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNL Macro Kind Entrance (List View)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.dashboard.macro-kinds.entrance",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

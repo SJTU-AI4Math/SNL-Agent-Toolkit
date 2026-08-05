@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: SNL Macros",
+    "source": {
+      "entries": [
+        "concept.snl.macro"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNL Macros}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "SNL_Macros",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

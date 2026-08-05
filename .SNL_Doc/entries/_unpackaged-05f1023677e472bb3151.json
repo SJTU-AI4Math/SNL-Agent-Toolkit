@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.library.edit.update-title",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Update Library Title Button",
+    "content": {
+      "snl": "ButtonPress(PersistValue(%the edited Library title%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

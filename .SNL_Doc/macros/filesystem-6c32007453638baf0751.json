@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Toolkit documentation term: <slug>",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{<slug>}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Folder.slug",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

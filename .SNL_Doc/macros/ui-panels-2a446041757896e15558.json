@@ -1,0 +1,45 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "Toolkit documentation term: Relationship Graph",
+    "source": {
+      "entries": [
+        "ui.panel.relationship-graph"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Relationship Graph (}#0\\texttt{)}",
+        "style_name": "default",
+        "tags": [],
+        "typst": {
+          "built_in": "",
+          "synthesis": {
+            "mode": "formula",
+            "macro": ""
+          }
+        },
+        "latex": {
+          "built_in": "",
+          "synthesis": {
+            "mode": "formula",
+            "macro": ""
+          }
+        },
+        "markdown": "",
+        "text": ""
+      }
+    ],
+    "name": "Relationship_Graph",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

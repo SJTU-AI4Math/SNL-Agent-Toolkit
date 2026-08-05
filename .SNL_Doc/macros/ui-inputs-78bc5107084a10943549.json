@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.relationship.edit.to: Relationship To Entry Input (Edit)",
+    "source": {
+      "entries": [
+        "ui.input.relationship.edit.to"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Relationship To Entry Input (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.relationship.edit.to",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

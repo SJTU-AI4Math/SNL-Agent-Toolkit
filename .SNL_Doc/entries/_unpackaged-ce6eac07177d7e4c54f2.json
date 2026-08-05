@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.relationship.create.from",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Relationship From Entry Input (Create)",
+    "content": {
+      "snl": "%Selects the source Entry id.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

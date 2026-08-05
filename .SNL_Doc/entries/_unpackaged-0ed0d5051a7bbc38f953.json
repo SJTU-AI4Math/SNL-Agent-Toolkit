@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.entry-data-driver",
+    "kind": "entry-kind.concept",
+    "title": "EntryDataDriver",
+    "content": {
+      "snl": "%The optional query-only Entry and Entry-Kind access boundary exported by SNL-Basics generic Entry rendering. The current Extension still owns its local EntryRender and does not yet consume this driver.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

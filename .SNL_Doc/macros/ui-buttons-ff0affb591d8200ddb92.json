@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.infoview.back-libraries: Back to Libraries Button",
+    "source": {
+      "entries": [
+        "ui.button.infoview.back-libraries"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Back to Libraries Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.infoview.back-libraries",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

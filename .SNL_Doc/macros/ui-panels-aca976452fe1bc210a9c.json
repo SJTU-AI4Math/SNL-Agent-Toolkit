@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.panel.entry.edit: Edit Entry",
+    "source": {
+      "entries": [
+        "ui.panel.entry.edit"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Edit Entry}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.panel.entry.edit",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

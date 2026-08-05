@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.infoview",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Infoview",
+    "content": {
+      "snl": "PanelDescription(%Reading surface with Libraries and selected-Library outline layers. It opens Library and Entry content without edit mode; every Entry body uses #0, query-only macro lookup, workspace Macro Kind colors, and recursive source popovers.%(EntrySurface),%Contains #0 and #1.%(Entry.ui.section.infoview.libraries,Entry.ui.section.infoview.library-reading),RunVSCodeCommand(CommandTitle.snlDoc.openInfoview),%Image%@ui.panel.infoview.img)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

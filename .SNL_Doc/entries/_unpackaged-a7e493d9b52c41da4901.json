@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.library.outline.reference-create",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Reference or Create Entry Button",
+    "content": {
+      "snl": "ButtonPress(ReferenceOrCreateEntry)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.library.outline.entry-id: Library Entry Reference ID Input",
+    "source": {
+      "entries": [
+        "ui.input.library.outline.entry-id"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Library Entry Reference ID Input}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.library.outline.entry-id",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term for Query-Only Macro Rendering.",
+    "source": {
+      "entries": [
+        "concept.extension.query-only-macro-rendering"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{query-only macro rendering}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Query_only_macro_rendering",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

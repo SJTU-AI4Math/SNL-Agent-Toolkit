@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.macro.create.mode",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Mode Selector (Create)",
+    "content": {
+      "snl": "%Selects formula_inline, formula_display, text, or block mode for the active Macro v8 style.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

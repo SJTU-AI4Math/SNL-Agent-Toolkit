@@ -2,7 +2,7 @@
 
 > Foundational reference for defining and invoking macros.
 
-An SNL Macro gives a stable semantic name to a concept and defines how that node renders. Macro definitions live in `.SNL_Doc/term_macros/*.json`; invocations live in Entry `content.snl`.
+An SNL Macro gives a stable semantic name to a concept and defines how that node renders. Macro definitions live in `.SNL_Doc/macros/*.json` envelopes and belong to Package manifests under `.SNL_Doc/packages/`; invocations live in Entry `content.snl`.
 
 ## Invocation
 
@@ -15,14 +15,15 @@ list(item1,item2,item3)
 
 - Bare name: zero children.
 - `(…)`: ordered children.
-- `[style_name]`: select a style; omission selects `styles[0]`.
+- `[style_name]`: select a style explicitly. Omission uses `default_style`
+  for the current language, then `en`, then `styles[0]`.
 - Macro names are identity keys. Treat renaming as a migration across every Entry.
 
 ## Package shape
 
 ```json
 {
-  "version": "7",
+  "version": "8",
   "name": "Algebra",
   "description": "Algebra terminology",
   "macros": {
@@ -31,6 +32,7 @@ list(item1,item2,item3)
       "source": { "entries": ["algebra.def.mul"], "urls": [] },
       "kind": "operator",
       "dynamic_arity": false,
+      "default_style": { "en": "default" },
       "styles": [
         {
           "style_name": "default",
@@ -54,7 +56,8 @@ The object key is the macro name. The in-memory editor shape may repeat it as `n
 - `source.urls`: stable external references.
 - `kind`: optional id from `config.json#macro_kinds`. If the author declares `fvar`, the UI should show the free-variable styling; consumers must not silently neutralize that declaration.
 - `dynamic_arity`: whether output is assembled from every child rather than fixed `#N` slots.
-- `styles`: non-empty ordered styles. `styles[0]` is the implicit default.
+- `default_style`: required language → style-name map. Every value must name a declared style.
+- `styles`: non-empty ordered styles. `styles[0]` is the final compatibility fallback.
 - `tags`: required free-text label array; use `[]` when empty. Tags must not contain backslashes.
 
 ## Style fields
@@ -86,7 +89,7 @@ are errors. Escape a literal hash as `\#`.
 
 ## Dynamic arity
 
-In Macro v7, every dynamic style template must contain `#*`. The renderer replaces `#*` with all rendered children joined by `separator`, while preserving all surrounding template text.
+In Macro v8, every dynamic style template must contain `#*`. The renderer replaces `#*` with all rendered children joined by `separator`, while preserving all surrounding template text.
 
 ```json
 {
@@ -140,7 +143,7 @@ Create a macro when a concept is reused, needs semantic source links, needs hove
 node bin/snl-lint-package.mjs --root . --name package-name
 ```
 
-The linter enforces Macro v7: required macro/style `tags`, valid unique `style_name`, no pre-v7 fields, dynamic `#*`, string `separator`, block-only `block_template_name`, modes, placeholders, and KaTeX-compilable templates. Still inspect decoded templates when backslashes are involved.
+The linter enforces Macro v8: required valid `default_style`, required macro/style `tags`, valid unique `style_name`, no pre-v7 fields, string-only templates, dynamic `#*`, string `separator`, block-only `block_template_name`, modes, placeholders, and KaTeX-compilable templates. Still inspect decoded templates when backslashes are involved.
 
 ## Migrating Toolkit package files from Macro v6
 
@@ -150,12 +153,13 @@ field because `macros` map keys are the macro identities. Do not pass a package'
 `macros` object directly to the Basics migration: the resulting names would be
 missing.
 
-Import `migrateMacroPackageV6toV7` from `lib/snl-doc-schema.ts` (implemented in
+Import `migrateMacroPackageV6toV8` from `lib/snl-doc-schema.ts` (implemented in
 `lib/migrate-macro-package.ts`). The adapter
 validates the package map, restores each authoritative map key as a transient
-macro `name`, invokes the canonical Basics v6→v7 migration, then removes the
+macro `name`, invokes the canonical Basics v6→v7→v8 migration, then removes the
 redundant value-level name. It preserves package version/metadata, unknown
-extension fields, and Toolkit output backends without mutating the input. Always
+extension fields, and Toolkit output backends without mutating the input. The
+result has Package wrapper version `8` and required `default_style`. Always
 run `lintPackage` (or `snl-lint-package`) on the migrated result before writing
 it to disk.
 

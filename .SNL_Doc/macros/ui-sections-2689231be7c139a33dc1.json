@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "Toolkit documentation term: Counters Section",
+    "source": {
+      "entries": [
+        "ui.section.library.counters"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Counters Section}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Counters_Section",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

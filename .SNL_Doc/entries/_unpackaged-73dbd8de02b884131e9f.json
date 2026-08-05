@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.command.palette-overview",
+    "kind": "406729f7-e18a-404d-90a3-679b9372edd1",
+    "title": "Command Palette Overview",
+    "content": {
+      "snl": "%The Extension registers 34 commands: 33 are contributed through #0 under #1, while #2 is an internal helper. Palette-visible commands are distinct from hidden programmatic commands and disabled UI-only command contributions; edit/create commands that require entity ids or package files are launched from documented UI flows.%(File.package_json,JsonKey.contributes_commands,snlDoc.createMacroPickPackage)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

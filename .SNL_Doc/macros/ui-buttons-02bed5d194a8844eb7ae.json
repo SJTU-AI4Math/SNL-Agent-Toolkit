@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry-kind.initialize.submit: Initialize Entry Kinds Submit Button",
+    "source": {
+      "entries": [
+        "ui.button.entry-kind.initialize.submit"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Initialize Entry Kinds Submit Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry-kind.initialize.submit",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Toolkit documentation term: Command",
+    "source": {
+      "entries": [
+        "concept.ui.command"
+      ],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Command}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Command",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

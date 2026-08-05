@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Toolkit documentation term: *.json",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{*.json}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "File.wildcard_json",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

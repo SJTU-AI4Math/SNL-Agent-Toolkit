@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.library.outline.entry-entrance: Library Entry Entrance",
+    "source": {
+      "entries": [
+        "ui.button.library.outline.entry-entrance"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Library Entry Entrance}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.library.outline.entry-entrance",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

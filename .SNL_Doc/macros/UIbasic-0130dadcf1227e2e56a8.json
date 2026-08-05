@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "UIbasic",
+  "macro": {
+    "description": "Move the current row within a tree.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "literal",
+    "dynamic_arity": false,
+    "styles": [
+      {
+        "style_name": "default",
+        "tags": [],
+        "mode": "text",
+        "template": "move the current tree row #0"
+      }
+    ],
+    "tags": [],
+    "name": "MoveTreeRow",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

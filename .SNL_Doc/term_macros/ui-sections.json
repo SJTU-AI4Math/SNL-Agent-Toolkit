@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "UI Sections",
   "description": "Concrete Extension Section terminology.",
   "macros": {
@@ -21,7 +21,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entries_Section": {
       "description": "Toolkit documentation term: Entries Section",
@@ -41,7 +44,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry_Kinds_Section": {
       "description": "Toolkit documentation term: Entry Kinds Section",
@@ -61,7 +67,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "GUI_inductive_editor": {
       "description": "Toolkit documentation term: GUI inductive editor",
@@ -81,7 +90,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Libraries_Section": {
       "description": "Toolkit documentation term: Libraries Section",
@@ -101,7 +113,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Outline_Section": {
       "description": "Toolkit documentation term: Outline Section",
@@ -121,7 +136,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNL_Macros_Section": {
       "description": "Toolkit documentation term: SNL Macros Section",
@@ -141,7 +159,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Section": {
       "description": "Toolkit documentation term: Section",
@@ -161,7 +182,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.dashboard.relationships": {
       "description": "UI terminology backed by Entry ui.section.dashboard.relationships: Relationships Section",
@@ -181,7 +205,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.dashboard.macro-kinds": {
       "description": "UI terminology backed by Entry ui.section.dashboard.macro-kinds: SNL Macro Kinds Section",
@@ -201,7 +228,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry-infoview.entry-render": {
       "description": "UI terminology backed by Entry ui.section.entry-infoview.entry-render: Entry Infoview Render Section",
@@ -221,7 +251,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro-package.macros": {
       "description": "UI terminology backed by Entry ui.section.macro-package.macros: Macro Package Macros Section",
@@ -241,7 +274,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.create.styles": {
       "description": "UI terminology backed by Entry ui.section.macro.create.styles: Macro Styles Section (Create)",
@@ -261,7 +297,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.edit.styles": {
       "description": "UI terminology backed by Entry ui.section.macro.edit.styles: Macro Styles Section (Edit)",
@@ -281,7 +320,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.edit.gui-inductive": {
       "description": "UI terminology backed by Entry ui.section.macro.edit.gui-inductive: GUI Inductive Editor Section",
@@ -301,7 +343,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.relationship-graph.canvas": {
       "description": "UI terminology backed by Entry ui.section.relationship-graph.canvas: Relationship Graph Canvas Section",
@@ -321,7 +366,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.snoogl.entry-results": {
       "description": "UI terminology backed by Entry ui.section.snoogl.entry-results: SNoogL Entry Results Section",
@@ -341,7 +389,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.snoogl.macro-results": {
       "description": "UI terminology backed by Entry ui.section.snoogl.macro-results: SNoogL Macro Results Section",
@@ -361,7 +412,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.infoview.libraries": {
       "description": "UI terminology backed by Entry ui.section.infoview.libraries: Infoview Libraries Layer",
@@ -381,7 +435,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.infoview.library-reading": {
       "description": "UI terminology backed by Entry ui.section.infoview.library-reading: Infoview Library Reading Layer",
@@ -401,7 +458,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry-infoview.context": {
       "description": "UI terminology backed by Entry ui.section.entry-infoview.context: Entry Infoview Context Section",
@@ -421,7 +481,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry-infoview.dependencies": {
       "description": "UI terminology backed by Entry ui.section.entry-infoview.dependencies: Entry Infoview Dependencies Section",
@@ -441,7 +504,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.create.preview": {
       "description": "UI terminology backed by Entry ui.section.entry.create.preview: Entry Live Preview Section (Create)",
@@ -461,7 +527,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.create.content": {
       "description": "UI terminology backed by Entry ui.section.entry.create.content: Entry Content Section (Create)",
@@ -481,7 +550,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.create.contributor": {
       "description": "UI terminology backed by Entry ui.section.entry.create.contributor: Contributor Section (Create Entry)",
@@ -501,7 +573,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.create.pointer": {
       "description": "UI terminology backed by Entry ui.section.entry.create.pointer: Pointer Section (Create Entry)",
@@ -521,7 +596,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.edit.preview": {
       "description": "UI terminology backed by Entry ui.section.entry.edit.preview: Entry Live Preview Section (Edit)",
@@ -541,7 +619,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.edit.content": {
       "description": "UI terminology backed by Entry ui.section.entry.edit.content: Entry Content Section (Edit)",
@@ -561,7 +642,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.edit.contributor": {
       "description": "UI terminology backed by Entry ui.section.entry.edit.contributor: Contributor Section (Edit Entry)",
@@ -581,7 +665,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.edit.pointer": {
       "description": "UI terminology backed by Entry ui.section.entry.edit.pointer: Pointer Section (Edit Entry)",
@@ -601,7 +688,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry-kind.create.preview": {
       "description": "UI terminology backed by Entry ui.section.entry-kind.create.preview: Entry Kind Color Preview (Create)",
@@ -621,7 +711,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry-kind.edit.preview": {
       "description": "UI terminology backed by Entry ui.section.entry-kind.edit.preview: Entry Kind Color Preview (Edit)",
@@ -641,7 +734,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro-kind.create.preview": {
       "description": "UI terminology backed by Entry ui.section.macro-kind.create.preview: Macro Kind Color Preview (Create)",
@@ -661,7 +757,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro-kind.edit.preview": {
       "description": "UI terminology backed by Entry ui.section.macro-kind.edit.preview: Macro Kind Color Preview (Edit)",
@@ -681,7 +780,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro-package.batch-actions": {
       "description": "UI terminology backed by Entry ui.section.macro-package.batch-actions: Macro Package Batch Actions Section",
@@ -701,7 +803,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro-package.transfer-modal": {
       "description": "UI terminology backed by Entry ui.section.macro-package.transfer-modal: Macro Transfer Modal Section",
@@ -721,7 +826,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.create.preview": {
       "description": "UI terminology backed by Entry ui.section.macro.create.preview: Macro Live Preview Section (Create)",
@@ -741,7 +849,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.create.sources": {
       "description": "UI terminology backed by Entry ui.section.macro.create.sources: Macro Sources Section (Create)",
@@ -761,7 +872,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.create.tags": {
       "description": "UI terminology backed by Entry ui.section.macro.create.tags: Macro Tags Section (Create)",
@@ -781,7 +895,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.edit.preview": {
       "description": "UI terminology backed by Entry ui.section.macro.edit.preview: Macro Live Preview Section (Edit)",
@@ -801,7 +918,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.edit.sources": {
       "description": "UI terminology backed by Entry ui.section.macro.edit.sources: Macro Sources Section (Edit)",
@@ -821,7 +941,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.macro.edit.tags": {
       "description": "UI terminology backed by Entry ui.section.macro.edit.tags: Macro Tags Section (Edit)",
@@ -841,7 +964,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.snoogl.search": {
       "description": "UI terminology backed by Entry ui.section.snoogl.search: SNoogL Search Bar Section",
@@ -861,7 +987,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.snoogl.filters": {
       "description": "UI terminology backed by Entry ui.section.snoogl.filters: SNoogL Filters Section",
@@ -881,7 +1010,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Dashboard_entry_metrics": {
       "description": "Catfood term backed by ui.section.dashboard.entry-metrics.",
@@ -901,7 +1033,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.dashboard.entry-metrics": {
       "description": "Catfood term backed by ui.section.dashboard.entry-metrics.",
@@ -921,7 +1056,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Library_entry_metrics": {
       "description": "Catfood term backed by ui.section.library.entry-metrics.",
@@ -941,7 +1079,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.library.entry-metrics": {
       "description": "Catfood term backed by ui.section.library.entry-metrics.",
@@ -961,7 +1102,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.shared.panel-nav": {
       "description": "Catfood term backed by ui.section.shared.panel-nav.",
@@ -981,7 +1125,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.create.gui-inductive": {
       "description": "Catfood term backed by ui.section.entry.create.gui-inductive.",
@@ -1001,7 +1148,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.section.entry.edit.gui-inductive": {
       "description": "Catfood term backed by ui.section.entry.edit.gui-inductive.",
@@ -1021,7 +1171,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

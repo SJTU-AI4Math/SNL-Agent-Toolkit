@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "Extension Commands",
   "description": "Registered command identifiers, titles, and aliases.",
   "macros": {
@@ -21,7 +21,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Command_Palette_Overview": {
       "description": "Toolkit documentation term: Command Palette Overview",
@@ -41,7 +44,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNL_Open_Dashboard": {
       "description": "Toolkit documentation term: SNL: Open Dashboard",
@@ -61,7 +67,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNL_Open_SNoogL_Search": {
       "description": "Toolkit documentation term: SNL: Open SNoogL (Search)",
@@ -81,7 +90,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "create": {
       "description": "Toolkit documentation term: create*",
@@ -99,7 +111,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "delete": {
       "description": "Toolkit documentation term: delete*",
@@ -117,7 +132,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "edit": {
       "description": "Toolkit documentation term: edit*",
@@ -135,7 +153,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "init": {
       "description": "Toolkit documentation term: init",
@@ -155,7 +176,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "initEntryKinds": {
       "description": "Toolkit documentation term: initEntryKinds",
@@ -175,7 +199,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "initMacroKinds": {
       "description": "Toolkit documentation term: initMacroKinds",
@@ -195,7 +222,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "openDashboard": {
       "description": "Toolkit documentation term: openDashboard",
@@ -215,7 +245,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "openEntryInfoview": {
       "description": "Toolkit documentation term: openEntryInfoview",
@@ -235,7 +268,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "openInfoview": {
       "description": "Toolkit documentation term: openInfoview",
@@ -255,7 +291,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "openInfoviewGraph_ForLibrary": {
       "description": "Toolkit documentation term: openInfoviewGraph[ForLibrary]",
@@ -276,7 +315,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "openMacroPackage": {
       "description": "Toolkit documentation term: openMacroPackage",
@@ -296,7 +338,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "openSnoogL": {
       "description": "Toolkit documentation term: openSnoogL",
@@ -316,7 +361,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "refreshInfoview": {
       "description": "Toolkit documentation term: refreshInfoview",
@@ -336,7 +384,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "regenerateDependencies": {
       "description": "Toolkit documentation term: regenerateDependencies",
@@ -356,7 +407,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "revealEntryPointer": {
       "description": "Toolkit documentation term: revealEntryPointer",
@@ -376,7 +430,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.": {
       "description": "Toolkit documentation term: snlDoc.*",
@@ -394,7 +451,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.init": {
       "description": "Toolkit documentation term: snlDoc.init",
@@ -414,7 +474,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openDashboard": {
       "description": "Toolkit documentation term: snlDoc.openDashboard",
@@ -434,7 +497,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openEntryInfoview": {
       "description": "Toolkit documentation term: snlDoc.openEntryInfoview",
@@ -454,7 +520,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openEntryInfoview_entryId": {
       "description": "Toolkit documentation term: snlDoc.openEntryInfoview <entryId>",
@@ -474,7 +543,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openInfoviewGraph": {
       "description": "Toolkit documentation term: snlDoc.openInfoviewGraph",
@@ -494,7 +566,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openInfoviewGraphForLibrary": {
       "description": "Toolkit documentation term: snlDoc.openInfoviewGraphForLibrary",
@@ -514,7 +589,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.regenerateDependencies": {
       "description": "Toolkit documentation term: snlDoc.regenerateDependencies",
@@ -534,7 +612,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openInfoview": {
       "description": "Extension command identifier: snlDoc.openInfoview",
@@ -554,7 +635,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openInfoview": {
       "description": "Command Palette title for snlDoc.openInfoview",
@@ -574,7 +658,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.refreshInfoview": {
       "description": "Extension command identifier: snlDoc.refreshInfoview",
@@ -594,7 +681,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.refreshInfoview": {
       "description": "Command Palette title for snlDoc.refreshInfoview",
@@ -614,7 +704,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.deleteEntry": {
       "description": "Extension command identifier: snlDoc.deleteEntry",
@@ -634,7 +727,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.deleteEntry": {
       "description": "Command Palette title for snlDoc.deleteEntry",
@@ -654,7 +750,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.deleteEntryKind": {
       "description": "Extension command identifier: snlDoc.deleteEntryKind",
@@ -674,7 +773,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.deleteEntryKind": {
       "description": "Command Palette title for snlDoc.deleteEntryKind",
@@ -694,7 +796,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.deleteMacroKind": {
       "description": "Extension command identifier: snlDoc.deleteMacroKind",
@@ -714,7 +819,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.deleteMacroKind": {
       "description": "Command Palette title for snlDoc.deleteMacroKind",
@@ -734,7 +842,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.deleteLibrary": {
       "description": "Extension command identifier: snlDoc.deleteLibrary",
@@ -754,7 +865,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.deleteLibrary": {
       "description": "Command Palette title for snlDoc.deleteLibrary",
@@ -774,7 +888,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.deleteMacroPackage": {
       "description": "Extension command identifier: snlDoc.deleteMacroPackage",
@@ -794,7 +911,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.deleteMacroPackage": {
       "description": "Command Palette title for snlDoc.deleteMacroPackage",
@@ -814,7 +934,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openEntryInfoview": {
       "description": "Command Palette title for snlDoc.openEntryInfoview",
@@ -834,7 +957,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.revealEntryPointer": {
       "description": "Extension command identifier: snlDoc.revealEntryPointer",
@@ -854,7 +980,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.revealEntryPointer": {
       "description": "Command Palette title for snlDoc.revealEntryPointer",
@@ -874,7 +1003,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openDashboard": {
       "description": "Command Palette title for snlDoc.openDashboard",
@@ -894,7 +1026,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.init": {
       "description": "Command Palette title for snlDoc.init",
@@ -914,7 +1049,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createLibrary": {
       "description": "Extension command identifier: snlDoc.createLibrary",
@@ -934,7 +1072,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createLibrary": {
       "description": "Command Palette title for snlDoc.createLibrary",
@@ -954,7 +1095,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.initEntryKinds": {
       "description": "Extension command identifier: snlDoc.initEntryKinds",
@@ -974,7 +1118,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.initEntryKinds": {
       "description": "Command Palette title for snlDoc.initEntryKinds",
@@ -994,7 +1141,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createEntryKind": {
       "description": "Extension command identifier: snlDoc.createEntryKind",
@@ -1014,7 +1164,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createEntryKind": {
       "description": "Command Palette title for snlDoc.createEntryKind",
@@ -1034,7 +1187,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.initMacroKinds": {
       "description": "Extension command identifier: snlDoc.initMacroKinds",
@@ -1054,7 +1210,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.initMacroKinds": {
       "description": "Command Palette title for snlDoc.initMacroKinds",
@@ -1074,7 +1233,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createMacroKind": {
       "description": "Extension command identifier: snlDoc.createMacroKind",
@@ -1094,7 +1256,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createMacroKind": {
       "description": "Command Palette title for snlDoc.createMacroKind",
@@ -1114,7 +1279,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createEntry": {
       "description": "Extension command identifier: snlDoc.createEntry",
@@ -1134,7 +1302,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createEntry": {
       "description": "Command Palette title for snlDoc.createEntry",
@@ -1154,7 +1325,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createMacroPackage": {
       "description": "Extension command identifier: snlDoc.createMacroPackage",
@@ -1174,7 +1348,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createMacroPackage": {
       "description": "Command Palette title for snlDoc.createMacroPackage",
@@ -1194,7 +1371,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openMacroPackage": {
       "description": "Extension command identifier: snlDoc.openMacroPackage",
@@ -1214,7 +1394,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openMacroPackage": {
       "description": "Command Palette title for snlDoc.openMacroPackage",
@@ -1234,7 +1417,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createMacro": {
       "description": "Extension command identifier: snlDoc.createMacro",
@@ -1254,7 +1440,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createMacro": {
       "description": "Command Palette title for snlDoc.createMacro",
@@ -1274,7 +1463,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editLibrary": {
       "description": "Extension command identifier: snlDoc.editLibrary",
@@ -1294,7 +1486,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editLibrary": {
       "description": "Command Palette title for snlDoc.editLibrary",
@@ -1314,7 +1509,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editEntryKind": {
       "description": "Extension command identifier: snlDoc.editEntryKind",
@@ -1334,7 +1532,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editEntryKind": {
       "description": "Command Palette title for snlDoc.editEntryKind",
@@ -1354,7 +1555,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editMacroKind": {
       "description": "Extension command identifier: snlDoc.editMacroKind",
@@ -1374,7 +1578,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editMacroKind": {
       "description": "Command Palette title for snlDoc.editMacroKind",
@@ -1394,7 +1601,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editEntry": {
       "description": "Extension command identifier: snlDoc.editEntry",
@@ -1414,7 +1624,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editEntry": {
       "description": "Command Palette title for snlDoc.editEntry",
@@ -1434,7 +1647,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editMacroPackage": {
       "description": "Extension command identifier: snlDoc.editMacroPackage",
@@ -1454,7 +1670,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editMacroPackage": {
       "description": "Command Palette title for snlDoc.editMacroPackage",
@@ -1474,7 +1693,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editMacro": {
       "description": "Extension command identifier: snlDoc.editMacro",
@@ -1494,7 +1716,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editMacro": {
       "description": "Command Palette title for snlDoc.editMacro",
@@ -1514,7 +1739,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createRelationship": {
       "description": "Extension command identifier: snlDoc.createRelationship",
@@ -1534,7 +1762,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.createRelationship": {
       "description": "Command Palette title for snlDoc.createRelationship",
@@ -1554,7 +1785,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.editRelationship": {
       "description": "Extension command identifier: snlDoc.editRelationship",
@@ -1574,7 +1808,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.editRelationship": {
       "description": "Command Palette title for snlDoc.editRelationship",
@@ -1594,7 +1831,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.deleteRelationship": {
       "description": "Extension command identifier: snlDoc.deleteRelationship",
@@ -1614,7 +1854,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.deleteRelationship": {
       "description": "Command Palette title for snlDoc.deleteRelationship",
@@ -1634,7 +1877,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openInfoviewGraph": {
       "description": "Command Palette title for snlDoc.openInfoviewGraph",
@@ -1654,7 +1900,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openInfoviewGraphForLibrary": {
       "description": "Command Palette title for snlDoc.openInfoviewGraphForLibrary",
@@ -1674,7 +1923,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.regenerateDependencies": {
       "description": "Command Palette title for snlDoc.regenerateDependencies",
@@ -1694,7 +1946,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.openSnoogL": {
       "description": "Extension command identifier: snlDoc.openSnoogL",
@@ -1714,7 +1969,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandTitle.snlDoc.openSnoogL": {
       "description": "Command Palette title for snlDoc.openSnoogL",
@@ -1734,7 +1992,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "snlDoc.createMacroPickPackage": {
       "description": "Internal Extension command identifier.",
@@ -1754,7 +2015,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CommandLabel.snlDoc.createMacroPickPackage": {
       "description": "Documentation label for the internal package-picker helper; it has no contributed Command Palette title.",
@@ -1774,7 +2038,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

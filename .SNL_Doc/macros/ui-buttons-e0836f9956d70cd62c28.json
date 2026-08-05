@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.library.outline.add-root: Add Root Entry Reference Button",
+    "source": {
+      "entries": [
+        "ui.button.library.outline.add-root"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Add Root Entry Reference Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.library.outline.add-root",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

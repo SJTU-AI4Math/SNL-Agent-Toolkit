@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl-doc",
+    "kind": "entry-kind.concept",
+    "title": "SNL-Doc Concepts",
+    "content": {
+      "snl": "%Root catalog of concepts provided by SNL-Doc and its Extension.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

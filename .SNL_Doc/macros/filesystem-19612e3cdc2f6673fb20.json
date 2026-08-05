@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "filesystem",
+  "macro": {
+    "description": "Toolkit documentation term: libraries",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "filesystem",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{libraries}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Folder.libraries",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

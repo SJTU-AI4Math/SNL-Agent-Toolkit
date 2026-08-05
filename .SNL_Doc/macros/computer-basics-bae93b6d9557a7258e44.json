@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "computer-basics",
+  "macro": {
+    "description": "Toolkit documentation term: crypto.randomUUID()",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "computer-basics",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{crypto.randomUUID()}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "crypto.randomUUID",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

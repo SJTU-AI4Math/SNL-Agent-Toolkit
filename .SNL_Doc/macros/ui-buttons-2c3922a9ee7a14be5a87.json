@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.dashboard.entries.entrance-list: Entry Entrance (List View)",
+    "source": {
+      "entries": [
+        "ui.button.dashboard.entries.entrance-list"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Entry Entrance (List View)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.dashboard.entries.entrance-list",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

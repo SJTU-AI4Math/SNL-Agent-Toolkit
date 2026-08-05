@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "UI Buttons",
   "macros": {
     "AddBar": {
@@ -20,7 +20,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "AddBar_dashed": {
       "description": "Toolkit documentation term: AddBar (dashed +)",
@@ -40,7 +43,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Button": {
       "description": "Toolkit documentation term: Button",
@@ -60,7 +66,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_X": {
       "description": "Toolkit documentation term: + Create X",
@@ -80,7 +89,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Delete_Row_Toolbar_Button": {
       "description": "Toolkit documentation term: Delete Row Toolbar Button",
@@ -100,7 +112,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Generate_UUID": {
       "description": "Toolkit documentation term: Generate UUID",
@@ -120,7 +135,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Generate_UUID_Button": {
       "description": "Toolkit documentation term: Generate UUID Button",
@@ -140,7 +158,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Indent_Row_Toolbar_Button": {
       "description": "Toolkit documentation term: Indent Row Toolbar Button",
@@ -160,7 +181,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Move-Up_Row_Toolbar_Button": {
       "description": "Toolkit documentation term: Move-Up Row Toolbar Button",
@@ -180,7 +204,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Outdent_Row_Toolbar_Button": {
       "description": "Toolkit documentation term: Outdent Row Toolbar Button",
@@ -200,7 +227,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Regenerate_UUID": {
       "description": "Toolkit documentation term: Regenerate UUID",
@@ -220,7 +250,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "active_toggle": {
       "description": "Toolkit documentation term: active toggle",
@@ -240,7 +273,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.view-graph": {
       "description": "UI terminology backed by Entry ui.button.dashboard.view-graph: View Graph Button",
@@ -260,7 +296,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.open-infoview": {
       "description": "UI terminology backed by Entry ui.button.dashboard.open-infoview: Open Infoview Button",
@@ -280,7 +319,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.libraries.entrance": {
       "description": "UI terminology backed by Entry ui.button.dashboard.libraries.entrance: Library Entrance (List View)",
@@ -300,7 +342,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.libraries.create-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.libraries.create-list: Create Library Button (List View)",
@@ -320,7 +365,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entries.create-header": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entries.create-header: Create Entry Button",
@@ -340,7 +388,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entries.search": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entries.search: SNoogL: Entry Search Button",
@@ -360,7 +411,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entries.entrance-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entries.entrance-list: Entry Entrance (List View)",
@@ -380,7 +434,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entries.create-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entries.create-list: Create Entry Button (List View)",
@@ -400,7 +457,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.relationships.entrance": {
       "description": "UI terminology backed by Entry ui.button.dashboard.relationships.entrance: Relationship Entrance (List View)",
@@ -420,7 +480,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.relationships.create-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.relationships.create-list: Create Relationship Button (List View)",
@@ -440,7 +503,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.relationships.regenerate": {
       "description": "UI terminology backed by Entry ui.button.dashboard.relationships.regenerate: Regenerate Dependencies Button (List View)",
@@ -460,7 +526,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.snl-macros.create-header": {
       "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.create-header: Create Macro Button",
@@ -480,7 +549,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.snl-macros.search": {
       "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.search: SNoogL: Macro Search Button",
@@ -500,7 +572,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.snl-macros.package-entrance": {
       "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.package-entrance: Macro Package Entrance (List View)",
@@ -520,7 +595,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.snl-macros.add-package": {
       "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.add-package: Add Package Button (List View)",
@@ -540,7 +618,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entry-kinds.entrance": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.entrance: Entry Kind Entrance (List View)",
@@ -560,7 +641,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entry-kinds.create-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.create-list: Create Entry Kind Button (List View)",
@@ -580,7 +664,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.entry-kinds.initialize-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.entry-kinds.initialize-list: Initialize Entry Kinds Button (List View)",
@@ -600,7 +687,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.macro-kinds.entrance": {
       "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.entrance: SNL Macro Kind Entrance (List View)",
@@ -620,7 +710,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.macro-kinds.create-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.create-list: Create Macro Kind Button (List View)",
@@ -640,7 +733,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.macro-kinds.initialize-list": {
       "description": "UI terminology backed by Entry ui.button.dashboard.macro-kinds.initialize-list: Initialize Macro Kinds Button (List View)",
@@ -660,7 +756,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.create.submit": {
       "description": "UI terminology backed by Entry ui.button.library.create.submit: Create Library Submit Button",
@@ -680,7 +779,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.edit.update-title": {
       "description": "UI terminology backed by Entry ui.button.library.edit.update-title: Update Library Title Button",
@@ -700,7 +802,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.counter.add-first": {
       "description": "UI terminology backed by Entry ui.button.counter.add-first: Add First Counter Button",
@@ -720,7 +825,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.tree.add-child": {
       "description": "UI terminology backed by Entry ui.button.tree.add-child: Add Child Row Toolbar Button",
@@ -740,7 +848,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.tree.add-sibling": {
       "description": "UI terminology backed by Entry ui.button.tree.add-sibling: Add Sibling Row Toolbar Button",
@@ -760,7 +871,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.tree.move-down": {
       "description": "UI terminology backed by Entry ui.button.tree.move-down: Move-Down Row Toolbar Button",
@@ -780,7 +894,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.outline.entry-entrance": {
       "description": "UI terminology backed by Entry ui.button.library.outline.entry-entrance: Library Entry Entrance",
@@ -800,7 +917,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.outline.reference-create": {
       "description": "UI terminology backed by Entry ui.button.library.outline.reference-create: Reference or Create Entry Button",
@@ -820,7 +940,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.save": {
       "description": "UI terminology backed by Entry ui.button.entry.save: Create Entry Submit Button",
@@ -840,7 +963,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry-kind.create.submit": {
       "description": "UI terminology backed by Entry ui.button.entry-kind.create.submit: Create Entry Kind Submit Button",
@@ -860,7 +986,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry-kind.edit.submit": {
       "description": "UI terminology backed by Entry ui.button.entry-kind.edit.submit: Update Entry Kind Submit Button",
@@ -880,7 +1009,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry-kind.initialize.submit": {
       "description": "UI terminology backed by Entry ui.button.entry-kind.initialize.submit: Initialize Entry Kinds Submit Button",
@@ -900,7 +1032,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-kind.create.submit": {
       "description": "UI terminology backed by Entry ui.button.macro-kind.create.submit: Create Macro Kind Submit Button",
@@ -920,7 +1055,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-kind.edit.submit": {
       "description": "UI terminology backed by Entry ui.button.macro-kind.edit.submit: Update Macro Kind Submit Button",
@@ -940,7 +1078,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-kind.initialize.submit": {
       "description": "UI terminology backed by Entry ui.button.macro-kind.initialize.submit: Initialize Macro Kinds Submit Button",
@@ -960,7 +1101,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.create.submit": {
       "description": "UI terminology backed by Entry ui.button.macro-package.create.submit: Create Macro Package Submit Button",
@@ -980,7 +1124,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.macro-entrance": {
       "description": "UI terminology backed by Entry ui.button.macro-package.macro-entrance: Macro Entrance (Package List View)",
@@ -1000,7 +1147,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.create-macro": {
       "description": "UI terminology backed by Entry ui.button.macro-package.create-macro: Create Macro Button (Package Panel)",
@@ -1020,7 +1170,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.select-mode": {
       "description": "UI terminology backed by Entry ui.button.macro-package.select-mode: Macro Select Mode Button",
@@ -1040,7 +1193,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.batch-delete": {
       "description": "UI terminology backed by Entry ui.button.macro-package.batch-delete: Delete Macros Batch Button",
@@ -1060,7 +1216,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.submit": {
       "description": "UI terminology backed by Entry ui.button.macro.create.submit: Create Macro Submit Button",
@@ -1080,7 +1239,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.submit": {
       "description": "UI terminology backed by Entry ui.button.macro.edit.submit: Update Macro Submit Button",
@@ -1100,7 +1262,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.relationship.create.submit": {
       "description": "UI terminology backed by Entry ui.button.relationship.create.submit: Create Relationship Submit Button",
@@ -1120,7 +1285,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.relationship.edit.submit": {
       "description": "UI terminology backed by Entry ui.button.relationship.edit.submit: Update Relationship Submit Button",
@@ -1140,7 +1308,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.snoogl.entry-result-entrance": {
       "description": "UI terminology backed by Entry ui.button.snoogl.entry-result-entrance: SNoogL Entry Result Entrance",
@@ -1160,7 +1331,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.snoogl.macro-result-entrance": {
       "description": "UI terminology backed by Entry ui.button.snoogl.macro-result-entrance: SNoogL Macro Result Entrance",
@@ -1180,7 +1354,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.view-graph": {
       "description": "UI terminology backed by Entry ui.button.infoview.view-graph: View Graph Button (Infoview)",
@@ -1200,7 +1377,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.edit-dashboard": {
       "description": "UI terminology backed by Entry ui.button.infoview.edit-dashboard: Edit in Dashboard Button",
@@ -1220,7 +1400,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.library-entrance": {
       "description": "UI terminology backed by Entry ui.button.infoview.library-entrance: Library Entrance (Infoview)",
@@ -1240,7 +1423,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.back-libraries": {
       "description": "UI terminology backed by Entry ui.button.infoview.back-libraries: Back to Libraries Button",
@@ -1260,7 +1446,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.library-graph": {
       "description": "UI terminology backed by Entry ui.button.infoview.library-graph: View Library Graph Button",
@@ -1280,7 +1469,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.edit-library": {
       "description": "UI terminology backed by Entry ui.button.infoview.edit-library: Edit This Library Button",
@@ -1300,7 +1492,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.infoview.outline-toggle": {
       "description": "UI terminology backed by Entry ui.button.infoview.outline-toggle: Infoview Outline Toggle Button",
@@ -1320,7 +1515,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry-infoview.edit": {
       "description": "UI terminology backed by Entry ui.button.entry-infoview.edit: Edit Entry Button (Entry Infoview)",
@@ -1340,7 +1538,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry-infoview.related-entry": {
       "description": "UI terminology backed by Entry ui.button.entry-infoview.related-entry: Related Entry Entrance",
@@ -1360,7 +1561,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.edit.view-infoview": {
       "description": "UI terminology backed by Entry ui.button.library.edit.view-infoview: View Library in Infoview Button",
@@ -1380,7 +1584,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.counter.add-root": {
       "description": "UI terminology backed by Entry ui.button.counter.add-root: Add Root Counter Button",
@@ -1400,7 +1607,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.outline.add-root": {
       "description": "UI terminology backed by Entry ui.button.library.outline.add-root: Add Root Entry Reference Button",
@@ -1420,7 +1630,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.library.outline.cancel-add": {
       "description": "UI terminology backed by Entry ui.button.library.outline.cancel-add: Cancel Entry Reference Add Button",
@@ -1440,7 +1653,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.content.snl": {
       "description": "UI terminology backed by Entry ui.button.entry.create.content.snl: SNL Content Tab (Create)",
@@ -1460,7 +1676,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.content.typst": {
       "description": "UI terminology backed by Entry ui.button.entry.create.content.typst: Typst Content Tab (Create)",
@@ -1480,7 +1699,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.content.latex": {
       "description": "UI terminology backed by Entry ui.button.entry.create.content.latex: LaTeX Content Tab (Create)",
@@ -1500,7 +1722,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.content.markdown": {
       "description": "UI terminology backed by Entry ui.button.entry.create.content.markdown: Markdown Content Tab (Create)",
@@ -1520,7 +1745,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.content.text": {
       "description": "UI terminology backed by Entry ui.button.entry.create.content.text: Text Content Tab (Create)",
@@ -1540,7 +1768,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.snl-text-editor": {
       "description": "UI terminology backed by Entry ui.button.entry.create.snl-text-editor: SNL Text Editor Button (Create)",
@@ -1560,7 +1791,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.snl-gui-editor": {
       "description": "UI terminology backed by Entry ui.button.entry.create.snl-gui-editor: SNL GUI Editor Button (Create)",
@@ -1580,7 +1814,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.view-infoview": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.view-infoview: View Entry in Infoview Button",
@@ -1600,7 +1837,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.content.snl": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.content.snl: SNL Content Tab (Edit)",
@@ -1620,7 +1860,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.content.typst": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.content.typst: Typst Content Tab (Edit)",
@@ -1640,7 +1883,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.content.latex": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.content.latex: LaTeX Content Tab (Edit)",
@@ -1660,7 +1906,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.content.markdown": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.content.markdown: Markdown Content Tab (Edit)",
@@ -1680,7 +1929,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.content.text": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.content.text: Text Content Tab (Edit)",
@@ -1700,7 +1952,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.snl-text-editor": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.snl-text-editor: SNL Text Editor Button (Edit)",
@@ -1720,7 +1975,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.snl-gui-editor": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.snl-gui-editor: SNL GUI Editor Button (Edit)",
@@ -1740,7 +1998,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.submit": {
       "description": "UI terminology backed by Entry ui.button.entry.edit.submit: Update Entry Submit Button",
@@ -1760,7 +2021,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.edit.submit": {
       "description": "UI terminology backed by Entry ui.button.macro-package.edit.submit: Update Macro Package Submit Button",
@@ -1780,7 +2044,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.toggle-active": {
       "description": "UI terminology backed by Entry ui.button.macro-package.toggle-active: Toggle Macro Package Active Button",
@@ -1800,7 +2067,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.edit": {
       "description": "UI terminology backed by Entry ui.button.macro-package.edit: Edit Macro Package Button",
@@ -1820,7 +2090,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.expand-styles": {
       "description": "UI terminology backed by Entry ui.button.macro-package.expand-styles: Expand Macro Styles Button",
@@ -1840,7 +2113,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.create-kind": {
       "description": "UI terminology backed by Entry ui.button.macro.create.create-kind: Create Macro Kind Button (Create)",
@@ -1860,7 +2136,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.create-kind": {
       "description": "UI terminology backed by Entry ui.button.macro.edit.create-kind: Create Macro Kind Button (Edit)",
@@ -1880,7 +2159,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.relationship-graph.open-entry": {
       "description": "UI terminology backed by Entry ui.button.relationship-graph.open-entry: Open Entry Node Button",
@@ -1900,7 +2182,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.relationship-graph.edit-edge": {
       "description": "UI terminology backed by Entry ui.button.relationship-graph.edit-edge: Edit Relationship Edge Button",
@@ -1920,7 +2205,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.snoogl.entry-mode": {
       "description": "UI terminology backed by Entry ui.button.snoogl.entry-mode: SNoogL Entry Search Mode Button",
@@ -1940,7 +2228,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.snoogl.macro-mode": {
       "description": "UI terminology backed by Entry ui.button.snoogl.macro-mode: SNoogL Macro Search Mode Button",
@@ -1960,7 +2251,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ButtonLabel.create_entry": {
       "description": "Toolkit documentation term: + Create Entry",
@@ -1980,7 +2274,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ButtonLabel.create_entry_kind": {
       "description": "Toolkit documentation term: + Create Entry Kind",
@@ -2000,7 +2297,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ButtonLabel.initialize_entry_kinds": {
       "description": "Toolkit documentation term: + Initialize Entry Kinds",
@@ -2020,7 +2320,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.dashboard.snl-macros.toggle-active": {
       "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.toggle-active: Toggle Package Active Button (Dashboard List)",
@@ -2040,7 +2343,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Delete_macro_row": {
       "description": "Catfood term backed by ui.button.macro-package.row-delete.",
@@ -2060,7 +2366,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.row-delete": {
       "description": "Catfood term backed by ui.button.macro-package.row-delete.",
@@ -2080,7 +2389,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro-package.batch-transfer": {
       "description": "Catfood term backed by ui.button.macro-package.batch-transfer.",
@@ -2100,7 +2412,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.panel-nav.back-dashboard": {
       "description": "Catfood term backed by ui.button.panel-nav.back-dashboard.",
@@ -2120,7 +2435,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.panel-nav.back-infoview": {
       "description": "Catfood term backed by ui.button.panel-nav.back-infoview.",
@@ -2140,7 +2458,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.panel-nav.refresh": {
       "description": "Catfood term backed by ui.button.panel-nav.refresh.",
@@ -2160,7 +2481,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.style-add": {
       "description": "Catfood term backed by ui.button.macro.create.style-add.",
@@ -2180,7 +2504,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.style-add": {
       "description": "Catfood term backed by ui.button.macro.edit.style-add.",
@@ -2200,7 +2527,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.style-remove": {
       "description": "Catfood term backed by ui.button.macro.create.style-remove.",
@@ -2220,7 +2550,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.style-remove": {
       "description": "Catfood term backed by ui.button.macro.edit.style-remove.",
@@ -2240,7 +2573,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.style-move-default": {
       "description": "Catfood term backed by ui.button.macro.create.style-move-default.",
@@ -2260,7 +2596,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.style-move-default": {
       "description": "Catfood term backed by ui.button.macro.edit.style-move-default.",
@@ -2280,7 +2619,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.arg-add": {
       "description": "Catfood term backed by ui.button.macro.create.arg-add.",
@@ -2300,7 +2642,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.arg-add": {
       "description": "Catfood term backed by ui.button.macro.edit.arg-add.",
@@ -2320,7 +2665,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.arg-remove": {
       "description": "Catfood term backed by ui.button.macro.create.arg-remove.",
@@ -2340,7 +2688,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.arg-remove": {
       "description": "Catfood term backed by ui.button.macro.edit.arg-remove.",
@@ -2360,7 +2711,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.create.args-reset": {
       "description": "Catfood term backed by ui.button.macro.create.args-reset.",
@@ -2380,7 +2734,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.macro.edit.args-reset": {
       "description": "Catfood term backed by ui.button.macro.edit.args-reset.",
@@ -2400,7 +2757,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.create.gui-open-macro": {
       "description": "Catfood term backed by ui.button.entry.create.gui-open-macro.",
@@ -2420,7 +2780,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry.edit.gui-open-macro": {
       "description": "Catfood term backed by ui.button.entry.edit.gui-open-macro.",
@@ -2440,7 +2803,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.button.entry-infoview.context-related-entry": {
       "description": "Catfood term backed by ui.button.entry-infoview.context-related-entry.",
@@ -2460,7 +2826,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ButtonPress": {
       "description": "",
@@ -2494,7 +2863,10 @@
           "template": "Pressing it will #0."
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     }
   },
   "description": "Concrete Extension buttons and actions."

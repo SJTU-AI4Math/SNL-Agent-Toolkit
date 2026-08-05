@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.native-renderer",
+    "kind": "entry-kind.concept",
+    "title": "SNL Native Renderer",
+    "content": {
+      "snl": "%snl-native rendering mode.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

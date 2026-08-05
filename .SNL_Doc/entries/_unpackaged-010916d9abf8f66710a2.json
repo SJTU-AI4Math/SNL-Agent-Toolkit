@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.ui.button",
+    "kind": "entry-kind.concept",
+    "title": "Button",
+    "content": {
+      "snl": "%An actionable Button in the Extension UI.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

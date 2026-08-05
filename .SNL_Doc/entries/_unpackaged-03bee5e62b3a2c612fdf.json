@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.macro.edit.style-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Macro Style Button (Edit)",
+    "content": {
+      "snl": "ButtonDescription(%This action runs in edit mode.%,AddItem(%a uniquely named Macro v8 style%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

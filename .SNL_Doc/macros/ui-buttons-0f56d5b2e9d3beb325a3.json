@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.add-package: Add Package Button (List View)",
+    "source": {
+      "entries": [
+        "ui.button.dashboard.snl-macros.add-package"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Add Package Button (List View)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.dashboard.snl-macros.add-package",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

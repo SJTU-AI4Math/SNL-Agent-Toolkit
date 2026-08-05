@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.tree.move-down: Move-Down Row Toolbar Button",
+    "source": {
+      "entries": [
+        "ui.button.tree.move-down"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Move-Down Row Toolbar Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.tree.move-down",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

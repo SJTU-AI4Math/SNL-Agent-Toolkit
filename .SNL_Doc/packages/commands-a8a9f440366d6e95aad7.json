@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "commands",
+  "name": "Extension Commands",
+  "description": "Registered command identifiers, titles, and aliases."
+}

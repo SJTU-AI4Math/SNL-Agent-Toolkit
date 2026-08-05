@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "Toolkit documentation term: Libraries Section",
+    "source": {
+      "entries": [
+        "ui.section.dashboard.libraries"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Libraries Section}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Libraries_Section",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

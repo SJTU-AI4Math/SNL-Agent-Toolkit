@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "UIbasic",
+  "macro": {
+    "description": "Start an inline add form at a given location.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "literal",
+    "dynamic_arity": false,
+    "styles": [
+      {
+        "style_name": "default",
+        "tags": [],
+        "mode": "text",
+        "template": "start the add form at #0"
+      }
+    ],
+    "tags": [],
+    "name": "StartAddForm",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

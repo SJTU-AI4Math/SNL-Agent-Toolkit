@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: EntryKind",
+    "source": {
+      "entries": [
+        "concept.snl.entry-kind"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{EntryKind}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "EntryKind",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.snoogl.macro-result-entrance: SNoogL Macro Result Entrance",
+    "source": {
+      "entries": [
+        "ui.button.snoogl.macro-result-entrance"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNoogL Macro Result Entrance}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.snoogl.macro-result-entrance",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

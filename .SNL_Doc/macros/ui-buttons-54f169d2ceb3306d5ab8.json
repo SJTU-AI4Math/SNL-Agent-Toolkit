@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Toolkit documentation term: Indent Row Toolbar Button",
+    "source": {
+      "entries": [
+        "ui.button.tree.indent"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Indent Row Toolbar Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Indent_Row_Toolbar_Button",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "snl-concepts",
+  "name": "SNL-Doc Concepts",
+  "description": "SNL schema, renderer, storage, and reusable Extension concepts."
+}

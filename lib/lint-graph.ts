@@ -28,7 +28,7 @@
  *        - the branch subgraph has NO CYCLES (cycles → error; would
  *          hang numberFor's chain walk).
  *        - graph nodes with an `entryId` prop reference an entry that
- *          exists in the shared pool (`.SNL_Doc/entries.json`). Missing
+ *          exists in the shared pool (`.SNL_Doc/entries/*.json`). Missing
  *          entryId is fine (placeholder node). Unresolvable entryId is
  *          an error — the graph promised a link that isn't there.
  *
@@ -286,7 +286,7 @@ export function lintGraph(raw: unknown, ctx: LintGraphContext): LintReport {
         code: 'graph.node.entry-not-in-pool',
         message:
           `Node '${n.id}'.props.entryId = '${entryId}' does not exist in the ` +
-          `shared entry pool (.SNL_Doc/entries.json).`,
+          `shared Entry entity pool (.SNL_Doc/entries/*.json).`,
         path: `nodes (id=${n.id}).props.entryId`,
       });
     }

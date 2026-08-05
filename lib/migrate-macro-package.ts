@@ -1,14 +1,16 @@
 /**
- * Adapt an on-disk Toolkit macro package from Macro v6 to v7.
+ * Adapt an on-disk Toolkit macro package from Macro v6 to current v8.
  *
  * SNL-Basics migrates a flat `Record<string, MacroV6>` whose values contain
  * `name`. Toolkit package files instead store the macro identity only as the
  * `macros` map key. This adapter restores that key as a transient `name`, runs
  * the canonical Basics migration, then removes the redundant name again.
- * Package metadata/version and non-schema extension fields are preserved.
+ * Package metadata and non-schema extension fields are preserved; the wrapper
+ * version becomes `8`.
  */
 import {
   migrateMacroV6toV7,
+  migrateMacroV7toV8,
   type MacroStyleV6,
   type MacroV6,
 } from '../external/SNL-Basics/src/schema/migrate-macro.ts';
@@ -33,7 +35,7 @@ export interface MacroPackageFileV6 {
   [key: string]: unknown;
 }
 
-export function migrateMacroPackageV6toV7(raw: unknown): MacroPackageFile {
+export function migrateMacroPackageV6toV8(raw: unknown): MacroPackageFile {
   if (!isRecord(raw)) throw new TypeError('macro package must be an object');
   if (!isRecord(raw.macros)) throw new TypeError('macro package macros must be an object map');
 
@@ -47,7 +49,8 @@ export function migrateMacroPackageV6toV7(raw: unknown): MacroPackageFile {
     });
 
     // Put `name` last so a stale/redundant value cannot override the map key.
-    const migrated = migrateMacroV6toV7({ ...rawMacro, name: mapName } as unknown as MacroV6);
+    const migratedV7 = migrateMacroV6toV7({ ...rawMacro, name: mapName } as unknown as MacroV6);
+    const migrated = migrateMacroV7toV8(migratedV7);
     const { name: _transientName, ...migratedWithoutName } = migrated;
     const {
       name: _staleName,
@@ -74,8 +77,11 @@ export function migrateMacroPackageV6toV7(raw: unknown): MacroPackageFile {
     } as MacroPackageEntryWithoutName;
   }
 
-  return { ...raw, macros } as unknown as MacroPackageFile;
+  return { ...raw, version: '8', macros } as unknown as MacroPackageFile;
 }
+
+/** @deprecated Use migrateMacroPackageV6toV8. */
+export const migrateMacroPackageV6toV7 = migrateMacroPackageV6toV8;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

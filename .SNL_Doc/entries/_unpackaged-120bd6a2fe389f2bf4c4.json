@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.interaction-driver",
+    "kind": "entry-kind.concept",
+    "title": "SnlInteractionDriver",
+    "content": {
+      "snl": "%The injectable SNL-Basics delegated-event boundary for hover, leave, click, and Ctrl-click. The current Extension uses its recursive popover stack but does not yet instantiate this driver.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

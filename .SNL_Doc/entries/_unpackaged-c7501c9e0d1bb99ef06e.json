@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.library.create.img",
+    "kind": "img",
+    "title": "Create Library Image",
+    "content": {
+      "markdown": "![](assets/Create-Library-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

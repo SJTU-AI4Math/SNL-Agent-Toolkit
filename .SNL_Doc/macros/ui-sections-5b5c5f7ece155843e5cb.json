@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.section.entry.edit.preview: Entry Live Preview Section (Edit)",
+    "source": {
+      "entries": [
+        "ui.section.entry.edit.preview"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Entry Live Preview Section (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.entry.edit.preview",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

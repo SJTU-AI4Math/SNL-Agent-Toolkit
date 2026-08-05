@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.snoogl.macro-result-entrance",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "SNoogL Macro Result Entrance",
+    "content": {
+      "snl": "ButtonPress(OpenPanelFor(Edit_Macro,%the macro result%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.library.outline.counter",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Library Entry Counter Selector",
+    "content": {
+      "snl": "%Selects a per-reference Counter override; empty uses the Entry Kind default.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

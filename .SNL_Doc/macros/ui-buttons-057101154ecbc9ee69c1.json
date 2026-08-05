@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.snoogl.entry-mode: SNoogL Entry Search Mode Button",
+    "source": {
+      "entries": [
+        "ui.button.snoogl.entry-mode"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNoogL Entry Search Mode Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.snoogl.entry-mode",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

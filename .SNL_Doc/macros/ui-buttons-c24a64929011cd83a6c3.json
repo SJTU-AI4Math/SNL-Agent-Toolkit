@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Toolkit documentation term: + Create X",
+    "source": {
+      "entries": [
+        "ui.button.shared.add-bar"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{+ Create X}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Create_X",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

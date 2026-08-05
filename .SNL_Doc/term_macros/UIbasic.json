@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "UI Basic",
   "macros": {
     "OpenPanel": {
@@ -34,7 +34,10 @@
           "template": "open #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "PanelDescription": {
       "description": "",
@@ -68,7 +71,10 @@
           "template": "Description: #0\nContents: #1\nCan be opened by: #2\nDemonstration image: #3"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "RunVSCodeCommand": {
       "description": "",
@@ -102,7 +108,10 @@
           "template": "run VS Code command #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "NotDocumented": {
       "description": "Explicit sentinel for an undocumented UI-description field.",
@@ -120,7 +129,10 @@
           "template": "not documented"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "OpenPanelFor": {
       "description": "Open a panel with an entity already selected as its context.",
@@ -138,7 +150,10 @@
           "template": "open #0 for #1"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ButtonDescription": {
       "description": "Describe a button's presentation separately from the action triggered by pressing it.",
@@ -156,7 +171,10 @@
           "template": "#0\nPressing it will #1."
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "OpenUIElement": {
       "description": "Open a UI surface that is not necessarily a panel.",
@@ -174,7 +192,10 @@
           "template": "open #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Toggle": {
       "description": "Toggle a binary UI state.",
@@ -192,7 +213,10 @@
           "template": "toggle #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "GenerateValueFor": {
       "description": "Generate a value for a UI field.",
@@ -210,7 +234,10 @@
           "template": "generate #0 for #1"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "MoveTreeRow": {
       "description": "Move the current row within a tree.",
@@ -228,7 +255,10 @@
           "template": "move the current tree row #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "DeleteTreeRow": {
       "description": "Delete the current tree row and its subtree.",
@@ -246,7 +276,10 @@
           "template": "delete the current tree row and its subtree"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CreateEntity": {
       "description": "Create a UI-managed entity.",
@@ -264,7 +297,10 @@
           "template": "create #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "PersistValue": {
       "description": "Persist an edited value.",
@@ -282,7 +318,10 @@
           "template": "persist #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "AddTreeRow": {
       "description": "Add a row to a tree.",
@@ -300,7 +339,10 @@
           "template": "add #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ReferenceOrCreateEntry": {
       "description": "Resolve an Entry reference or create the missing Entry.",
@@ -318,7 +360,10 @@
           "template": "reference an existing Entry, or insert a pending stub and open Create Entry when unresolved"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ValidateAndCreateEntity": {
       "description": "Validate and create an entity.",
@@ -336,7 +381,10 @@
           "template": "validate and create #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "UpdateEntity": {
       "description": "Update an existing entity.",
@@ -354,7 +402,10 @@
           "template": "update #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ApplySelectedPreset": {
       "description": "Apply the selected preset.",
@@ -372,7 +423,10 @@
           "template": "apply the selected #0 preset"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "EnableInterfaceState": {
       "description": "Enable a UI state.",
@@ -390,7 +444,10 @@
           "template": "enable #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "DeleteSelectedItems": {
       "description": "Delete selected items.",
@@ -408,7 +465,10 @@
           "template": "delete selected #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SelectContentFormat": {
       "description": "Select an Entry content format editor.",
@@ -426,7 +486,10 @@
           "template": "select the #0 content editor"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SetInterfaceMode": {
       "description": "Switch a UI surface to another mode.",
@@ -444,7 +507,10 @@
           "template": "switch #0 to #1"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ValidateAndUpdateEntity": {
       "description": "Validate and update an entity.",
@@ -462,7 +528,10 @@
           "template": "validate and update #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "CloseInterface": {
       "description": "Close a UI surface.",
@@ -480,7 +549,10 @@
           "template": "close #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "DeleteItemAfterConfirmation": {
       "description": "Delete one item after confirmation.",
@@ -498,7 +570,10 @@
           "template": "delete #0 after confirmation"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "RefreshPanelContext": {
       "description": "Refresh the current panel context.",
@@ -516,7 +591,10 @@
           "template": "refresh the current panel context"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "AddItem": {
       "description": "Add an item.",
@@ -534,7 +612,10 @@
           "template": "add #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "RemoveItem": {
       "description": "Remove an item.",
@@ -552,7 +633,10 @@
           "template": "remove #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "MoveItemTowardDefault": {
       "description": "Move an item toward the default position.",
@@ -570,7 +654,10 @@
           "template": "move #0 toward the default position"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "ResetItems": {
       "description": "Reset a collection of UI values.",
@@ -588,7 +675,10 @@
           "template": "reset #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "StartAddForm": {
       "description": "Start an inline add form at a given location.",
@@ -606,7 +696,10 @@
           "template": "start the add form at #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "NavigateBackTo": {
       "description": "Navigate back to a prior UI surface.",
@@ -624,7 +717,10 @@
           "template": "navigate back to #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "OpenOneOfFor": {
       "description": "Open one of two possible panels for the same selected context.",
@@ -642,7 +738,10 @@
           "template": "open either #0 for #2 or #1 for #2"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SelectSearchMode": {
       "description": "Select a search mode in a search interface.",
@@ -660,7 +759,10 @@
           "template": "select #1 search in #0"
         }
       ],
-      "tags": []
+      "tags": [],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "ui-panels",
+  "name": "UI Panels",
+  "description": "Concrete Extension Panel terminology."
+}

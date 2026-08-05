@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.library.create.title",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Library Title Input",
+    "content": {
+      "snl": "%Title field used to derive the new Library slug.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

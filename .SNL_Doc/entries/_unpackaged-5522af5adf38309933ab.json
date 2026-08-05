@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.macro-package.batch-transfer",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Copy / Move Batch Button",
+    "content": {
+      "snl": "ButtonDescription(%The single transfer modal supports copying or moving selected macros to an existing or newly described destination package.%,OpenUIElement(%that modal%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

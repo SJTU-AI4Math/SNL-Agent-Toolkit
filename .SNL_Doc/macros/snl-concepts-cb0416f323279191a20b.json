@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: dependency relationship",
+    "source": {
+      "entries": [
+        "concept.snl.dependency-relationship"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{dependency relationship}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "dependency_relationship",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

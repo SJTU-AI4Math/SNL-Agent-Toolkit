@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.snoogl.img",
+    "kind": "img",
+    "title": "SNoogL Search Image",
+    "content": {
+      "markdown": "![](assets/SNoogL-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

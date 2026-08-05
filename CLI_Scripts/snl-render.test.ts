@@ -38,6 +38,7 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'infix +',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    default_style: { en: 'default' },
     tags: [],
     styles: [
       { style_name: 'default', mode: 'formula_inline', template: '#0 + #1', tags: [] },
@@ -48,6 +49,7 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'set union',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    default_style: { en: 'default' },
     tags: [],
     styles: [
       { style_name: 'default', mode: 'formula_inline', template: '#0 \\cup #1', tags: [] },
@@ -58,6 +60,7 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'fraction',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    default_style: { en: 'default' },
     tags: [],
     styles: [
       { style_name: 'default', mode: 'formula_inline', template: '\\frac{#0}{#1}', tags: [] },
@@ -68,6 +71,7 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'less or equal',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    default_style: { en: 'default' },
     tags: [],
     styles: [
       { style_name: 'default', mode: 'formula_inline', template: '#0 \\leq #1', tags: [] },
@@ -78,6 +82,7 @@ const macros: Record<string, MacroPackageEntry> = {
     description: 'norm',
     source: { entries: [], urls: [] },
     dynamic_arity: false,
+    default_style: { en: 'default' },
     tags: [],
     styles: [
       { style_name: 'default', mode: 'formula_inline', template: '\\lVert #0 \\rVert', tags: [] },
@@ -119,7 +124,7 @@ describe('renderTreeAsLatex', () => {
     const dynamic: Record<string, MacroPackageEntry> = {
       join: {
         name: 'join', description: '', source: { entries: [], urls: [] },
-        dynamic_arity: true, tags: [],
+        dynamic_arity: true, default_style: { en: 'default' }, tags: [],
         styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\left[#*\\right]', separator: ' | ', tags: [] }],
       },
     };
@@ -130,7 +135,7 @@ describe('renderTreeAsLatex', () => {
     const composed: Record<string, MacroPackageEntry> = {
       calc: {
         name: 'calc', description: '', source: { entries: [], urls: [] },
-        kind: 'rule', dynamic_arity: false, tags: [],
+        kind: 'rule', dynamic_arity: false, default_style: { en: 'default' }, tags: [],
         styles: [{
           style_name: 'default', mode: 'formula_display',
           template: '\\text{Calculating: }\\begin{aligned}#0#1\\end{aligned}', tags: [],
@@ -138,7 +143,7 @@ describe('renderTreeAsLatex', () => {
       },
       'calc-partial': {
         name: 'calc-partial', description: '', source: { entries: [], urls: [] },
-        kind: 'partial', dynamic_arity: true, tags: [],
+        kind: 'partial', dynamic_arity: true, default_style: { en: 'default' }, tags: [],
         styles: [{
           style_name: 'default', mode: 'formula_display',
           template: '& =#*', separator: '\\\\ & =', tags: [],
@@ -157,7 +162,7 @@ describe('renderTreeAsLatex', () => {
     const dynamic: Record<string, MacroPackageEntry> = {
       join: {
         name: 'join', description: '', source: { entries: [], urls: [] },
-        dynamic_arity: true, tags: [],
+        dynamic_arity: true, default_style: { en: 'default' }, tags: [],
         styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\left[#*\\right]', separator: '', tags: [] }],
       },
     };
@@ -172,7 +177,7 @@ describe('renderTreeAsLatex', () => {
     const invalid: Record<string, MacroPackageEntry> = {
       join: {
         name: 'join', description: '', source: { entries: [], urls: [] },
-        dynamic_arity: true, tags: [],
+        dynamic_arity: true, default_style: { en: 'default' }, tags: [],
         styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\Sigma', tags: [] }],
       },
     };
@@ -211,6 +216,7 @@ describe('renderTreeAsText', () => {
         description: 'unmapped',
         source: { entries: [], urls: [] },
         dynamic_arity: false,
+        default_style: { en: 'default' },
         tags: [],
         styles: [
           { style_name: 'default', mode: 'formula_inline', template: '#0 \\weirdop #1', tags: [] },

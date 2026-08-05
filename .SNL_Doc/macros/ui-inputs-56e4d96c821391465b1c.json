@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "Toolkit documentation term: Text Input",
+    "source": {
+      "entries": [
+        "concept.ui.text-input"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Text Input}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Text_Input",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

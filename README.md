@@ -45,6 +45,11 @@ for the full lint, reference-tracing, and synchronized-rename workflows.
 
 The authoritative on-disk schema implementation belongs to `SNL-Doc-Extension`. The agent-readable Markdown reference is [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md); Toolkit-only compatibility types live in `lib/snl-doc-schema.ts`.
 
+Toolkit currently targets workspace data `0.0.6` (entity storage v1) and Macro
+schema v8. It retains read/maintenance compatibility for pre-`0.0.6` aggregate
+workspaces, never merges frozen aggregate backups into current live entities,
+and rejects unknown future workspace versions instead of guessing.
+
 ## Related repositories
 
 - [`SNL-Basics`](https://github.com/SJTU-AI4Math/SNL-Basics) — parser and renderer.

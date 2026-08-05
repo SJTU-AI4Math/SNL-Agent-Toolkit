@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.snoogl.kind-filter: SNoogL Kind Filter",
+    "source": {
+      "entries": [
+        "ui.input.snoogl.kind-filter"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNoogL Kind Filter}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.snoogl.kind-filter",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.section.relationship-graph.canvas: Relationship Graph Canvas Section",
+    "source": {
+      "entries": [
+        "ui.section.relationship-graph.canvas"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Relationship Graph Canvas Section}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.relationship-graph.canvas",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

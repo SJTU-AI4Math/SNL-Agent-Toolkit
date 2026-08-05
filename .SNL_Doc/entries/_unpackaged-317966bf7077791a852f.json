@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.stable-identity",
+    "kind": "entry-kind.concept",
+    "title": "Stable Entity Identity",
+    "content": {
+      "snl": "%Entry ids, Macro map keys, Entry-Kind ids, Macro-Kind ids, package filenames, Library slugs, and relationship ids are stable identities rather than display labels.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

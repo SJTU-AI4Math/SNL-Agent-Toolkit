@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.entry-kind.edit.style: Entry Kind Style Input (Edit)",
+    "source": {
+      "entries": [
+        "ui.input.entry-kind.edit.style"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Entry Kind Style Input (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.entry-kind.edit.style",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

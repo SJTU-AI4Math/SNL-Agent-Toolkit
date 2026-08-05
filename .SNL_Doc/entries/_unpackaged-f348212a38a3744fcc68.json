@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-package.create.img",
+    "kind": "img",
+    "title": "Create Macro Package Image",
+    "content": {
+      "markdown": "![](assets/Create-Macro-Package-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

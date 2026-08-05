@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "Catfood term backed by ui.section.shared.panel-nav.",
+    "source": {
+      "entries": [
+        "ui.section.shared.panel-nav"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Shared Panel Navigation}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.shared.panel-nav",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

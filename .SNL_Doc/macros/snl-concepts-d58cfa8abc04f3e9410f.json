@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term backed by concept.snl.syntax-tree.",
+    "source": {
+      "entries": [
+        "concept.snl.syntax-tree"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{env\\_mode}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "env_mode",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

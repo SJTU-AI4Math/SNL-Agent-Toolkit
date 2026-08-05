@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.entry-kind.create.img",
+    "kind": "img",
+    "title": "Create Entry Kind Image",
+    "content": {
+      "markdown": "![](assets/Create-Entry-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

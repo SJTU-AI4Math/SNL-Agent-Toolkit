@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-kind.edit.img",
+    "kind": "img",
+    "title": "Edit Macro Kind Image",
+    "content": {
+      "markdown": "![](assets/Edit-Macro-Kind-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

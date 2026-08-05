@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.syntax-tree",
+    "kind": "entry-kind.concept",
+    "title": "SNL Syntax Tree",
+    "content": {
+      "snl": "%Tree v2 is the parsed SNL representation. Nodes use #0, optional #1 and #2, semantic kind/scope metadata, and ordered children; v1 name, style, and envMode fields exist only at migration boundaries.%(macro_name,style_name,env_mode)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

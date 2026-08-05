@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.macro-package.edit.img",
+    "kind": "img",
+    "title": "Edit Macro Package Image",
+    "content": {
+      "markdown": "![](assets/Edit-Macro-Package-Panel.png)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

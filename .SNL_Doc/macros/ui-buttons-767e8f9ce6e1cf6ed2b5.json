@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "Toolkit documentation term: Generate UUID Button",
+    "source": {
+      "entries": [
+        "ui.button.entry.generate-uuid"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Generate UUID Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Generate_UUID_Button",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

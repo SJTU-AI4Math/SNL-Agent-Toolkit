@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.macro.edit.block-template-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Block Template Name Input (Edit)",
+    "content": {
+      "snl": "%Edits the block-only #0 and replaces the legacy renderer-key field on save.%(block_template_name)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

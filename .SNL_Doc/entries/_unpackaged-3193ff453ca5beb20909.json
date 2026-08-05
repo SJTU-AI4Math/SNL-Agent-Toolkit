@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.dashboard.entries.entrance-list",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Entry Entrance (List View)",
+    "content": {
+      "snl": "ButtonDescription(%An Entry row in the Dashboard list.%,OpenPanelFor(Entry.ui.panel.entry.edit,%that Entry%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

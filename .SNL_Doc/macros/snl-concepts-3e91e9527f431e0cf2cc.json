@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term for Source Structure Metrics.",
+    "source": {
+      "entries": [
+        "concept.extension.source-structure-metrics"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{source structure metrics}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Source_structure_metrics",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

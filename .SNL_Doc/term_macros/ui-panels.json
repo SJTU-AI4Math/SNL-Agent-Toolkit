@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "UI Panels",
   "macros": {
     "Create_Entry": {
@@ -20,7 +20,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_Entry_Kind": {
       "description": "Toolkit documentation term: Create Entry Kind",
@@ -40,7 +43,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_Library": {
       "description": "Toolkit documentation term: Create Library",
@@ -60,7 +66,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_Macro": {
       "description": "Toolkit documentation term: Create Macro",
@@ -80,7 +89,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_Macro_Kind": {
       "description": "Toolkit documentation term: Create Macro Kind",
@@ -100,7 +112,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_Macro_Package": {
       "description": "Toolkit documentation term: Create Macro Package",
@@ -120,7 +135,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Create_Relationship": {
       "description": "Toolkit documentation term: Create Relationship",
@@ -140,7 +158,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Dashboard": {
       "description": "Toolkit documentation term: Dashboard",
@@ -160,7 +181,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Edit_Entry_Kind": {
       "description": "Toolkit documentation term: Edit Entry Kind",
@@ -180,7 +204,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Edit_Library": {
       "description": "Toolkit documentation term: Edit Library",
@@ -200,7 +227,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Edit_Macro": {
       "description": "Toolkit documentation term: Edit Macro",
@@ -220,7 +250,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Edit_Macro_Kind": {
       "description": "Toolkit documentation term: Edit Macro Kind",
@@ -240,7 +273,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Edit_Relationship": {
       "description": "Toolkit documentation term: Edit Relationship",
@@ -260,7 +296,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry_Infoview": {
       "description": "Toolkit documentation term: Entry Infoview",
@@ -280,7 +319,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Infoview": {
       "description": "Toolkit documentation term: Infoview",
@@ -300,7 +342,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Initialize_Entry_Kinds": {
       "description": "Toolkit documentation term: Initialize Entry Kinds",
@@ -320,7 +365,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Initialize_Macro_Kinds": {
       "description": "Toolkit documentation term: Initialize Macro Kinds",
@@ -340,7 +388,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Package_Panel": {
       "description": "Toolkit documentation term: Package Panel",
@@ -360,7 +411,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Panel": {
       "description": "Toolkit documentation term: Panel",
@@ -380,7 +434,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Relationship_Graph": {
       "description": "Toolkit documentation term: Relationship Graph",
@@ -416,7 +473,10 @@
           "markdown": "",
           "text": ""
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "SNoogL_Search": {
       "description": "Toolkit documentation term: SNoogL Search",
@@ -436,7 +496,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.panel.entry.edit": {
       "description": "UI terminology backed by Entry ui.panel.entry.edit: Edit Entry",
@@ -456,7 +519,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.panel.macro-package.edit": {
       "description": "UI terminology backed by Entry ui.panel.macro-package.edit: Edit Macro Package",
@@ -476,7 +542,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   },
   "description": "Concrete Extension Panel terminology."

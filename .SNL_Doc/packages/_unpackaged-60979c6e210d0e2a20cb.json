@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "_unpackaged",
+  "name": "Unpackaged",
+  "description": "Legacy Entries without an assigned package."
+}

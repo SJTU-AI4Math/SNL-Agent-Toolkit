@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.tree.add-sibling: Add Sibling Row Toolbar Button",
+    "source": {
+      "entries": [
+        "ui.button.tree.add-sibling"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Add Sibling Row Toolbar Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.tree.add-sibling",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

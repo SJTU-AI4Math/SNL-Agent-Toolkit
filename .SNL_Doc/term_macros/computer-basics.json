@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "Computer Basics",
   "description": "Keyboard and general computer/programming terminology.",
   "macros": {
@@ -19,7 +19,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "when_false": {
       "description": "Toolkit documentation term: when: false",
@@ -37,7 +40,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Shortcut_Ctrl_click": {
       "description": "Toolkit documentation term: Ctrl+click",
@@ -55,7 +61,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Shortcut_Enter": {
       "description": "Toolkit documentation term: Enter",
@@ -73,7 +82,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Shortcut_Space": {
       "description": "Toolkit documentation term: Space",
@@ -91,7 +103,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

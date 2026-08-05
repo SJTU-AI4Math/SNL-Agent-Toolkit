@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.dashboard.snl-macros.toggle-active: Toggle Package Active Button (Dashboard List)",
+    "source": {
+      "entries": [
+        "ui.button.dashboard.snl-macros.toggle-active"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Toggle Package Active Button (Dashboard List)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.dashboard.snl-macros.toggle-active",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

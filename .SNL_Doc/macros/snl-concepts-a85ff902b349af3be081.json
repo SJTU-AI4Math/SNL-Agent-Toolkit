@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Concept Entry handle: Counter Number Formatting",
+    "source": {
+      "entries": [
+        "concept.snl.number-formatting"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Counter Number Formatting}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Concept.concept.snl.number-formatting",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

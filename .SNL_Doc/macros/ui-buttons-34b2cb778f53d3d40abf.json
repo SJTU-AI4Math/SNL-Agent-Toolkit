@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.macro-package.batch-delete: Delete Macros Batch Button",
+    "source": {
+      "entries": [
+        "ui.button.macro-package.batch-delete"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Delete Macros Batch Button}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.macro-package.batch-delete",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

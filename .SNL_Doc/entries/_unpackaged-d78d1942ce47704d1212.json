@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.relationship.create.submit",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Create Relationship Submit Button",
+    "content": {
+      "snl": "ButtonPress(CreateEntity(%the semantic relationship%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

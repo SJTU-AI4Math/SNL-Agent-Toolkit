@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Toolkit documentation term: Macro Kind",
+    "source": {
+      "entries": [
+        "concept.snl.macro-kind"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Macro Kind}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Macro_Kind",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "Filesystem",
   "description": "Composable Path/Folder/File/JSON-key terminology.",
   "macros": {
@@ -19,7 +19,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Folder.SNL_Doc": {
       "description": "Toolkit documentation term: .SNL_Doc",
@@ -37,7 +40,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Folder.libraries": {
       "description": "Toolkit documentation term: libraries",
@@ -55,7 +61,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Folder.term_macros": {
       "description": "Toolkit documentation term: term_macros",
@@ -73,7 +82,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Folder.slug": {
       "description": "Toolkit documentation term: <slug>",
@@ -91,7 +103,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.config_json": {
       "description": "Toolkit documentation term: config.json",
@@ -109,7 +124,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.entries_json": {
       "description": "Toolkit documentation term: entries.json",
@@ -127,7 +145,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.meta_json": {
       "description": "Toolkit documentation term: meta.json",
@@ -145,7 +166,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.graph_json": {
       "description": "Toolkit documentation term: graph.json",
@@ -163,7 +187,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.counters_json": {
       "description": "Toolkit documentation term: counters.json",
@@ -181,7 +208,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.relationships_json": {
       "description": "Toolkit documentation term: relationships.json",
@@ -199,7 +229,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.package_json": {
       "description": "Toolkit documentation term: package.json",
@@ -217,7 +250,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.slug_json": {
       "description": "Toolkit documentation term: <slug>.json",
@@ -235,7 +271,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "File.wildcard_json": {
       "description": "Toolkit documentation term: *.json",
@@ -253,7 +292,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "JsonKey.entry_kinds": {
       "description": "Toolkit documentation term: entry_kinds",
@@ -271,7 +313,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "JsonKey.macro_kinds": {
       "description": "Toolkit documentation term: macro_kinds",
@@ -289,7 +334,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "JsonKey.contributes_commands": {
       "description": "Toolkit documentation term: contributes.commands",
@@ -307,7 +355,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

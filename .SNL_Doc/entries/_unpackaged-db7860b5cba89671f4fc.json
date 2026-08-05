@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.webview-message-bridge",
+    "kind": "entry-kind.concept",
+    "title": "Webview Message Bridge",
+    "content": {
+      "snl": "%The shared lifecycle wrapper that acquires the VS Code API once, posts the ready handshake, installs one typed message listener, and releases it when a webview unmounts.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

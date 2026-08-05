@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.dashboard.snl-macros.add-package",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Add Package Button (List View)",
+    "content": {
+      "snl": "ButtonDescription(%The full-width Add Package bar at the end of the SNL Macros list.%,OpenPanel(Create_Macro_Package))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

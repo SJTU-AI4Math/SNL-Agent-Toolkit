@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.macro-package.create-macro: Create Macro Button (Package Panel)",
+    "source": {
+      "entries": [
+        "ui.button.macro-package.create-macro"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Create Macro Button (Package Panel)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.macro-package.create-macro",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

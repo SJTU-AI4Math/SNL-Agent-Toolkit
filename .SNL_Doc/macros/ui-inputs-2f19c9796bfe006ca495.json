@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-inputs",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.input.relationship.edit.metadata: Relationship Metadata JSON Input (Edit)",
+    "source": {
+      "entries": [
+        "ui.input.relationship.edit.metadata"
+      ],
+      "urls": []
+    },
+    "kind": "text-input",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Relationship Metadata JSON Input (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.input.relationship.edit.metadata",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

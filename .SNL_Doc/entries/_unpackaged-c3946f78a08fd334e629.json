@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.entry-title-format",
+    "kind": "entry-kind.concept",
+    "title": "Entry Title Format",
+    "content": {
+      "snl": "%Kind/counter/title header formatting contract.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

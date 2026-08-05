@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Extension command identifier: snlDoc.editEntryKind",
+    "source": {
+      "entries": [
+        "command.snlDoc.editEntryKind"
+      ],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{snlDoc.editEntryKind}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "snlDoc.editEntryKind",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

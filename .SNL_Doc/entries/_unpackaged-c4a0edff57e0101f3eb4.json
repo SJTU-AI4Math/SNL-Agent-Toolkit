@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.default-counter-name",
+    "kind": "entry-kind.concept",
+    "title": "Default Counter Name",
+    "content": {
+      "snl": "%Entry Kind field that resolves a Library Counter by first depth-first exact name match when an Entry occurrence has no explicit counterId. Duplicate Counter names are therefore ambiguous.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

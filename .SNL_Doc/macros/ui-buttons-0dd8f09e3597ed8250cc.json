@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry.edit.snl-gui-editor: SNL GUI Editor Button (Edit)",
+    "source": {
+      "entries": [
+        "ui.button.entry.edit.snl-gui-editor"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNL GUI Editor Button (Edit)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry.edit.snl-gui-editor",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

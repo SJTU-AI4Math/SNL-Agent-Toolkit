@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.entry-kind.edit.background",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Entry Kind Background Color Input (Edit)",
+    "content": {
+      "snl": "%Entry Kind background RGB color field.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

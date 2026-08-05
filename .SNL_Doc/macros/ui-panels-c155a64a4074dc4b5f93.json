@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "Toolkit documentation term: Edit Entry Kind",
+    "source": {
+      "entries": [
+        "ui.panel.entry-kind.edit"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Edit Entry Kind}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Edit_Entry_Kind",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

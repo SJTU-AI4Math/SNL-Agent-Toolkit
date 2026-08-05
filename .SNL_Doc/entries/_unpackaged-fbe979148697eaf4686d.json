@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.panel.entry-kind.initialize",
+    "kind": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
+    "title": "Initialize Entry Kinds",
+    "content": {
+      "snl": "PanelDescription(%Empty-catalog bootstrap panel with a Presets dropdown (currently only #0) that seeds 12 EntryKinds in one write. Skipped if the catalog is already non-empty.%(Preset.Fulcrum_Math_Notes),%Contains a preset selector and an initialize action.%,RunVSCodeCommand(CommandTitle.snlDoc.initEntryKinds),%Image%@ui.panel.entry-kind.initialize.img)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

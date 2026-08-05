@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.section.snoogl.macro-results: SNoogL Macro Results Section",
+    "source": {
+      "entries": [
+        "ui.section.snoogl.macro-results"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{SNoogL Macro Results Section}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.snoogl.macro-results",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

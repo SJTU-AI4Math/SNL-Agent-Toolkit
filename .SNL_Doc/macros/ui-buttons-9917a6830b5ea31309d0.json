@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry.create.content.typst: Typst Content Tab (Create)",
+    "source": {
+      "entries": [
+        "ui.button.entry.create.content.typst"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Typst Content Tab (Create)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry.create.content.typst",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

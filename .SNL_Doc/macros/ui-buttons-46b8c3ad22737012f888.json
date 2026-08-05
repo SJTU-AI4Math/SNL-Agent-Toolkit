@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry-infoview.edit: Edit Entry Button (Entry Infoview)",
+    "source": {
+      "entries": [
+        "ui.button.entry-infoview.edit"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Edit Entry Button (Entry Infoview)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry-infoview.edit",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

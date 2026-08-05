@@ -5,10 +5,9 @@
  *
  *   1. Explicit file mode: `snl-lint-package path/to/pkg.json ...`
  *   2. Named mode: `snl-lint-package --name my-pkg` (may repeat).
- *      Resolves `.SNL_Doc/term_macros/<name>.json`.
+ *      Resolves one Package ID from live Package/Macro entities.
  *
- * With no positional and no --name, every package under
- * `.SNL_Doc/term_macros/` is linted.
+ * With no positional and no --name, every live Package is linted.
  *
  * The lint is FILE-LOCAL — cross-package name-collision checking will be
  * a separate CLI (or fold into snl-commit-batch) since it needs the full
@@ -27,8 +26,7 @@ import {
 } from '../../lib/cli-args.ts';
 import {
   assertSnlDoc,
-  pathExists,
-  termMacrosDir,
+  readAllMacroPackages,
 } from '../../lib/snl-doc.ts';
 import { lintPackage } from '../../lib/lint-package.ts';
 import {
@@ -42,7 +40,7 @@ const NAME_FLAG: FlagSpec = {
   name: 'name',
   hasValue: true,
   help:
-    'Package bare filename (no .json), relative to .SNL_Doc/term_macros/. ' +
+    'Package ID. ' +
     'May be repeated. When neither --name nor a positional file is given, ' +
     'every package on disk is linted.',
 };
@@ -109,48 +107,66 @@ async function main(): Promise<number> {
     return 2;
   }
 
-  const targets: string[] = [...parsed.positional.map((p) => path.resolve(p))];
-  for (const name of names) {
-    const bare = name.replace(/\.json$/i, '');
-    targets.push(path.join(termMacrosDir(root), `${bare}.json`));
-  }
-  if (targets.length === 0) {
-    const dir = termMacrosDir(root);
-    if (await pathExists(dir)) {
-      const files = await fs.readdir(dir);
-      for (const f of files) {
-        if (f.endsWith('.json')) targets.push(path.join(dir, f));
-      }
+  const reports: LintReport[] = [];
+  const targets: Array<{ file: string; raw?: unknown }> = parsed.positional.map((p) => ({
+    file: path.resolve(p),
+  }));
+  if (names.length > 0 || targets.length === 0) {
+    let packages: Awaited<ReturnType<typeof readAllMacroPackages>>;
+    try {
+      packages = await readAllMacroPackages(root);
+    } catch (error) {
+      const failure: LintReport = {
+        file: path.join(root, '.SNL_Doc'),
+        issues: [{ severity: 'error', code: 'file.read', message: (error as Error).message }],
+      };
+      if (asJson) process.stdout.write(JSON.stringify([failure], null, 2) + '\n');
+      else process.stdout.write(formatReport([failure]) + '\n');
+      return 1;
     }
-    if (targets.length === 0) {
-      process.stderr.write(
-        `No package files found under ${termMacrosDir(root)}.\n`,
-      );
+    const selected = names.length > 0
+      ? names.map((name) => name.replace(/\.json$/i, ''))
+      : Object.keys(packages).sort();
+    if (selected.length === 0) {
+      process.stderr.write(`No Packages found in ${path.join(root, '.SNL_Doc')}.\n`);
       return 2;
+    }
+    for (const name of selected) {
+      if (!Object.prototype.hasOwnProperty.call(packages, name)) {
+        reports.push({
+          file: `package:${name}`,
+          issues: [{ severity: 'error', code: 'file.read', message: `Package ${JSON.stringify(name)} was not found.` }],
+        });
+      } else {
+        targets.push({ file: `package:${name}`, raw: packages[name] });
+      }
     }
   }
 
-  const reports: LintReport[] = [];
-  for (const abs of targets) {
+  for (const target of targets) {
     let raw: unknown;
-    try {
-      const text = await fs.readFile(abs, 'utf8');
-      raw = JSON.parse(text);
-    } catch (err) {
-      reports.push({
-        file: abs,
-        issues: [
-          {
-            severity: 'error',
-            code: 'file.read',
-            message: (err as Error).message,
-          },
-        ],
-      });
-      continue;
+    if (target.raw !== undefined) {
+      raw = target.raw;
+    } else {
+      try {
+        const text = await fs.readFile(target.file, 'utf8');
+        raw = JSON.parse(text);
+      } catch (err) {
+        reports.push({
+          file: target.file,
+          issues: [
+            {
+              severity: 'error',
+              code: 'file.read',
+              message: (err as Error).message,
+            },
+          ],
+        });
+        continue;
+      }
     }
     const report = lintPackage(raw, { checkKatex: checkKatexEnabled });
-    report.file = abs;
+    report.file = target.file;
     reports.push(report);
   }
 

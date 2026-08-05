@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.macro-package.toggle-active",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Toggle Macro Package Active Button",
+    "content": {
+      "snl": "ButtonPress(Toggle(%this package in the active macro database%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

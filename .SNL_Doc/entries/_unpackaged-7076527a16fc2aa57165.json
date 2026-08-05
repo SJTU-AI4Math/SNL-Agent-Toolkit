@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.snl.shared-entry-pool",
+    "kind": "entry-kind.concept",
+    "title": "Shared Entry Pool",
+    "content": {
+      "snl": "%Global per-entity Entry pool under #0, shared by Libraries.%(Folder.entries)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

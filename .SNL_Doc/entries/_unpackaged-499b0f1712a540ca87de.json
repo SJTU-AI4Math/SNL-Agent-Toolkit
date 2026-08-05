@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.relationship-graph.open-entry",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Open Entry Node Button",
+    "content": {
+      "snl": "ButtonPress(OpenPanelFor(Entry_Infoview,%the Entry represented by the graph node%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

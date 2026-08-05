@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "Catfood term backed by ui.section.dashboard.entry-metrics.",
+    "source": {
+      "entries": [
+        "ui.section.dashboard.entry-metrics"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Entry source metrics}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Dashboard_entry_metrics",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

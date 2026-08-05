@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-panels",
+  "macro": {
+    "description": "Toolkit documentation term: Create Macro Package",
+    "source": {
+      "entries": [
+        "ui.panel.macro-package.create"
+      ],
+      "urls": []
+    },
+    "kind": "panel",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Create Macro Package}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Create_Macro_Package",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

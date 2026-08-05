@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-buttons",
+  "macro": {
+    "description": "UI terminology backed by Entry ui.button.entry-infoview.related-entry: Related Entry Entrance",
+    "source": {
+      "entries": [
+        "ui.button.entry-infoview.related-entry"
+      ],
+      "urls": []
+    },
+    "kind": "button",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Related Entry Entrance}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.button.entry-infoview.related-entry",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

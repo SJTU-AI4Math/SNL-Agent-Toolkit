@@ -60,15 +60,15 @@ When several subagents draft disjoint parts of one Library:
 
 - Assign each subagent a disjoint **id slug space** up front, not just a topic. Two agents drafting "sequences" and "series" both reach for `ctxt.seq`.
 - Assign each subagent a disjoint **top-level counter range** (agent A owns `1`–`2`, agent B owns `3`–`4`), so counters concatenate without renumbering.
-- Tell each subagent which Entry ids **already exist** in `entries.json` and must be reused verbatim rather than recreated under a new name.
+- Tell each subagent which Entry ids **already exist** across `entries/*.json` and must be reused verbatim rather than recreated under a new name.
 - After the parts return, run the consolidation checks in Stage 2 before merging. Cross-agent id collisions are the normal failure mode, not the exceptional one.
 
 ## Stage 2: Entrification (条目化)
 
 1. Verify the merged blueprint before writing any JSON:
-   - every `id` is unique across all draft files and does not collide with an existing `entries.json` id unless the row is a deliberate reuse;
+   - every `id` is unique across all draft files and does not collide with an existing Entry entity unless the row is a deliberate reuse;
    - every `kind` resolves in `config.json#entry_kinds`;
    - every `counter` has a parent counter present in the table (`1.2.3` requires `1.2`);
    - no counter is duplicated.
-2. Create one record per row in `.SNL_Doc/entries.json` with identity and classification fixed, following [`Author_Entries.md`](Author_Entries.md).
+2. Create one hash-named Entry envelope per row in `.SNL_Doc/entries/` with Package, identity, and classification fixed, following [`Author_Entries.md`](Author_Entries.md).
 3. For the `content` field, only the Markdown version is expected here. The SNL version is refined during subsequent stages.

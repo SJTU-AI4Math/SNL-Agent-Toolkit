@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.library.outline.cancel-add",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Cancel Entry Reference Add Button",
+    "content": {
+      "snl": "ButtonDescription(%The outline remains unchanged.%,CloseInterface(%the inline Entry-reference add form%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "ui-sections",
+  "macro": {
+    "description": "Catfood term backed by ui.section.entry.edit.gui-inductive.",
+    "source": {
+      "entries": [
+        "ui.section.entry.edit.gui-inductive"
+      ],
+      "urls": []
+    },
+    "kind": "section",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{GUI Inductive Editor Section (Edit Entry)}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Entry.ui.section.entry.edit.gui-inductive",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

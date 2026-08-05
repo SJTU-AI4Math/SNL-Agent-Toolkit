@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "literals",
+  "macro": {
+    "description": "Toolkit documentation term: Fulcrum's Math Notes",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "literal",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{Fulcrum's Math Notes}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Preset.Fulcrum_Math_Notes",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "UI Inputs",
   "description": "Concrete text/select input terminology.",
   "macros": {
@@ -21,7 +21,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry_ID_Field": {
       "description": "Toolkit documentation term: Entry ID Field",
@@ -41,7 +44,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry_Title_Field": {
       "description": "Toolkit documentation term: Entry Title Field",
@@ -61,7 +67,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Text_Input": {
       "description": "Toolkit documentation term: Text Input",
@@ -81,7 +90,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.library.create.title": {
       "description": "UI terminology backed by Entry ui.input.library.create.title: Library Title Input",
@@ -101,7 +113,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.library.edit.slug": {
       "description": "UI terminology backed by Entry ui.input.library.edit.slug: Library Slug Input (Read Only)",
@@ -121,7 +136,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.library.edit.title": {
       "description": "UI terminology backed by Entry ui.input.library.edit.title: Library Title Input (Edit)",
@@ -141,7 +159,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.counter.name": {
       "description": "UI terminology backed by Entry ui.input.counter.name: Counter Name Input",
@@ -161,7 +182,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.library.outline.entry-id": {
       "description": "UI terminology backed by Entry ui.input.library.outline.entry-id: Library Entry Reference ID Input",
@@ -181,7 +205,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.library.outline.counter": {
       "description": "UI terminology backed by Entry ui.input.library.outline.counter: Library Entry Counter Selector",
@@ -201,7 +228,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.kind": {
       "description": "UI terminology backed by Entry ui.input.entry.kind: Entry Kind Selector",
@@ -221,7 +251,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.content": {
       "description": "UI terminology backed by Entry ui.input.entry.content: Entry Content Editor",
@@ -241,7 +274,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.create.name": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.create.name: Entry Kind Name Input (Create)",
@@ -261,7 +297,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.create.stroke": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.create.stroke: Entry Kind Stroke Color Input (Create)",
@@ -281,7 +320,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.create.background": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.create.background: Entry Kind Background Color Input (Create)",
@@ -301,7 +343,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.create.default-counter": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.create.default-counter: Default Counter Name Input (Create)",
@@ -321,7 +366,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.create.style": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.create.style: Entry Kind Style Input (Create)",
@@ -341,7 +389,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.edit.name": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.edit.name: Entry Kind Name Input (Edit)",
@@ -361,7 +412,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.edit.stroke": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.edit.stroke: Entry Kind Stroke Color Input (Edit)",
@@ -381,7 +435,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.edit.background": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.edit.background: Entry Kind Background Color Input (Edit)",
@@ -401,7 +458,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.edit.default-counter": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.edit.default-counter: Default Counter Name Input (Edit)",
@@ -421,7 +481,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.edit.style": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.edit.style: Entry Kind Style Input (Edit)",
@@ -441,7 +504,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.initialize.preset": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.initialize.preset: Entry Kind Preset Selector",
@@ -461,7 +527,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.create.name": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.create.name: Macro Kind Name Input (Create)",
@@ -481,7 +550,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.create.description": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.create.description: Macro Kind Description Input (Create)",
@@ -501,7 +573,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.create.stroke": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.create.stroke: Macro Kind Stroke Color Input (Create)",
@@ -521,7 +596,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.create.background": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.create.background: Macro Kind Background Color Input (Create)",
@@ -541,7 +619,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.edit.name": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.edit.name: Macro Kind Name Input (Edit)",
@@ -561,7 +642,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.edit.description": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.edit.description: Macro Kind Description Input (Edit)",
@@ -581,7 +665,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.edit.stroke": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.edit.stroke: Macro Kind Stroke Color Input (Edit)",
@@ -601,7 +688,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.edit.background": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.edit.background: Macro Kind Background Color Input (Edit)",
@@ -621,7 +711,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.initialize.preset": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.initialize.preset: Macro Kind Preset Selector",
@@ -641,7 +734,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.name": {
       "description": "UI terminology backed by Entry ui.input.macro.create.name: Macro Name Input (Create)",
@@ -661,7 +757,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.kind": {
       "description": "UI terminology backed by Entry ui.input.macro.create.kind: Macro Kind Selector (Create)",
@@ -681,7 +780,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.template": {
       "description": "UI terminology backed by Entry ui.input.macro.create.template: Macro Template Input (Create)",
@@ -701,7 +803,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.name": {
       "description": "UI terminology backed by Entry ui.input.macro.edit.name: Macro Name Input (Edit)",
@@ -721,7 +826,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.kind": {
       "description": "UI terminology backed by Entry ui.input.macro.edit.kind: Macro Kind Selector (Edit)",
@@ -741,7 +849,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.template": {
       "description": "UI terminology backed by Entry ui.input.macro.edit.template: Macro Template Input (Edit)",
@@ -761,7 +872,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.create.from": {
       "description": "UI terminology backed by Entry ui.input.relationship.create.from: Relationship From Entry Input (Create)",
@@ -781,7 +895,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.create.to": {
       "description": "UI terminology backed by Entry ui.input.relationship.create.to: Relationship To Entry Input (Create)",
@@ -801,7 +918,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.create.label": {
       "description": "UI terminology backed by Entry ui.input.relationship.create.label: Relationship Label Input (Create)",
@@ -821,7 +941,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.edit.from": {
       "description": "UI terminology backed by Entry ui.input.relationship.edit.from: Relationship From Entry Input (Edit)",
@@ -841,7 +964,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.edit.to": {
       "description": "UI terminology backed by Entry ui.input.relationship.edit.to: Relationship To Entry Input (Edit)",
@@ -861,7 +987,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.edit.label": {
       "description": "UI terminology backed by Entry ui.input.relationship.edit.label: Relationship Label Input (Edit)",
@@ -881,7 +1010,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.snoogl.query": {
       "description": "UI terminology backed by Entry ui.input.snoogl.query: SNoogL Query Input",
@@ -901,7 +1033,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.edit.id": {
       "description": "UI terminology backed by Entry ui.input.entry.edit.id: Entry ID Field (Edit)",
@@ -921,7 +1056,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.edit.title": {
       "description": "UI terminology backed by Entry ui.input.entry.edit.title: Entry Title Field (Edit)",
@@ -941,7 +1079,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.edit.kind": {
       "description": "UI terminology backed by Entry ui.input.entry.edit.kind: Entry Kind Selector (Edit)",
@@ -961,7 +1102,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.edit.content": {
       "description": "UI terminology backed by Entry ui.input.entry.edit.content: Entry Content Editor (Edit)",
@@ -981,7 +1125,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.create.id": {
       "description": "UI terminology backed by Entry ui.input.entry-kind.create.id: Entry Kind ID Input (Create)",
@@ -1001,7 +1148,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.create.id": {
       "description": "UI terminology backed by Entry ui.input.macro-kind.create.id: Macro Kind ID Input (Create)",
@@ -1021,7 +1171,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-package.create.file": {
       "description": "UI terminology backed by Entry ui.input.macro-package.create.file: Macro Package File Input (Create)",
@@ -1041,7 +1194,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-package.create.name": {
       "description": "UI terminology backed by Entry ui.input.macro-package.create.name: Macro Package Display Name Input (Create)",
@@ -1061,7 +1217,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-package.create.description": {
       "description": "UI terminology backed by Entry ui.input.macro-package.create.description: Macro Package Description Input (Create)",
@@ -1081,7 +1240,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-package.edit.file": {
       "description": "UI terminology backed by Entry ui.input.macro-package.edit.file: Macro Package File Input (Edit)",
@@ -1101,7 +1263,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-package.edit.name": {
       "description": "UI terminology backed by Entry ui.input.macro-package.edit.name: Macro Package Display Name Input (Edit)",
@@ -1121,7 +1286,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-package.edit.description": {
       "description": "UI terminology backed by Entry ui.input.macro-package.edit.description: Macro Package Description Input (Edit)",
@@ -1141,7 +1309,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.description": {
       "description": "UI terminology backed by Entry ui.input.macro.create.description: Macro Description Input (Create)",
@@ -1161,7 +1332,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.source-entry": {
       "description": "UI terminology backed by Entry ui.input.macro.create.source-entry: Macro Source Entry Input (Create)",
@@ -1181,7 +1355,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.source-url": {
       "description": "UI terminology backed by Entry ui.input.macro.create.source-url: Macro Source URL Input (Create)",
@@ -1201,7 +1378,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.description": {
       "description": "UI terminology backed by Entry ui.input.macro.edit.description: Macro Description Input (Edit)",
@@ -1221,7 +1401,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.source-entry": {
       "description": "UI terminology backed by Entry ui.input.macro.edit.source-entry: Macro Source Entry Input (Edit)",
@@ -1241,7 +1424,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.source-url": {
       "description": "UI terminology backed by Entry ui.input.macro.edit.source-url: Macro Source URL Input (Edit)",
@@ -1261,7 +1447,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.create.id": {
       "description": "UI terminology backed by Entry ui.input.relationship.create.id: Relationship ID Input (Create)",
@@ -1281,7 +1470,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.create.metadata": {
       "description": "UI terminology backed by Entry ui.input.relationship.create.metadata: Relationship Metadata JSON Input (Create)",
@@ -1301,7 +1493,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.edit.id": {
       "description": "UI terminology backed by Entry ui.input.relationship.edit.id: Relationship ID Input (Edit)",
@@ -1321,7 +1516,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.relationship.edit.metadata": {
       "description": "UI terminology backed by Entry ui.input.relationship.edit.metadata: Relationship Metadata JSON Input (Edit)",
@@ -1341,7 +1539,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.snoogl.kind-filter": {
       "description": "UI terminology backed by Entry ui.input.snoogl.kind-filter: SNoogL Kind Filter",
@@ -1361,7 +1562,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_create_style_name": {
       "description": "Catfood term backed by ui.input.macro.create.style-name.",
@@ -1381,7 +1585,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.style-name": {
       "description": "Catfood term backed by ui.input.macro.create.style-name.",
@@ -1401,7 +1608,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_edit_style_name": {
       "description": "Catfood term backed by ui.input.macro.edit.style-name.",
@@ -1421,7 +1631,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.style-name": {
       "description": "Catfood term backed by ui.input.macro.edit.style-name.",
@@ -1441,7 +1654,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_create_template_left": {
       "description": "Catfood term backed by ui.input.macro.create.template-left.",
@@ -1461,7 +1677,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.template-left": {
       "description": "Catfood term backed by ui.input.macro.create.template-left.",
@@ -1481,7 +1700,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_create_separator": {
       "description": "Catfood term backed by ui.input.macro.create.separator.",
@@ -1501,7 +1723,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.separator": {
       "description": "Catfood term backed by ui.input.macro.create.separator.",
@@ -1521,7 +1746,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_create_template_right": {
       "description": "Catfood term backed by ui.input.macro.create.template-right.",
@@ -1541,7 +1769,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.template-right": {
       "description": "Catfood term backed by ui.input.macro.create.template-right.",
@@ -1561,7 +1792,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_edit_template_left": {
       "description": "Catfood term backed by ui.input.macro.edit.template-left.",
@@ -1581,7 +1815,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.template-left": {
       "description": "Catfood term backed by ui.input.macro.edit.template-left.",
@@ -1601,7 +1838,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_edit_separator": {
       "description": "Catfood term backed by ui.input.macro.edit.separator.",
@@ -1621,7 +1861,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.separator": {
       "description": "Catfood term backed by ui.input.macro.edit.separator.",
@@ -1641,7 +1884,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_edit_template_right": {
       "description": "Catfood term backed by ui.input.macro.edit.template-right.",
@@ -1661,7 +1907,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.template-right": {
       "description": "Catfood term backed by ui.input.macro.edit.template-right.",
@@ -1681,7 +1930,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_create_block_template_name": {
       "description": "Catfood term backed by ui.input.macro.create.block-template-name.",
@@ -1701,7 +1953,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.block-template-name": {
       "description": "Catfood term backed by ui.input.macro.create.block-template-name.",
@@ -1721,7 +1976,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "macro_edit_block_template_name": {
       "description": "Catfood term backed by ui.input.macro.edit.block-template-name.",
@@ -1741,7 +1999,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.block-template-name": {
       "description": "Catfood term backed by ui.input.macro.edit.block-template-name.",
@@ -1761,7 +2022,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.mode": {
       "description": "Catfood term backed by ui.input.macro.create.mode.",
@@ -1781,7 +2045,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.mode": {
       "description": "Catfood term backed by ui.input.macro.edit.mode.",
@@ -1801,7 +2068,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.create.dynamic-arity": {
       "description": "Catfood term backed by ui.input.macro.create.dynamic-arity.",
@@ -1821,7 +2091,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro.edit.dynamic-arity": {
       "description": "Catfood term backed by ui.input.macro.edit.dynamic-arity.",
@@ -1841,7 +2114,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.create.gui-macro-style": {
       "description": "Catfood term backed by ui.input.entry.create.gui-macro-style.",
@@ -1861,7 +2137,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry.edit.gui-macro-style": {
       "description": "Catfood term backed by ui.input.entry.edit.gui-macro-style.",
@@ -1881,7 +2160,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.entry-kind.edit.id": {
       "description": "Catfood term backed by ui.input.entry-kind.edit.id.",
@@ -1901,7 +2183,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Entry.ui.input.macro-kind.edit.id": {
       "description": "Catfood term backed by ui.input.macro-kind.edit.id.",
@@ -1921,7 +2206,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

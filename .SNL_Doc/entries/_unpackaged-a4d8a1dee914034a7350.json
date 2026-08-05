@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.macro-package.macro-entrance",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Macro Entrance (Package List View)",
+    "content": {
+      "snl": "ButtonDescription(%A macro row.%,OpenPanelFor(Edit_Macro,%that macro%))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

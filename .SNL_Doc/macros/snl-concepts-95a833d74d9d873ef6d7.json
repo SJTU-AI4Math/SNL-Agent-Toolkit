@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term for MacroDataDriver.",
+    "source": {
+      "entries": [
+        "concept.extension.macro-data-driver"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{MacroDataDriver}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "MacroDataDriver",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

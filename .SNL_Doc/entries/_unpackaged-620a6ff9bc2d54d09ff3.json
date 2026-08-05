@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.relationship.create.metadata",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Relationship Metadata JSON Input (Create)",
+    "content": {
+      "snl": "%Optional relationship metadata JSON.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.macro-package.edit.file",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Macro Package File Input (Edit)",
+    "content": {
+      "snl": "%Edits the package file.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.macro.create.block-template-name",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Block Template Name Input (Create)",
+    "content": {
+      "snl": "%Selects or customizes the block-only #0 used by the React renderer. The field is not serialized for non-block modes.%(block_template_name)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

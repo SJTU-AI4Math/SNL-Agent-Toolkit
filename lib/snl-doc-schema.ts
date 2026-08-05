@@ -2,8 +2,9 @@
  * Vendored SNL-Doc on-disk schema types.
  *
  * Source of truth:
- *   SJTU-AI4Math/SNL-Doc-Extension, commit 78ef2f9a (2026-07-07).
- *   Files: src/snlDoc.ts, src/libraryGraph.ts.
+ *   SJTU-AI4Math/SNL-Doc-Extension per-entity storage v1.
+ *   Files: src/entityStorage.ts, src/entityStorageIo.ts, src/snlDoc.ts,
+ *   src/libraryGraph.ts.
  *
  * This file is a HAND-COPIED SUBSET of the extension's TypeScript
  * interfaces, with all `vscode`-dependent runtime code stripped. The
@@ -16,11 +17,14 @@
  * On-disk layout (mirrored from snlDoc.ts jsdoc):
  *
  *   .SNL_Doc/
- *   ├── config.json            { version, entry_kinds, macro_kinds,
- *   │                            active_macro_packages }
- *   ├── entries.json           shared entry pool — bare JSON array of EntryData
+ *   ├── config.json            { version, entity_storage, entry_kinds,
+ *   │                            macro_kinds, active_macro_packages }
+ *   ├── packages/*.json        one Package manifest per stable Package id
+ *   ├── entries/*.json         one Entry envelope per stable identity
+ *   ├── macros/*.json          one Macro envelope per (Package, name)
  *   ├── relationships.json    pool-wide semantic relationships (optional)
- *   ├── term_macros/<pkg>.json macro packages (one file per package)
+ *   ├── entries.json           frozen pre-entity migration backup (optional)
+ *   ├── term_macros/*.json     frozen pre-entity migration backups (optional)
  *   └── libraries/<slug>/
  *       ├── meta.json          { title, description? }
  *       ├── graph.json         { nodes: GraphNode[], relationships: GraphRelationship[] }
@@ -69,6 +73,12 @@ export interface MacroKind {
 /** Root of `.SNL_Doc/config.json`. */
 export interface SnlConfig {
   version: string;
+  entity_storage?: {
+    version: 1;
+    legacy_backup_version?: string;
+    entry_default_package?: string;
+    receipt?: unknown;
+  };
   /**
    * DEPRECATED (2026-07-06): superseded by disk-walk in listLibraries().
    * Kept as an optional field so older configs still parse.
@@ -84,7 +94,7 @@ export interface SnlConfig {
 }
 
 // ===========================================================================
-// entries.json — shared entry pool
+// entries/*.json — inner Entry payload
 // ===========================================================================
 
 /**
@@ -101,6 +111,8 @@ export interface SnlConfig {
  */
 export interface EntryData {
   id: string;
+  /** Immutable Package identity in per-entity storage. */
+  package?: string;
   kind: string;
   title: string;
   content: {
@@ -142,7 +154,7 @@ export interface GraphNode {
   props: {
     /**
      * Optional — unset = placeholder node. Set = reference into
-     * entries.json's shared pool.
+     * the live shared Entry entity pool.
      */
     entryId?: string;
     [key: string]: unknown;
@@ -163,11 +175,11 @@ export interface LibraryGraph {
 }
 
 // ===========================================================================
-// term_macros/<pkg>.json — Macro v7 (SNL-Basics 0.10.0)
+// macros/*.json — inner Macro payload and synthetic Package compatibility view
 // ===========================================================================
 
 /**
- * Macro v7 is owned by SNL-Basics. Re-export its canonical runtime types and
+ * Macro v8 is owned by SNL-Basics. Re-export its canonical runtime types and
  * migration functions rather than maintaining a second, drifting schema.
  */
 export type {
@@ -181,8 +193,10 @@ export type {
 } from '../external/SNL-Basics/src/schema/migrate-macro.ts';
 export {
   isMacroDocumentV7,
+  isMacroDocumentV8,
   migrateMacroDocument,
   migrateMacroV6toV7,
+  migrateMacroV7toV8,
   migrateStyleV6toV7,
 } from '../external/SNL-Basics/src/schema/migrate-macro.ts';
 
@@ -205,10 +219,10 @@ export interface MacroPackageOutputBackends {
   text?: string;
 }
 
-/** Canonical SNL-Basics v7 style plus Toolkit-preserved output backends. */
+/** Canonical SNL-Basics v8 style plus Toolkit-preserved output backends. */
 export type MacroPackageStyle = SnlMacroStyle & MacroPackageOutputBackends;
 
-/** Canonical SNL-Basics v7 macro with backend-extended styles. */
+/** Canonical SNL-Basics v8 macro with backend-extended styles. */
 export type MacroPackageEntry = Omit<SnlMacro, 'styles'> & {
   styles: MacroPackageStyle[];
 };
@@ -216,7 +230,7 @@ export type MacroPackageEntry = Omit<SnlMacro, 'styles'> & {
 /** MacroPackageEntry without redundant `name` (the name is the map key). */
 export type MacroPackageEntryWithoutName = Omit<MacroPackageEntry, 'name'>;
 
-/** Root of `.SNL_Doc/term_macros/<pkg>.json`. */
+/** Synthetic Package view assembled from one manifest plus Macro entities. */
 export interface MacroPackageFile {
   version: string;
   name: string;
@@ -225,8 +239,8 @@ export interface MacroPackageFile {
   macros: Record<string, MacroPackageEntryWithoutName>;
 }
 
-/** Safe package-shape adapter around SNL-Basics's flat-record v6→v7 migration. */
-export { migrateMacroPackageV6toV7 } from './migrate-macro-package.ts';
+/** Safe package-shape adapter around SNL-Basics's canonical v6→v7→v8 migration. */
+export { migrateMacroPackageV6toV8, migrateMacroPackageV6toV7 } from './migrate-macro-package.ts';
 export type {
   MacroPackageEntryV6WithoutName,
   MacroPackageFileV6,

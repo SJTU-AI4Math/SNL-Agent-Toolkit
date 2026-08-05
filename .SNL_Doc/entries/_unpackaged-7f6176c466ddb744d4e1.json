@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.button.entry.generate-uuid",
+    "kind": "a7b50172-f82e-4adb-85cc-f085fda132ff",
+    "title": "Generate UUID Button",
+    "content": {
+      "snl": "ButtonDescription(%Located in #0 beside the ID field; it relabels to #1 when the field is non-empty.%(Create_Entry,Regenerate_UUID),GenerateValueFor(crypto.randomUUID,Entry_ID_Field))"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

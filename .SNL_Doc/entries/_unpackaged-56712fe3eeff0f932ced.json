@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "concept.extension.query-only-macro-rendering",
+    "kind": "entry-kind.concept",
+    "title": "Query-Only Macro Rendering",
+    "content": {
+      "snl": "%Rendering receives macro data only through #0. Entry, graph, editor, popover, and package-preview surfaces share that query route instead of combining a database prop with a template callback.%(MacroDataDriver)"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

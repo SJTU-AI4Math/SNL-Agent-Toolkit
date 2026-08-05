@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.library.edit.title",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "Library Title Input (Edit)",
+    "content": {
+      "snl": "%Editable Library title in Edit Library.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

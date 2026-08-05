@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "snl-concepts",
+  "macro": {
+    "description": "Catfood term for Macro Migration Boundary.",
+    "source": {
+      "entries": [
+        "concept.extension.macro-migration-boundary"
+      ],
+      "urls": []
+    },
+    "kind": "snl-concept",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{macro migration boundary}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "Macro_migration_boundary",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

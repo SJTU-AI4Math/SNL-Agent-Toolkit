@@ -1,0 +1,16 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "ui.input.entry.create.gui-macro-style",
+    "kind": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
+    "title": "GUI Macro Style Input (Create Entry)",
+    "content": {
+      "snl": "%Shows the resolved default style_name at low opacity until the author explicitly writes a bracketed style.%"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "package": "_unpackaged"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "commands",
+  "macro": {
+    "description": "Extension command identifier: snlDoc.editMacroPackage",
+    "source": {
+      "entries": [
+        "command.snlDoc.editMacroPackage"
+      ],
+      "urls": []
+    },
+    "kind": "command",
+    "dynamic_arity": false,
+    "tags": [],
+    "styles": [
+      {
+        "mode": "formula_inline",
+        "template": "\\texttt{snlDoc.editMacroPackage}",
+        "style_name": "default",
+        "tags": []
+      }
+    ],
+    "name": "snlDoc.editMacroPackage",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "ui-buttons",
+  "name": "UI Buttons",
+  "description": "Concrete Extension buttons and actions."
+}

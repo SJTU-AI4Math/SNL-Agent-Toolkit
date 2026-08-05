@@ -1,5 +1,5 @@
 {
-  "version": "7",
+  "version": "8",
   "name": "Technical Literals",
   "description": "Literal symbols, examples, statuses, and residual technical prose terms.",
   "macros": {
@@ -19,7 +19,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.dot_one": {
       "description": "Toolkit documentation term: .1",
@@ -37,7 +40,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.parentheses": {
       "description": "Toolkit documentation term: ()",
@@ -55,7 +61,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.brackets": {
       "description": "Toolkit documentation term: []",
@@ -73,7 +82,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.at_sign": {
       "description": "Toolkit documentation term: @",
@@ -91,7 +103,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.percent_sign": {
       "description": "Toolkit documentation term: %",
@@ -109,7 +124,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.dollar_sign": {
       "description": "Toolkit documentation term: $",
@@ -127,7 +145,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.one": {
       "description": "Toolkit documentation term: 1",
@@ -145,7 +166,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.upper_A": {
       "description": "Toolkit documentation term: A",
@@ -163,7 +187,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.lower_i": {
       "description": "Toolkit documentation term: (i)",
@@ -181,7 +208,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.section_I": {
       "description": "Toolkit documentation term: §I.",
@@ -199,7 +229,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.example_A": {
       "description": "Toolkit documentation term: Ex. A.",
@@ -217,7 +250,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Preset.Fulcrum_Math_Notes": {
       "description": "Toolkit documentation term: Fulcrum's Math Notes",
@@ -235,7 +271,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     },
     "Literal.hash_star": {
       "description": "Macro v7 dynamic-child placeholder #*.",
@@ -255,7 +294,10 @@
           "style_name": "default",
           "tags": []
         }
-      ]
+      ],
+      "default_style": {
+        "en": "default"
+      }
     }
   }
 }

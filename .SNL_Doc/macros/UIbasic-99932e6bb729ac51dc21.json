@@ -1,0 +1,27 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "package": "UIbasic",
+  "macro": {
+    "description": "Reset a collection of UI values.",
+    "source": {
+      "entries": [],
+      "urls": []
+    },
+    "kind": "literal",
+    "dynamic_arity": false,
+    "styles": [
+      {
+        "style_name": "default",
+        "tags": [],
+        "mode": "text",
+        "template": "reset #0"
+      }
+    ],
+    "tags": [],
+    "name": "ResetItems",
+    "default_style": {
+      "en": "default"
+    }
+  }
+}

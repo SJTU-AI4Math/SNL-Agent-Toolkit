@@ -78,18 +78,19 @@ Checks:
   declared node; each node has at most one incoming branch (multi-parent
   = error); the branch subgraph has no cycles.
 - **Pool references** — `props.entryId`, when set, must resolve in
-  `.SNL_Doc/entries.json`. Placeholder nodes (no entryId) are fine.
+  the live `.SNL_Doc/entries/*.json` pool. Placeholder nodes (no entryId) are fine.
 
 ### snl-lint-package
 
-Lint one or more macro-package JSON payloads (files in
-`.SNL_Doc/term_macros/`).
+Lint one or more Macro payloads. Named mode assembles a Package from the live
+Package manifest and per-entity Macro files; positional mode still accepts a
+standalone synthetic Package JSON payload.
 
 ```bash
 # Lint every package on disk
 node bin/snl-lint-package.mjs --root /path/to/project
 
-# Named package (bare filename, no .json)
+# Named Package (Package ID)
 node bin/snl-lint-package.mjs --root . --name core
 
 # Multiple packages — repeat --name
@@ -102,13 +103,15 @@ node bin/snl-lint-package.mjs --root . path/to/draft-pkg.json
 Checks:
 - **Schema** — top-level `version` / `name` / optional `description` /
   `macros` (name → entry map). Per macro: `description` / `source` /
-  `dynamic_arity` / required `tags[]` / non-empty `styles[]`. Per style:
+  `dynamic_arity` / required `default_style` / required `tags[]` /
+  non-empty `styles[]`. Per style:
   valid unique `style_name`, `mode`, `template`, and required `tags[]`.
 - **Template placeholders** — canonical `#0` through `#99` and `#*` are
   recognised; anything else (`#foo`, `#-1`, `##`, `#00`, `#100`, …) is an
   error. Escape a literal hash as `\#`. `#*` is only legal when the
   macro's `dynamic_arity` is `true`; every dynamic style must contain it.
-- **Macro v7 rules** — `separator`, when present, is a string (including
+- **Macro v8 rules** — `default_style` values resolve to declared styles;
+  every template is a string; `separator`, when present, is a string (including
   explicit `""`); `block_template_name` is valid only in block mode; tags
   cannot contain backslashes; pre-v7 style fields are errors rather than
   runtime aliases.
@@ -131,7 +134,7 @@ node bin/snl-find-refs.mjs --root . --type macro Group
 node bin/snl-find-refs.mjs --root . --type macro --json Group
 ```
 
-For Entry ids, this covers the `entries.json` definition, Library graph
+For Entry ids, this covers the `entries/*.json` definition, Library graph
 `props.entryId`, pool-wide relationship `from`/`to`, macro
 `source.entries[]`, SNL `x@entry-id` references, and Extension-generated
 relationship `metadata.postfixes[]` witnesses. For Macro ids, it covers the
@@ -172,14 +175,16 @@ Safety rules:
   key order, and CRLFs—remains byte-for-byte unchanged. The deliberately edited
   identity/SNL string token is re-encoded as valid JSON and may normalize its
   own prior escape spelling;
-- `.SNL_Doc`, `term_macros`, `libraries`, Library slug directories, and schema
+- `.SNL_Doc`, `packages`, `entries`, `macros`, `libraries`, Library slug directories, and schema
   files must stay within the canonical workspace and may not be symlinks;
   reads use `O_NOFOLLOW`, temporary files use exclusive creation, parent
   directories plus inode/content are checked again before installation, and
   original permission modes are preserved;
-- writes use same-directory temporary files and restore already-installed
-  originals if a later replacement fails. This is rollback-based multi-file
-  safety, **not crash-atomic transaction semantics**: process/machine failure
+- writes acquire the Extension-compatible `.data-write.lock`, use same-directory
+  temporary files, recheck each source immediately before its installation, and
+  restore already-installed originals if a later replacement fails. Rollback
+  refuses to overwrite/delete output that changed concurrently. This is
+  guarded multi-file safety, **not crash-atomic transaction semantics**: process/machine failure
   between per-file renames can still require recovery from version control;
 - only schema-owned identity/reference fields, generated relationship witness
   arrays, and parsed SNL tokens change; titles, Markdown/LaTeX/text, arbitrary

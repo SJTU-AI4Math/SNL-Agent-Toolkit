@@ -1,34 +1,38 @@
 # `.SNL_Doc` JSON schema reference
 
-> Markdown reference for the on-disk data model. This is descriptive documentation, not a machine-readable JSON Schema document.
-
-The authoritative implementation is owned by `SNL-Doc-Extension`. Toolkit runtime compatibility types live in `lib/snl-doc-schema.ts`; agents should read this document rather than TypeScript declarations.
+> Agent-readable reference for the on-disk model. `SNL-Doc-Extension` is authoritative; Toolkit mirrors only the parts its CLIs consume.
 
 ## Directory layout
 
 ```text
 .SNL_Doc/
 ├── config.json
-├── entries.json
-├── relationships.json                 # optional
-├── term_macros/
-│   └── <package>.json
-└── libraries/
-    └── <slug>/
-        ├── meta.json
-        ├── graph.json
-        ├── counters.json
-        └── documents/
-            ├── Typst/
-            ├── LaTeX/
-            └── Markdown/
+├── packages/<PackageId>-<packageHash>.json
+├── entries/<PackageId>-<entryHash>.json
+├── macros/<PackageId>-<macroHash>.json
+├── relationships.json                     # optional
+├── libraries/<slug>/
+│   ├── meta.json
+│   ├── graph.json
+│   ├── counters.json
+│   └── documents/{Typst,LaTeX,Markdown}/
+├── entries.json                           # frozen legacy backup after migration
+└── term_macros/*.json                     # frozen legacy backups after migration
 ```
+
+When `config.json#entity_storage.version` is `1`, readers use only `packages/`, `entries/`, and `macros/`. They must never merge the frozen aggregate backups into the live entity set. New workspaces omit the backups.
 
 ## `config.json`
 
 ```json
 {
-  "version": "0.0.3",
+  "version": "0.0.6",
+  "entity_storage": {
+    "version": 1,
+    "legacy_backup_version": "0.0.5",
+    "entry_default_package": "_unpackaged",
+    "receipt": {}
+  },
   "entry_kinds": [
     {
       "id": "definition",
@@ -46,102 +50,124 @@ The authoritative implementation is owned by `SNL-Doc-Extension`. Toolkit runtim
       "coloring": { "stroke": "#6a1b9a", "background": "#f3e5f5" }
     }
   ],
-  "active_macro_packages": ["algebra"]
+  "active_macro_packages": ["Algebra"]
 }
 ```
 
-### Invariants
-
 - `EntryKind.id` and `MacroKind.id` are stable identity keys.
-- `EntryKind.defaultCounterName` names a counter in the current Library. It is not a numbering DSL.
-- `active_macro_packages` contains bare filenames without `.json`.
-- `coloring` values are CSS colors consumed by the UI.
+- `EntryKind.defaultCounterName` names a Library counter.
+- `active_macro_packages` contains Package IDs, not filenames.
+- `entity_storage.receipt` is Extension-owned migration evidence. Readers recompute it from the frozen `0.0.5` backups and reject missing or mismatched receipts; preserve it verbatim.
 
-## `entries.json`
+## Stable identity paths
 
-A bare array shared by every Library:
+Entity filenames are derived from logical identity, not mutable JSON content:
+
+```text
+hash = first 20 lowercase hex digits of SHA-256(
+  UTF-8("snl-doc/v1\0" + kind + "\0" + identity components joined by NUL)
+)
+```
+
+- Package: kind `package`, component `packageId`.
+- Entry: kind `entry`, components `packageId`, `entry.id`.
+- Macro: kind `macro`, components `packageId`, `macro.name`.
+
+Examples of path constructors are implemented in `lib/entity-storage.ts`. Never guess, truncate differently, hash JSON content, or retain a stale filename after changing an identity or Entry Package.
+
+Package IDs are immutable, case-preserved, 1–64 Windows-safe ASCII characters matching `[A-Za-z0-9][A-Za-z0-9._-]*`; `.json` suffixes and Windows device names are forbidden. `_unpackaged` is the reserved system Package. Exact and case-folded path/Package collisions are fatal.
+
+## Package manifest
 
 ```json
-[
-  {
+{
+  "format": "snl-package",
+  "version": 1,
+  "id": "Algebra",
+  "name": "Algebra",
+  "description": "Algebra terms"
+}
+```
+
+A Package groups both Entries and Macros. `id` is immutable; `name`, `description`, and unknown extension fields are mutable and must round-trip.
+
+## Entry entity
+
+```json
+{
+  "format": "snl-entry",
+  "version": 1,
+  "package": "Algebra",
+  "entry": {
     "id": "algebra.def.group",
+    "package": "Algebra",
     "kind": "definition",
     "title": "Group",
     "content": { "snl": "%A #0 is …%(Group)" },
     "contribution_info": null,
     "pointer": null
   }
-]
+}
 ```
 
-### Invariants
-
-- `id` is non-empty and globally unique in the pool.
+- Envelope and inner `package` must agree.
+- `entry.id` is globally unique even across Packages.
+- Moving an Entry changes its hash-derived filename and both Package fields, but not its id or references.
 - `kind` references `config.entry_kinds[].id`.
-- `title` may be empty.
-- `content` may contain `snl`, `typst`, `latex`, `markdown`, and `text`; SNL is the canonical structured form.
-- `contribution_info` is consumer-owned data.
-- `pointer` is `null` or a structured source-location payload; preserve unknown fields.
+- `content.snl` is the canonical structured form; other optional dialects are `typst`, `latex`, `markdown`, and `text`.
+- `contribution_info`, `pointer`, and unknown fields are pass-through data.
 
-## `term_macros/<package>.json`
+## Macro entity
 
 ```json
 {
-  "version": "7",
-  "name": "Algebra",
-  "description": "Algebra terms",
-  "macros": {
-    "Group": {
-      "description": "A group",
-      "source": { "entries": ["algebra.def.group"], "urls": [] },
-      "kind": "structure",
-      "dynamic_arity": false,
-      "styles": [
-        { "style_name": "default", "mode": "text", "template": "group", "tags": [] }
-      ],
-      "tags": []
-    }
+  "format": "snl-macro",
+  "version": 1,
+  "package": "Algebra",
+  "macro": {
+    "name": "Group",
+    "description": "A group",
+    "source": { "entries": ["algebra.def.group"], "urls": [] },
+    "kind": "structure",
+    "dynamic_arity": false,
+    "default_style": { "en": "default" },
+    "styles": [
+      { "style_name": "default", "mode": "text", "template": "group", "tags": [] }
+    ],
+    "tags": []
   }
 }
 ```
 
-- Macro map keys are stable macro identities.
+- Macro identity is `(package, macro.name)`; active Packages form a set and
+  canonical Package filename order determines last-wins precedence for same-named Macros.
 - `source.entries[]` references Entry ids.
 - `kind`, when present, references a Macro Kind id.
-- `styles` is non-empty; `style_name` values are unique within one macro and follow the SNL identifier grammar.
-- Valid modes: `formula_inline`, `formula_display`, `text`, `block`.
-- Macro and style `tags` are required arrays (use `[]` when empty) and must not contain backslashes.
-- Dynamic macros put `#*` in every style `template`; optional string `separator` joins the children and may be explicitly empty.
-- `block_template_name` is optional and valid only for `mode: "block"`.
-- Pre-v7 fields are invalid; migrate old packages with SNL-Basics before linting.
-- Toolkit-owned optional output backends are `typst`, `latex`, `markdown`, and `text`.
+- `default_style` is required. It maps language ids to declared style names;
+  implicit resolution is current language, then `en`, then `styles[0]`.
+- Style names are unique within one Macro and follow the SNL identifier grammar.
+- Valid modes are `formula_inline`, `formula_display`, `text`, and `block`.
+- Macro and style `tags` are required arrays and may not contain backslashes.
+- Dynamic Macros put `#*` in every style template; optional string `separator` joins children.
+- `block_template_name` is valid only in `block` mode.
+- A style may omit arguments used by sibling styles. Fixed arity is the largest referenced `#N` plus one across all styles; missing intermediate placeholders are valid.
 
 See [`SNL_Macro.md`](SNL_Macro.md) for rendering semantics.
 
-## `libraries/<slug>/meta.json`
+## Libraries
+
+`libraries/<slug>/meta.json`:
 
 ```json
-{
-  "title": "Algebra",
-  "description": "A reading path through the algebra Entries."
-}
+{ "title": "Algebra", "description": "A reading path." }
 ```
 
-Both fields are optional at read time. The directory slug is the Library identity.
-
-## `libraries/<slug>/graph.json`
+`libraries/<slug>/graph.json`:
 
 ```json
 {
   "nodes": [
-    {
-      "id": "group",
-      "label": "Entry",
-      "props": {
-        "entryId": "algebra.def.group",
-        "counterId": "counter-definition"
-      }
-    }
+    { "id": "group", "label": "Entry", "props": { "entryId": "algebra.def.group", "counterId": "counter-definition" } }
   ],
   "relationships": [
     { "from": "chapter", "to": "group", "label": "branch" }
@@ -149,98 +175,58 @@ Both fields are optional at read time. The directory slug is the Library identit
 }
 ```
 
-- `nodes[].id` is unique only within this Library.
-- `label: "Entry"` is the understood node label.
-- `props.entryId` optionally references the shared pool; omission means a placeholder.
-- `props.counterId` optionally overrides the Entry Kind's default counter for this occurrence.
-- `branch` points parent → child.
-- Each node has at most one incoming `branch`; the branch graph is acyclic.
-- Sibling order is relationship declaration order; reading order is depth-first traversal.
-- Unknown properties must survive round trips.
+- Node ids are local to one Library; `props.entryId` references the global Entry pool.
+- Omitted `entryId` means a placeholder.
+- `branch` points parent to child; each node has at most one parent and the graph is acyclic.
+- Sibling order is relationship declaration order; reading order is depth-first.
 
-## `libraries/<slug>/counters.json`
+`libraries/<slug>/counters.json`:
 
 ```json
 {
   "counters": [
-    {
-      "id": "counter-definition",
-      "name": "Definition",
-      "numbering": "1",
-      "children": [
-        {
-          "id": "counter-subdefinition",
-          "name": "Subdefinition",
-          "numbering": ".1",
-          "children": []
-        }
-      ]
-    }
+    { "id": "counter-definition", "name": "Definition", "numbering": "1", "children": [] }
   ]
 }
 ```
 
-- Counter ids are stable within the Library.
-- `name` is matched by `EntryKind.defaultCounterName`; duplicate names are ambiguous because lookup uses the first depth-first match.
-- `numbering` is a Typst-inspired ordinal template such as `1`, `.1`, `A`, `(i)`, or `§I.`.
-- `children` forms the counter hierarchy.
+Counter ids are Library-local. `name` is matched by `EntryKind.defaultCounterName`; duplicate names are ambiguous.
 
-## `relationships.json`
+## Pool relationships
+
+`relationships.json` is optional and distinct from Library structure:
 
 ```json
 {
   "version": 1,
   "relationships": [
-    {
-      "id": "rel-group-monoid",
-      "from": "algebra.def.group",
-      "to": "algebra.def.monoid",
-      "label": "generalizes",
-      "metadata": {}
-    }
+    { "id": "rel-group-monoid", "from": "algebra.def.group", "to": "algebra.def.monoid", "label": "generalizes", "metadata": {} }
   ]
 }
 ```
 
-This graph is pool-wide and semantic. It is distinct from each Library's structural `graph.json`.
+`from` and `to` reference Entry ids. Metadata is opaque except Extension-generated rows with `metadata.generator: "macro-source-scan"`: `metadata.macros[]` contains Macro names and `metadata.postfixes[]` contains Entry ids.
 
-- `id` is globally unique in the relationship file.
-- `from` and `to` reference Entry ids.
-- `label` is a non-empty free-form string.
-- `metadata` is generally opaque and must round-trip unchanged.
-- Exception: rows with `metadata.generator: "macro-source-scan"` are
-  Extension-owned generated relationships. Their `metadata.macros[]` values are
-  Macro identities and `metadata.postfixes[]` values are Entry identities;
-  identity tracing/rename updates these known witness arrays while leaving
-  arbitrary user-authored metadata untouched.
+## Identity changes and round trips
 
-## Identity and round-trip rules
+Never hand-edit an identity in only one location. Use:
 
-Never silently change:
+```bash
+node bin/snl-find-refs.mjs --root . --type entry old.id
+node bin/snl-rename-id.mjs --root . --type entry --dry-run old.id new.id
+node bin/snl-rename-id.mjs --root . --type entry old.id new.id
+```
 
-- Entry id;
-- Entry Kind id;
-- Macro Kind id;
-- macro package filename;
-- macro name;
-- Library slug;
-- relationship id.
+The rename CLI acquires the Extension-compatible `.data-write.lock`, updates structured references, and transactionally moves the defining Entry/Macro to its new hash-derived path with optimistic concurrency checks and guarded rollback. It deliberately leaves frozen legacy backups unchanged.
 
-Readers should tolerate unknown fields and writers should preserve them unless a migration explicitly owns their removal.
-
-When an identity really must change, do not hand-edit one file or run a raw
-text replacement. Use `snl-find-refs` to inspect its structured definition and
-references, then `snl-rename-id --dry-run` followed by `snl-rename-id` to apply
-a collision-checked synchronized migration. The Toolkit owns Entry references
-in Library graphs, pool relationships, macro provenance, and SNL `x@entry-id`;
-it owns Macro references in package map keys and SNL macro tokens. Opaque
-metadata and non-SNL prose are deliberately outside that migration boundary.
+Readers reject malformed envelopes, envelope/inner Package disagreement, path mismatch, duplicate Entry ids, duplicate `(Package, Macro)` identities, and case-folded Package collisions. Unknown fields must survive writes unless an explicit migration owns their removal.
 
 ## Source-of-truth synchronization
 
-When `SNL-Doc-Extension/src/snlDoc.ts` or `src/libraryGraph.ts` changes:
+When Extension storage changes:
 
-1. update this Markdown reference;
-2. update `lib/snl-doc-schema.ts` if Toolkit code consumes the changed shape;
-3. update lint rules and fixtures;
-4. run `npm test` and `npm run lint-types`.
+1. inspect `src/entityStorage.ts`, `src/entityStorageIo.ts`, migration code, and storage docs;
+2. update this reference and `lib/entity-storage.ts` / `lib/snl-doc-schema.ts`;
+3. update every CLI that discovers or writes schema files;
+4. add failing fixtures for both live entity data and ignored frozen backups;
+5. run `npm test`, `npm run lint-types`, all Toolkit lints, and a real Extension read/render check.

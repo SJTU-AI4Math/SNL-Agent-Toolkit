@@ -1,6 +1,6 @@
 /**
  * Lint one EntryData JSON payload — the SNL-Doc "entry" record shape from
- * `.SNL_Doc/entries.json`.
+ * live `.SNL_Doc/entries/*.json` entities.
  *
  * Layered validation:
  *
