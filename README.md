@@ -24,8 +24,10 @@ SNL-Agent-Toolkit/
 ## Install
 
 ```bash
-git clone git@github.com:SJTU-AI4Math/SNL-Agent-Toolkit.git
+git clone --recurse-submodules git@github.com:SJTU-AI4Math/SNL-Agent-Toolkit.git
 cd SNL-Agent-Toolkit
+# For an existing clone created without --recurse-submodules:
+# git submodule update --init --recursive
 npm install
 npm test
 ```
