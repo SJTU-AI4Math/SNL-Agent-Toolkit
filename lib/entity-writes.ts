@@ -89,6 +89,20 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot: string): Promise<strin
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved) {
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
   }
+  const doc = path.join(resolved, '.SNL_Doc');
+  let docStat;
+  try {
+    docStat = await fs.lstat(doc);
+  } catch {
+    throw new Error(`Workspace must contain an existing .SNL_Doc directory: ${doc}.`);
+  }
+  if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
+    throw new Error(`${doc} must be a real directory, not a symlink.`);
+  }
+  const realDoc = await fs.realpath(doc);
+  if (realDoc !== path.join(real, '.SNL_Doc')) {
+    throw new Error(`${doc} escapes the canonical workspace boundary.`);
+  }
   return resolved;
 }
 

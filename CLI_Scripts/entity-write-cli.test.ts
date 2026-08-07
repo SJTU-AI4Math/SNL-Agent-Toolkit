@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { watch } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -467,6 +468,40 @@ describe('agent-facing entity write CLIs', () => {
     const packageResult = run(packageWorkspace.root, 'snl-add-package', [packageDraft]);
     assert.equal(packageResult.status, 1);
     assert.equal(JSON.parse(packageResult.stdout).status, 'invalid');
+  });
+
+  it('rejects a symlinked .SNL_Doc before creating a lock in its target', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'snl-add-cli-doc-link-'));
+    const external = await mkdtemp(path.join(tmpdir(), 'snl-add-cli-external-doc-'));
+    roots.push(root, external);
+    await symlink(external, path.join(root, '.SNL_Doc'), 'dir');
+    const packageDraft = path.join(root, 'package.json');
+    const macroDraft = path.join(root, 'macro.json');
+    const entryDraft = path.join(root, 'entry.json');
+    await Promise.all([
+      json(packageDraft, { id: 'Logic' }),
+      json(macroDraft, { name: 'Logic.term', styles: [{ style_name: 'default', mode: 'text', template: 'term' }] }),
+      json(entryDraft, { id: 'entry.doc-link', kind: 'definition', content: {} }),
+    ]);
+    const events: string[] = [];
+    const watcher = watch(external, (_event, filename) => events.push(String(filename)));
+    try {
+      const invocations: Array<[string, string[]]> = [
+        ['snl-add-package', [packageDraft]],
+        ['snl-add-macro', ['--package', 'Logic', macroDraft]],
+        ['snl-add-entry', [entryDraft]],
+      ];
+      for (const [cli, args] of invocations) {
+        const result = run(root, cli, args);
+        assert.equal(result.status, 2);
+        assert.match(JSON.parse(result.stdout).message, /\.SNL_Doc.*real directory.*symlink/i);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    } finally {
+      watcher.close();
+    }
+    assert.deepEqual(events, []);
+    await assert.rejects(() => stat(path.join(external, '.data-write.lock')), { code: 'ENOENT' });
   });
 
   it('write CLIs reject a symlinked workspace root instead of writing through it', async () => {
