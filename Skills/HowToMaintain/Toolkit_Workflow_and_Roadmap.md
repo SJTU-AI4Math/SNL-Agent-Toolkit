@@ -20,9 +20,10 @@ draft-to-CLI loop:
 
 Design intent: each agent invocation is stateless and single-purpose. Drafts hold
 business content only; envelopes, hashes, filenames, receipts, and locking stay
-inside the Toolkit. A non-`created` result never overwrites an existing identity;
-if a non-cooperating writer changes a just-created path, the CLI preserves that
-concurrent edit and reports possible residue explicitly.
+inside the Toolkit. Entry/Macro identity installation is no-clobber. Package config
+updates coordinate through the writer lock and optimistic checks; on config failure,
+the CLI preserves the manifest path and reports an inactive residue instead of
+attempting an unlink that could race a non-cooperating replacement.
 
 ---
 
@@ -37,8 +38,9 @@ collision-checked renames with dry-run and rollback.
 
 **P0.5 — Agent-safe writes (shipped).** `snl-add-package`, `snl-add-entry`, and
 `snl-add-macro` accept minimal business drafts, validate current topology, and own
-canonical storage writes. Multi-file Package creation is guarded with optimistic
-checks and rollback; it is not described as crash-atomic.
+canonical storage writes. Multi-file Package creation is guarded with writer locking,
+optimistic config checks, and residue reporting; it is not described as crash-atomic
+or as lock-free compare-and-swap against non-cooperating writers.
 
 **Future bulk writes.** If real authoring workloads need them, build a guarded
 batch CLI on the same primitives. Do not weaken per-entity validation or claim

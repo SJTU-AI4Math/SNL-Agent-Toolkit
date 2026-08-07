@@ -216,17 +216,6 @@ async function replaceJsonIfUnchanged(file: string, expected: string, value: unk
   }
 }
 
-async function removeJsonIfUnchanged(file: string, expected: unknown): Promise<'removed' | 'missing' | 'preserved'> {
-  try {
-    if ((await readRegularText(file)).text !== jsonText(expected)) return 'preserved';
-    await fs.unlink(file);
-    return 'removed';
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return 'missing';
-    throw error;
-  }
-}
-
 export async function addEntryEntity(
   workspaceRoot: string,
   raw: unknown,
@@ -479,22 +468,12 @@ export async function addPackageEntity(
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
     } catch (error) {
       const manifestFile = path.join(snlDocRoot(workspaceRoot), relativePath);
-      try {
-        const rollback = await removeJsonIfUnchanged(manifestFile, manifest);
-        if (rollback === 'preserved') {
-          throw new Error(
-            `${error instanceof Error ? error.message : String(error)} Rollback kept a concurrently changed Package manifest; workspace may contain an inactive Package.`,
-            { cause: error },
-          );
-        }
-      } catch (rollbackError) {
-        if (rollbackError instanceof Error && rollbackError.cause === error) throw rollbackError;
-        throw new Error(
-          `${error instanceof Error ? error.message : String(error)} Rollback failed for ${manifestFile}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}. Workspace may be inconsistent.`,
-          { cause: error },
-        );
-      }
-      throw error;
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} ` +
+        `The new Package manifest remains at ${manifestFile} but is inactive. ` +
+        'Guarded failure handling intentionally does not unlink a live path because a non-cooperating writer could replace it between verification and deletion.',
+        { cause: error },
+      );
     }
     return { status: 'created', entity: 'package', id, path: relativePath, active: true };
   });

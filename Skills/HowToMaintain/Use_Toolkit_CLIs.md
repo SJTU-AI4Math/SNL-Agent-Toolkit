@@ -72,8 +72,12 @@ All three commands:
 - leave `entries.json`, `term_macros/*.json`, and `entity_storage.receipt` unchanged.
 
 Package creation is a guarded two-file write (manifest, then config), not a
-crash-atomic transaction. It uses an optimistic config check and removes only the
-manifest it created when rollback is safe; concurrent edits are never overwritten.
+crash-atomic transaction. Cooperative writers are serialized by `.data-write.lock`;
+the config replacement also performs optimistic byte checks. If config installation
+fails, the CLI deliberately leaves and reports an inactive Package manifest rather
+than unlinking a live path that a non-cooperating writer could have replaced. A
+non-cooperating writer can still race the final config rename syscall; the CLI does
+not claim lock-free CAS semantics.
 
 **Write CLI exit codes:**
 

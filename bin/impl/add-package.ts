@@ -46,4 +46,4 @@ function usage(): string {
   return formatUsage('snl-add-package', '[options] <package-draft.json>', SPECS);
 }
 
-main().then((code) => process.exit(code));
+main().then((code) => { process.exitCode = code; });

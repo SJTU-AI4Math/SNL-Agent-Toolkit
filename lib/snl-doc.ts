@@ -310,7 +310,7 @@ export async function readAllMacroPackages(
     return {};
   }
   const names = await fs.readdir(dir);
-  const out: Record<string, MacroPackageFile> = {};
+  const out: Record<string, MacroPackageFile> = Object.create(null);
   for (const name of names) {
     if (!name.endsWith('.json')) continue;
     const bare = name.replace(/\.json$/i, '');
@@ -352,18 +352,19 @@ async function readEntityMacroPackages(
     identities.add(identity);
     const envelope = value as unknown as MacroEnvelope<Record<string, unknown>>;
     const { name: _name, ...withoutName } = envelope.macro;
-    const packageMacros = macros.get(value.package) ?? {};
+    const packageMacros = macros.get(value.package) ??
+      Object.create(null) as Record<string, MacroPackageEntryWithoutName>;
     packageMacros[value.macro.name] = withoutName as MacroPackageEntryWithoutName;
     macros.set(value.package, packageMacros);
   }
 
-  const out: Record<string, MacroPackageFile> = {};
+  const out: Record<string, MacroPackageFile> = Object.create(null);
   for (const manifest of [...manifests.values()].sort((a, b) => a.id.localeCompare(b.id))) {
     out[manifest.id] = {
       version: '8',
       name: manifest.name,
       description: manifest.description,
-      macros: macros.get(manifest.id) ?? {},
+      macros: macros.get(manifest.id) ?? Object.create(null),
     };
   }
   return out;
@@ -453,7 +454,7 @@ export async function readActiveMacros(
       }
     }
   }
-  const flat: Record<string, MacroPackageEntry> = {};
+  const flat: Record<string, MacroPackageEntry> = Object.create(null);
   // Package discovery order is canonical; active_macro_packages is a set, not
   // a precedence list. Later canonical Package filenames win name collisions.
   for (const pkgName of Object.keys(packages).sort(

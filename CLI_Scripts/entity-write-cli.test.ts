@@ -10,7 +10,7 @@ import {
   makeEntityStorageReceipt,
   packageManifestPath,
 } from '../lib/entity-storage.ts';
-import { readAllMacroPackages, readConfig, readEntries } from '../lib/snl-doc.ts';
+import { readActiveMacros, readAllMacroPackages, readConfig, readEntries } from '../lib/snl-doc.ts';
 import { addPackageEntity } from '../lib/entity-writes.ts';
 
 const roots: string[] = [];
@@ -59,6 +59,7 @@ function run(root: string, cli: string, args: string[]) {
   return spawnSync(process.execPath, [`bin/${cli}.mjs`, '--root', root, '--json', ...args], {
     cwd: path.resolve(import.meta.dirname, '..'),
     encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
   });
 }
 
@@ -220,6 +221,47 @@ describe('agent-facing entity write CLIs', () => {
     });
   });
 
+  it('round-trips prototype-like Macro identities through Package and active maps', async () => {
+    const { root, doc } = await workspace();
+    await json(path.join(doc, packageManifestPath('Logic')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
+    const configFile = path.join(doc, 'config.json');
+    const config = JSON.parse(await readFile(configFile, 'utf8'));
+    config.active_macro_packages = ['Logic'];
+    await json(configFile, config);
+    const draft = path.join(root, 'macro-proto.json');
+    await json(draft, {
+      name: '__proto__',
+      styles: [{ style_name: 'default', mode: 'text', template: 'prototype' }],
+    });
+    const result = run(root, 'snl-add-macro', ['--package', 'Logic', draft]);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const packages = await readAllMacroPackages(root);
+    assert.equal(Object.hasOwn(packages.Logic.macros, '__proto__'), true);
+    assert.equal(Object.hasOwn(await readActiveMacros(root), '__proto__'), true);
+  });
+
+  it('flushes large JSON diagnostics before exiting', async () => {
+    const { root, doc } = await workspace();
+    await json(path.join(doc, packageManifestPath('Logic')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
+    const draft = path.join(root, 'macro-many-errors.json');
+    await json(draft, {
+      name: 'Many.errors',
+      styles: Array.from({ length: 3000 }, (_, index) => ({
+        style_name: `bad style ${index}`, mode: 'invalid', template: null,
+      })),
+    });
+    const result = run(root, 'snl-add-macro', ['--package', 'Logic', draft]);
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /\n$/);
+    const payload = JSON.parse(result.stdout);
+    assert.equal(payload.status, 'invalid');
+    assert.ok(payload.issues.length >= 3000);
+  });
+
   it('snl-add-package accepts a minimal draft, writes the hashed manifest, and activates it', async () => {
     const { root } = await workspace();
     const draft = path.join(root, 'package.json');
@@ -275,7 +317,7 @@ describe('agent-facing entity write CLIs', () => {
     await assert.rejects(() => stat(path.join(doc, packageManifestPath('Logic'))), { code: 'ENOENT' });
   });
 
-  it('Package creation preserves a concurrent config edit and rolls back its new manifest', async () => {
+  it('Package creation preserves config conflicts and reports an inactive manifest residue', async () => {
     const { root, doc } = await workspace();
     const configFile = path.join(doc, 'config.json');
     const concurrentConfig = JSON.parse(await readFile(configFile, 'utf8'));
@@ -283,12 +325,14 @@ describe('agent-facing entity write CLIs', () => {
 
     await assert.rejects(() => addPackageEntity(root, { id: 'Logic' }, {
       beforeConfigInstall: async () => json(configFile, concurrentConfig),
-    }), /changed during Package creation/);
+    }), /manifest remains.*inactive/i);
     assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
-    await assert.rejects(() => stat(path.join(doc, packageManifestPath('Logic'))), { code: 'ENOENT' });
+    assert.deepEqual(JSON.parse(await readFile(path.join(doc, packageManifestPath('Logic')), 'utf8')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
   });
 
-  it('Package creation reports rollback residue instead of deleting a concurrent manifest edit', async () => {
+  it('Package creation never unlinks a concurrently replaced manifest on config failure', async () => {
     const { root, doc } = await workspace();
     const configFile = path.join(doc, 'config.json');
     const manifestFile = path.join(doc, packageManifestPath('Logic'));
@@ -304,7 +348,7 @@ describe('agent-facing entity write CLIs', () => {
         await json(manifestFile, concurrentManifest);
         await json(configFile, concurrentConfig);
       },
-    }), /rollback.*manifest.*preserved|workspace may contain/i);
+    }), /manifest remains.*inactive/i);
     assert.deepEqual(JSON.parse(await readFile(manifestFile, 'utf8')), concurrentManifest);
     assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
   });

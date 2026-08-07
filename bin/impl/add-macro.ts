@@ -71,4 +71,4 @@ function usage(): string {
   return formatUsage('snl-add-macro', '--package <id> [options] <macro-draft.json>', SPECS);
 }
 
-main().then((code) => process.exit(code));
+main().then((code) => { process.exitCode = code; });
