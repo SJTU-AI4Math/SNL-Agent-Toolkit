@@ -484,7 +484,7 @@ export async function addPackageEntity(
       const manifestFile = path.join(snlDocRoot(workspaceRoot), relativePath);
       throw new Error(
         `${error instanceof Error ? error.message : String(error)} ` +
-        `The new Package manifest remains at ${manifestFile} but is inactive. ` +
+        `The new Package manifest remains at ${manifestFile}. Its effective activation follows the unchanged config and it may already be active when active_macro_packages is omitted. ` +
         'Guarded failure handling intentionally does not unlink a live path because a non-cooperating writer could replace it between verification and deletion.',
         { cause: error },
       );

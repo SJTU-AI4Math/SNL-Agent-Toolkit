@@ -22,8 +22,9 @@ Design intent: each agent invocation is stateless and single-purpose. Drafts hol
 business content only; envelopes, hashes, filenames, receipts, and locking stay
 inside the Toolkit. Entry/Macro identity installation is no-clobber. Package config
 updates coordinate through the writer lock and optimistic checks; on config failure,
-the CLI preserves the manifest path and reports an inactive residue instead of
-attempting an unlink that could race a non-cooperating replacement.
+the CLI preserves the manifest path and reports its effective activation from the
+unchanged config instead of attempting an unlink that could race a non-cooperating
+replacement. If `active_macro_packages` is omitted, the residue may already be active.
 
 ---
 

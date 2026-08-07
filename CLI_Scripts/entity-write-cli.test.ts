@@ -12,7 +12,7 @@ import {
   packageManifestPath,
 } from '../lib/entity-storage.ts';
 import { readActiveMacros, readAllMacroPackages, readConfig, readEntries } from '../lib/snl-doc.ts';
-import { addPackageEntity } from '../lib/entity-writes.ts';
+import { addMacroEntity, addPackageEntity } from '../lib/entity-writes.ts';
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -326,7 +326,7 @@ describe('agent-facing entity write CLIs', () => {
 
     await assert.rejects(() => addPackageEntity(root, { id: 'Logic' }, {
       beforeConfigInstall: async () => json(configFile, concurrentConfig),
-    }), /manifest remains.*inactive/i);
+    }), /manifest remains.*effective activation/is);
     assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
     assert.deepEqual(JSON.parse(await readFile(path.join(doc, packageManifestPath('Logic')), 'utf8')), {
       format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
@@ -349,9 +349,29 @@ describe('agent-facing entity write CLIs', () => {
         await json(manifestFile, concurrentManifest);
         await json(configFile, concurrentConfig);
       },
-    }), /manifest remains.*inactive/i);
+    }), /manifest remains.*effective activation/is);
     assert.deepEqual(JSON.parse(await readFile(manifestFile, 'utf8')), concurrentManifest);
     assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
+  });
+
+  it('reports that a config-failure residue may be active under effective-all semantics', async () => {
+    const { root, doc } = await workspace();
+    const configFile = path.join(doc, 'config.json');
+    const config = JSON.parse(await readFile(configFile, 'utf8'));
+    delete config.active_macro_packages;
+    await json(configFile, config);
+    const concurrentConfig = { ...config, vendor_extension: { keep: 'concurrent' } };
+
+    await assert.rejects(() => addPackageEntity(root, { id: 'Logic' }, {
+      beforeConfigInstall: async () => json(configFile, concurrentConfig),
+    }), /may already be active when active_macro_packages is omitted/i);
+    const macroResult = await addMacroEntity(root, 'Logic', {
+      name: 'Logic.residue',
+      styles: [{ style_name: 'default', mode: 'text', template: 'residue' }],
+    });
+    assert.equal(macroResult.status, 'created');
+    assert.equal(macroResult.issues.some((issue) => issue.code === 'macro.package-inactive'), false);
+    assert.equal(Object.hasOwn(await readActiveMacros(root), 'Logic.residue'), true);
   });
 
   it('agent JSON mode reports invocation errors as JSON on stdout', async () => {
