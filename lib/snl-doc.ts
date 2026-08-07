@@ -291,6 +291,15 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
   return raw as EntryData[];
 }
 
+function defineIdentity<T>(target: Record<string, T>, key: string, value: T): void {
+  Object.defineProperty(target, key, {
+    value,
+    enumerable: true,
+    configurable: true,
+    writable: true,
+  });
+}
+
 /**
  * Assemble every live Package manifest and Macro entity into the historical
  * Package map API used by Toolkit linters/renderers. Legacy aggregate Package
@@ -310,12 +319,12 @@ export async function readAllMacroPackages(
     return {};
   }
   const names = await fs.readdir(dir);
-  const out: Record<string, MacroPackageFile> = Object.create(null);
+  const out: Record<string, MacroPackageFile> = {};
   for (const name of names) {
     if (!name.endsWith('.json')) continue;
     const bare = name.replace(/\.json$/i, '');
     try {
-      out[bare] = await readJson<MacroPackageFile>(path.join(dir, name));
+      defineIdentity(out, bare, await readJson<MacroPackageFile>(path.join(dir, name)));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       throw new Error(`Failed to read macro package '${bare}': ${msg}`);
@@ -352,20 +361,23 @@ async function readEntityMacroPackages(
     identities.add(identity);
     const envelope = value as unknown as MacroEnvelope<Record<string, unknown>>;
     const { name: _name, ...withoutName } = envelope.macro;
-    const packageMacros = macros.get(value.package) ??
-      Object.create(null) as Record<string, MacroPackageEntryWithoutName>;
-    packageMacros[value.macro.name] = withoutName as MacroPackageEntryWithoutName;
+    const packageMacros = macros.get(value.package) ?? {};
+    defineIdentity(
+      packageMacros,
+      value.macro.name,
+      withoutName as MacroPackageEntryWithoutName,
+    );
     macros.set(value.package, packageMacros);
   }
 
-  const out: Record<string, MacroPackageFile> = Object.create(null);
+  const out: Record<string, MacroPackageFile> = {};
   for (const manifest of [...manifests.values()].sort((a, b) => a.id.localeCompare(b.id))) {
-    out[manifest.id] = {
+    defineIdentity(out, manifest.id, {
       version: '8',
       name: manifest.name,
       description: manifest.description,
-      macros: macros.get(manifest.id) ?? Object.create(null),
-    };
+      macros: macros.get(manifest.id) ?? {},
+    });
   }
   return out;
 }
@@ -454,7 +466,7 @@ export async function readActiveMacros(
       }
     }
   }
-  const flat: Record<string, MacroPackageEntry> = Object.create(null);
+  const flat: Record<string, MacroPackageEntry> = {};
   // Package discovery order is canonical; active_macro_packages is a set, not
   // a precedence list. Later canonical Package filenames win name collisions.
   for (const pkgName of Object.keys(packages).sort(
@@ -468,7 +480,7 @@ export async function readActiveMacros(
         name: macroName,
         ...(entry as MacroPackageEntryWithoutName),
       };
-      flat[macroName] = withName;
+      defineIdentity(flat, macroName, withName);
     }
   }
   return flat;
