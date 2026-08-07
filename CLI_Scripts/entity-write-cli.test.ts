@@ -271,6 +271,35 @@ describe('agent-facing entity write CLIs', () => {
     assert.deepEqual(await readEntries(root), []);
   });
 
+  it('safe defaults apply only to omitted fields, not explicit invalid nulls', async () => {
+    const entryWorkspace = await workspace();
+    const entryDraft = path.join(entryWorkspace.root, 'entry-null.json');
+    await json(entryDraft, { id: 'entry.null', kind: 'definition', content: null });
+    const entryResult = run(entryWorkspace.root, 'snl-add-entry', [entryDraft]);
+    assert.equal(entryResult.status, 1);
+    assert.equal(JSON.parse(entryResult.stdout).status, 'invalid');
+
+    const macroWorkspace = await workspace();
+    await json(path.join(macroWorkspace.doc, packageManifestPath('Logic')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
+    const macroDraft = path.join(macroWorkspace.root, 'macro-null.json');
+    await json(macroDraft, {
+      name: 'Term.null', source: null,
+      styles: [{ style_name: 'default', mode: 'text', template: 'term' }],
+    });
+    const macroResult = run(macroWorkspace.root, 'snl-add-macro', ['--package', 'Logic', macroDraft]);
+    assert.equal(macroResult.status, 1);
+    assert.equal(JSON.parse(macroResult.stdout).status, 'invalid');
+
+    const packageWorkspace = await workspace();
+    const packageDraft = path.join(packageWorkspace.root, 'package-null.json');
+    await json(packageDraft, { id: 'Logic', name: null });
+    const packageResult = run(packageWorkspace.root, 'snl-add-package', [packageDraft]);
+    assert.equal(packageResult.status, 1);
+    assert.equal(JSON.parse(packageResult.stdout).status, 'invalid');
+  });
+
   it('write CLIs reject a symlinked workspace root instead of writing through it', async () => {
     const source = await workspace();
     const parent = await mkdtemp(path.join(tmpdir(), 'snl-add-alias-'));

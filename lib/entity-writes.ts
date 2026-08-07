@@ -84,14 +84,13 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot: string): Promise<strin
 
 function normalizeEntryDraft(raw: unknown, packageOverride?: string): Record<string, unknown> | unknown {
   if (!isRecord(raw)) return raw;
-  const draftPackage = typeof raw.package === 'string' && raw.package.trim()
-    ? raw.package.trim()
-    : undefined;
-  const packageId = packageOverride ?? draftPackage ?? UNPACKAGED_PACKAGE_ID;
+  const packageId = packageOverride !== undefined
+    ? packageOverride
+    : raw.package !== undefined ? raw.package : UNPACKAGED_PACKAGE_ID;
   return {
     ...raw,
-    title: raw.title ?? '',
-    content: raw.content ?? {},
+    title: raw.title === undefined ? '' : raw.title,
+    content: raw.content === undefined ? {} : raw.content,
     contribution_info: Object.prototype.hasOwnProperty.call(raw, 'contribution_info')
       ? raw.contribution_info : null,
     pointer: Object.prototype.hasOwnProperty.call(raw, 'pointer') ? raw.pointer : null,
@@ -113,19 +112,31 @@ function templateUsesVariadic(value: unknown): boolean {
 function normalizeMacroDraft(raw: unknown): Record<string, unknown> | unknown {
   if (!isRecord(raw)) return raw;
   const styles = Array.isArray(raw.styles)
-    ? raw.styles.map((style) => isRecord(style) ? { ...style, tags: style.tags ?? [] } : style)
+    ? raw.styles.map((style) => isRecord(style)
+      ? { ...style, tags: style.tags === undefined ? [] : style.tags }
+      : style)
     : raw.styles;
   const firstStyle = Array.isArray(styles) && isRecord(styles[0]) &&
     typeof styles[0].style_name === 'string' ? styles[0].style_name : undefined;
-  const source = isRecord(raw.source) ? raw.source : {};
+  const source = raw.source === undefined ? {} : raw.source;
+  const normalizedSource = isRecord(source)
+    ? {
+        ...source,
+        entries: source.entries === undefined ? [] : source.entries,
+        urls: source.urls === undefined ? [] : source.urls,
+      }
+    : source;
   return {
     ...raw,
-    description: raw.description ?? '',
-    source: { ...source, entries: source.entries ?? [], urls: source.urls ?? [] },
-    dynamic_arity: raw.dynamic_arity ??
-      (Array.isArray(styles) && styles.some((style) => isRecord(style) && templateUsesVariadic(style.template))),
-    default_style: raw.default_style ?? (firstStyle ? { en: firstStyle } : undefined),
-    tags: raw.tags ?? [],
+    description: raw.description === undefined ? '' : raw.description,
+    source: normalizedSource,
+    dynamic_arity: raw.dynamic_arity === undefined
+      ? Array.isArray(styles) && styles.some((style) => isRecord(style) && templateUsesVariadic(style.template))
+      : raw.dynamic_arity,
+    default_style: raw.default_style === undefined
+      ? (firstStyle ? { en: firstStyle } : undefined)
+      : raw.default_style,
+    tags: raw.tags === undefined ? [] : raw.tags,
     styles,
   };
 }
@@ -218,8 +229,8 @@ export async function addEntryEntity(
     ]);
     const normalized = normalizeEntryDraft(raw, options.package);
     const issues: LintIssue[] = [];
-    if (isRecord(raw) && options.package !== undefined && typeof raw.package === 'string' &&
-        raw.package.trim() !== '' && raw.package.trim() !== options.package) {
+    if (isRecord(raw) && options.package !== undefined &&
+        Object.prototype.hasOwnProperty.call(raw, 'package') && raw.package !== options.package) {
       issues.push({
         severity: 'error',
         code: 'entry.package-mismatch',
@@ -234,9 +245,25 @@ export async function addEntryEntity(
       strictMacros: options.strictMacros,
     });
     issues.push(...report.issues);
-    const packageId = isRecord(normalized) && typeof normalized.package === 'string'
-      ? normalized.package : UNPACKAGED_PACKAGE_ID;
-    if (!Object.prototype.hasOwnProperty.call(packages, packageId)) {
+    const packageValue = isRecord(normalized) ? normalized.package : undefined;
+    let packageId = '';
+    if (typeof packageValue !== 'string' || packageValue.length === 0) {
+      issues.push({
+        severity: 'error', code: 'entry.bad-package',
+        message: 'Entry package must be a non-empty Package ID string.', path: 'package',
+      });
+    } else {
+      packageId = packageValue;
+      try {
+        assertPackageId(packageId);
+      } catch (error) {
+        issues.push({
+          severity: 'error', code: 'entry.bad-package',
+          message: error instanceof Error ? error.message : String(error), path: 'package',
+        });
+      }
+    }
+    if (packageId && !Object.prototype.hasOwnProperty.call(packages, packageId)) {
       issues.push({
         severity: 'error',
         code: 'entry.package-not-found',
@@ -397,8 +424,8 @@ export async function addPackageEntity(
         });
       }
     }
-    const name = raw.name ?? id;
-    const description = raw.description ?? '';
+    const name = raw.name === undefined ? id : raw.name;
+    const description = raw.description === undefined ? '' : raw.description;
     if (typeof name !== 'string' || !name) {
       issues.push({ severity: 'error', code: 'package.bad-name', message: 'Package name must be a non-empty string.', path: 'name' });
     }

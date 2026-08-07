@@ -57,7 +57,8 @@ Minimal Entry draft:
 ```
 
 `snl-add-entry` defaults Package ownership to draft `package`, then `_unpackaged`;
-`--package` explicitly overrides it. `snl-add-macro` requires `--package`. Package
+`--package` supplies it when omitted, and must agree when both are present.
+`snl-add-macro` requires `--package`. Package
 creation activates the new Package in `active_macro_packages` while preserving all
 unknown config fields.
 

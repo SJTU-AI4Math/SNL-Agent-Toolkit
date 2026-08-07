@@ -35,8 +35,9 @@ Then let the Toolkit create the entity:
 node bin/snl-add-entry.mjs --root . --json draft-entry.json
 ```
 
-Use `--package Topology` to supply or override Package ownership, and
-`--strict-macros` when unresolved SNL identifiers must be errors. If no Package is
+Use `--package Topology` to supply Package ownership when omitted from the draft;
+if both are present they must agree. Use `--strict-macros` when unresolved SNL
+identifiers must be errors. If no Package is
 specified in either place, the CLI uses `_unpackaged`. The target Package manifest
 must already exist.
 
