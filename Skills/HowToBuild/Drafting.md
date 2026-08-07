@@ -70,5 +70,8 @@ When several subagents draft disjoint parts of one Library:
    - every `kind` resolves in `config.json#entry_kinds`;
    - every `counter` has a parent counter present in the table (`1.2.3` requires `1.2`);
    - no counter is duplicated.
-2. Create one hash-named Entry envelope per row in `.SNL_Doc/entries/` with Package, identity, and classification fixed, following [`Author_Entries.md`](Author_Entries.md).
+2. Create one inner Entry draft per row, then run
+   `snl-add-entry --root . --json <draft>` for each, following
+   [`Author_Entries.md`](Author_Entries.md). Never create the hash-named envelope
+   or filename directly.
 3. For the `content` field, only the Markdown version is expected here. The SNL version is refined during subsequent stages.

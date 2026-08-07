@@ -34,7 +34,6 @@ source of truth for the library's structure; there is no separate
   ships, hand-author the JSON, then lint.
 - ✅ `snl-lint-graph` — schema, label vocab, branch-tree integrity
   (no multi-parent, no cycles, all `entryId`s resolve in the pool).
-- ⏳ `snl-commit-batch`.
 
 **Rules of thumb.**
 - **The branch subgraph is a tree**, not a DAG. Each node has at most

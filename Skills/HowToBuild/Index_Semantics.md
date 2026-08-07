@@ -24,7 +24,9 @@ defining entry; agents can trace concept dependencies.
 - ✅ `snl-lint-package` — validates schema, but does NOT currently
   check that `source.entries[]` ids resolve in the live Entry entity pool. That
   check is planned; until then, cross-check by hand.
-- ⏳ `snl-commit-batch`.
+- The add CLI does not update an existing Macro. Use the Extension's Macro editor
+  for this phase until a guarded `snl-update-macro` CLI ships; do not replace a
+  hash-named Macro file or edit the migration receipt.
 
 **Rules of thumb.**
 - **Empty is legal, wrong is not.** A macro with no `source.entries`

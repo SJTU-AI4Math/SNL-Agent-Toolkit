@@ -9,8 +9,7 @@
  *   3. If errors → agent fixes them (schema or SNL parse) and retries.
  *   4. If only warnings → agent decides whether to register new macros
  *      or fix references, then either fixes or explicitly accepts.
- *   5. On clean lint → the commit CLI (future) writes a hash-named
- *      `.SNL_Doc/entries/*.json` envelope.
+ *   5. On clean lint → `snl-add-entry` installs the canonical envelope/path.
  *
  * The lint context (entry_kinds, macro pool, sibling entries) is loaded
  * from `<--root>/.SNL_Doc/`. Pass `--root <workspace>` when the CLI's cwd

@@ -9,9 +9,8 @@
  *
  * With no positional and no --name, every live Package is linted.
  *
- * The lint is FILE-LOCAL — cross-package name-collision checking will be
- * a separate CLI (or fold into snl-commit-batch) since it needs the full
- * active-package view.
+ * The lint is FILE-LOCAL. `snl-add-macro` adds target-Package identity,
+ * activation, topology, lock, and no-clobber checks for real writes.
  */
 
 import { promises as fs } from 'node:fs';
