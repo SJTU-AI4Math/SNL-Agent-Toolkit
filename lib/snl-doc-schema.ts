@@ -109,6 +109,14 @@ export interface SnlConfig {
  * extension leaves their shape open for downstream consumers. Toolkits
  * should pass them through untouched on read/write.
  */
+export interface I18nString {
+  type: 'i18n';
+  default_language: string;
+  values: Record<string, string>;
+}
+
+export type LocalizedString = string | I18nString;
+
 export interface EntryData {
   id: string;
   /** Immutable Package identity in per-entity storage. */
@@ -117,10 +125,10 @@ export interface EntryData {
   title: string;
   content: {
     snl?: string;
-    typst?: string;
-    latex?: string;
-    markdown?: string;
-    text?: string;
+    typst?: LocalizedString;
+    latex?: LocalizedString;
+    markdown?: LocalizedString;
+    text?: LocalizedString;
   };
   contribution_info: unknown;
   pointer: unknown;
