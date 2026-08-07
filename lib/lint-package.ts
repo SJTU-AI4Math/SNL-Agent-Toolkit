@@ -126,8 +126,8 @@ function lintMacroEntry(name: string, raw: unknown, issues: LintIssue[], checkKa
     } else if (style.block_template_name !== undefined && style.mode !== 'block') {
       issues.push({ severity: 'error', code: 'style.block-template-non-block', message: `${stylePath}.block_template_name is valid only in block mode.`, path: `${stylePath}.block_template_name` });
     }
-    if (typeof style.template !== 'string') {
-      issues.push({ severity: 'error', code: 'style.missing-template', message: `${stylePath}.template must be a string (may be empty).`, path: `${stylePath}.template` });
+    if (typeof style.template !== 'string' || style.template.trim().length === 0) {
+      issues.push({ severity: 'error', code: 'style.missing-template', message: `${stylePath}.template must be a non-empty string.`, path: `${stylePath}.template` });
       return;
     }
 

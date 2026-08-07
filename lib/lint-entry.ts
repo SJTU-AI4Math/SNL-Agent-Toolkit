@@ -8,7 +8,8 @@
  *        - id: non-empty string, unique across the shared pool
  *        - kind: non-empty string, resolves to an existing EntryKind
  *        - title: string (may be empty — cat 2026-07-06 allows blank titles)
- *        - content: object w/ optional snl/typst/latex/markdown/text strings
+ *        - content: object with language-invariant `snl` and optional
+ *          string/I18n `typst`/`latex`/`markdown`/`text` dialects
  *        - contribution_info / pointer: present (any value)
  *
  *   L2 — SNL SYNTAX
@@ -63,6 +64,15 @@ export interface LintEntryContext {
    * must be a registered macro" (rare).
    */
   strictMacros?: boolean;
+}
+
+function isValidI18nString(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const record = value as Record<string, unknown>;
+  if (record.type !== 'i18n' || typeof record.default_language !== 'string') return false;
+  if (typeof record.values !== 'object' || record.values === null || Array.isArray(record.values)) return false;
+  const values = Object.values(record.values as Record<string, unknown>);
+  return values.length > 0 && values.every((item) => typeof item === 'string');
 }
 
 /**
@@ -142,11 +152,15 @@ export function lintEntry(
   } else {
     for (const dialect of ['snl', 'typst', 'latex', 'markdown', 'text'] as const) {
       const val = (e.content as Record<string, unknown>)[dialect];
-      if (val !== undefined && typeof val !== 'string') {
+      const valid = val === undefined || typeof val === 'string' ||
+        (dialect !== 'snl' && isValidI18nString(val));
+      if (!valid) {
         issues.push({
           severity: 'error',
           code: 'entry.bad-content-dialect',
-          message: `content.${dialect} must be a string when present, got ${describe(val)}.`,
+          message: dialect === 'snl'
+            ? `content.snl must be a language-invariant string when present, got ${describe(val)}.`
+            : `content.${dialect} must be a string or valid I18n map when present, got ${describe(val)}.`,
           path: `content.${dialect}`,
         });
       }

@@ -1,3 +1,24 @@
+import { promises as fs } from 'node:fs';
+
+class DraftJsonError extends Error {
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'DraftJsonError';
+  }
+}
+
+export async function readDraftJson(file: string): Promise<unknown> {
+  const text = await fs.readFile(file, 'utf8');
+  try {
+    return JSON.parse(text) as unknown;
+  } catch (error) {
+    throw new DraftJsonError(
+      `Invalid JSON in draft ${file}: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
+    );
+  }
+}
+
 export interface AgentCliFailure {
   status: 'error';
   code: 'usage' | 'input.invalid-json' | 'input.read-failed' | 'workspace.write-failed';
@@ -14,9 +35,17 @@ export function failure(code: AgentCliFailure['code'], message: string): AgentCl
 
 export function failureFromError(error: unknown): AgentCliFailure {
   const message = error instanceof Error ? error.message : String(error);
-  if (error instanceof SyntaxError) return failure('input.invalid-json', message);
+  if (error instanceof DraftJsonError) return failure('input.invalid-json', message);
   if ((error as NodeJS.ErrnoException)?.code === 'ENOENT') return failure('input.read-failed', message);
   return failure('workspace.write-failed', message);
+}
+
+export function emitHelp(usageText: string, asJson: boolean): void {
+  if (asJson) {
+    process.stdout.write(`${JSON.stringify({ status: 'help', usage: usageText }, null, 2)}\n`);
+  } else {
+    process.stdout.write(`${usageText}\n`);
+  }
 }
 
 export function emitFailure(

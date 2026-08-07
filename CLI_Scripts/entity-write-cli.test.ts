@@ -90,6 +90,72 @@ describe('agent-facing entity write CLIs', () => {
     await assert.rejects(() => stat(path.join(doc, '.data-write.lock')), { code: 'ENOENT' });
   });
 
+  it('canonicalizes Entry identity fields exactly like Extension addEntry', async () => {
+    const { root } = await workspace();
+    const draft = path.join(root, 'entry-spaces.json');
+    await json(draft, {
+      id: '  entry.trimmed  ', kind: '  definition  ', title: '  Trimmed title  ', content: {},
+    });
+    const result = run(root, 'snl-add-entry', [draft]);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const payload = JSON.parse(result.stdout);
+    assert.equal(payload.id, 'entry.trimmed');
+    assert.equal(payload.path, entryEntityPath('_unpackaged', 'entry.trimmed'));
+    assert.deepEqual(await readEntries(root), [{
+      id: 'entry.trimmed', kind: 'definition', title: 'Trimmed title', content: {},
+      contribution_info: null, pointer: null, package: '_unpackaged',
+    }]);
+  });
+
+  it('accepts authoritative localized Entry output dialects', async () => {
+    const { root } = await workspace();
+    const draft = path.join(root, 'entry-i18n.json');
+    const localized = {
+      type: 'i18n', default_language: 'en', values: { en: 'Hello', zh: '你好' },
+    };
+    await json(draft, {
+      id: 'entry.i18n', kind: 'definition', content: { markdown: localized },
+    });
+    const result = run(root, 'snl-add-entry', [draft]);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual((await readEntries(root))[0].content.markdown, localized);
+  });
+
+  it('rejects empty Macro templates like Extension addMacro', async () => {
+    const { root, doc } = await workspace();
+    await json(path.join(doc, packageManifestPath('Logic')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
+    const draft = path.join(root, 'macro-empty.json');
+    await json(draft, {
+      name: 'Empty.template',
+      styles: [{ style_name: 'default', mode: 'text', template: '   ' }],
+    });
+    const result = run(root, 'snl-add-macro', ['--package', 'Logic', draft]);
+    assert.equal(result.status, 1);
+    assert.ok(JSON.parse(result.stdout).issues.some((issue: { code: string }) =>
+      issue.code === 'style.missing-template'));
+  });
+
+  it('does not report an existing Package inactive when active_macro_packages is absent', async () => {
+    const { root, doc } = await workspace();
+    await json(path.join(doc, packageManifestPath('Logic')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
+    const configFile = path.join(doc, 'config.json');
+    const config = JSON.parse(await readFile(configFile, 'utf8'));
+    delete config.active_macro_packages;
+    await json(configFile, config);
+    const draft = path.join(root, 'macro.json');
+    await json(draft, {
+      name: 'Logic.term',
+      styles: [{ style_name: 'default', mode: 'text', template: 'term' }],
+    });
+    const result = run(root, 'snl-add-macro', ['--package', 'Logic', draft]);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(JSON.parse(result.stdout).issues, []);
+  });
+
   it('snl-add-entry returns structured validation errors and writes nothing', async () => {
     const { root } = await workspace();
     const draft = path.join(root, 'bad-entry.json');
@@ -252,6 +318,27 @@ describe('agent-facing entity write CLIs', () => {
       status: 'error', code: 'usage',
       message: 'snl-add-entry requires exactly one draft JSON file.',
     });
+  });
+
+  it('agent JSON help is itself one parseable JSON document', async () => {
+    const { root } = await workspace();
+    for (const cli of ['snl-add-entry', 'snl-add-macro', 'snl-add-package']) {
+      const result = run(root, cli, ['--help']);
+      assert.equal(result.status, 0, result.stderr);
+      const payload = JSON.parse(result.stdout);
+      assert.equal(payload.status, 'help');
+      assert.match(payload.usage, new RegExp(cli));
+    }
+  });
+
+  it('distinguishes corrupt workspace JSON from invalid draft JSON', async () => {
+    const { root, doc } = await workspace();
+    const draft = path.join(root, 'entry.json');
+    await json(draft, { id: 'entry.config-corrupt', kind: 'definition', content: {} });
+    await writeFile(path.join(doc, 'config.json'), '{', 'utf8');
+    const result = run(root, 'snl-add-entry', [draft]);
+    assert.equal(result.status, 2);
+    assert.equal(JSON.parse(result.stdout).code, 'workspace.write-failed');
   });
 
   it('JSON mode classifies invalid draft JSON without touching storage', async () => {

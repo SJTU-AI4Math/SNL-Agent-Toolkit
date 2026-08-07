@@ -72,6 +72,16 @@ function assertCurrentWriteConfig(config: unknown, cli: string): asserts config 
   }
 }
 
+function effectiveActivePackageIds(
+  config: Record<string, unknown>,
+  packages: Record<string, unknown>,
+): Set<string> {
+  const configured = config.active_macro_packages;
+  return new Set(Array.isArray(configured)
+    ? configured.filter((id): id is string => typeof id === 'string')
+    : Object.keys(packages).filter((id) => id !== UNPACKAGED_PACKAGE_ID));
+}
+
 async function canonicalWriteWorkspaceRoot(workspaceRoot: string): Promise<string> {
   const resolved = path.resolve(workspaceRoot);
   const real = await fs.realpath(resolved);
@@ -84,17 +94,22 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot: string): Promise<strin
 
 function normalizeEntryDraft(raw: unknown, packageOverride?: string): Record<string, unknown> | unknown {
   if (!isRecord(raw)) return raw;
-  const packageId = packageOverride !== undefined
-    ? packageOverride
-    : raw.package !== undefined ? raw.package : UNPACKAGED_PACKAGE_ID;
+  const normalizedOverride = typeof packageOverride === 'string' ? packageOverride.trim() : packageOverride;
+  const packageId = normalizedOverride !== undefined
+    ? normalizedOverride
+    : raw.package !== undefined
+      ? typeof raw.package === 'string' ? raw.package.trim() : raw.package
+      : UNPACKAGED_PACKAGE_ID;
   return {
     ...raw,
-    title: raw.title === undefined ? '' : raw.title,
+    id: raw.id === undefined ? raw.id : typeof raw.id === 'string' ? raw.id.trim() : raw.id,
+    package: packageId,
+    kind: raw.kind === undefined ? raw.kind : typeof raw.kind === 'string' ? raw.kind.trim() : raw.kind,
+    title: raw.title === undefined ? '' : typeof raw.title === 'string' ? raw.title.trim() : raw.title,
     content: raw.content === undefined ? {} : raw.content,
     contribution_info: Object.prototype.hasOwnProperty.call(raw, 'contribution_info')
       ? raw.contribution_info : null,
     pointer: Object.prototype.hasOwnProperty.call(raw, 'pointer') ? raw.pointer : null,
-    package: packageId,
   };
 }
 
@@ -230,7 +245,8 @@ export async function addEntryEntity(
     const normalized = normalizeEntryDraft(raw, options.package);
     const issues: LintIssue[] = [];
     if (isRecord(raw) && options.package !== undefined &&
-        Object.prototype.hasOwnProperty.call(raw, 'package') && raw.package !== options.package) {
+        Object.prototype.hasOwnProperty.call(raw, 'package') &&
+        (typeof raw.package !== 'string' || raw.package.trim() !== options.package.trim())) {
       issues.push({
         severity: 'error',
         code: 'entry.package-mismatch',
@@ -351,7 +367,7 @@ export async function addMacroEntity(
       macros: name ? { [name]: macroBody } : {},
     };
     issues.push(...lintPackage(synthetic, { checkKatex: options.checkKatex !== false }).issues);
-    if (packageExists && !(config.active_macro_packages ?? []).includes(packageId)) {
+    if (packageExists && !effectiveActivePackageIds(config, packages).has(packageId)) {
       issues.push({
         severity: 'info',
         code: 'macro.package-inactive',
@@ -452,9 +468,7 @@ export async function addPackageEntity(
     const relativePath = packageManifestPath(id);
     await installNewJson(snlDocRoot(workspaceRoot), relativePath, manifest);
     const configRecord = config as Record<string, unknown>;
-    const currentActive = Array.isArray(configRecord.active_macro_packages)
-      ? configRecord.active_macro_packages as string[]
-      : Object.keys(packages).filter((packageId) => packageId !== UNPACKAGED_PACKAGE_ID);
+    const currentActive = effectiveActivePackageIds(configRecord, packages);
     const nextConfig = {
       ...configRecord,
       active_macro_packages: [...new Set([...currentActive, id])]

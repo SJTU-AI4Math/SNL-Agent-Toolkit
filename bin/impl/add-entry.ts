@@ -1,4 +1,3 @@
-import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import {
   formatUsage,
@@ -9,7 +8,7 @@ import {
   type FlagSpec,
 } from '../../lib/cli-args.ts';
 import { addEntryEntity } from '../../lib/entity-writes.ts';
-import { emitFailure, failure, failureFromError, wantsJson } from './add-cli-common.ts';
+import { emitFailure, emitHelp, failure, failureFromError, readDraftJson, wantsJson } from './add-cli-common.ts';
 
 const PACKAGE_FLAG: FlagSpec = {
   name: 'package', short: 'p', hasValue: true,
@@ -30,7 +29,7 @@ async function main(): Promise<number> {
     return 2;
   }
   if (parsed.flags.help === true) {
-    process.stdout.write(`${usage()}\n`);
+    emitHelp(usage(), parsed.flags.json === true);
     return 0;
   }
   if (parsed.positional.length !== 1) {
@@ -45,7 +44,7 @@ async function main(): Promise<number> {
   const asJson = parsed.flags.json === true;
   try {
     const draftPath = path.resolve(parsed.positional[0]);
-    const raw: unknown = JSON.parse(await fs.readFile(draftPath, 'utf8'));
+    const raw = await readDraftJson(draftPath);
     const result = await addEntryEntity(root, raw, {
       package: typeof parsed.flags.package === 'string' ? parsed.flags.package : undefined,
       strictMacros: parsed.flags['strict-macros'] === true,

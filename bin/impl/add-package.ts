@@ -1,8 +1,7 @@
-import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import { formatUsage, HELP_FLAG, JSON_FLAG, parseArgs, ROOT_FLAG } from '../../lib/cli-args.ts';
 import { addPackageEntity } from '../../lib/entity-writes.ts';
-import { emitFailure, failure, failureFromError, wantsJson } from './add-cli-common.ts';
+import { emitFailure, emitHelp, failure, failureFromError, readDraftJson, wantsJson } from './add-cli-common.ts';
 
 const SPECS = [ROOT_FLAG, JSON_FLAG, HELP_FLAG];
 
@@ -15,7 +14,7 @@ async function main(): Promise<number> {
     return 2;
   }
   if (parsed.flags.help === true) {
-    process.stdout.write(`${usage()}\n`);
+    emitHelp(usage(), parsed.flags.json === true);
     return 0;
   }
   if (parsed.positional.length !== 1) {
@@ -28,7 +27,7 @@ async function main(): Promise<number> {
   }
   const asJson = parsed.flags.json === true;
   try {
-    const raw: unknown = JSON.parse(await fs.readFile(path.resolve(parsed.positional[0]), 'utf8'));
+    const raw = await readDraftJson(path.resolve(parsed.positional[0]));
     const result = await addPackageEntity(path.resolve(String(parsed.flags.root)), raw);
     if (asJson) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
     else if (result.status === 'created') {

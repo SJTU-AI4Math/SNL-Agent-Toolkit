@@ -81,8 +81,8 @@ manifest it created when rollback is safe; concurrent edits are never overwritte
 - `1` — valid invocation, but payload is `invalid` or identity is in `conflict`;
 - `2` — usage, input-read/JSON, lock, workspace, or write failure.
 
-For non-help invocations with `--json`, stdout always contains one object. Branch on `status`:
-`created`, `invalid`, `conflict`, or `error`. `issues[]` uses stable linter
+With `--json`, stdout always contains one object. Branch on `status`:
+`created`, `invalid`, `conflict`, `help`, or `error`. `issues[]` uses stable linter
 `severity`, `code`, `message`, and optional `path` fields. Do not scrape human text.
 
 ### snl-lint-entry
@@ -96,7 +96,7 @@ node bin/snl-lint-entry.mjs --root /path/to/project entry-draft.json [more.json 
 # Machine-readable output for programmatic consumption:
 node bin/snl-lint-entry.mjs --root . --json entry-draft.json
 
-# Treat unknown-macro references as errors (default: warnings).
+# Treat unknown-macro references as errors (default: info).
 node bin/snl-lint-entry.mjs --root . --strict-macros entry-draft.json
 ```
 

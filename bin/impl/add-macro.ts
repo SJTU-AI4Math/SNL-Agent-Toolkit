@@ -1,10 +1,9 @@
-import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import {
   formatUsage, HELP_FLAG, JSON_FLAG, parseArgs, ROOT_FLAG, type FlagSpec,
 } from '../../lib/cli-args.ts';
 import { addMacroEntity } from '../../lib/entity-writes.ts';
-import { emitFailure, failure, failureFromError, wantsJson } from './add-cli-common.ts';
+import { emitFailure, emitHelp, failure, failureFromError, readDraftJson, wantsJson } from './add-cli-common.ts';
 
 const PACKAGE_FLAG: FlagSpec = {
   name: 'package', short: 'p', hasValue: true,
@@ -25,7 +24,7 @@ async function main(): Promise<number> {
     return 2;
   }
   if (parsed.flags.help === true) {
-    process.stdout.write(`${usage()}\n`);
+    emitHelp(usage(), parsed.flags.json === true);
     return 0;
   }
   if (parsed.positional.length !== 1 || typeof parsed.flags.package !== 'string') {
@@ -38,7 +37,7 @@ async function main(): Promise<number> {
   }
   const asJson = parsed.flags.json === true;
   try {
-    const raw: unknown = JSON.parse(await fs.readFile(path.resolve(parsed.positional[0]), 'utf8'));
+    const raw = await readDraftJson(path.resolve(parsed.positional[0]));
     const result = await addMacroEntity(
       path.resolve(String(parsed.flags.root)),
       parsed.flags.package,
