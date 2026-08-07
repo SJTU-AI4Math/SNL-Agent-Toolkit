@@ -1,0 +1,9 @@
+{
+  "id": "topology.def.continuous",
+  "package": "Topology",
+  "kind": "definition",
+  "title": "Continuous function",
+  "content": {
+    "snl": "%A #0 is continuous.%(ContinuousFunction)"
+  }
+}

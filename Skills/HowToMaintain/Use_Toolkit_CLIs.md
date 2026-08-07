@@ -1,18 +1,88 @@
 # Use the Toolkit CLIs
 
-> Use this to lint Entries, Library graphs, and macro packages.
+> Use this to create Packages, Entries, and Macros safely, then lint and maintain them.
 
 ## Part B — Toolkit CLIs
 
-### Status: reference-safe maintenance CLIs shipped
+### Status: agent-safe write and maintenance CLIs shipped
 
+- ✅ **`snl-add-package`** — create and activate a canonical Package manifest.
+- ✅ **`snl-add-entry`** — validate an inner Entry draft and install its canonical entity.
+- ✅ **`snl-add-macro`** — normalize a Macro v8 draft and install it in a Package.
 - ✅ **`snl-lint-entry`** — schema + SNL syntax + identifier resolution for EntryData JSON payloads.
 - ✅ **`snl-lint-graph`** — schema + label vocabulary + branch-tree integrity for library graph.json.
 - ✅ **`snl-lint-package`** — schema + template placeholder rules for macro package files.
 - ✅ **`snl-find-refs`** — trace every structured definition/reference to an Entry or Macro id.
 - ✅ **`snl-rename-id`** — collision-checked global Entry/Macro id rename with dry-run and rollback.
-- ⏳ **`snl-commit-batch`** — atomic merge of validated payloads into .SNL_Doc/.
 - ⏳ **Other Read CLIs (P1)** — `snl-entry-get`, `snl-macro-get`, `snl-macro-find`, `snl-list-*`.
+
+### Write CLI rule: drafts in, storage plumbing stays inside
+
+For normal authoring, never calculate a hash, write an envelope, choose an entity
+filename, edit the migration receipt, or modify frozen aggregate backups. Use:
+
+```bash
+node bin/snl-add-package.mjs --root . --json package-draft.json
+node bin/snl-add-macro.mjs --root . --package Algebra --json macro-draft.json
+node bin/snl-add-entry.mjs --root . --json entry-draft.json
+```
+
+Minimal Package draft:
+
+```json
+{ "id": "Algebra", "name": "Algebra", "description": "Algebra terminology" }
+```
+
+Minimal Macro draft:
+
+```json
+{
+  "name": "mul",
+  "styles": [
+    { "style_name": "default", "mode": "formula_inline", "template": "#0 \\cdot #1" }
+  ]
+}
+```
+
+Minimal Entry draft:
+
+```json
+{
+  "id": "algebra.def.mul",
+  "package": "Algebra",
+  "kind": "definition",
+  "title": "Multiplication",
+  "content": { "snl": "%Multiplication is #0.%(mul)" }
+}
+```
+
+`snl-add-entry` defaults Package ownership to draft `package`, then `_unpackaged`;
+`--package` explicitly overrides it. `snl-add-macro` requires `--package`. Package
+creation activates the new Package in `active_macro_packages` while preserving all
+unknown config fields.
+
+All three commands:
+
+- require a canonical, non-symlink current `0.0.6` workspace;
+- validate topology, receipt, Package ownership, catalogs, identity collisions, and payload;
+- compute canonical filenames and storage envelopes internally;
+- acquire the Extension-compatible `.data-write.lock`;
+- use exclusive no-clobber entity installation;
+- leave `entries.json`, `term_macros/*.json`, and `entity_storage.receipt` unchanged.
+
+Package creation is a guarded two-file write (manifest, then config), not a
+crash-atomic transaction. It uses an optimistic config check and removes only the
+manifest it created when rollback is safe; concurrent edits are never overwritten.
+
+**Write CLI exit codes:**
+
+- `0` — entity created;
+- `1` — valid invocation, but payload is `invalid` or identity is in `conflict`;
+- `2` — usage, input-read/JSON, lock, workspace, or write failure.
+
+With `--json`, stdout always contains one object. Branch on `status`:
+`created`, `invalid`, `conflict`, or `error`. `issues[]` uses stable linter
+`severity`, `code`, `message`, and optional `path` fields. Do not scrape human text.
 
 ### snl-lint-entry
 
@@ -119,9 +189,9 @@ Checks:
   index, we surface an **info** note; legal (SNL fills missing children
   as empty) but often unintended — agent decides.
 
-Note: cross-package name collisions and workspace-wide activation are NOT
-checked here (the linter is file-local). Those checks will fold into
-`snl-commit-batch` (P0.5).
+Note: positional `snl-lint-package` remains file-local and does not install data.
+`snl-add-macro` adds the workspace topology, Package ownership, target-identity,
+activation, lock, and no-clobber checks needed for a real write.
 
 ### snl-find-refs
 

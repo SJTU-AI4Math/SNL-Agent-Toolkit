@@ -4,30 +4,25 @@
 
 ## Workflow patterns
 
-The end-to-end authoring workflow lives in **Part A** (five-phase model:
+The end-to-end authoring workflow uses the five-phase model:
 Drafting → Terminologization → Entry Prefabrication → Library
-Construction → Semantic Indexation). This section tracks the
-CLI-execution shape those phases will take once tooling is complete.
-
-**Current CLI-execution shape (partial).** Draft creation and batch insertion are
-still manual JSON authoring, but validation and identity maintenance are now
-tooled: the three linters validate drafts, `snl-find-refs` inspects Entry/Macro
-identity usage, and `snl-rename-id` performs a checked synchronized migration.
-Target loop once `snl-commit-batch` (P0.5) and the remaining P1 read CLIs land:
+Construction → Semantic Indexation. Package, Entry, and Macro creation now use a
+draft-to-CLI loop:
 
 1. For each phase, materialise its deliverables as JSON files in a
    scratch dir (outside `.SNL_Doc/`).
-2. Lint each file with the matching CLI (`snl-lint-package`,
-   `snl-lint-entry`, `snl-lint-graph`). Fix errors before proceeding.
-3. Consult `snl-list-*` / `snl-*-find` (P1) before inventing anything
+2. Install Package, Macro, and Entry drafts individually with `snl-add-package`,
+   `snl-add-macro`, and `snl-add-entry`. Each command re-reads and validates the
+   live workspace under the writer lock before installing a canonical entity.
+3. Lint resulting Packages, Entries, and Library graphs. Fix errors before proceeding.
+4. Consult `snl-list-*` / `snl-*-find` (P1) before inventing anything
    already in the pool.
-4. When the whole phase is drafted, `snl-commit-batch` (P0.5)
-   re-lints against current on-disk state and merges atomically.
-   On failure, fix the reported artifact and retry.
 
-Design intent: each agent invocation is stateless and single-purpose —
-the scratch dir is the only durable state until commit. If a step
-fails, drop the scratch dir and retry.
+Design intent: each agent invocation is stateless and single-purpose. Drafts hold
+business content only; envelopes, hashes, filenames, receipts, and locking stay
+inside the Toolkit. A non-`created` result never overwrites an existing identity;
+if a non-cooperating writer changes a just-created path, the CLI preserves that
+concurrent edit and reports possible residue explicitly.
 
 ---
 
@@ -40,9 +35,14 @@ fails, drop the scratch dir and retry.
 Entry/Macro definitions and references; `snl-rename-id` applies synchronized,
 collision-checked renames with dry-run and rollback.
 
-**P0.5 — Atomic commit.** `snl-commit-batch` — accepts a directory of validated
-payloads, re-lints against the current on-disk state, and writes only if
-everything passes.
+**P0.5 — Agent-safe writes (shipped).** `snl-add-package`, `snl-add-entry`, and
+`snl-add-macro` accept minimal business drafts, validate current topology, and own
+canonical storage writes. Multi-file Package creation is guarded with optimistic
+checks and rollback; it is not described as crash-atomic.
+
+**Future bulk writes.** If real authoring workloads need them, build a guarded
+batch CLI on the same primitives. Do not weaken per-entity validation or claim
+filesystem crash atomicity without a real journal.
 
 **P1 — Basic reads.** Exact-lookup CLIs so agents don't reinvent existing
 macros / entries: `snl-macro-get <name>`, `snl-macro-find <substring>`,

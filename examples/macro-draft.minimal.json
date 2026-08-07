@@ -1,0 +1,11 @@
+{
+  "name": "ContinuousFunction",
+  "description": "A continuous function",
+  "styles": [
+    {
+      "style_name": "default",
+      "mode": "text",
+      "template": "continuous function"
+    }
+  ]
+}

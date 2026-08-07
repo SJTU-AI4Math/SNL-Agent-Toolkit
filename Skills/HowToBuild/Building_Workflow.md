@@ -16,17 +16,26 @@ Drafting process includes two separate stages: **Independent Markdown Planning (
 
 1. During *Independent Markdown Planning*, write the document draft of the contents to be built in a Markdown file `.SNL_Doc/Plans/Draft_<Name>.md`;
 
-2. During *Entrification*, for each entry in the draft, create one hash-named `.SNL_Doc/entries/*.json` envelope in its Package.
+2. During *Entrification*, write one inner Entry draft per planned Entry, then run
+   `snl-add-entry --root . --json <draft>`. The CLI creates the hash-named envelope;
+   agents never compute the hash or write `.SNL_Doc/entries/*.json` directly.
 
 You should refer to [Drafting Guide](Drafting.md) for detailed guidance. 
 
 ## Terminologization (术语化)
 
-During *Terminologization*, extract terms from markdown natural language contents and create one `.SNL_Doc/macros/*.json` entity per Term Macro under an explicit Package.
+During *Terminologization*, extract terms from markdown natural language contents.
+Create missing Packages with `snl-add-package`, then create each Term Macro with
+`snl-add-macro --package <PackageId>`. Do not hand-create Package or Macro entity
+files, and do not edit `active_macro_packages` merely to avoid using the CLI.
 
 You should refer to [Terminologization Guide](Terminologization.md) for detailed guidance.
 
 ## Entry Prefabrication (条目预制)
+
+Use [`Author_Entries.md`](Author_Entries.md). A `created` JSON response is the only
+successful write result; resolve every `invalid`, `conflict`, or `error` before
+moving to Library construction.
 
 ## Library Construction (库建构)
 

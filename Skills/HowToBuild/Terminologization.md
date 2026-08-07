@@ -110,11 +110,29 @@ the author — not a new macro.
 
 Put the intended implicit style at `styles[0]`. Add alternate styles only when a real caller needs them. Choose modes and arity according to [`../Basics/SNL_Macro.md`](../Basics/SNL_Macro.md).
 
-### 6. Leave semantic sources honest
+### 6. Materialize through the write CLIs
+
+For a missing Package, author a small `{ "id", "name", "description" }` draft and run:
+
+```bash
+node bin/snl-add-package.mjs --root . --json package-draft.json
+```
+
+For each term, author one inner Macro draft and run:
+
+```bash
+node bin/snl-add-macro.mjs --root . --package <PackageId> --json macro-draft.json
+```
+
+The CLI owns Macro v8 defaults, envelope construction, hash-derived filenames,
+validation, activation, and writer locking. Do not copy an aggregate Package shape
+into `macros/`, manually derive a path, edit the receipt, or touch legacy backups.
+
+### 7. Leave semantic sources honest
 
 Before defining Entries exist, keep `source.entries` empty. Do not invent future ids unless the Entry blueprint has already fixed them. Populate sources during semantic indexation.
 
-### 7. Lint every package
+### 8. Lint every package
 
 ```bash
 node bin/snl-lint-package.mjs --root . --name <package>

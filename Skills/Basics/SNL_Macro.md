@@ -49,6 +49,46 @@ list(item1,item2,item3)
 
 The object key is the macro name. The in-memory editor shape may repeat it as `name`; the on-disk package map does not.
 
+## Create a Macro safely
+
+Author one inner Macro draft. Do not include a storage envelope, hash, filename, or
+Package wrapper:
+
+```json
+{
+  "name": "mul",
+  "description": "Multiplication",
+  "styles": [
+    { "style_name": "default", "mode": "formula_inline", "template": "#0 \\cdot #1" }
+  ]
+}
+```
+
+Create it in an existing Package:
+
+```bash
+node bin/snl-add-macro.mjs --root . --package Algebra --json macro-draft.json
+```
+
+If the Package does not exist, create and activate it first:
+
+```bash
+node bin/snl-add-package.mjs --root . --json package-draft.json
+```
+
+`snl-add-macro` supplies omitted `description`, `source.entries`, `source.urls`,
+Macro/style `tags`, and `default_style`. It infers `dynamic_arity` from an unescaped
+`#*`. It then runs Macro v8 and KaTeX validation, constructs the envelope, computes
+the canonical identity path, and installs it under `.data-write.lock`. Pass
+`--no-katex` only in an environment where KaTeX checking is deliberately unavailable.
+
+An `info/macro.package-inactive` issue means the Macro was stored successfully but
+cannot resolve until its Package is activated. `invalid`, `conflict`, and `error`
+results do not overwrite an existing Macro.
+
+**Never edit `macros/*.json`, `packages/*.json`, `term_macros/*.json`, the migration
+receipt, or hash-derived filenames by hand during normal authoring.**
+
 ## Macro fields
 
 - `description`: human explanation; may be empty.

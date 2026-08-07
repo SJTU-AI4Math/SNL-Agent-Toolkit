@@ -22,6 +22,24 @@
 
 When `config.json#entity_storage.version` is `1`, readers use only `packages/`, `entries/`, and `macros/`. They must never merge the frozen aggregate backups into the live entity set. New workspaces omit the backups.
 
+## Agent write rule
+
+This page explains storage for inspection and debugging. It is **not** an
+instruction to hand-author storage files. For normal creation, give the Toolkit an
+inner business draft:
+
+```bash
+node bin/snl-add-package.mjs --root . --json package-draft.json
+node bin/snl-add-macro.mjs --root . --package <PackageId> --json macro-draft.json
+node bin/snl-add-entry.mjs --root . --json entry-draft.json
+```
+
+These CLIs own envelope/storage versions, Package identity, canonical hashes and
+filenames, safe defaults, linting, writer locking, optimistic checks, and structured
+JSON errors. Agents must not calculate hashes, create or rename entity files, edit
+`entity_storage.receipt`, or modify frozen `entries.json` / `term_macros/*.json`.
+Identity changes use `snl-rename-id`, never a partial JSON edit.
+
 ## `config.json`
 
 ```json

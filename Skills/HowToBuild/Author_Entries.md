@@ -17,26 +17,39 @@ Materialize the full planned Entry set before prose writing drifts the document 
 
 ## Phase A — prefabricate records
 
-Create every planned record with identity and classification fixed:
+Write an **inner Entry draft**, not an on-disk envelope:
 
 ```json
 {
-  "format": "snl-entry",
-  "version": 1,
+  "id": "topology.def.continuous",
   "package": "Topology",
-  "entry": {
-    "id": "topology.def.continuous",
-    "package": "Topology",
-    "kind": "definition",
-    "title": "Continuous function",
-    "content": {},
-    "contribution_info": null,
-    "pointer": null
-  }
+  "kind": "definition",
+  "title": "Continuous function",
+  "content": {}
 }
 ```
 
-At this phase, empty content is intentional. It lets Library construction and semantic-source planning proceed without guessing future ids.
+Then let the Toolkit create the entity:
+
+```bash
+node bin/snl-add-entry.mjs --root . --json draft-entry.json
+```
+
+Use `--package Topology` to supply or override Package ownership, and
+`--strict-macros` when unresolved SNL identifiers must be errors. If no Package is
+specified in either place, the CLI uses `_unpackaged`. The target Package manifest
+must already exist.
+
+The CLI fills omitted `title`, `content`, `contribution_info`, and `pointer` with
+safe defaults, validates the Entry against the live kinds and active Macros,
+constructs the `snl-entry` envelope, computes the canonical identity hash and
+filename, and installs it under the writer lock. At this phase, empty content is
+intentional. It lets Library construction and semantic-source planning proceed
+without guessing future ids.
+
+**Do not hand-write envelopes, calculate hashes, choose entity filenames, edit the
+migration receipt, or modify frozen `entries.json`.** A non-`created` JSON result
+means nothing was installed; fix the draft or workspace and retry.
 
 ### ID conventions
 
@@ -53,7 +66,7 @@ Examples:
 - `topology.thm.continuousComposition.proof`
 - `linearAlgebra.def.linearMap.pointfree`
 
-Ids must be non-empty and globally unique across `entries/*.json`. Keep them ASCII, case-consistent, shell-safe, and human-readable. The filename must be computed with `entryEntityPath(packageId, id)`; never invent it manually. UUIDs are acceptable for machine-only bulk imports, not the default for hand-maintained libraries.
+Ids must be non-empty and globally unique across `entries/*.json`. Keep them ASCII, case-consistent, shell-safe, and human-readable. `snl-add-entry` computes the filename; never call a hash helper or invent a filename in an authoring workflow. UUIDs are acceptable for machine-only bulk imports, not the default for hand-maintained libraries.
 
 ## Phase B — write `content.snl`
 

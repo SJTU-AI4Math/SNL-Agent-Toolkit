@@ -30,16 +30,27 @@ npm install
 npm test
 ```
 
-Invoke a CLI directly, for example:
+Invoke a CLI directly. For agent-authored writes, always use the add CLIs rather
+than creating hash-named entity files yourself:
 
 ```bash
+node bin/snl-add-package.mjs --root /path/to/project --json examples/package-draft.minimal.json
+node bin/snl-add-macro.mjs --root /path/to/project --package Topology --json examples/macro-draft.minimal.json
+node bin/snl-add-entry.mjs --root /path/to/project --json examples/entry-draft.minimal.json
+
 node bin/snl-lint-package.mjs --root /path/to/project
 node bin/snl-find-refs.mjs --root /path/to/project --type entry algebra.def.group
 node bin/snl-rename-id.mjs --root /path/to/project --type entry --dry-run old.id new.id
 ```
 
+The write CLIs compute canonical identity hashes and filenames, construct storage
+envelopes, fill safe defaults, lint before writing, acquire `.data-write.lock`, and
+refuse malformed/current-future-incompatible workspaces. `--json` gives stable
+agent-facing `created`, `invalid`, `conflict`, or `error` output. They never edit
+migration receipts or frozen legacy backups.
+
 See [`Skills/HowToMaintain/Use_Toolkit_CLIs.md`](Skills/HowToMaintain/Use_Toolkit_CLIs.md)
-for the full lint, reference-tracing, and synchronized-rename workflows.
+for the full creation, lint, reference-tracing, and synchronized-rename workflows.
 
 ## Schema ownership
 
