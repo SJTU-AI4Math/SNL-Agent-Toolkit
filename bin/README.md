@@ -5,6 +5,9 @@ TypeScript implementation under `impl/`, executed via `tsx` so no build step
 is required.
 
 **Shipped:**
+- `snl-add-package.mjs` — create and activate a canonical Package manifest from a business draft.
+- `snl-add-entry.mjs` — validate an inner Entry draft and install its canonical envelope/path.
+- `snl-add-macro.mjs` — normalize and validate a Macro v8 draft, then install it in a Package.
 - `snl-lint-entry.mjs` — schema + SNL syntax + identifier resolution for
   EntryData JSON payloads.
 - `snl-lint-graph.mjs` — schema + label vocabulary + branch-tree
@@ -18,4 +21,4 @@ is required.
 
 See `../Skills/HowToMaintain/Use_Toolkit_CLIs.md` for complete usage.
 
-**Planned:** `snl-commit-batch`, plus the remaining P1 read CLIs.
+**Planned:** remaining P1 read CLIs and, if real workloads require it, a guarded bulk-write CLI built on the same primitives.

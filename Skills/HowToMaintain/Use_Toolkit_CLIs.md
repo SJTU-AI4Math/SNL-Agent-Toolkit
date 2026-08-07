@@ -81,7 +81,7 @@ manifest it created when rollback is safe; concurrent edits are never overwritte
 - `1` — valid invocation, but payload is `invalid` or identity is in `conflict`;
 - `2` — usage, input-read/JSON, lock, workspace, or write failure.
 
-With `--json`, stdout always contains one object. Branch on `status`:
+For non-help invocations with `--json`, stdout always contains one object. Branch on `status`:
 `created`, `invalid`, `conflict`, or `error`. `issues[]` uses stable linter
 `severity`, `code`, `message`, and optional `path` fields. Do not scrape human text.
 

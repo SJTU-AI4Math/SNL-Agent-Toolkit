@@ -87,7 +87,7 @@ describe('agent-facing entity write CLIs', () => {
       pointer: null,
       package: '_unpackaged',
     }]);
-    await assert.doesNotReject(() => writeFile(path.join(doc, '.probe'), ''));
+    await assert.rejects(() => stat(path.join(doc, '.data-write.lock')), { code: 'ENOENT' });
   });
 
   it('snl-add-entry returns structured validation errors and writes nothing', async () => {
@@ -171,6 +171,26 @@ describe('agent-facing entity write CLIs', () => {
     const config = await readConfig(root) as unknown as Record<string, unknown>;
     assert.deepEqual(config.active_macro_packages, ['Logic']);
     assert.deepEqual(config.vendor_extension, { keep: true });
+  });
+
+  it('Package creation preserves legacy effective activation and canonicalizes author text', async () => {
+    const { root, doc } = await workspace();
+    await json(path.join(doc, packageManifestPath('Logic')), {
+      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
+    });
+    const configFile = path.join(doc, 'config.json');
+    const config = JSON.parse(await readFile(configFile, 'utf8'));
+    delete config.active_macro_packages;
+    await json(configFile, config);
+    const draft = path.join(root, 'package.json');
+    await json(draft, { id: 'New', name: '  New display  ', description: '  description  ' });
+
+    const result = run(root, 'snl-add-package', [draft]);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const written = await readAllMacroPackages(root);
+    assert.equal(written.New.name, 'New display');
+    assert.equal(written.New.description, 'description');
+    assert.deepEqual((await readConfig(root)).active_macro_packages, ['Logic', 'New']);
   });
 
   it('write CLIs reject a structurally invalid current config before writing', async () => {

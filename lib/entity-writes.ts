@@ -408,7 +408,7 @@ export async function addPackageEntity(
       issues.push({ severity: 'error', code: 'package.not-object', message: 'Package draft must be a JSON object.' });
       return { status: 'invalid', entity: 'package', issues };
     }
-    const id = typeof raw.id === 'string' ? raw.id : '';
+    const id = typeof raw.id === 'string' ? raw.id.trim() : '';
     if (!id || id === UNPACKAGED_PACKAGE_ID) {
       issues.push({
         severity: 'error', code: 'package.bad-id',
@@ -424,8 +424,10 @@ export async function addPackageEntity(
         });
       }
     }
-    const name = raw.name === undefined ? id : raw.name;
-    const description = raw.description === undefined ? '' : raw.description;
+    const name = raw.name === undefined ? id
+      : typeof raw.name === 'string' ? raw.name.trim() : raw.name;
+    const description = raw.description === undefined ? ''
+      : typeof raw.description === 'string' ? raw.description.trim() : raw.description;
     if (typeof name !== 'string' || !name) {
       issues.push({ severity: 'error', code: 'package.bad-name', message: 'Package name must be a non-empty string.', path: 'name' });
     }
@@ -451,8 +453,13 @@ export async function addPackageEntity(
     await installNewJson(snlDocRoot(workspaceRoot), relativePath, manifest);
     const configRecord = config as Record<string, unknown>;
     const currentActive = Array.isArray(configRecord.active_macro_packages)
-      ? configRecord.active_macro_packages as string[] : [];
-    const nextConfig = { ...configRecord, active_macro_packages: [...currentActive, id] };
+      ? configRecord.active_macro_packages as string[]
+      : Object.keys(packages).filter((packageId) => packageId !== UNPACKAGED_PACKAGE_ID);
+    const nextConfig = {
+      ...configRecord,
+      active_macro_packages: [...new Set([...currentActive, id])]
+        .sort((left, right) => left.localeCompare(right)),
+    };
     try {
       if (options.beforeConfigInstall) await options.beforeConfigInstall();
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
