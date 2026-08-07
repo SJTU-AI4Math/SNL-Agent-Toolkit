@@ -1,5 +1,12 @@
 import { promises as fs } from 'node:fs';
 
+class DraftReadError extends Error {
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'DraftReadError';
+  }
+}
+
 class DraftJsonError extends Error {
   constructor(message: string, options?: ErrorOptions) {
     super(message, options);
@@ -8,7 +15,15 @@ class DraftJsonError extends Error {
 }
 
 export async function readDraftJson(file: string): Promise<unknown> {
-  const text = await fs.readFile(file, 'utf8');
+  let text: string;
+  try {
+    text = await fs.readFile(file, 'utf8');
+  } catch (error) {
+    throw new DraftReadError(
+      `Could not read draft ${file}: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
+    );
+  }
   try {
     return JSON.parse(text) as unknown;
   } catch (error) {
@@ -36,7 +51,7 @@ export function failure(code: AgentCliFailure['code'], message: string): AgentCl
 export function failureFromError(error: unknown): AgentCliFailure {
   const message = error instanceof Error ? error.message : String(error);
   if (error instanceof DraftJsonError) return failure('input.invalid-json', message);
-  if ((error as NodeJS.ErrnoException)?.code === 'ENOENT') return failure('input.read-failed', message);
+  if (error instanceof DraftReadError) return failure('input.read-failed', message);
   return failure('workspace.write-failed', message);
 }
 

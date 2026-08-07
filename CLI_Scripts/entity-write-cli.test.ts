@@ -341,6 +341,24 @@ describe('agent-facing entity write CLIs', () => {
     assert.equal(JSON.parse(result.stdout).code, 'workspace.write-failed');
   });
 
+  it('distinguishes missing workspace paths from unreadable draft paths', async () => {
+    const { root } = await workspace();
+    const draft = path.join(root, 'entry.json');
+    await json(draft, { id: 'entry.missing-root', kind: 'definition', content: {} });
+    const detachedRoot = await mkdtemp(path.join(tmpdir(), 'snl-entry-draft-'));
+    roots.push(detachedRoot);
+    const detachedDraft = path.join(detachedRoot, 'entry.json');
+    await json(detachedDraft, JSON.parse(await readFile(draft, 'utf8')));
+    await rm(root, { recursive: true, force: true });
+    const workspaceResult = run(root, 'snl-add-entry', [detachedDraft]);
+    assert.equal(workspaceResult.status, 2);
+    assert.equal(JSON.parse(workspaceResult.stdout).code, 'workspace.write-failed');
+    const inputResult = run(root, 'snl-add-entry', [`${detachedDraft}.missing`]);
+    assert.equal(inputResult.status, 2);
+    assert.equal(JSON.parse(inputResult.stdout).code, 'input.read-failed');
+    await rm(detachedDraft, { force: true });
+  });
+
   it('JSON mode classifies invalid draft JSON without touching storage', async () => {
     const { root } = await workspace();
     const draft = path.join(root, 'broken.json');
