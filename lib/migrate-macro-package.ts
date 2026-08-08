@@ -13,7 +13,7 @@ import {
   migrateMacroV7toV8,
   type MacroStyleV6,
   type MacroV6,
-} from '../external/SNL-Basics/src/schema/migrate-macro.ts';
+} from '@sjtu-ai4math/snl-basics';
 import type {
   MacroPackageEntryWithoutName,
   MacroPackageFile,

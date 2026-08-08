@@ -24,10 +24,11 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@sjtu-ai4math/snl-basics": "0.1.5",
     "@types/katex": "^0.16.8",
     "fuse.js": "^7.5.0",
     "jsonc-parser": "^3.3.1",
-    "katex": "^0.17.0",
+    "katex": "0.16.47",
     "tsx": "^4.19.0"
   },
   "devDependencies": {

@@ -194,11 +194,11 @@ export type {
   SnlMacro,
   SnlMacroSource,
   SnlMacroStyle,
-} from '../external/SNL-Basics/src/snl-macro/types.ts';
+} from '@sjtu-ai4math/snl-basics';
 export type {
   MacroStyleV6,
   MacroV6,
-} from '../external/SNL-Basics/src/schema/migrate-macro.ts';
+} from '@sjtu-ai4math/snl-basics';
 export {
   isMacroDocumentV7,
   isMacroDocumentV8,
@@ -206,12 +206,12 @@ export {
   migrateMacroV6toV7,
   migrateMacroV7toV8,
   migrateStyleV6toV7,
-} from '../external/SNL-Basics/src/schema/migrate-macro.ts';
+} from '@sjtu-ai4math/snl-basics';
 
 import type {
   SnlMacro,
   SnlMacroStyle,
-} from '../external/SNL-Basics/src/snl-macro/types.ts';
+} from '@sjtu-ai4math/snl-basics';
 
 /** Consumer-owned output backends preserved by Toolkit package operations. */
 export interface MacroPackageOutputBackends {

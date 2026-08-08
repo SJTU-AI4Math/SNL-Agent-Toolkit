@@ -1,26 +1,23 @@
 /**
- * Thin re-export wrapper for the SNL-Basics parser, imported straight from
- * the git submodule at ../external/SNL-Basics. The parser has no runtime
- * dependencies (no React, no KaTeX) — it's a pure TS module —, so tsx can
- * execute it directly without a build step.
+ * Thin re-export wrapper for the SNL-Basics parser, imported from the published `@sjtu-ai4math/snl-basics/core` export.
+ * The core parser API is pure and safe for a headless CLI.
  *
  * Kept as a wrapper so the rest of the toolkit imports from a stable local
- * path; if SNL-Basics ever ships an npm package we swap this file's imports
- * and everything downstream stays put.
+ * path; the rest of the toolkit stays insulated from upstream import-path changes.
  */
 
 export {
   parseSnlSyntaxTree,
   SnlSyntaxTreeParseError,
-} from '../external/SNL-Basics/src/snl-syntax-tree/parser.ts';
+} from '@sjtu-ai4math/snl-basics/core';
 
-export type { SnlSyntaxTree } from '../external/SNL-Basics/src/snl-syntax-tree/types.ts';
+export type { SnlSyntaxTree } from '@sjtu-ai4math/snl-basics/core';
 
 import {
   parseSnlSyntaxTree,
   SnlSyntaxTreeParseError,
-} from '../external/SNL-Basics/src/snl-syntax-tree/parser.ts';
-import type { SnlSyntaxTree } from '../external/SNL-Basics/src/snl-syntax-tree/types.ts';
+} from '@sjtu-ai4math/snl-basics/core';
+import type { SnlSyntaxTree } from '@sjtu-ai4math/snl-basics/core';
 
 /**
  * Non-throwing parse — mirrors the react-view `tryParseSnlSyntaxTree`

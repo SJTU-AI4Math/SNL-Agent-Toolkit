@@ -9,7 +9,7 @@
  *   2. Take `content.snl`, parse it into an SNL tree, run
  *      `resolveRootLatex` from SNL-Basics (the SAME pure renderer
  *      SnlSyntaxTreeView uses at runtime — imported from
- *      `../external/SNL-Basics/src/snl-react-view/render-source.ts`).
+ *      `@sjtu-ai4math/snl-basics`).
  *   3. Feed each resulting KaTeX source through
  *      `checkKatex({ throwOnError: true })` — the same headless
  *      compile the package linter already uses for template previews.
@@ -25,13 +25,13 @@
 
 import katex from 'katex';
 
-import { parseSnlSyntaxTree } from '../external/SNL-Basics/src/snl-syntax-tree/parser.ts';
-import { annotateBindings } from '../external/SNL-Basics/src/snl-syntax-tree/annotate-bind.ts';
+import { parseSnlSyntaxTree } from '@sjtu-ai4math/snl-basics/core';
+import { annotateBindings } from '@sjtu-ai4math/snl-basics/core';
 import {
   nodeDisplay,
   resolveRootLatex,
-} from '../external/SNL-Basics/src/snl-react-view/render-source.ts';
-import { MacroDataDriver } from '../external/SNL-Basics/src/snl-macro/macro-data-driver.ts';
+} from '@sjtu-ai4math/snl-basics';
+import { MacroDataDriver } from '@sjtu-ai4math/snl-basics/core';
 
 import type {
   EntryData,
