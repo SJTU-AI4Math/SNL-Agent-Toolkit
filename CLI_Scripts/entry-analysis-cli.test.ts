@@ -54,6 +54,41 @@ describe('single Entry analysis CLIs', () => {
     });
   });
 
+  it('uses the declared English default style, preserves cross-mode wrappers, and treats prototype names as unknown', async () => {
+    const root = await workspace();
+    const doc = path.join(root, '.SNL_Doc');
+    const entries = [
+      { id: 'styles', package: '_unpackaged', kind: 'definition', title: '', content: { snl: 'Logic.parent(Logic.text,constructor(a))' }, contribution_info: null, pointer: null },
+    ];
+    for (const entry of entries) await json(path.join(doc, entryEntityPath(entry.package, entry.id)), { format: 'snl-entry', version: 1, package: entry.package, entry });
+    const macros = [
+      { name: 'Logic.parent', description: '', source: { entries: [], urls: [] }, dynamic_arity: false, default_style: { en: 'english' }, tags: [], styles: [
+        { style_name: 'first', mode: 'formula_inline', template: 'FIRST(#0,#1)', tags: [] },
+        { style_name: 'english', mode: 'formula_inline', template: '<#0|#1>', tags: [] },
+      ] },
+      { name: 'Logic.text', description: '', source: { entries: [], urls: [] }, dynamic_arity: false, default_style: { en: 'default' }, tags: [], styles: [{ style_name: 'default', mode: 'text', template: 'words', tags: [] }] },
+    ];
+    for (const macro of macros) await json(path.join(doc, macroEntityPath('Logic', macro.name)), { format: 'snl-macro', version: 1, package: 'Logic', macro });
+    const latex = run(root, 'snl-entry-latex', ['styles']);
+    assert.equal(latex.status, 0, latex.stderr);
+    const body = JSON.parse(latex.stdout);
+    assert.equal(body.latex, '<\\text{words}|constructor(a)>');
+    assert.equal(body.notes.length, 1);
+    const ssi = run(root, 'snl-entry-ssi', ['styles']);
+    assert.equal(ssi.status, 0, ssi.stderr);
+    assert.equal(JSON.parse(ssi.stdout).metrics.weakSemanticFreedom, 2);
+  });
+
+  it('returns structured JSON for invocation failures', async () => {
+    const root = await workspace();
+    for (const cli of ['snl-entry-ssi', 'snl-entry-latex']) {
+      const result = run(root, cli, []);
+      assert.equal(result.status, 2);
+      assert.equal(result.stderr, '');
+      assert.equal(JSON.parse(result.stdout).code, 'invocation.invalid');
+    }
+  });
+
   it('returns one structured JSON failure for a missing Entry', async () => {
     const root = await workspace();
     for (const cli of ['snl-entry-ssi', 'snl-entry-latex']) {

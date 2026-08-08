@@ -43,6 +43,7 @@
  *     structure stays legible.
  */
 
+import { resolveStyle } from '@sjtu-ai4math/snl-basics';
 import type {
   MacroPackageEntry,
   MacroPackageStyle,
@@ -352,20 +353,13 @@ function fillTemplate(
   return out.split(ESCAPED).join('\\#');
 }
 
-/**
- * Pick which style to apply. `[style_name]` in the SNL source lands in
- * `node.style_name`; otherwise use `styles[0]` (the declared default).
- */
+/** Pick the SNL-Basics v0.1.5 style: explicit bracket, language default, English, then styles[0]. */
 function pickStyle(
   macro: MacroPackageEntry,
   node: SnlSyntaxTree,
 ): MacroPackageStyle | undefined {
-  if (node.style_name) {
-    const style = macro.styles.find((candidate) => candidate.style_name === node.style_name);
-    if (style) return style;
-    throw new Error(`Unknown style '${node.style_name}' for macro '${macro.name}'.`);
-  }
-  return macro.styles[0];
+  if (macro.styles.length === 0) return undefined;
+  return resolveStyle(node, macro, 'en') as MacroPackageStyle;
 }
 
 /** Escape identifier text for inclusion in a LaTeX fragment. */
@@ -374,6 +368,20 @@ function escapeIdent(name: string): string {
   // the only real hazard — escape them so LaTeX doesn't treat them as
   // subscript starters.
   return name.replace(/_/g, '\\_');
+}
+
+function ownMacro(macros: Record<string, MacroPackageEntry>, name: string): MacroPackageEntry | undefined {
+  return Object.hasOwn(macros, name) ? macros[name] : undefined;
+}
+
+type RenderedNode = { output: string; mode: MacroPackageStyle['mode'] };
+
+function wrapForParent(child: RenderedNode, parentMode: MacroPackageStyle['mode']): string {
+  const childText = child.mode === 'text';
+  const parentText = parentMode === 'text';
+  if (!parentText && childText) return `\\text{${child.output}}`;
+  if (parentText && !childText && child.mode !== 'block') return `$${child.output}$`;
+  return child.output;
 }
 
 /**
@@ -398,61 +406,60 @@ function renderNode(
   mode: 'latex' | 'text',
   macros: Record<string, MacroPackageEntry>,
   notes: string[],
-): string {
+): RenderedNode {
   // Formula / text leaves — the parser marks these with env_mode.
   const envMode = node.env_mode;
   if (typeof envMode === 'string' && envMode.length > 0) {
     const raw = node.macro_name;
     if (envMode === 'text') {
-      return raw;
+      return { output: raw, mode: 'text' };
     }
     if (mode === 'latex') {
-      if (envMode === 'formula_display' || envMode === 'block') {
-        return `$$${raw}$$`;
-      }
-      return `$${raw}$`;
+      return { output: raw, mode: envMode as MacroPackageStyle['mode'] };
     }
-    // Text mode: convert LaTeX to Unicode and wrap in $...$ so it's
-    // visually distinct.
-    return `$${latexToText(raw, notes)}$`;
+    return { output: `$${latexToText(raw, notes)}$`, mode: envMode as MacroPackageStyle['mode'] };
   }
 
   const name = node.macro_name;
   const children = Array.isArray(node.children) ? node.children : [];
 
   // Leaf identifier (no children, no macro match) → bare name.
-  const macro = macros[name];
+  const macro = ownMacro(macros, name);
   if (!macro && children.length === 0) {
-    return mode === 'latex' ? escapeIdent(name) : name;
+    return { output: mode === 'latex' ? escapeIdent(name) : name, mode: 'formula_inline' };
   }
 
-  // Recurse first so we have child strings ready either way.
-  const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
-
   if (!macro) {
+    const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
     notes.push(
       `Unregistered macro '${name}' — emitted as \`${name}(...)\` fallback.`,
     );
-    return `${name}(${renderedChildren.join(', ')})`;
+    return { output: `${name}(${renderedChildren.map((child) => child.output).join(', ')})`, mode: 'formula_inline' };
   }
   const style = pickStyle(macro, node);
   if (!style) {
+    const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
     notes.push(
       `Macro '${name}' has no styles — emitted as \`${name}(...)\` fallback.`,
     );
-    return `${name}(${renderedChildren.join(', ')})`;
+    return { output: `${name}(${renderedChildren.map((child) => child.output).join(', ')})`, mode: 'formula_inline' };
   }
+
+  const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
+  const wrappedChildren = mode === 'latex'
+    ? renderedChildren.map((child) => wrapForParent(child, style.mode))
+    : renderedChildren.map((child) => child.output);
 
   // Assemble the slot map.
   const values: Record<string, string | undefined> = {};
-  renderedChildren.forEach((v, i) => {
+  wrappedChildren.forEach((v, i) => {
     values[`child${i}`] = v;
   });
   if (macro.dynamic_arity) {
     if (!style.template.includes('#*')) {
       throw new Error(`Dynamic macro '${name}' style '${style.style_name}' requires #* in its template.`);
     }
-    values['children_joined'] = joinVariadic(style, renderedChildren);
+    values['children_joined'] = joinVariadic(style, wrappedChildren);
   }
 
   // Pick the source template. LaTeX synth prefers style.latex.synthesis
@@ -467,7 +474,7 @@ function renderNode(
     const src = typeof explicit === 'string' && explicit.length > 0
       ? explicit
       : style.template;
-    return fillTemplate(src, values);
+    return { output: fillTemplate(src, values), mode: style.mode };
   }
   // Text mode: prefer style.text if provided, else convert the KaTeX
   // template to Unicode-char text and fill afterwards (fill AFTER
@@ -475,10 +482,10 @@ function renderNode(
   // char-mapped twice).
   const explicitText = style.text;
   if (typeof explicitText === 'string' && explicitText.length > 0) {
-    return fillTemplate(explicitText, values);
+    return { output: fillTemplate(explicitText, values), mode: style.mode };
   }
   const converted = latexToText(style.template, notes);
-  return fillTemplate(converted, values);
+  return { output: fillTemplate(converted, values), mode: style.mode };
 }
 
 /**
@@ -492,7 +499,7 @@ export function renderTreeAsLatex(
   macros: Record<string, MacroPackageEntry>,
 ): SynthResult {
   const notes: string[] = [];
-  const output = renderNode(tree, 'latex', macros, notes);
+  const output = renderNode(tree, 'latex', macros, notes).output;
   return { output, notes: dedupe(notes) };
 }
 
@@ -505,7 +512,7 @@ export function renderTreeAsText(
   macros: Record<string, MacroPackageEntry>,
 ): SynthResult {
   const notes: string[] = [];
-  const output = renderNode(tree, 'text', macros, notes);
+  const output = renderNode(tree, 'text', macros, notes).output;
   return { output, notes: dedupe(notes) };
 }
 

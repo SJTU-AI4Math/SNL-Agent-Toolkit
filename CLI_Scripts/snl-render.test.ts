@@ -110,14 +110,14 @@ describe('renderTreeAsLatex', () => {
     assert.match(r.notes[0], /Unregistered macro 'mystery'/);
   });
 
-  test('formula leaves survive as $...$', () => {
+  test('formula leaves splice directly into formula parents', () => {
     const r = synthLatex('plus($x^2$, b)', macros);
-    assert.equal(r.output, '$x^2$ + b');
+    assert.equal(r.output, 'x^2 + b');
   });
 
-  test('text leaves survive verbatim', () => {
+  test('text leaves are wrapped when spliced into formula parents', () => {
     const r = synthLatex('plus(%hello%, b)', macros);
-    assert.equal(r.output, 'hello + b');
+    assert.equal(r.output, '\\text{hello} + b');
   });
 
   test('dynamic #* templates honor separator', () => {
@@ -170,7 +170,7 @@ describe('renderTreeAsLatex', () => {
   });
 
   test('throws for an unknown style instead of silently using the default', () => {
-    assert.throws(() => synthLatex('plus[missing](a,b)', macros), /Unknown style 'missing'/);
+    assert.throws(() => synthLatex('plus[missing](a,b)', macros), /unknown style "missing"/i);
   });
 
   test('throws when a dynamic style omits #*', () => {

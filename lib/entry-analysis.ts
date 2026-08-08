@@ -53,7 +53,7 @@ export function analyzeStructuralIndex(root: SnlSyntaxTree, macros: SnlMacroSour
   const walk = (node: SnlSyntaxTree): void => {
     if (!numeric(node)) {
       const meta = metadata(node), src = typeof meta.src === 'string' ? meta.src : '', bindRef = typeof meta.bindRef === 'string' ? meta.bindRef : '', srcStatus = typeof meta.srcStatus === 'string' ? meta.srcStatus : '';
-      const macro = macros[node.macro_name];
+      const macro = Object.hasOwn(macros, node.macro_name) ? macros[node.macro_name] : undefined;
       const catalogConstant = !src && !node.env_mode && !['fvar', 'bvar', 'binder'].includes(node.kind ?? '') && Boolean(macro);
       let sourced = node.kind === 'binder';
       if (src) sourced = node.kind === 'bvar' && !srcStatus && entryIds.has(src);
