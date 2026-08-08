@@ -1,0 +1,27 @@
+import * as path from 'node:path';
+import { computeEntryBareLatex } from '../../lib/entry-analysis.ts';
+import { formatUsage, HELP_FLAG, JSON_FLAG, parseArgs, ROOT_FLAG } from '../../lib/cli-args.ts';
+
+const SPECS = [ROOT_FLAG, JSON_FLAG, HELP_FLAG];
+const usage = () => formatUsage('snl-entry-latex', '[options] <entry-id>', SPECS);
+async function main(): Promise<number> {
+  let parsed;
+  try { parsed = parseArgs(process.argv.slice(2), SPECS); }
+  catch (error) { process.stderr.write(`${(error as Error).message}\n\n${usage()}\n`); return 2; }
+  if (parsed.flags.help === true) { process.stdout.write(usage() + '\n'); return 0; }
+  if (parsed.positional.length !== 1) { process.stderr.write(`Expected exactly one Entry id.\n\n${usage()}\n`); return 2; }
+  try {
+    const entryId = parsed.positional[0];
+    const rendered = await computeEntryBareLatex(path.resolve(String(parsed.flags.root)), entryId);
+    if (rendered.output.includes('\\htmlData')) throw new Error('Internal error: bare LaTeX output contains \\htmlData.');
+    const result = { status: 'ok', entryId, latex: rendered.output, notes: rendered.notes };
+    process.stdout.write(parsed.flags.json === true ? JSON.stringify(result, null, 2) + '\n' : rendered.output + '\n');
+    return 0;
+  } catch (error) {
+    const message = (error as Error).message;
+    if (parsed.flags.json === true) process.stdout.write(JSON.stringify({ status: 'error', code: message.startsWith('Entry not found:') ? 'entry.not-found' : 'entry.analysis-failed', message }) + '\n');
+    else process.stderr.write(`${message}\n`);
+    return 2;
+  }
+}
+process.exitCode = await main();

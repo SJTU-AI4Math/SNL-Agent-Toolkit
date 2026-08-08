@@ -8,6 +8,8 @@ is required.
 - `snl-add-package.mjs` — create and activate a canonical Package manifest from a business draft.
 - `snl-add-entry.mjs` — validate an inner Entry draft and install its canonical envelope/path.
 - `snl-add-macro.mjs` — normalize and validate a Macro v8 draft, then install it in a Package.
+- `snl-entry-ssi.mjs` — compute the Extension-compatible Structural Index for exactly one live Entry.
+- `snl-entry-latex.mjs` — assemble exactly one live Entry as bare LaTeX without `\\htmlData` metadata wrappers.
 - `snl-lint-entry.mjs` — schema + SNL syntax + identifier resolution for
   EntryData JSON payloads.
 - `snl-lint-graph.mjs` — schema + label vocabulary + branch-tree

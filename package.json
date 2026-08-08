@@ -8,6 +8,8 @@
     "snl-add-entry": "./bin/snl-add-entry.mjs",
     "snl-add-macro": "./bin/snl-add-macro.mjs",
     "snl-add-package": "./bin/snl-add-package.mjs",
+    "snl-entry-latex": "./bin/snl-entry-latex.mjs",
+    "snl-entry-ssi": "./bin/snl-entry-ssi.mjs",
     "snl-find-refs": "./bin/snl-find-refs.mjs",
     "snl-lint-entry": "./bin/snl-lint-entry.mjs",
     "snl-lint-graph": "./bin/snl-lint-graph.mjs",

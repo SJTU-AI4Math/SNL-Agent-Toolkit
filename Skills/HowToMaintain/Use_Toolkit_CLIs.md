@@ -324,6 +324,28 @@ and Macro tags contribute labels. Macro mode reads only Packages enabled by
 `kind`, `id`, `title`, `entryKind`, and `score`; Macro hits contain `kind`, `id`,
 `packageId`, `packageName`, `macroKind`, `tags`, `sourceEntries`, and `score`.
 
+### Single-Entry SSI and bare LaTeX
+
+Analyze exactly one live Entry by identity:
+
+```bash
+node bin/snl-entry-ssi.mjs --root . --json <entry-id>
+node bin/snl-entry-latex.mjs --root . --json <entry-id>
+```
+
+`snl-entry-ssi` reads the complete Entry pool and active Macro source metadata, so
+cross-Entry `x@entry` bindings and source resolution follow the Extension's SSI
+semantics. JSON includes raw and weighted strong/weak freedom plus
+`structuralIndex` in `[0, 1]`.
+
+`snl-entry-latex` recursively fills the selected Macro styles for that Entry. It
+returns bare LaTeX with no `\\htmlData` hover/index wrappers. Unresolved Macros are
+retained and explained in `notes`, never silently discarded.
+
+Both commands require exactly one Entry id. Exit `0` means success; exit `2` covers
+invocation, workspace, missing-Entry, no-content, and parse failures. In `--json`
+mode, stdout is one parseable document and analysis failures leave stderr empty.
+
 ### Common flag conventions
 
 Every CLI accepts:

@@ -17,8 +17,9 @@
 
 1. Always read json schema in [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md) before inspecting JSON files.
 2. For normal Package, Entry, or Macro creation, use `snl-add-package`, `snl-add-entry`, or `snl-add-macro`. Never hand-calculate hashes, create hash-named entity files, edit migration receipts, or touch frozen backups.
-3. Always refer to syntax guide in [`Skills/Basics/SNL_Macro.md`](Skills/Basics/SNL_Macro.md) and [`Skills/Basics/SNL_DSL.md`](Skills/Basics/SNL_DSL.md) when editing SNL Macros and SNL DSL strings.
-4. Always run Toolkit linting tools before committing. If any data is corrupted, fix it.
+3. For a single live Entry, use `snl-entry-ssi` for the Extension-compatible Structural Index and `snl-entry-latex` for bare macro-composed LaTeX without `\\htmlData`; do not estimate either by eye.
+4. Always refer to syntax guide in [`Skills/Basics/SNL_Macro.md`](Skills/Basics/SNL_Macro.md) and [`Skills/Basics/SNL_DSL.md`](Skills/Basics/SNL_DSL.md) when editing SNL Macros and SNL DSL strings.
+5. Always run Toolkit linting tools before committing. If any data is corrupted, fix it.
 
 ## Routing
 
