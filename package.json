@@ -12,7 +12,9 @@
     "snl-lint-entry": "./bin/snl-lint-entry.mjs",
     "snl-lint-graph": "./bin/snl-lint-graph.mjs",
     "snl-lint-package": "./bin/snl-lint-package.mjs",
-    "snl-rename-id": "./bin/snl-rename-id.mjs"
+    "snl-rename-id": "./bin/snl-rename-id.mjs",
+    "snl-rename-style": "./bin/snl-rename-style.mjs",
+    "snoogle": "./bin/snoogle.mjs"
   },
   "scripts": {
     "test": "tsx --test CLI_Scripts/*.test.ts",
@@ -23,6 +25,7 @@
   },
   "dependencies": {
     "@types/katex": "^0.16.8",
+    "fuse.js": "^7.5.0",
     "jsonc-parser": "^3.3.1",
     "katex": "^0.17.0",
     "tsx": "^4.19.0"

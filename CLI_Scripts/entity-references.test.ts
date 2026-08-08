@@ -4,7 +4,11 @@ import { promises as fs } from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import {
+  applyEntityRename,
+  applyStyleRename,
   findEntityReferences,
+  planEntityRename,
+  planStyleRename,
   renameEntityId,
   scanSnlReferences,
 } from '../lib/entity-references.ts';
@@ -165,6 +169,19 @@ describe('findEntityReferences', () => {
 });
 
 describe('renameEntityId', () => {
+  it('exposes a categorized two-phase plan and rejects a stale plan before writing', async () => {
+    const root = await fixture();
+    const entriesPath = path.join(root, '.SNL_Doc', 'entries.json');
+    const plan = await planEntityRename(root, 'entry', 'entry.old', 'entry.new');
+    assert.ok(plan.occurrences.every((occurrence) => typeof occurrence.category === 'string'));
+    assert.ok(plan.sourceRevisions.length >= plan.changedFiles.length);
+    assert.ok(plan.sourceRevisions.every((revision) => /^[a-f0-9]{64}$/.test(revision.sha256)));
+    await fs.appendFile(entriesPath, ' ');
+    await assert.rejects(applyEntityRename(root, plan), /rename plan is stale/i);
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.new')).length, 0);
+    assert.match(await fs.readFile(entriesPath, 'utf8'), /entry\.old/);
+  });
+
   it('dry-run reports files but performs no writes', async () => {
     const root = await fixture();
     const entries = path.join(root, '.SNL_Doc', 'entries.json');
@@ -476,5 +493,63 @@ describe('renameEntityId', () => {
       /already appears in .* structured location/,
     );
     assert.equal(await fs.readFile(entriesPath, 'utf8'), before);
+  });
+});
+
+describe('scoped Style rename', () => {
+  it('renames only the selected Macro definition, defaults, and explicit resolved SNL styles', async () => {
+    const root = await entityFixture();
+    const doc = path.join(root, '.SNL_Doc');
+    const targetPath = path.join(doc, macroEntityPath('demo', 'Macro.old'));
+    const targetEnvelope = JSON.parse(await fs.readFile(targetPath, 'utf8'));
+    targetEnvelope.macro.default_style = { en: 'shared', zh: 'shared' };
+    targetEnvelope.macro.styles.push({ style_name: 'shared', mode: 'formula_inline', template: '#0', tags: [], unknown: { keep: true } });
+    await fs.writeFile(targetPath, JSON.stringify(targetEnvelope, null, 2) + '\n');
+    const other = {
+      name: 'Other', description: '', source: { entries: [], urls: [] }, dynamic_arity: false,
+      default_style: { en: 'shared' }, tags: [],
+      styles: [{ style_name: 'shared', mode: 'formula_inline', template: '#0', tags: [] }],
+    };
+    const otherPath = path.join(doc, macroEntityPath('demo', 'Other'));
+    await fs.writeFile(otherPath, JSON.stringify({ format: 'snl-macro', version: 1, package: 'demo', macro: other }, null, 2) + '\n');
+    const entryFiles = (await fs.readdir(path.join(doc, 'entries'))).sort();
+    const firstPath = path.join(doc, 'entries', entryFiles[0]);
+    const secondPath = path.join(doc, 'entries', entryFiles[1]);
+    const first = JSON.parse(await fs.readFile(firstPath, 'utf8'));
+    const second = JSON.parse(await fs.readFile(secondPath, 'utf8'));
+    first.entry.content.snl = 'Macro.old[shared](x)';
+    second.entry.content.snl = 'Other[shared](x)';
+    await fs.writeFile(firstPath, JSON.stringify(first, null, 2) + '\n');
+    await fs.writeFile(secondPath, JSON.stringify(second, null, 2) + '\n');
+
+    const plan = await planStyleRename(root, 'demo', 'Macro.old', 'shared', 'renamed');
+    assert.deepEqual(new Set(plan.occurrences.map((item) => item.category)), new Set(['style-definition', 'default-style', 'snl-style']));
+    await applyStyleRename(root, plan);
+
+    const updatedTarget = JSON.parse(await fs.readFile(targetPath, 'utf8'));
+    assert.deepEqual(updatedTarget.macro.default_style, { en: 'renamed', zh: 'renamed' });
+    assert.equal(updatedTarget.macro.styles.at(-1).style_name, 'renamed');
+    assert.deepEqual(updatedTarget.macro.styles.at(-1).unknown, { keep: true });
+    assert.equal(JSON.parse(await fs.readFile(otherPath, 'utf8')).macro.styles[0].style_name, 'shared');
+    assert.equal(JSON.parse(await fs.readFile(firstPath, 'utf8')).entry.content.snl, 'Macro.old[renamed](x)');
+    assert.equal(JSON.parse(await fs.readFile(secondPath, 'utf8')).entry.content.snl, 'Other[shared](x)');
+  });
+
+  it('fails closed on malformed SNL before writing a Style definition', async () => {
+    const root = await entityFixture();
+    const doc = path.join(root, '.SNL_Doc');
+    const targetPath = path.join(doc, macroEntityPath('demo', 'Macro.old'));
+    const envelope = JSON.parse(await fs.readFile(targetPath, 'utf8'));
+    envelope.macro.default_style = { en: 'shared' };
+    envelope.macro.styles.push({ style_name: 'shared', mode: 'formula_inline', template: '#0', tags: [] });
+    await fs.writeFile(targetPath, JSON.stringify(envelope, null, 2) + '\n');
+    const entryName = (await fs.readdir(path.join(doc, 'entries'))).sort()[0];
+    const entryPath = path.join(doc, 'entries', entryName);
+    const entry = JSON.parse(await fs.readFile(entryPath, 'utf8'));
+    entry.entry.content.snl = 'Macro.old[shared';
+    await fs.writeFile(entryPath, JSON.stringify(entry, null, 2) + '\n');
+    const before = await fs.readFile(targetPath, 'utf8');
+    await assert.rejects(planStyleRename(root, 'demo', 'Macro.old', 'shared', 'renamed'), /Expected RBRACKET|Expected EOF/);
+    assert.equal(await fs.readFile(targetPath, 'utf8'), before);
   });
 });

@@ -14,7 +14,9 @@
 - ✅ **`snl-lint-package`** — schema + template placeholder rules for macro package files.
 - ✅ **`snl-find-refs`** — trace every structured definition/reference to an Entry or Macro id.
 - ✅ **`snl-rename-id`** — collision-checked global Entry/Macro id rename with dry-run and rollback.
-- ⏳ **Other Read CLIs (P1)** — `snl-entry-get`, `snl-macro-get`, `snl-macro-find`, `snl-list-*`.
+- ✅ **`snl-rename-style`** — parser-scoped Style rename for one Package/Macro owner.
+- ✅ **`snoogle`** — fuzzy Entry or active-Macro query with the shared SNoogL ranker.
+- ⏳ **Other Read CLIs (P1)** — exact `snl-entry-get`, `snl-macro-get`, and `snl-list-*` commands.
 
 ### Write CLI rule: drafts in, storage plumbing stays inside
 
@@ -270,6 +272,57 @@ Safety rules:
   verification failure triggers rollback;
 - `--dry-run` performs the complete validation and plan construction with zero
   writes.
+
+The library also exposes `planEntityRename` and `applyEntityRename`. A plan records
+SHA-256 provenance for every parsed workspace source. Apply acquires the same writer
+lock, rebuilds the plan, and refuses to write if the source revisions, occurrences,
+or changed-file set differ. This two-phase API is useful when an agent must inspect
+the exact plan before applying it; the one-shot CLI retains the same source-range
+editing, compare-before-install checks, post-write verification, and rollback.
+
+### snl-rename-style
+
+Rename one Style owned by an exact `(Package, Macro)` pair:
+
+```bash
+node bin/snl-rename-style.mjs --root . --package logic --macro Logic.forall --dry-run default compact
+node bin/snl-rename-style.mjs --root . --package logic --macro Logic.forall default compact
+```
+
+The command requires exactly one old Style definition and rejects a colliding new
+name. It changes only that definition, matching values in that Macro's
+`default_style`, and explicit parsed `Macro[style]` selections where the target
+Package is the active resolution winner for that Macro. Same-named Styles on other
+Macros are untouched. Every non-empty Entry SNL source is parsed before writing, so
+malformed SNL fails closed. JSON is edited by source range rather than reserialized,
+preserving unrelated bytes and unknown fields.
+
+Style rename uses the same two-phase SHA-256 provenance check, workspace writer lock,
+source/inode compare-before-install checks, permission preservation, post-write
+verification, and guarded rollback as identity rename. `--dry-run` returns the exact
+plan without writing. `--json` includes the scoped identities, categorized
+occurrences, changed files, source revisions, and `dryRun`.
+
+### snoogle
+
+Run one free-form query against either Entries or active Macros:
+
+```bash
+node bin/snoogle.mjs --root . --entry "group identity"
+node bin/snoogle.mjs --root . --macro "Logic forall"
+node bin/snoogle.mjs --root . --macro "quantifier forall" --json
+```
+
+Exactly one of `--entry <query>` and `--macro <query>` is required. There are
+deliberately **no filter flags**: options such as `--kind`, `--package`, or `--tag`
+are rejected as unknown flags. Space-separated terms use AND semantics. Dotted
+terms give the tail and namespace segments their SNoogL field tiers; Entry titles
+and Macro tags contribute labels. Macro mode reads only Packages enabled by
+`active_macro_packages` (or all Packages when that config field is absent).
+
+`--json` emits `{ schemaVersion: 1, mode, query, results }`. Entry hits contain
+`kind`, `id`, `title`, `entryKind`, and `score`; Macro hits contain `kind`, `id`,
+`packageId`, `packageName`, `macroKind`, `tags`, `sourceEntries`, and `score`.
 
 ### Common flag conventions
 
