@@ -152,7 +152,16 @@ function snapshotInertJson(value: unknown, label: string, seen = new Set<object>
         throw new Error(`${label} must use plain Array values.`);
       }
       const keys = Reflect.ownKeys(value);
-      if (keys.some((key) => typeof key !== 'string' || (key !== 'length' && !/^(0|[1-9]\d*)$/.test(key)))) {
+      const lengthDescriptor = Object.getOwnPropertyDescriptor(value, 'length');
+      const hasExactOwnKeys = keys.length === value.length + 1 && keys.every((key) => {
+        if (key === 'length') return true;
+        if (typeof key !== 'string') return false;
+        const index = Number(key);
+        return Number.isInteger(index) && index >= 0 && index < value.length &&
+          index < 0xffff_ffff && String(index) === key;
+      });
+      if (!hasExactOwnKeys || !lengthDescriptor || !('value' in lengthDescriptor) ||
+          lengthDescriptor.value !== value.length || lengthDescriptor.enumerable || lengthDescriptor.configurable) {
         throw new Error(`${label} contains non-JSON Array properties.`);
       }
       const snapshot: InertJson[] = [];

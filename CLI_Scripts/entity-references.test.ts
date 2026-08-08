@@ -253,6 +253,96 @@ describe('renameEntityId', () => {
     }
   });
 
+  it('rejects numeric-looking extra own keys on plan Arrays before writing', async () => {
+    for (const arrayField of ['changedFiles', 'plannedOutputs'] as const) {
+      const root = await fixture();
+      const plan = structuredClone(await planEntityRename(root, 'entry', 'entry.old', 'entry.new'));
+      const before = new Map(
+        await Promise.all(plan.changedFiles.map(async (file) => [
+          file,
+          await fs.readFile(path.join(root, '.SNL_Doc', file), 'utf8'),
+        ] as const)),
+      );
+      let getterReads = 0;
+      Object.defineProperty(plan[arrayField], '4294967295', {
+        enumerable: true,
+        get: () => {
+          getterReads += 1;
+          return 'unreviewed';
+        },
+      });
+
+      await assert.rejects(
+        applyEntityRename(root, plan),
+        /non-JSON Array properties|inert data property/i,
+      );
+      assert.equal(getterReads, 0);
+      for (const [file, contents] of before) {
+        assert.equal(await fs.readFile(path.join(root, '.SNL_Doc', file), 'utf8'), contents);
+      }
+      assert.equal((await findEntityReferences(root, 'entry', 'entry.new')).length, 0);
+    }
+  });
+
+  it('requires exact canonical own keys and inert descriptors on plan Arrays', async () => {
+    const extraSymbol = Symbol('unreviewed');
+    const attacks: Array<[string, (array: any[]) => void]> = [
+      ['sparse hole', (array) => { delete array[0]; }],
+      ['canonical maximum Array index', (array) => {
+        Object.defineProperty(array, '4294967294', { value: 'unreviewed', enumerable: true });
+      }],
+      ...['01', '-0', '1e0'].map((key) => [
+        `non-canonical key ${key}`,
+        (array: any[]) => { Object.defineProperty(array, key, { value: 'unreviewed', enumerable: true }); },
+      ] as [string, (array: any[]) => void]),
+      ['symbol key', (array) => {
+        Object.defineProperty(array, extraSymbol, { value: 'unreviewed', enumerable: true });
+      }],
+      ['non-enumerable extra', (array) => {
+        Object.defineProperty(array, 'metadata', { value: 'unreviewed', enumerable: false });
+      }],
+      ['non-enumerable index', (array) => {
+        Object.defineProperty(array, '0', { value: array[0], enumerable: false });
+      }],
+      ['index accessor', (array) => {
+        const value = array[0];
+        Object.defineProperty(array, '0', { get: () => value, enumerable: true });
+      }],
+    ];
+
+    for (const [name, attack] of attacks) {
+      const root = await fixture();
+      const plan = structuredClone(await planEntityRename(root, 'entry', 'entry.old', 'entry.new'));
+      const before = new Map(
+        await Promise.all(plan.changedFiles.map(async (file) => [
+          file,
+          await fs.readFile(path.join(root, '.SNL_Doc', file), 'utf8'),
+        ] as const)),
+      );
+      attack(plan.changedFiles);
+
+      await assert.rejects(
+        applyEntityRename(root, plan),
+        /non-JSON Array properties|inert data property/i,
+        name,
+      );
+      for (const [file, contents] of before) {
+        assert.equal(await fs.readFile(path.join(root, '.SNL_Doc', file), 'utf8'), contents, name);
+      }
+    }
+  });
+
+  it('accepts canonical frozen plan Arrays', async () => {
+    const root = await fixture();
+    const plan = structuredClone(await planEntityRename(root, 'entry', 'entry.old', 'entry.new'));
+    Object.freeze(plan.changedFiles);
+
+    await applyEntityRename(root, plan);
+
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.old')).length, 0);
+    assert.ok((await findEntityReferences(root, 'entry', 'entry.new')).length > 0);
+  });
+
   it('exposes a categorized two-phase plan and rejects a stale plan before writing', async () => {
     const root = await fixture();
     const entriesPath = path.join(root, '.SNL_Doc', 'entries.json');
