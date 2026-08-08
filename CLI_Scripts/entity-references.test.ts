@@ -120,6 +120,18 @@ async function entityFixture(): Promise<string> {
   return root;
 }
 
+async function styleFixture(): Promise<{ root: string; targetPath: string }> {
+  const root = await entityFixture();
+  const targetPath = path.join(root, '.SNL_Doc', macroEntityPath('demo', 'Macro.old'));
+  const envelope = JSON.parse(await fs.readFile(targetPath, 'utf8'));
+  envelope.macro.default_style = { en: 'shared', zh: 'shared' };
+  envelope.macro.styles.push({
+    style_name: 'shared', mode: 'formula_inline', template: '#0', tags: [],
+  });
+  await fs.writeFile(targetPath, JSON.stringify(envelope, null, 2) + '\n');
+  return { root, targetPath };
+}
+
 describe('SNL structured reference scanner', () => {
   it('separates macro tokens, src-postfix Entry refs, style tags, and literal environments', () => {
     const refs = scanSnlReferences(
@@ -169,6 +181,29 @@ describe('findEntityReferences', () => {
 });
 
 describe('renameEntityId', () => {
+  it('binds every reviewed Entity identity and planned output to the plan fingerprint', async () => {
+    const root = await fixture();
+    const plan = await planEntityRename(root, 'entry', 'entry.old', 'entry.new');
+    assert.match((plan as any).fingerprint, /^[a-f0-9]{64}$/);
+    assert.ok((plan as any).plannedOutputs.length > 0);
+
+    const mutations: Array<(candidate: any) => void> = [
+      (candidate) => { candidate.entityType = 'macro'; },
+      (candidate) => { candidate.oldId = 'entry.user'; },
+      (candidate) => { candidate.newId = 'entry.unreviewed'; },
+      (candidate) => { candidate.plannedOutputs[0].sourceFile = 'unreviewed-source.json'; },
+      (candidate) => { candidate.plannedOutputs[0].targetFile = 'unreviewed-target.json'; },
+      (candidate) => { candidate.plannedOutputs[0].sha256 = '0'.repeat(64); },
+    ];
+    for (const mutate of mutations) {
+      const candidate = structuredClone(plan) as any;
+      mutate(candidate);
+      await assert.rejects(applyEntityRename(root, candidate), /plan integrity check failed/i);
+    }
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.new')).length, 0);
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.old')).filter((item) => item.role === 'definition').length, 1);
+  });
+
   it('exposes a categorized two-phase plan and rejects a stale plan before writing', async () => {
     const root = await fixture();
     const entriesPath = path.join(root, '.SNL_Doc', 'entries.json');
@@ -497,6 +532,40 @@ describe('renameEntityId', () => {
 });
 
 describe('scoped Style rename', () => {
+  it('binds every reviewed Style scope identity and planned output to the plan fingerprint', async () => {
+    const { root, targetPath } = await styleFixture();
+    const before = await fs.readFile(targetPath, 'utf8');
+    const plan = await planStyleRename(root, 'demo', 'Macro.old', 'shared', 'renamed');
+    assert.match((plan as any).fingerprint, /^[a-f0-9]{64}$/);
+    assert.ok((plan as any).plannedOutputs.length > 0);
+
+    const mutations: Array<(candidate: any) => void> = [
+      (candidate) => { candidate.packageId = 'unreviewed-package'; },
+      (candidate) => { candidate.macroId = 'Other'; },
+      (candidate) => { candidate.oldStyle = 'unreviewed-old'; },
+      (candidate) => { candidate.newStyle = 'unreviewed-new'; },
+      (candidate) => { candidate.plannedOutputs[0].sourceFile = 'unreviewed-source.json'; },
+      (candidate) => { candidate.plannedOutputs[0].targetFile = 'unreviewed-target.json'; },
+      (candidate) => { candidate.plannedOutputs[0].sha256 = 'f'.repeat(64); },
+    ];
+    for (const mutate of mutations) {
+      const candidate = structuredClone(plan) as any;
+      mutate(candidate);
+      await assert.rejects(applyStyleRename(root, candidate), /plan integrity check failed/i);
+    }
+    assert.equal(await fs.readFile(targetPath, 'utf8'), before);
+  });
+
+  it('rejects a stale Style source snapshot before writing', async () => {
+    const { root, targetPath } = await styleFixture();
+    const plan = await planStyleRename(root, 'demo', 'Macro.old', 'shared', 'renamed');
+    await fs.appendFile(targetPath, ' ');
+    const staleSource = await fs.readFile(targetPath, 'utf8');
+    await assert.rejects(applyStyleRename(root, plan), /style rename plan is stale/i);
+    assert.equal(await fs.readFile(targetPath, 'utf8'), staleSource);
+    assert.match(staleSource, /"style_name": "shared"/);
+  });
+
   it('renames only the selected Macro definition, defaults, and explicit resolved SNL styles', async () => {
     const root = await entityFixture();
     const doc = path.join(root, '.SNL_Doc');

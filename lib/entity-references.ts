@@ -42,6 +42,9 @@ export interface RenamePlan {
   occurrences: EntityOccurrence[];
   changedFiles: string[];
   sourceRevisions: Array<{ file: string; sha256: string }>;
+  plannedOutputs: Array<{ sourceFile: string; targetFile: string; sha256: string }>;
+  /** SHA-256 integrity digest of every other serializable plan field. */
+  fingerprint: string;
 }
 
 export interface StyleOccurrence {
@@ -61,6 +64,9 @@ export interface StyleRenamePlan {
   occurrences: StyleOccurrence[];
   changedFiles: string[];
   sourceRevisions: Array<{ file: string; sha256: string }>;
+  plannedOutputs: Array<{ sourceFile: string; targetFile: string; sha256: string }>;
+  /** SHA-256 integrity digest of every other serializable plan field. */
+  fingerprint: string;
 }
 
 interface LoadedJson {
@@ -79,6 +85,57 @@ interface TextEdit {
   offset: number;
   length: number;
   content: string;
+}
+
+type PlannedOutput = { sourceFile: string; targetFile: string; sha256: string };
+
+function sha256(value: string): string {
+  return createHash('sha256').update(value).digest('hex');
+}
+
+function comparePlannedOutput(left: PlannedOutput, right: PlannedOutput): number {
+  return left.sourceFile.localeCompare(right.sourceFile) ||
+    left.targetFile.localeCompare(right.targetFile) || left.sha256.localeCompare(right.sha256);
+}
+
+function canonicalJson(value: unknown): string | undefined {
+  if (value === undefined || typeof value === 'function' || typeof value === 'symbol') return undefined;
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => canonicalJson(item) ?? 'null').join(',')}]`;
+  }
+  const fields = Object.keys(value as Record<string, unknown>).sort().flatMap((key) => {
+    const encoded = canonicalJson((value as Record<string, unknown>)[key]);
+    return encoded === undefined ? [] : [`${JSON.stringify(key)}:${encoded}`];
+  });
+  return `{${fields.join(',')}}`;
+}
+
+function planFingerprint(plan: Record<string, unknown>): string {
+  const payload = Object.fromEntries(Object.entries(plan).filter(([key]) => key !== 'fingerprint'));
+  return sha256(canonicalJson(payload) ?? '');
+}
+
+function fingerprintPlan<T extends { fingerprint: string }>(payload: Omit<T, 'fingerprint'>): T {
+  const plan = payload as T;
+  plan.fingerprint = planFingerprint(plan as unknown as Record<string, unknown>);
+  return plan;
+}
+
+function assertPlanFingerprint(plan: unknown): asserts plan is RenamePlan | StyleRenamePlan {
+  try {
+    if (!plan || typeof plan !== 'object') throw new Error('not an object');
+    const candidate = plan as Record<string, unknown>;
+    if (typeof candidate.fingerprint !== 'string' ||
+        !/^[a-f0-9]{64}$/.test(candidate.fingerprint) ||
+        planFingerprint(candidate) !== candidate.fingerprint) {
+      throw new Error('digest mismatch');
+    }
+  } catch {
+    // This SHA-256 digest detects DTO mutation; it is not a secret MAC or proof
+    // of authenticity. A remote API must also retain/recompute trusted plans.
+    throw new Error('Rename plan integrity check failed; rescan before applying.');
+  }
 }
 
 interface SnlToken {
@@ -159,16 +216,12 @@ export async function applyEntityRename(
   options: Omit<RenameOptions, 'dryRun'> = {},
 ): Promise<RenamePlan> {
   const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
-  return withWorkspaceDataLock(canonicalWorkspace, `rename ${plan.entityType} identity`, async () => {
-    const current = await renameEntityIdUnlocked(
-      canonicalWorkspace, plan.entityType, plan.oldId, plan.newId, { dryRun: true },
+  assertPlanFingerprint(plan);
+  return withWorkspaceDataLock(canonicalWorkspace, 'apply reviewed entity rename', async () => {
+    assertPlanFingerprint(plan);
+    return renameEntityIdUnlocked(
+      canonicalWorkspace, plan.entityType, plan.oldId, plan.newId, options, plan,
     );
-    if (JSON.stringify(current.sourceRevisions) !== JSON.stringify(plan.sourceRevisions) ||
-        JSON.stringify(current.occurrences) !== JSON.stringify(plan.occurrences) ||
-        JSON.stringify(current.changedFiles) !== JSON.stringify(plan.changedFiles)) {
-      throw new Error('Rename plan is stale because workspace sources changed; rescan before applying.');
-    }
-    return renameEntityIdUnlocked(canonicalWorkspace, plan.entityType, plan.oldId, plan.newId, options);
   });
 }
 
@@ -180,12 +233,12 @@ export async function planStyleRename(
 
 export async function applyStyleRename(workspaceRoot: string, plan: StyleRenamePlan): Promise<StyleRenamePlan> {
   const root = await validateWorkspaceBoundary(workspaceRoot);
-  return withWorkspaceDataLock(root, `rename Style ${plan.macroId}[${plan.oldStyle}]`, async () => {
-    const current = await styleRenameUnlocked(root, plan.packageId, plan.macroId, plan.oldStyle, plan.newStyle, true);
-    if (JSON.stringify(current) !== JSON.stringify(plan)) {
-      throw new Error('Style rename plan is stale because workspace sources changed; rescan before applying.');
-    }
-    return styleRenameUnlocked(root, plan.packageId, plan.macroId, plan.oldStyle, plan.newStyle, false);
+  assertPlanFingerprint(plan);
+  return withWorkspaceDataLock(root, 'apply reviewed Style rename', async () => {
+    assertPlanFingerprint(plan);
+    return styleRenameUnlocked(
+      root, plan.packageId, plan.macroId, plan.oldStyle, plan.newStyle, false, plan,
+    );
   });
 }
 
@@ -199,6 +252,7 @@ export async function renameStyle(
 
 async function styleRenameUnlocked(
   root: string, packageId: string, macroId: string, oldStyle: string, newStyle: string, dryRun: boolean,
+  expectedPlan?: StyleRenamePlan,
 ): Promise<StyleRenamePlan> {
   for (const [label, value] of [['Package', packageId], ['Macro', macroId], ['old Style', oldStyle], ['new Style', newStyle]]) {
     if (!value.trim()) throw new Error(`${label} identity must be non-empty.`);
@@ -207,12 +261,20 @@ async function styleRenameUnlocked(
   if (!isTraceableSnlIdentity('macro', newStyle)) throw new Error(`Style name '${newStyle}' is not representable as an SNL identifier.`);
   const files = await loadWorkspaceJson(root);
   const { occurrences, changed } = buildStyleRename(files, packageId, macroId, oldStyle, newStyle);
-  const plan: StyleRenamePlan = {
+  const plan = fingerprintPlan<StyleRenamePlan>({
     packageId, macroId, oldStyle, newStyle,
     occurrences: occurrences.sort((a, b) => a.file.localeCompare(b.file) || a.path.localeCompare(b.path) || (a.offset ?? -1) - (b.offset ?? -1)),
     changedFiles: [...changed.values()].map((file) => file.relPath).sort(),
     sourceRevisions: files.map((file) => ({ file: file.relPath, sha256: createHash('sha256').update(file.raw).digest('hex') })),
-  };
+    plannedOutputs: [...changed.values()].map((file) => ({
+      sourceFile: file.relPath,
+      targetFile: file.relPath,
+      sha256: sha256(file.next),
+    })).sort(comparePlannedOutput),
+  });
+  if (expectedPlan && plan.fingerprint !== expectedPlan.fingerprint) {
+    throw new Error('Style rename plan is stale because workspace sources or planned outputs changed; rescan before applying.');
+  }
   if (dryRun) return plan;
   const replacements = [...changed.values()].map((file) => ({
     ...file, targetAbsPath: file.absPath,
@@ -359,6 +421,7 @@ async function renameEntityIdUnlocked(
   oldId: string,
   newId: string,
   options: RenameOptions,
+  expectedPlan?: RenamePlan,
 ): Promise<RenamePlan> {
   validateNonEmptyIdentity(oldId);
   validateNonEmptyIdentity(newId);
@@ -421,7 +484,7 @@ async function renameEntityIdUnlocked(
     }
   }
 
-  const plan: RenamePlan = {
+  const plan = fingerprintPlan<RenamePlan>({
     entityType,
     oldId,
     newId,
@@ -431,7 +494,15 @@ async function renameEntityIdUnlocked(
       file: file.relPath,
       sha256: createHash('sha256').update(file.raw).digest('hex'),
     })),
-  };
+    plannedOutputs: [...changed.values()].map((file) => ({
+      sourceFile: file.relPath,
+      targetFile: file.targetRelPath,
+      sha256: sha256(file.next),
+    })).sort(comparePlannedOutput),
+  });
+  if (expectedPlan && plan.fingerprint !== expectedPlan.fingerprint) {
+    throw new Error('Rename plan is stale because workspace sources or planned outputs changed; rescan before applying.');
+  }
   if (options.dryRun || changed.size === 0) return plan;
 
   const replacements = [...changed.values()].map((file) => ({
