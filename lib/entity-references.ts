@@ -2,6 +2,7 @@ import { constants } from 'node:fs';
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import { createHash } from 'node:crypto';
+import { types as utilTypes } from 'node:util';
 import {
   findNodeAtLocation,
   parseTree,
@@ -122,20 +123,187 @@ function fingerprintPlan<T extends { fingerprint: string }>(payload: Omit<T, 'fi
   return plan;
 }
 
-function assertPlanFingerprint(plan: unknown): asserts plan is RenamePlan | StyleRenamePlan {
-  try {
-    if (!plan || typeof plan !== 'object') throw new Error('not an object');
-    const candidate = plan as Record<string, unknown>;
-    if (typeof candidate.fingerprint !== 'string' ||
-        !/^[a-f0-9]{64}$/.test(candidate.fingerprint) ||
-        planFingerprint(candidate) !== candidate.fingerprint) {
-      throw new Error('digest mismatch');
-    }
-  } catch {
-    // This SHA-256 digest detects DTO mutation; it is not a secret MAC or proof
-    // of authenticity. A remote API must also retain/recompute trusted plans.
+function assertPlanFingerprint(plan: RenamePlan | StyleRenamePlan): void {
+  if (!/^[a-f0-9]{64}$/.test(plan.fingerprint) ||
+      planFingerprint(plan as unknown as Record<string, unknown>) !== plan.fingerprint) {
+    // SHA-256 detects DTO mutation; it is integrity, not authentication. A future
+    // Extension host must retain the reviewed plan (or an opaque trusted token)
+    // to preserve user-confirmation authority across an external caller boundary.
     throw new Error('Rename plan integrity check failed; rescan before applying.');
   }
+}
+
+type InertJson = null | boolean | number | string | readonly InertJson[] | { [key: string]: InertJson };
+
+function snapshotInertJson(value: unknown, label: string, seen = new Set<object>()): InertJson {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+  if (typeof value === 'number') {
+    if (Number.isFinite(value)) return value;
+    throw new Error(`${label} contains a non-JSON number.`);
+  }
+  if (typeof value !== 'object' || utilTypes.isProxy(value)) {
+    throw new Error(`${label} must be inert plain JSON data.`);
+  }
+  if (seen.has(value)) throw new Error(`${label} must not contain cycles.`);
+  seen.add(value);
+  try {
+    if (Array.isArray(value)) {
+      if (Object.getPrototypeOf(value) !== Array.prototype) {
+        throw new Error(`${label} must use plain Array values.`);
+      }
+      const keys = Reflect.ownKeys(value);
+      if (keys.some((key) => typeof key !== 'string' || (key !== 'length' && !/^(0|[1-9]\d*)$/.test(key)))) {
+        throw new Error(`${label} contains non-JSON Array properties.`);
+      }
+      const snapshot: InertJson[] = [];
+      for (let index = 0; index < value.length; index += 1) {
+        const descriptor = Object.getOwnPropertyDescriptor(value, String(index));
+        if (!descriptor || !descriptor.enumerable || !('value' in descriptor)) {
+          throw new Error(`${label}[${index}] must be an inert data property.`);
+        }
+        snapshot.push(snapshotInertJson(descriptor.value, `${label}[${index}]`, seen));
+      }
+      return Object.freeze(snapshot);
+    }
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) {
+      throw new Error(`${label} must contain only plain objects.`);
+    }
+    const snapshot: { [key: string]: InertJson } = {};
+    for (const key of Reflect.ownKeys(value)) {
+      if (typeof key !== 'string') throw new Error(`${label} must not contain symbol properties.`);
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor || !descriptor.enumerable || !('value' in descriptor)) {
+        throw new Error(`${label}.${key} must be an inert enumerable data property.`);
+      }
+      Object.defineProperty(snapshot, key, {
+        value: snapshotInertJson(descriptor.value, `${label}.${key}`, seen),
+        enumerable: true,
+        writable: false,
+        configurable: false,
+      });
+    }
+    return Object.freeze(snapshot);
+  } finally {
+    seen.delete(value);
+  }
+}
+
+function assertExactFields(value: Record<string, unknown>, fields: readonly string[], label: string): void {
+  const actual = Object.keys(value).sort();
+  const expected = [...fields].sort();
+  if (actual.length !== expected.length || actual.some((field, index) => field !== expected[index])) {
+    throw new Error(`${label} has unexpected or missing fields.`);
+  }
+}
+
+function assertString(value: unknown, label: string): asserts value is string {
+  if (typeof value !== 'string') throw new Error(`${label} must be a string.`);
+}
+
+function assertOptionalLocation(value: Record<string, unknown>, label: string): void {
+  for (const field of ['offset', 'snlLine', 'snlColumn']) {
+    if (field in value && (!Number.isSafeInteger(value[field]) || (value[field] as number) < 0)) {
+      throw new Error(`${label}.${field} must be a non-negative safe integer.`);
+    }
+  }
+}
+
+function assertRevisionList(value: unknown, label: string): void {
+  if (!Array.isArray(value)) throw new Error(`${label} must be an Array.`);
+  value.forEach((revision, index) => {
+    if (!isRecord(revision)) throw new Error(`${label}[${index}] must be an object.`);
+    assertExactFields(revision, ['file', 'sha256'], `${label}[${index}]`);
+    assertString(revision.file, `${label}[${index}].file`);
+    if (typeof revision.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(revision.sha256)) {
+      throw new Error(`${label}[${index}].sha256 must be a SHA-256 digest.`);
+    }
+  });
+}
+
+function assertOutputList(value: unknown, label: string): void {
+  if (!Array.isArray(value)) throw new Error(`${label} must be an Array.`);
+  value.forEach((output, index) => {
+    if (!isRecord(output)) throw new Error(`${label}[${index}] must be an object.`);
+    assertExactFields(output, ['sourceFile', 'targetFile', 'sha256'], `${label}[${index}]`);
+    assertString(output.sourceFile, `${label}[${index}].sourceFile`);
+    assertString(output.targetFile, `${label}[${index}].targetFile`);
+    if (typeof output.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(output.sha256)) {
+      throw new Error(`${label}[${index}].sha256 must be a SHA-256 digest.`);
+    }
+  });
+}
+
+function assertCommonPlanFields(plan: Record<string, unknown>, label: string): void {
+  if (!Array.isArray(plan.changedFiles) || !plan.changedFiles.every((file) => typeof file === 'string')) {
+    throw new Error(`${label}.changedFiles must be an Array of strings.`);
+  }
+  assertRevisionList(plan.sourceRevisions, `${label}.sourceRevisions`);
+  assertOutputList(plan.plannedOutputs, `${label}.plannedOutputs`);
+  if (typeof plan.fingerprint !== 'string' || !/^[a-f0-9]{64}$/.test(plan.fingerprint)) {
+    throw new Error(`${label}.fingerprint must be a SHA-256 digest.`);
+  }
+}
+
+function materializeEntityPlan(submitted: unknown): RenamePlan {
+  const plan = snapshotInertJson(submitted, 'Entity rename plan') as Record<string, unknown>;
+  assertExactFields(plan, [
+    'entityType', 'oldId', 'newId', 'occurrences', 'changedFiles',
+    'sourceRevisions', 'plannedOutputs', 'fingerprint',
+  ], 'Entity rename plan');
+  if (plan.entityType !== 'entry' && plan.entityType !== 'macro') {
+    throw new Error('Entity rename plan.entityType is invalid.');
+  }
+  assertString(plan.oldId, 'Entity rename plan.oldId');
+  assertString(plan.newId, 'Entity rename plan.newId');
+  if (!Array.isArray(plan.occurrences)) throw new Error('Entity rename plan.occurrences must be an Array.');
+  plan.occurrences.forEach((occurrence, index) => {
+    if (!isRecord(occurrence)) throw new Error(`Entity rename plan.occurrences[${index}] must be an object.`);
+    const required = ['entityType', 'id', 'role', 'category', 'file', 'path'];
+    const optional = ['offset', 'snlLine', 'snlColumn'].filter((field) => field in occurrence);
+    assertExactFields(occurrence, [...required, ...optional], `Entity rename plan.occurrences[${index}]`);
+    if (occurrence.entityType !== 'entry' && occurrence.entityType !== 'macro') throw new Error('Invalid occurrence entityType.');
+    if (occurrence.role !== 'definition' && occurrence.role !== 'reference') throw new Error('Invalid occurrence role.');
+    if (!['definition', 'snl', 'library-index', 'macro-source', 'relationship', 'generated-witness'].includes(occurrence.category as string)) {
+      throw new Error('Invalid occurrence category.');
+    }
+    for (const field of ['id', 'file', 'path']) assertString(occurrence[field], `Entity occurrence.${field}`);
+    assertOptionalLocation(occurrence, `Entity rename plan.occurrences[${index}]`);
+  });
+  assertCommonPlanFields(plan, 'Entity rename plan');
+  assertPlanFingerprint(plan as unknown as RenamePlan);
+  return plan as unknown as RenamePlan;
+}
+
+function materializeStylePlan(submitted: unknown): StyleRenamePlan {
+  const plan = snapshotInertJson(submitted, 'Style rename plan') as Record<string, unknown>;
+  assertExactFields(plan, [
+    'packageId', 'macroId', 'oldStyle', 'newStyle', 'occurrences',
+    'changedFiles', 'sourceRevisions', 'plannedOutputs', 'fingerprint',
+  ], 'Style rename plan');
+  for (const field of ['packageId', 'macroId', 'oldStyle', 'newStyle']) {
+    assertString(plan[field], `Style rename plan.${field}`);
+  }
+  if (!Array.isArray(plan.occurrences)) throw new Error('Style rename plan.occurrences must be an Array.');
+  plan.occurrences.forEach((occurrence, index) => {
+    if (!isRecord(occurrence)) throw new Error(`Style rename plan.occurrences[${index}] must be an object.`);
+    const required = ['category', 'file', 'path'];
+    const optional = ['offset', 'snlLine', 'snlColumn'].filter((field) => field in occurrence);
+    assertExactFields(occurrence, [...required, ...optional], `Style rename plan.occurrences[${index}]`);
+    if (!['style-definition', 'default-style', 'snl-style'].includes(occurrence.category as string)) {
+      throw new Error('Invalid Style occurrence category.');
+    }
+    assertString(occurrence.file, 'Style occurrence.file');
+    assertString(occurrence.path, 'Style occurrence.path');
+    assertOptionalLocation(occurrence, `Style rename plan.occurrences[${index}]`);
+  });
+  assertCommonPlanFields(plan, 'Style rename plan');
+  assertPlanFingerprint(plan as unknown as StyleRenamePlan);
+  return plan as unknown as StyleRenamePlan;
+}
+
+function sameCanonicalPlan(left: RenamePlan | StyleRenamePlan, right: RenamePlan | StyleRenamePlan): boolean {
+  return canonicalJson(left) === canonicalJson(right);
 }
 
 interface SnlToken {
@@ -215,14 +383,13 @@ export async function applyEntityRename(
   plan: RenamePlan,
   options: Omit<RenameOptions, 'dryRun'> = {},
 ): Promise<RenamePlan> {
+  const reviewedPlan = materializeEntityPlan(plan);
   const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
-  assertPlanFingerprint(plan);
-  return withWorkspaceDataLock(canonicalWorkspace, 'apply reviewed entity rename', async () => {
-    assertPlanFingerprint(plan);
-    return renameEntityIdUnlocked(
-      canonicalWorkspace, plan.entityType, plan.oldId, plan.newId, options, plan,
-    );
-  });
+  return withWorkspaceDataLock(canonicalWorkspace, 'apply reviewed entity rename', async () =>
+    renameEntityIdUnlocked(
+      canonicalWorkspace, reviewedPlan.entityType, reviewedPlan.oldId, reviewedPlan.newId,
+      options, reviewedPlan,
+    ));
 }
 
 export async function planStyleRename(
@@ -232,14 +399,13 @@ export async function planStyleRename(
 }
 
 export async function applyStyleRename(workspaceRoot: string, plan: StyleRenamePlan): Promise<StyleRenamePlan> {
+  const reviewedPlan = materializeStylePlan(plan);
   const root = await validateWorkspaceBoundary(workspaceRoot);
-  assertPlanFingerprint(plan);
-  return withWorkspaceDataLock(root, 'apply reviewed Style rename', async () => {
-    assertPlanFingerprint(plan);
-    return styleRenameUnlocked(
-      root, plan.packageId, plan.macroId, plan.oldStyle, plan.newStyle, false, plan,
-    );
-  });
+  return withWorkspaceDataLock(root, 'apply reviewed Style rename', async () =>
+    styleRenameUnlocked(
+      root, reviewedPlan.packageId, reviewedPlan.macroId,
+      reviewedPlan.oldStyle, reviewedPlan.newStyle, false, reviewedPlan,
+    ));
 }
 
 export async function renameStyle(
@@ -272,7 +438,7 @@ async function styleRenameUnlocked(
       sha256: sha256(file.next),
     })).sort(comparePlannedOutput),
   });
-  if (expectedPlan && plan.fingerprint !== expectedPlan.fingerprint) {
+  if (expectedPlan && !sameCanonicalPlan(plan, expectedPlan)) {
     throw new Error('Style rename plan is stale because workspace sources or planned outputs changed; rescan before applying.');
   }
   if (dryRun) return plan;
@@ -500,7 +666,7 @@ async function renameEntityIdUnlocked(
       sha256: sha256(file.next),
     })).sort(comparePlannedOutput),
   });
-  if (expectedPlan && plan.fingerprint !== expectedPlan.fingerprint) {
+  if (expectedPlan && !sameCanonicalPlan(plan, expectedPlan)) {
     throw new Error('Rename plan is stale because workspace sources or planned outputs changed; rescan before applying.');
   }
   if (options.dryRun || changed.size === 0) return plan;

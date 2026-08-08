@@ -204,6 +204,55 @@ describe('renameEntityId', () => {
     assert.equal((await findEntityReferences(root, 'entry', 'entry.old')).filter((item) => item.role === 'definition').length, 1);
   });
 
+  it('rejects stateful Entity plan accessors before they can swap the reviewed operation', async () => {
+    const root = await fixture();
+    const entriesPath = path.join(root, '.SNL_Doc', 'entries.json');
+    const before = await fs.readFile(entriesPath, 'utf8');
+    const reviewed = await planEntityRename(root, 'entry', 'entry.old', 'entry.new');
+    const unreviewed = await planEntityRename(root, 'entry', 'entry.old', 'entry.unreviewed');
+    let fingerprintReads = 0;
+    const attacker: Record<string, unknown> = {};
+    for (const key of Object.keys(reviewed) as Array<keyof typeof reviewed>) {
+      Object.defineProperty(attacker, key, {
+        enumerable: true,
+        get: () => {
+          if (key === 'fingerprint') fingerprintReads += 1;
+          return (fingerprintReads > 4 ? unreviewed : reviewed)[key];
+        },
+      });
+    }
+
+    await assert.rejects(
+      applyEntityRename(root, attacker as any),
+      /must be inert plain JSON data|inert enumerable data property|plan integrity check failed/i,
+    );
+    assert.equal(await fs.readFile(entriesPath, 'utf8'), before);
+    assert.equal((await findEntityReferences(root, 'entry', 'entry.unreviewed')).length, 0);
+  });
+
+  it('rejects Proxy and nested accessor Entity plans without writing', async () => {
+    for (const attack of ['proxy', 'nested-accessor'] as const) {
+      const root = await fixture();
+      const entriesPath = path.join(root, '.SNL_Doc', 'entries.json');
+      const before = await fs.readFile(entriesPath, 'utf8');
+      const plan = await planEntityRename(root, 'entry', 'entry.old', 'entry.new');
+      const attacker = attack === 'proxy' ? new Proxy(plan, {}) : structuredClone(plan);
+      if (attack === 'nested-accessor') {
+        const value = attacker.plannedOutputs[0].targetFile;
+        Object.defineProperty(attacker.plannedOutputs[0], 'targetFile', {
+          enumerable: true,
+          get: () => value,
+        });
+      }
+
+      await assert.rejects(
+        applyEntityRename(root, attacker),
+        /must be inert plain JSON data|inert enumerable data property|plan integrity check failed/i,
+      );
+      assert.equal(await fs.readFile(entriesPath, 'utf8'), before);
+    }
+  });
+
   it('exposes a categorized two-phase plan and rejects a stale plan before writing', async () => {
     const root = await fixture();
     const entriesPath = path.join(root, '.SNL_Doc', 'entries.json');
@@ -553,6 +602,30 @@ describe('scoped Style rename', () => {
       mutate(candidate);
       await assert.rejects(applyStyleRename(root, candidate), /plan integrity check failed/i);
     }
+    assert.equal(await fs.readFile(targetPath, 'utf8'), before);
+  });
+
+  it('rejects stateful Style plan accessors before they can swap the reviewed operation', async () => {
+    const { root, targetPath } = await styleFixture();
+    const before = await fs.readFile(targetPath, 'utf8');
+    const reviewed = await planStyleRename(root, 'demo', 'Macro.old', 'shared', 'renamed');
+    const unreviewed = await planStyleRename(root, 'demo', 'Macro.old', 'shared', 'unreviewed');
+    let fingerprintReads = 0;
+    const attacker: Record<string, unknown> = {};
+    for (const key of Object.keys(reviewed) as Array<keyof typeof reviewed>) {
+      Object.defineProperty(attacker, key, {
+        enumerable: true,
+        get: () => {
+          if (key === 'fingerprint') fingerprintReads += 1;
+          return (fingerprintReads > 4 ? unreviewed : reviewed)[key];
+        },
+      });
+    }
+
+    await assert.rejects(
+      applyStyleRename(root, attacker as any),
+      /must be inert plain JSON data|inert enumerable data property|plan integrity check failed/i,
+    );
     assert.equal(await fs.readFile(targetPath, 'utf8'), before);
   });
 
