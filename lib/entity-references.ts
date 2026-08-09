@@ -1078,7 +1078,10 @@ export function scanSnlReferences(source: string): SnlReference[] {
     const token = tokens[i];
     if (token.type !== 'ident') continue;
     const prev = tokens[i - 1];
+    const next = tokens[i + 1];
     if (prev?.type === 'lbracket' || prev?.type === 'hash') continue; // style tag or Tree3 local source target
+    if (prev?.type === 'at' && !isPostfixAt(tokens[i - 2])) continue; // Tree3 binder declaration
+    if (next?.type === 'at') continue; // sourced bvar/fvar, never a Macro identity
     if (prev?.type === 'at' && isPostfixAt(tokens[i - 2])) {
       refs.push({ entityType: 'entry', id: token.value, start: token.start, end: token.end });
       continue;

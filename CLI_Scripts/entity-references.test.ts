@@ -140,8 +140,8 @@ describe('SNL structured reference scanner', () => {
     assert.deepEqual(
       refs.map((r) => [r.entityType, r.id]),
       [
-        ['macro', 'Macro.old'], ['macro', 'x'], ['entry', 'entry.old'],
-        ['macro', 'Macro.old'], ['macro', 'y'], ['macro', 'Macro.old'],
+        ['macro', 'Macro.old'], ['entry', 'entry.old'],
+        ['macro', 'y'], ['macro', 'Macro.old'],
       ],
     );
   });
@@ -149,8 +149,7 @@ describe('SNL structured reference scanner', () => {
   it('distinguishes Tree3 local-source postfixes from Entry postfixes', () => {
     const refs = scanSnlReferences('root(@x, x@#x, x@#0.0, x@entry.old, $raw$, `fmt`)');
     assert.deepEqual(refs.map((r) => [r.entityType, r.id]), [
-      ['macro', 'root'], ['macro', 'x'], ['macro', 'x'], ['macro', 'x'],
-      ['macro', 'x'], ['entry', 'entry.old'],
+      ['macro', 'root'], ['entry', 'entry.old'],
     ]);
   });
 });
@@ -177,7 +176,7 @@ describe('findEntityReferences', () => {
     const root = await fixture();
     const refs = await findEntityReferences(root, 'macro', 'Macro.old');
     assert.equal(refs.filter((r) => r.role === 'definition').length, 1);
-    assert.equal(refs.filter((r) => r.role === 'reference').length, 4);
+    assert.equal(refs.filter((r) => r.role === 'reference').length, 3);
   });
 
   it('finds JSON-only Unicode Macro identities', async () => {
@@ -399,9 +398,10 @@ describe('renameEntityId', () => {
     const root = await fixture();
     await renameEntityId(root, 'macro', 'Macro.old', 'Macro.new');
     assert.equal((await findEntityReferences(root, 'macro', 'Macro.old')).length, 0);
-    assert.equal((await findEntityReferences(root, 'macro', 'Macro.new')).length, 5);
+    assert.equal((await findEntityReferences(root, 'macro', 'Macro.new')).length, 4);
     const entries = JSON.parse(await fs.readFile(path.join(root, '.SNL_Doc', 'entries.json'), 'utf8'));
     assert.match(entries[0].content.snl, /Macro\.new\[entry\.old\]/);
+    assert.match(entries[0].content.snl, /@Macro\.old/);
     assert.match(entries[0].content.snl, /%Macro\.old%/);
     assert.match(entries[0].content.snl, /\$Macro\.old\$/);
   });
