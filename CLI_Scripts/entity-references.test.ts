@@ -151,6 +151,12 @@ describe('SNL structured reference scanner', () => {
     assert.deepEqual(refs.map((r) => [r.entityType, r.id]), [
       ['macro', 'root'], ['entry', 'entry.old'],
     ]);
+    const resolved = scanSnlReferences('root(@x, x@#x, x@#0.0, x@entry.old)', {
+      postfixedMacroNames: new Set(['x']),
+    });
+    assert.deepEqual(resolved.map((r) => [r.entityType, r.id]), [
+      ['macro', 'root'], ['macro', 'x'], ['macro', 'x'], ['macro', 'x'], ['entry', 'entry.old'],
+    ]);
   });
 });
 
@@ -404,6 +410,22 @@ describe('renameEntityId', () => {
     assert.match(entries[0].content.snl, /@Macro\.old/);
     assert.match(entries[0].content.snl, /%Macro\.old%/);
     assert.match(entries[0].content.snl, /\$Macro\.old\$/);
+  });
+
+  it('renames a registered Macro with a Tree3 postfix without changing binder identities', async () => {
+    const root = await fixture();
+    const packagePath = path.join(root, '.SNL_Doc/term_macros/demo.json');
+    const pkg = JSON.parse(await fs.readFile(packagePath, 'utf8'));
+    pkg.macros.x = { description: '', source: { entries: [], urls: [] }, dynamic_arity: false, styles: [{ tag: 'default', mode: 'formula_inline', template: 'x' }] };
+    await fs.writeFile(packagePath, JSON.stringify(pkg, null, 2) + '\n');
+    const entriesPath = path.join(root, '.SNL_Doc/entries.json');
+    const entries = JSON.parse(await fs.readFile(entriesPath, 'utf8'));
+    entries.push({ id: 'entry.postfix', kind: 'theorem', title: '', content: { snl: 'root(@x, x@#x)' }, contribution_info: null, pointer: null });
+    await fs.writeFile(entriesPath, JSON.stringify(entries, null, 2) + '\n');
+
+    await renameEntityId(root, 'macro', 'x', 'renamed');
+    const after = JSON.parse(await fs.readFile(entriesPath, 'utf8'));
+    assert.equal(after.at(-1).content.snl, 'root(@x, renamed@#x)');
   });
 
   it('renames an inactive macro definition without rewriting same-spelled fvars', async () => {

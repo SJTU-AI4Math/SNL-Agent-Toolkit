@@ -810,7 +810,9 @@ function collectFileOccurrences(
     }
     const snl = entry?.content?.snl;
     if (typeof snl === 'string' && snl.trim() !== '') {
-      for (const ref of scanSnlReferences(snl)) {
+      for (const ref of scanSnlReferences(snl, {
+        postfixedMacroNames: entityType === 'macro' && includeSnlMacroTokens ? new Set([id]) : undefined,
+      })) {
         if (ref.entityType !== entityType || ref.id !== id) continue;
         if (entityType === 'macro' && !includeSnlMacroTokens) continue;
         const pos = offsetPosition(snl, ref.start);
@@ -847,7 +849,9 @@ function collectFileOccurrences(
       }
       const snl = entry?.content?.snl;
       if (typeof snl === 'string' && snl.trim() !== '') {
-        for (const ref of scanSnlReferences(snl)) {
+        for (const ref of scanSnlReferences(snl, {
+          postfixedMacroNames: entityType === 'macro' && includeSnlMacroTokens ? new Set([id]) : undefined,
+        })) {
           if (ref.entityType !== entityType || ref.id !== id) continue;
           if (entityType === 'macro' && !includeSnlMacroTokens) continue;
           const pos = offsetPosition(snl, ref.start);
@@ -1068,7 +1072,10 @@ function applyTextEdits(raw: string, edits: TextEdit[]): string {
   return next;
 }
 
-export function scanSnlReferences(source: string): SnlReference[] {
+export function scanSnlReferences(
+  source: string,
+  options: { postfixedMacroNames?: ReadonlySet<string> } = {},
+): SnlReference[] {
   // Use the authority parser as the syntax gate. The source-preserving scanner
   // below exists only because the current AST does not retain token offsets.
   parseSnlSyntaxTree(source);
@@ -1081,7 +1088,12 @@ export function scanSnlReferences(source: string): SnlReference[] {
     const next = tokens[i + 1];
     if (prev?.type === 'lbracket' || prev?.type === 'hash') continue; // style tag or Tree3 local source target
     if (prev?.type === 'at' && !isPostfixAt(tokens[i - 2])) continue; // Tree3 binder declaration
-    if (next?.type === 'at') continue; // sourced bvar/fvar, never a Macro identity
+    if (next?.type === 'at') {
+      if (options.postfixedMacroNames?.has(token.value)) {
+        refs.push({ entityType: 'macro', id: token.value, start: token.start, end: token.end });
+      }
+      continue;
+    }
     if (prev?.type === 'at' && isPostfixAt(tokens[i - 2])) {
       refs.push({ entityType: 'entry', id: token.value, start: token.start, end: token.end });
       continue;
@@ -1098,7 +1110,9 @@ function replaceSnlReferences(
   oldId: string,
   newId: string,
 ): string {
-  const matches = scanSnlReferences(source).filter((r) => r.entityType === entityType && r.id === oldId);
+  const matches = scanSnlReferences(source, {
+    postfixedMacroNames: entityType === 'macro' ? new Set([oldId]) : undefined,
+  }).filter((r) => r.entityType === entityType && r.id === oldId);
   let next = source;
   for (const match of matches.reverse()) {
     next = next.slice(0, match.start) + newId + next.slice(match.end);
