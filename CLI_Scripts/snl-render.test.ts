@@ -120,6 +120,11 @@ describe('renderTreeAsLatex', () => {
     assert.equal(r.output, '\\text{hello} + b');
   });
 
+  test('Tree3 backtick temporaries render as escaped texttt', () => {
+    const r = synthLatex('plus(`a_b`, b)', macros);
+    assert.equal(r.output, '\\texttt{a\\_b} + b');
+  });
+
   test('dynamic #* templates honor separator', () => {
     const dynamic: Record<string, MacroPackageEntry> = {
       join: {

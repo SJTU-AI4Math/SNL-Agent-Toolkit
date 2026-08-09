@@ -316,7 +316,7 @@ function sameCanonicalPlan(left: RenamePlan | StyleRenamePlan, right: RenamePlan
 }
 
 interface SnlToken {
-  type: 'ident' | 'at' | 'lparen' | 'rparen' | 'lbracket' | 'rbracket' | 'comma' | 'eq' | 'delimited';
+  type: 'ident' | 'at' | 'hash' | 'lparen' | 'rparen' | 'lbracket' | 'rbracket' | 'comma' | 'eq' | 'delimited';
   value: string;
   start: number;
   end: number;
@@ -1078,7 +1078,7 @@ export function scanSnlReferences(source: string): SnlReference[] {
     const token = tokens[i];
     if (token.type !== 'ident') continue;
     const prev = tokens[i - 1];
-    if (prev?.type === 'lbracket') continue; // style tag
+    if (prev?.type === 'lbracket' || prev?.type === 'hash') continue; // style tag or Tree3 local source target
     if (prev?.type === 'at' && isPostfixAt(tokens[i - 2])) {
       refs.push({ entityType: 'entry', id: token.value, start: token.start, end: token.end });
       continue;
@@ -1116,7 +1116,7 @@ function tokenizeSnl(source: string): SnlToken[] {
       i++;
       continue;
     }
-    if (ch === '$' || ch === '%') {
+    if (ch === '$' || ch === '%' || ch === '`') {
       const delimiter = ch === '$' && source[i + 1] === '$' ? '$$' : ch;
       const close = source.indexOf(delimiter, i + delimiter.length);
       if (close < 0) throw new Error(`Malformed SNL: unclosed ${delimiter} delimiter at offset ${i}.`);
@@ -1131,7 +1131,7 @@ function tokenizeSnl(source: string): SnlToken[] {
       continue;
     }
     const punctuation: Record<string, SnlToken['type']> = {
-      '@': 'at', '(': 'lparen', ')': 'rparen', '[': 'lbracket', ']': 'rbracket', ',': 'comma', '=': 'eq',
+      '@': 'at', '#': 'hash', '(': 'lparen', ')': 'rparen', '[': 'lbracket', ']': 'rbracket', ',': 'comma', '=': 'eq',
     };
     const type = punctuation[ch];
     if (!type) throw new Error(`Malformed SNL: unexpected character ${JSON.stringify(ch)} at offset ${i}.`);

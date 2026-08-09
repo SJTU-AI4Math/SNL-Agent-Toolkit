@@ -264,8 +264,8 @@ export function lintEntry(
 }
 
 /**
- * Recursively collect every `mdata.src` string from a parsed SNL tree.
- * Skip empty strings and non-string values defensively. Result is
+ * Recursively collect every Tree3 Entry postfix (`x@entry`) plus legacy
+ * `mdata.src` strings. Skip empty/non-string values defensively.
  * deduped and sorted for stable reporting.
  */
 function collectSrcReferences(node: unknown): string[] {
@@ -275,7 +275,11 @@ function collectSrcReferences(node: unknown): string[] {
 
   function visit(n: unknown): void {
     if (!n || typeof n !== 'object') return;
-    const nn = n as { mdata?: unknown; children?: unknown };
+    const nn = n as { mdata?: unknown; postfix?: unknown; children?: unknown };
+    if (nn.postfix && typeof nn.postfix === 'object') {
+      const postfix = nn.postfix as { type?: unknown; name?: unknown };
+      if (postfix.type === 'name' && typeof postfix.name === 'string' && postfix.name.length > 0) out.add(postfix.name);
+    }
     if (nn.mdata && typeof nn.mdata === 'object') {
       const src = (nn.mdata as { src?: unknown }).src;
       if (typeof src === 'string' && src.length > 0) {

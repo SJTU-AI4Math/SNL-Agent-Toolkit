@@ -34,7 +34,7 @@ async function fixture(): Promise<string> {
   const entriesRaw = JSON.stringify([
     {
       id: 'entry.old', kind: 'definition', title: 'Old',
-      content: { snl: 'Macro.old(x@entry.old, @Macro.old(y), Macro.old[entry.old], %Macro.old%, $Macro.old$)' },
+      content: { snl: 'Macro.old(x@entry.old, @Macro.old, y, Macro.old[entry.old], %Macro.old%, $Macro.old$)' },
       contribution_info: { text: 'entry.old must stay opaque' }, pointer: { huge: '__HUGE__' },
     },
     {
@@ -135,7 +135,7 @@ async function styleFixture(): Promise<{ root: string; targetPath: string }> {
 describe('SNL structured reference scanner', () => {
   it('separates macro tokens, src-postfix Entry refs, style tags, and literal environments', () => {
     const refs = scanSnlReferences(
-      'Macro.old(x@entry.old, @Macro.old(y), Macro.old[entry.old], %Macro.old%, $Macro.old$)',
+      'Macro.old(x@entry.old, @Macro.old, y, Macro.old[entry.old], %Macro.old%, $Macro.old$)',
     );
     assert.deepEqual(
       refs.map((r) => [r.entityType, r.id]),
@@ -144,6 +144,14 @@ describe('SNL structured reference scanner', () => {
         ['macro', 'Macro.old'], ['macro', 'y'], ['macro', 'Macro.old'],
       ],
     );
+  });
+
+  it('distinguishes Tree3 local-source postfixes from Entry postfixes', () => {
+    const refs = scanSnlReferences('root(@x, x@#x, x@#0.0, x@entry.old, $raw$, `fmt`)');
+    assert.deepEqual(refs.map((r) => [r.entityType, r.id]), [
+      ['macro', 'root'], ['macro', 'x'], ['macro', 'x'], ['macro', 'x'],
+      ['macro', 'x'], ['entry', 'entry.old'],
+    ]);
   });
 });
 

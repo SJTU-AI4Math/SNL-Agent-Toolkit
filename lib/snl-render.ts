@@ -43,7 +43,7 @@
  *     structure stays legible.
  */
 
-import { resolveStyle } from '@sjtu-ai4math/snl-basics';
+import { resolveStyle, resolve_style_template } from '@sjtu-ai4math/snl-basics';
 import type {
   MacroPackageEntry,
   MacroPackageStyle,
@@ -353,13 +353,18 @@ function fillTemplate(
   return out.split(ESCAPED).join('\\#');
 }
 
-/** Pick the SNL-Basics v0.1.5 style: explicit bracket, language default, English, then styles[0]. */
+/** Pick the SNL-Basics v0.2.0 runtime-compatible style: explicit bracket, language default, English, then styles[0]. */
 function pickStyle(
   macro: MacroPackageEntry,
   node: SnlSyntaxTree,
 ): MacroPackageStyle | undefined {
   if (macro.styles.length === 0) return undefined;
   return resolveStyle(node, macro, 'en') as MacroPackageStyle;
+}
+
+/** Escape temporary backtick payload for a LaTeX `\\texttt{...}` group. */
+function escapeTemporaryText(value: string): string {
+  return value.replace(/([\\{}%$#&_])/g, '\\$1').replace(/~/g, '\\textasciitilde{}').replace(/\^/g, '\\textasciicircum{}');
 }
 
 /** Escape identifier text for inclusion in a LaTeX fragment. */
@@ -410,7 +415,10 @@ function renderNode(
   // Formula / text leaves — the parser marks these with env_mode.
   const envMode = node.env_mode;
   if (typeof envMode === 'string' && envMode.length > 0) {
-    const raw = node.macro_name;
+    const raw = node.temporary_source ?? node.macro_name;
+    if (node.temporary_format === 'texttt') {
+      return { output: `\\texttt{${escapeTemporaryText(raw)}}`, mode: 'formula_inline' };
+    }
     if (envMode === 'text') {
       return { output: raw, mode: 'text' };
     }
@@ -445,6 +453,7 @@ function renderNode(
     return { output: `${name}(${renderedChildren.map((child) => child.output).join(', ')})`, mode: 'formula_inline' };
   }
 
+  const template = resolve_style_template(style, undefined, 'en');
   const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
   const wrappedChildren = mode === 'latex'
     ? renderedChildren.map((child) => wrapForParent(child, style.mode))
@@ -456,7 +465,7 @@ function renderNode(
     values[`child${i}`] = v;
   });
   if (macro.dynamic_arity) {
-    if (!style.template.includes('#*')) {
+    if (!template.includes('#*')) {
       throw new Error(`Dynamic macro '${name}' style '${style.style_name}' requires #* in its template.`);
     }
     values['children_joined'] = joinVariadic(style, wrappedChildren);
@@ -473,7 +482,7 @@ function renderNode(
     const explicit = style.latex?.synthesis?.macro;
     const src = typeof explicit === 'string' && explicit.length > 0
       ? explicit
-      : style.template;
+      : template;
     return { output: fillTemplate(src, values), mode: style.mode };
   }
   // Text mode: prefer style.text if provided, else convert the KaTeX
@@ -484,7 +493,7 @@ function renderNode(
   if (typeof explicitText === 'string' && explicitText.length > 0) {
     return { output: fillTemplate(explicitText, values), mode: style.mode };
   }
-  const converted = latexToText(style.template, notes);
+  const converted = latexToText(template, notes);
   return { output: fillTemplate(converted, values), mode: style.mode };
 }
 
