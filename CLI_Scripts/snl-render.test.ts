@@ -120,6 +120,11 @@ describe('renderTreeAsLatex', () => {
     assert.equal(r.output, '\\text{hello} + b');
   });
 
+  test('text leaves are escaped before formula-parent wrapping', () => {
+    const r = synthLatex('plus(%a_b%, b)', macros);
+    assert.equal(r.output, '\\text{a\\_b} + b');
+  });
+
   test('Tree3 backtick temporaries render as escaped texttt', () => {
     const r = synthLatex('plus(`a_b`, b)', macros);
     assert.equal(r.output, '\\texttt{a\\_b} + b');

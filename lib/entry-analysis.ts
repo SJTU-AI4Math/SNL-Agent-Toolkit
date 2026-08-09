@@ -38,7 +38,7 @@ function applyContextLookup(tree: SnlSyntaxTree, index: Map<string, Set<string>>
         node.kind = 'fvar';
         node.source = undefined;
         node.mdata = { ...meta, srcStatus: 'dangling' };
-      } else if (!declarations.has(node.macro_name)) {
+      } else if (!declarations.has(semanticName(node))) {
         node.kind = 'fvar';
         node.source = undefined;
         node.mdata = { ...meta, srcStatus: 'srcResolvedNoDecl' };

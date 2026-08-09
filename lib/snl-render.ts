@@ -417,10 +417,10 @@ function renderNode(
   if (typeof envMode === 'string' && envMode.length > 0) {
     const raw = node.temporary_source ?? node.macro_name;
     if (node.temporary_format === 'texttt') {
-      return { output: `\\texttt{${escapeTemporaryText(raw)}}`, mode: 'formula_inline' };
+      return { output: mode === 'latex' ? `\\texttt{${escapeTemporaryText(raw)}}` : raw, mode: 'formula_inline' };
     }
     if (envMode === 'text') {
-      return { output: raw, mode: 'text' };
+      return { output: mode === 'latex' ? escapeTemporaryText(raw) : raw, mode: 'text' };
     }
     if (mode === 'latex') {
       return { output: raw, mode: envMode as MacroPackageStyle['mode'] };

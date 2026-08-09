@@ -38,6 +38,7 @@
  * checks only `severity === 'error'`, so info notes don't fail the run.
  */
 
+import { extractExportedBinders } from '@sjtu-ai4math/snl-basics/core';
 import type {
   EntryData,
   EntryKind,
@@ -45,6 +46,11 @@ import type {
 } from './snl-doc-schema.ts';
 import type { LintIssue, LintReport } from './lint-report.ts';
 import { tryParseSnlSyntaxTree } from './snl-parser.ts';
+
+function safeExportedBinders(source: unknown): Set<string> {
+  if (typeof source !== 'string' || !source.trim()) return new Set();
+  try { return extractExportedBinders(source); } catch { return new Set(); }
+}
 
 export interface LintEntryContext {
   /** entry_kinds from `.SNL_Doc/config.json`. Empty = every `kind` is unknown. */
@@ -232,27 +238,35 @@ export function lintEntry(
       // its own decls if that ever makes sense). If `siblingEntries`
       // is empty (standalone lint), we cannot check anything and just
       // report the src refs as info without a dangling verdict.
-      const knownIds = new Set<string>();
+      const exportedBinders = new Map<string, Set<string>>();
       for (const sibling of ctx.siblingEntries) {
         if (typeof sibling.id === 'string') {
-          knownIds.add(sibling.id);
+          exportedBinders.set(sibling.id, safeExportedBinders(sibling.content?.snl));
         }
       }
       if (typeof e.id === 'string') {
-        knownIds.add(e.id);
+        exportedBinders.set(e.id, safeExportedBinders(snl));
       }
       const srcRefs = collectSrcReferences(parsed.tree);
-      for (const src of srcRefs) {
-        if (!knownIds.has(src)) {
+      for (const ref of srcRefs) {
+        const declarations = exportedBinders.get(ref.sourceId);
+        if (!declarations) {
           issues.push({
             severity: 'info',
             code: 'snl.src-dangling',
             message:
-              `Cross-entry src-postfix reference \`x@${src}\` does not resolve ` +
+              `Cross-entry src-postfix reference \`${ref.binderName}@${ref.sourceId}\` does not resolve ` +
               `to any entry in the shared pool. Tolerated (renders with a ` +
               `warning badge), but likely a typo — entry ids are stable once ` +
               `created and should point at a real source entry that owns the ` +
               `bound variable. See docs/context-entry-design.md.`,
+            path: 'content.snl',
+          });
+        } else if (!declarations.has(ref.binderName)) {
+          issues.push({
+            severity: 'info',
+            code: 'snl.src-no-declaration',
+            message: `Cross-entry source ${JSON.stringify(ref.sourceId)} exists but does not export binder ${JSON.stringify(ref.binderName)}.`,
             path: 'content.snl',
           });
         }
@@ -268,27 +282,34 @@ export function lintEntry(
  * `mdata.src` strings. Skip empty/non-string values defensively.
  * deduped and sorted for stable reporting.
  */
-function collectSrcReferences(node: unknown): string[] {
-  const out = new Set<string>();
+interface SrcReference { sourceId: string; binderName: string }
+
+function collectSrcReferences(node: unknown): SrcReference[] {
+  const out = new Map<string, SrcReference>();
   visit(node);
-  return [...out].sort();
+  return [...out.values()].sort((a, b) => a.sourceId.localeCompare(b.sourceId) || a.binderName.localeCompare(b.binderName));
 
   function visit(n: unknown): void {
     if (!n || typeof n !== 'object') return;
-    const nn = n as { mdata?: unknown; postfix?: unknown; children?: unknown };
+    const nn = n as { macro_name?: unknown; temporary_source?: unknown; binder_name?: unknown; mdata?: unknown; postfix?: unknown; children?: unknown };
+    const binderName = typeof nn.temporary_source === 'string' ? nn.temporary_source
+      : typeof nn.binder_name === 'string' ? nn.binder_name
+      : typeof nn.macro_name === 'string' ? nn.macro_name : '';
     if (nn.postfix && typeof nn.postfix === 'object') {
       const postfix = nn.postfix as { type?: unknown; name?: unknown };
-      if (postfix.type === 'name' && typeof postfix.name === 'string' && postfix.name.length > 0) out.add(postfix.name);
+      if (postfix.type === 'name' && typeof postfix.name === 'string' && postfix.name.length > 0) {
+        const ref = { sourceId: postfix.name, binderName };
+        out.set(`${ref.sourceId}\0${ref.binderName}`, ref);
+      }
     }
     if (nn.mdata && typeof nn.mdata === 'object') {
       const src = (nn.mdata as { src?: unknown }).src;
       if (typeof src === 'string' && src.length > 0) {
-        out.add(src);
+        const ref = { sourceId: src, binderName };
+        out.set(`${ref.sourceId}\0${ref.binderName}`, ref);
       }
     }
-    if (Array.isArray(nn.children)) {
-      for (const c of nn.children) visit(c);
-    }
+    if (Array.isArray(nn.children)) for (const child of nn.children) visit(child);
   }
 }
 
@@ -325,7 +346,8 @@ function findUnresolvedIdentifiers(
   const stripped = snl
     .replace(/\$\$[\s\S]*?\$\$/g, ' ')
     .replace(/\$[\s\S]*?\$/g, ' ')
-    .replace(/%[\s\S]*?%/g, ' ');
+    .replace(/%[\s\S]*?%/g, ' ')
+    .replace(/`[\s\S]*?`/g, ' ');
   // Also drop the identifier immediately AFTER any `@` — that's a
   // binder-declared name or an entry-id src-postfix, neither of which
   // can be a macro reference.
@@ -341,7 +363,7 @@ function findUnresolvedIdentifiers(
     const name = m[1];
     if (seen.has(name)) continue;
     seen.add(name);
-    if (!(name in pool)) unresolved.add(name);
+    if (!Object.hasOwn(pool, name)) unresolved.add(name);
   }
   return [...unresolved].sort();
 }

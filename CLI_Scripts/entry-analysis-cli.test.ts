@@ -54,6 +54,19 @@ describe('single Entry analysis CLIs', () => {
     });
   });
 
+  it('resolves Tree3 temporary binders across Entry sources for SSI', async () => {
+    const root = await workspace();
+    const doc = path.join(root, '.SNL_Doc');
+    const entries = [
+      { id: 'temporary.ctx', package: '_unpackaged', kind: 'definition', title: '', content: { snl: 'root(@`a b`)' }, contribution_info: null, pointer: null },
+      { id: 'temporary.target', package: '_unpackaged', kind: 'definition', title: '', content: { snl: '`a b`@temporary.ctx' }, contribution_info: null, pointer: null },
+    ];
+    for (const entry of entries) await json(path.join(doc, entryEntityPath(entry.package, entry.id)), { format: 'snl-entry', version: 1, package: entry.package, entry });
+    const result = run(root, 'snl-entry-ssi', ['temporary.target']);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).metrics.structuralIndex, 1);
+  });
+
   it('uses the declared English default style, preserves cross-mode wrappers, and treats prototype names as unknown', async () => {
     const root = await workspace();
     const doc = path.join(root, '.SNL_Doc');

@@ -181,6 +181,16 @@ describe('lintEntry', () => {
     assert.equal(issue!.severity, 'error');
   });
 
+  it('does not treat Tree3 backtick temporary payload as a Macro identifier', () => {
+    const r = lintEntry({ id: 'x', kind: 'theorem', title: '', content: { snl: '`opaque_name`' }, contribution_info: null, pointer: null }, baseCtx({ strictMacros: true }));
+    assert.ok(!codes(r).includes('snl.identifier-not-in-pool'));
+  });
+
+  it('does not accept Object.prototype names as registered Macros', () => {
+    const r = lintEntry({ id: 'x', kind: 'theorem', title: '', content: { snl: 'constructor' }, contribution_info: null, pointer: null }, baseCtx());
+    assert.ok(codes(r).includes('snl.identifier-not-in-pool'));
+  });
+
   it('rejects non-object payloads', () => {
     const r = lintEntry([1, 2, 3], baseCtx());
     assert.deepEqual(codes(r), ['entry.not-object']);
@@ -211,7 +221,7 @@ describe('lintEntry', () => {
           id: 'context-linalg-vars',
           kind: 'context',
           title: '',
-          content: { snl: '' },
+          content: { snl: 'root(@x)' },
           contribution_info: null,
           pointer: null,
         } as any,
@@ -229,6 +239,13 @@ describe('lintEntry', () => {
       );
       const issue = r.issues.find((i) => i.code === 'snl.src-dangling');
       assert.equal(issue, undefined, 'sibling src should resolve');
+      assert.equal(r.issues.find((i) => i.code === 'snl.src-no-declaration'), undefined);
+    });
+
+    it('reports an existing source Entry that does not export the requested binder', () => {
+      const siblings = [{ id: 'ctx', kind: 'context', title: '', content: { snl: 'root(@y)' }, contribution_info: null, pointer: null }] as any;
+      const r = lintEntry({ id: 'thm', kind: 'theorem', title: '', content: { snl: 'x@ctx' }, contribution_info: null, pointer: null }, baseCtx({ siblingEntries: siblings }));
+      assert.ok(codes(r).includes('snl.src-no-declaration'));
     });
 
     it('allows a src pointing at the entry itself (self-ref)', () => {
