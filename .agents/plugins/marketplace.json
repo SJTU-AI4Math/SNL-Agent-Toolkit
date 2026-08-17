@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "snl-agent-toolkit",
-      "source": "./"
+      "source": "./agent-plugin"
     }
   ]
 }

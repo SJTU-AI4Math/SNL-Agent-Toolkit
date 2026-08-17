@@ -106,7 +106,7 @@ codex plugin marketplace add SJTU-AI4Math/SNL-Agent-Toolkit
 codex plugin add snl-agent-toolkit@snl-agent-toolkit
 
 # Hermes portable Agent Plugin
-hermes plugins install SJTU-AI4Math/SNL-Agent-Toolkit --enable
+hermes plugins install SJTU-AI4Math/SNL-Agent-Toolkit/agent-plugin --enable
 
 # DeepSeek Harness profile bundle, from a checkout or packed npm artifact
 dsh plugin --profile default add .

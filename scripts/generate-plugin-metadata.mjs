@@ -32,11 +32,11 @@ export async function generatedMetadata(root = ownRoot) {
     },
   };
   return {
-    'plugin.json': {
+    'agent-plugin/plugin.json': {
       $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
       ...common,
     },
-    'mcp.json': {
+    'agent-plugin/mcp.json': {
       $schema: 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json',
       mcpServers: {
         [source.name]: {
@@ -47,21 +47,21 @@ export async function generatedMetadata(root = ownRoot) {
         },
       },
     },
-    '.claude-plugin/plugin.json': hostManifest,
-    '.codex-plugin/plugin.json': hostManifest,
+    'agent-plugin/.claude-plugin/plugin.json': hostManifest,
+    'agent-plugin/.codex-plugin/plugin.json': hostManifest,
     '.claude-plugin/marketplace.json': {
       name: source.name,
       owner: source.author,
       metadata: { description: source.description },
-      plugins: [{ name: source.name, source: './' }],
+      plugins: [{ name: source.name, source: './agent-plugin' }],
     },
     '.agents/plugins/marketplace.json': {
       name: source.name,
       owner: source.author,
       metadata: { description: source.description },
-      plugins: [{ name: source.name, source: './' }],
+      plugins: [{ name: source.name, source: './agent-plugin' }],
     },
-    '.mcp.json': nativeMcp,
+    'agent-plugin/.mcp.json': nativeMcp,
   };
 }
 

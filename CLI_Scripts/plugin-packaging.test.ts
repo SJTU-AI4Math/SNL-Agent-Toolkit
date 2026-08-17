@@ -17,21 +17,21 @@ test('all host manifests are generated from one canonical metadata source', asyn
 });
 
 test('portable Hermes and host-native manifests select the bundled stdio runtime', async () => {
-  const portable = await json('plugin.json');
+  const portable = await json('agent-plugin/plugin.json');
   assert.equal(portable.$schema, 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json');
-  const hermesMcp = await json('mcp.json');
+  const hermesMcp = await json('agent-plugin/mcp.json');
   assert.deepEqual(Object.keys(hermesMcp), ['$schema', 'mcpServers']);
   assert.equal(
     ((hermesMcp.mcpServers as Record<string, { args: string[] }>)['snl-agent-toolkit']).args[0],
     '${PLUGIN_ROOT}/dist/mcp/server.cjs',
   );
 
-  const nativeMcp = await json('.mcp.json');
+  const nativeMcp = await json('agent-plugin/.mcp.json');
   const nativeServer = (nativeMcp.mcpServers as Record<string, { args: string[]; cwd: string }>)['snl-agent-toolkit'];
   assert.equal(nativeServer.args[0], './dist/mcp/server.cjs');
   assert.equal(nativeServer.cwd, '.');
 
-  for (const path of ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json']) {
+  for (const path of ['agent-plugin/.claude-plugin/plugin.json', 'agent-plugin/.codex-plugin/plugin.json']) {
     const manifest = await json(path);
     assert.equal(manifest.name, 'snl-agent-toolkit');
     assert.equal(manifest.version, '0.1.0');
@@ -44,7 +44,7 @@ test('Claude and Codex marketplace catalogs expose the root plugin', async () =>
   for (const path of ['.claude-plugin/marketplace.json', '.agents/plugins/marketplace.json']) {
     const marketplace = await json(path);
     assert.equal(marketplace.name, 'snl-agent-toolkit');
-    assert.deepEqual(marketplace.plugins, [{ name: 'snl-agent-toolkit', source: './' }]);
+    assert.deepEqual(marketplace.plugins, [{ name: 'snl-agent-toolkit', source: './agent-plugin' }]);
   }
 });
 
@@ -63,7 +63,7 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   }
 
   const files = packageJson.files as string[];
-  for (const required of ['dist', 'skills', '.agents', 'plugin.json', 'mcp.json', '.claude-plugin', '.codex-plugin', '.mcp.json', 'cordis.patch.yml']) {
+  for (const required of ['dist', 'skills', 'agent-plugin', '.agents', '.claude-plugin', 'cordis.patch.yml']) {
     assert.ok(files.includes(required), `${required} is omitted from npm files`);
   }
 });
@@ -75,6 +75,17 @@ test('shared Agent Skill and DSH layer point at packaged components', async () =
   assert.match(skill, /references\/entity-adapter-contract\.md/);
   const patch = await readFile(resolve(root, 'cordis.patch.yml'), 'utf8');
   assert.match(patch, /name: '@snl-doc\/agent-toolkit\/dsh'/);
+});
+
+test('isolated Agent Plugin carries the exact canonical MCP and Skill artifacts', async () => {
+  assert.deepEqual(
+    await readFile(resolve(root, 'agent-plugin/dist/mcp/server.cjs')),
+    await readFile(resolve(root, 'dist/mcp/server.cjs')),
+  );
+  assert.deepEqual(
+    await readFile(resolve(root, 'agent-plugin/skills/snl-agent-toolkit/SKILL.md')),
+    await readFile(resolve(root, 'skills/snl-agent-toolkit/SKILL.md')),
+  );
 });
 
 test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', async () => {
