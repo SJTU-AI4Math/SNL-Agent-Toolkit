@@ -72,8 +72,11 @@ test('package manifest declares a DSH profile bundle and distributable payload',
 
 
 test('prebuilt DSH adapter bundles defineTool instead of importing a second Harness runtime', async () => {
-  const adapter = await readFile(resolve(root, 'dist/dsh/adapter.mjs'), 'utf8');
+  const adapterPath = resolve(root, 'dist/dsh/adapter.mjs');
+  const adapter = await readFile(adapterPath, 'utf8');
   assert.doesNotMatch(adapter, /from ["']@deepseek-ai\/dsh-tools["']/);
+  const loaded = await import(`${new URL(adapterPath, import.meta.url).href}?test=${Date.now()}`);
+  assert.equal(typeof loaded.apply, 'function');
 });
 
 

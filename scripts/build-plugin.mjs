@@ -54,7 +54,12 @@ await build({
   entryPoints: ['plugin-src/dsh-adapter.ts'],
   outfile: 'dist/dsh/adapter.mjs',
   bundle: true,
-  alias: { 'jsonc-parser': resolve(root, 'node_modules/jsonc-parser/lib/esm/main.js') },
+  alias: {
+    'jsonc-parser': resolve(root, 'node_modules/jsonc-parser/lib/esm/main.js'),
+    '@deepseek-ai/dsh-tools': resolve(root, 'node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js'),
+    '@deepseek-ai/dsh-llm': resolve(root, 'plugin-src/dsh-llm-build-shim.ts'),
+    '@deepseek-ai/dsh-session': resolve(root, 'plugin-src/dsh-session-build-shim.ts'),
+  },
   platform: 'node',
   format: 'esm',
   target: 'node20',
