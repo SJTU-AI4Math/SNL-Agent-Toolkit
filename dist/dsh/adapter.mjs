@@ -18952,10 +18952,15 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
     } catch (error) {
       const manifestFile = path5.join(snlDocRoot(workspaceRoot), relativePath);
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} The new Package manifest remains at ${manifestFile}. Its effective activation follows the unchanged config and it may already be active when active_macro_packages is omitted. Guarded failure handling intentionally does not unlink a live path because a non-cooperating writer could replace it between verification and deletion.`,
-        { cause: error }
-      );
+      try {
+        await removeJsonIfUnchanged(manifestFile, jsonText(manifest));
+      } catch (rollbackError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Rollback of ${manifestFile} failed without deleting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`,
+          { cause: error }
+        );
+      }
+      throw error;
     }
     return { status: "created", entity: "package", id, path: relativePath, active: true };
   });
@@ -18992,8 +18997,8 @@ async function readJson2(file) {
 async function jsonFiles(directory) {
   return (await fs4.readdir(directory, { withFileTypes: true })).filter((e) => e.isFile() && e.name.endsWith(".json")).map((e) => path6.join(directory, e.name)).sort();
 }
-function managed(type, id, value) {
-  return { type, id, revision: sha(value), value };
+function managed(type, id, value, revisionSource = value) {
+  return { type, id, revision: sha(revisionSource), value };
 }
 function requireRecord(value, label) {
   if (!isRecord6(value))
@@ -19006,28 +19011,22 @@ function requireId(value, field = "id") {
   return value[field];
 }
 async function packageRows(root, type) {
+  await readEntries(root);
+  const macroPackages = type === "macro-package" ? await readAllMacroPackages(root) : void 0;
   const rows = [];
   const doc = docRoot(root);
   for (const file of await jsonFiles(path6.join(doc, "packages"))) {
     const manifest = requireRecord(await readJson2(file), "Package manifest");
-    if (manifest.format !== "snl-package" || manifest.version !== 1)
-      throw new Error(`${file} is not a Package v1 manifest.`);
     const id = requireId(manifest);
     if (path6.relative(doc, file) !== packageManifestPath(id))
       throw new Error(`${file} does not match Package identity ${id}.`);
     if (type === "entry-package")
       rows.push(managed(type, id, manifest));
     else {
-      const macros2 = /* @__PURE__ */ Object.create(null);
-      for (const macroFile of await jsonFiles(path6.join(doc, "macros"))) {
-        const envelope = requireRecord(await readJson2(macroFile), "Macro envelope");
-        if (envelope.package !== id)
-          continue;
-        const macro = requireRecord(envelope.macro, "Macro payload");
-        const name2 = requireId(macro, "name");
-        macros2[name2] = Object.fromEntries(Object.entries(macro).filter(([key]) => key !== "name"));
-      }
-      rows.push(managed(type, id, { ...manifest, macros: macros2 }));
+      const authoritative = macroPackages?.[id];
+      if (!authoritative)
+        throw new Error(`Package ${JSON.stringify(id)} was not returned by the authoritative Macro reader.`);
+      rows.push(managed(type, id, { ...manifest, macros: authoritative.macros }));
     }
   }
   return rows.sort(compare);
@@ -19035,28 +19034,20 @@ async function packageRows(root, type) {
 async function entryRows(root) {
   const rows = [];
   const doc = docRoot(root);
-  for (const file of await jsonFiles(path6.join(doc, "entries"))) {
-    const env = requireRecord(await readJson2(file), "Entry envelope");
-    const value = requireRecord(env.entry, "Entry payload");
-    const id = requireId(value);
-    const pkg = typeof env.package === "string" ? env.package : "";
-    if (path6.relative(doc, file) !== entryEntityPath(pkg, id))
-      throw new Error(`${file} does not match Entry identity ${id}.`);
-    rows.push(managed("entry", id, value));
+  for (const value of await readEntries(root)) {
+    const envelope = requireRecord(await readJson2(path6.join(doc, entryEntityPath(value.package ?? "", value.id))), "Entry envelope");
+    rows.push(managed("entry", value.id, value, envelope));
   }
   return rows.sort(compare);
 }
 async function macroRows(root) {
   const rows = [];
   const doc = docRoot(root);
-  for (const file of await jsonFiles(path6.join(doc, "macros"))) {
-    const env = requireRecord(await readJson2(file), "Macro envelope");
-    const value = requireRecord(env.macro, "Macro payload");
-    const name2 = requireId(value, "name");
-    const pkg = typeof env.package === "string" ? env.package : "";
-    if (path6.relative(doc, file) !== macroEntityPath(pkg, name2))
-      throw new Error(`${file} does not match Macro identity ${name2}.`);
-    rows.push(managed("macro", `${pkg}::${name2}`, { package: pkg, ...value }));
+  for (const [pkg, macroPackage] of Object.entries(await readAllMacroPackages(root))) {
+    for (const [name2, body] of Object.entries(macroPackage.macros)) {
+      const envelope = requireRecord(await readJson2(path6.join(doc, macroEntityPath(pkg, name2))), "Macro envelope");
+      rows.push(managed("macro", `${pkg}::${name2}`, { package: pkg, name: name2, ...body }, envelope));
+    }
   }
   return rows.sort(compare);
 }
@@ -19163,6 +19154,72 @@ async function atomicWriteJson(file, value) {
     await fs4.rm(temp, { force: true });
   }
 }
+function jsonText2(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readRegularText2(file) {
+  let handle;
+  try {
+    handle = await fs4.open(file, constants4.O_RDONLY | constants4.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
+  } finally {
+    await handle?.close();
+  }
+}
+async function replaceJsonIfUnchanged2(file, expected, value) {
+  const current = await readRegularText2(file);
+  if (current.text !== expected) throw new Error(`${file} changed; refusing to overwrite it.`);
+  const directory = path6.dirname(file);
+  const temp = path6.join(directory, `.${path6.basename(file)}.snl-entity-${process.pid}-${randomUUID3()}.tmp`);
+  let handle;
+  try {
+    handle = await fs4.open(temp, constants4.O_CREAT | constants4.O_EXCL | constants4.O_WRONLY, current.mode);
+    await handle.writeFile(jsonText2(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    if ((await readRegularText2(file)).text !== expected)
+      throw new Error(`${file} changed; refusing to overwrite it.`);
+    await fs4.rename(temp, file);
+  } finally {
+    await handle?.close();
+    await fs4.rm(temp, { force: true });
+  }
+}
+async function installNewJson2(file, value) {
+  const directory = path6.dirname(file);
+  const temp = path6.join(directory, `.${path6.basename(file)}.snl-entity-${process.pid}-${randomUUID3()}.tmp`);
+  let handle;
+  try {
+    handle = await fs4.open(temp, constants4.O_CREAT | constants4.O_EXCL | constants4.O_WRONLY, 420);
+    await handle.writeFile(jsonText2(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await fs4.link(temp, file);
+  } finally {
+    await handle?.close();
+    await fs4.rm(temp, { force: true });
+  }
+}
+async function removeJsonIfUnchanged2(file, expected) {
+  let handle;
+  try {
+    handle = await fs4.open(file, constants4.O_RDONLY | constants4.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || await handle.readFile("utf8") !== expected)
+      throw new Error(`${file} changed; refusing to remove it.`);
+    const current = await fs4.lstat(file);
+    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino)
+      throw new Error(`${file} path changed; refusing to remove it.`);
+    await fs4.rm(file);
+  } finally {
+    await handle?.close();
+  }
+}
 function invalid(message) {
   return { status: "invalid", code: "entity.invalid", message };
 }
@@ -19237,7 +19294,8 @@ async function validationMessage(root, type, value, currentId) {
     const pkg = typeof value.package === "string" ? value.package : "";
     const name2 = typeof value.name === "string" ? value.name : "";
     const body = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package" && key !== "name"));
-    const report = lintPackage({ version: "8", name: pkg, description: "", macros: name2 ? { [name2]: body } : {} }, { checkKatex: false });
+    const current = usesCurrentEntitySchemas(await readConfig(root));
+    const report = lintPackage({ version: current ? "11" : "8", name: pkg, description: "", macros: name2 ? { [name2]: body } : {} }, { checkKatex: false });
     const errors = report.issues.filter((issue) => issue.severity === "error");
     if (!pkg || !name2 || errors.length)
       return !pkg || !name2 ? "Macro requires non-empty package and name." : errors.map((issue) => `${issue.code}: ${issue.message}`).join("; ");
@@ -19354,7 +19412,7 @@ async function locateFile(root, type, entity) {
   }
   throw new Error(`No entity file for ${type}.`);
 }
-async function mutateDirect(root, type, operation, id, input, ifMatch) {
+async function mutateDirect(root, type, operation, id, input, ifMatch, options = {}) {
   return withWorkspaceDataLock(root, `${operation} ${type}`, async () => {
     const current = await getManagedEntity(root, type, id);
     if (!current)
@@ -19383,16 +19441,124 @@ async function mutateDirect(root, type, operation, id, input, ifMatch) {
       } else {
         const file = await locateFile(root, type, current);
         if (type === "entry-package" || type === "macro-package") {
-          const manifest = { ...value, format: "snl-package", version: 1 };
+          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
+            return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
+          const manifest = {
+            ...value,
+            format: "snl-package",
+            version: PACKAGE_STORAGE_VERSION,
+            ...currentSchema ? {
+              schema_version: CURRENT_PACKAGE_SCHEMA_VERSION,
+              entry_ids: current.value.entry_ids
+            } : {}
+          };
           delete manifest.macros;
           await atomicWriteJson(file, manifest);
         } else if (type === "entry") {
-          await atomicWriteJson(file, { format: "snl-entry", version: 1, package: value.package, entry: value });
+          const originalEntity = await readRegularText2(file);
+          const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
+          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          const nextEnvelope = {
+            ...envelope,
+            format: "snl-entry",
+            version: ENTRY_STORAGE_VERSION,
+            ...currentSchema ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
+            package: value.package,
+            entry: value
+          };
+          const oldPackage = typeof current.value.package === "string" ? current.value.package : "";
+          const newPackage = typeof value.package === "string" ? value.package : "";
+          if (oldPackage === newPackage) {
+            await atomicWriteJson(file, nextEnvelope);
+          } else {
+            const destinationFile = path6.join(docRoot(root), entryEntityPath(newPackage, id));
+            if (!currentSchema) {
+              let installed = false;
+              try {
+                await installNewJson2(destinationFile, nextEnvelope);
+                installed = true;
+                await removeJsonIfUnchanged2(file, originalEntity.text);
+              } catch (error) {
+                if (installed) {
+                  try {
+                    await removeJsonIfUnchanged2(destinationFile, jsonText2(nextEnvelope));
+                  } catch (rollback) {
+                    throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of legacy destination Entry failed: ${rollback instanceof Error ? rollback.message : String(rollback)}.`, { cause: error });
+                  }
+                }
+                throw error;
+              }
+            } else {
+              const sourceManifestFile = path6.join(docRoot(root), packageManifestPath(oldPackage));
+              const destinationManifestFile = path6.join(docRoot(root), packageManifestPath(newPackage));
+              const sourceOriginal = await readRegularText2(sourceManifestFile);
+              const destinationOriginal = await readRegularText2(destinationManifestFile);
+              const sourceManifest = requireRecord(JSON.parse(sourceOriginal.text), "Source Package manifest");
+              const destinationManifest = requireRecord(JSON.parse(destinationOriginal.text), "Destination Package manifest");
+              if (!Array.isArray(sourceManifest.entry_ids) || sourceManifest.entry_ids.filter((v2) => v2 === id).length !== 1)
+                throw new Error(`Source Package ${JSON.stringify(oldPackage)} must contain Entry ${JSON.stringify(id)} exactly once.`);
+              if (!Array.isArray(destinationManifest.entry_ids) || destinationManifest.entry_ids.includes(id))
+                throw new Error(`Destination Package ${JSON.stringify(newPackage)} already contains Entry ${JSON.stringify(id)}.`);
+              const sourceNext = { ...sourceManifest, entry_ids: sourceManifest.entry_ids.filter((v2) => v2 !== id) };
+              const destinationNext = {
+                ...destinationManifest,
+                entry_ids: [...destinationManifest.entry_ids, id].sort((left, right) => String(left).localeCompare(String(right)))
+              };
+              let installed = false;
+              let destinationUpdated = false;
+              let sourceUpdated = false;
+              try {
+                await installNewJson2(destinationFile, nextEnvelope);
+                installed = true;
+                await replaceJsonIfUnchanged2(destinationManifestFile, destinationOriginal.text, destinationNext);
+                destinationUpdated = true;
+                await replaceJsonIfUnchanged2(sourceManifestFile, sourceOriginal.text, sourceNext);
+                sourceUpdated = true;
+                await removeJsonIfUnchanged2(file, originalEntity.text);
+              } catch (error) {
+                const rollbackErrors = [];
+                if (sourceUpdated) {
+                  try {
+                    await replaceJsonIfUnchanged2(sourceManifestFile, jsonText2(sourceNext), sourceManifest);
+                  } catch (rollback) {
+                    rollbackErrors.push(`source membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
+                  }
+                }
+                if (destinationUpdated) {
+                  try {
+                    await replaceJsonIfUnchanged2(destinationManifestFile, jsonText2(destinationNext), destinationManifest);
+                  } catch (rollback) {
+                    rollbackErrors.push(`destination membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
+                  }
+                }
+                if (installed) {
+                  try {
+                    await removeJsonIfUnchanged2(destinationFile, jsonText2(nextEnvelope));
+                  } catch (rollback) {
+                    rollbackErrors.push(`destination Entry: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
+                  }
+                }
+                if (rollbackErrors.length)
+                  throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback failed: ${rollbackErrors.join("; ")}.`, { cause: error });
+                throw error;
+              }
+            }
+          }
         } else {
           const split = id.indexOf("::");
           const pkg = id.slice(0, split);
           const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
-          await atomicWriteJson(file, { format: "snl-macro", version: 1, package: pkg, macro });
+          const envelope = requireRecord(await readJson2(file), "Macro envelope");
+          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          await atomicWriteJson(file, {
+            ...envelope,
+            format: "snl-macro",
+            version: MACRO_STORAGE_VERSION,
+            ...currentSchema ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
+            package: pkg,
+            macro
+          });
         }
       }
       const entity = await getManagedEntity(root, type, id);
@@ -19401,10 +19567,34 @@ async function mutateDirect(root, type, operation, id, input, ifMatch) {
       return { status: "ok", operation, type, entity };
     }
     if (type === "entry") {
-      const references = (await findEntityReferences(root, "entry", id)).filter((occurrence2) => occurrence2.role === "reference");
+      const references = (await findEntityReferences(root, "entry", id)).filter((occurrence2) => occurrence2.role === "reference" && occurrence2.category !== "package-membership");
       if (references.length)
         return { status: "conflict", code: "entity.referenced", message: `Entry ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
-      await fs4.unlink(await locateFile(root, type, current));
+      const entityFile = await locateFile(root, type, current);
+      const originalEntity = await readRegularText2(entityFile);
+      if (!usesCurrentEntitySchemas(await readConfig(root))) {
+        await removeJsonIfUnchanged2(entityFile, originalEntity.text);
+        return { status: "ok", operation, type, entity: current };
+      }
+      const packageId = typeof current.value.package === "string" ? current.value.package : "";
+      const manifestFile = path6.join(docRoot(root), packageManifestPath(packageId));
+      const originalManifest = await readRegularText2(manifestFile);
+      const manifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
+      const entryIds = manifest.entry_ids;
+      if (!Array.isArray(entryIds) || entryIds.filter((value) => value === id).length !== 1)
+        throw new Error(`Package ${JSON.stringify(packageId)} does not contain Entry ${JSON.stringify(id)} exactly once.`);
+      const nextManifest = { ...manifest, entry_ids: entryIds.filter((value) => value !== id) };
+      await replaceJsonIfUnchanged2(manifestFile, originalManifest.text, nextManifest);
+      try {
+        await removeJsonIfUnchanged2(entityFile, originalEntity.text);
+      } catch (error) {
+        try {
+          await replaceJsonIfUnchanged2(manifestFile, jsonText2(nextManifest), manifest);
+        } catch (rollbackError) {
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of Package membership failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
+        }
+        throw error;
+      }
     } else if (type === "macro") {
       const name2 = id.slice(id.indexOf("::") + 2);
       const references = (await findEntityReferences(root, "macro", name2)).filter((occurrence2) => occurrence2.role === "reference");
@@ -19431,11 +19621,28 @@ async function mutateDirect(root, type, operation, id, input, ifMatch) {
       if (entries.some((e) => e.value.package === id) || macros2.some((m3) => m3.value.package === id))
         return { status: "conflict", code: "package.not-empty", message: `Package ${JSON.stringify(id)} still contains entities.` };
       const file = await locateFile(root, type, current);
-      await fs4.unlink(file);
+      const originalManifest = await readRegularText2(file);
       const configFile = path6.join(docRoot(root), "config.json");
-      const config = requireRecord(await readJson2(configFile), "config.json");
-      if (Array.isArray(config.active_macro_packages))
-        await atomicWriteJson(configFile, { ...config, active_macro_packages: config.active_macro_packages.filter((v2) => v2 !== id) });
+      const originalConfig = await readRegularText2(configFile);
+      const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
+      const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId) => packageId !== "_unpackaged");
+      const nextConfig = {
+        ...config,
+        active_macro_packages: [...new Set(active.filter((value) => value !== id))].sort((left, right) => left.localeCompare(right))
+      };
+      await options.beforeConfigInstall?.();
+      await replaceJsonIfUnchanged2(configFile, originalConfig.text, nextConfig);
+      try {
+        await options.beforeManifestDelete?.();
+        await removeJsonIfUnchanged2(file, originalManifest.text);
+      } catch (error) {
+        try {
+          await replaceJsonIfUnchanged2(configFile, jsonText2(nextConfig), config);
+        } catch (rollbackError) {
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of config failed without overwriting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
+        }
+        throw error;
+      }
     } else
       await fs4.unlink(await locateFile(root, type, current));
     return { status: "ok", operation, type, entity: current };
@@ -19448,12 +19655,12 @@ async function updateManagedEntity(root, type, id, input, ifMatch) {
     return mutateConfigEntity(root, type, "update", id, input, ifMatch);
   return mutateDirect(root, type, "update", id, input, ifMatch);
 }
-async function deleteManagedEntity(root, type, id, ifMatch) {
+async function deleteManagedEntity(root, type, id, ifMatch, options = {}) {
   root = await canonicalWriteWorkspace(root);
   await assertWorkspace(root);
   if (type === "entry-kind" || type === "macro-kind")
     return mutateConfigEntity(root, type, "delete", id, void 0, ifMatch);
-  return mutateDirect(root, type, "delete", id, void 0, ifMatch);
+  return mutateDirect(root, type, "delete", id, void 0, ifMatch, options);
 }
 
 // plugin-src/entity-adapter.ts

@@ -15561,6 +15561,23 @@ async function replaceJsonIfUnchanged(file, expected, value) {
     await fs2.rm(temp, { force: true });
   }
 }
+async function removeJsonIfUnchanged(file, expected) {
+  let handle;
+  try {
+    handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || await handle.readFile("utf8") !== expected) {
+      throw new Error("installed entity changed concurrently; refusing to remove it");
+    }
+    const current = await fs2.lstat(file);
+    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino) {
+      throw new Error("installed entity path changed concurrently; refusing to remove it");
+    }
+    await fs2.rm(file);
+  } finally {
+    await handle?.close();
+  }
+}
 async function addPackageEntity(workspaceRoot, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
   return withWorkspaceDataLock(workspaceRoot, "add Package manifest", async () => {
@@ -15636,10 +15653,15 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
     } catch (error) {
       const manifestFile = path4.join(snlDocRoot(workspaceRoot), relativePath);
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} The new Package manifest remains at ${manifestFile}. Its effective activation follows the unchanged config and it may already be active when active_macro_packages is omitted. Guarded failure handling intentionally does not unlink a live path because a non-cooperating writer could replace it between verification and deletion.`,
-        { cause: error }
-      );
+      try {
+        await removeJsonIfUnchanged(manifestFile, jsonText(manifest));
+      } catch (rollbackError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Rollback of ${manifestFile} failed without deleting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`,
+          { cause: error }
+        );
+      }
+      throw error;
     }
     return { status: "created", entity: "package", id, path: relativePath, active: true };
   });
