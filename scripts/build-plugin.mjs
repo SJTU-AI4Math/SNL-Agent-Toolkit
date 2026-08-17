@@ -54,7 +54,7 @@ await build({
   entryPoints: ['plugin-src/dsh-adapter.ts'],
   outfile: 'dist/dsh/adapter.mjs',
   bundle: true,
-  packages: 'external',
+  alias: { 'jsonc-parser': resolve(root, 'node_modules/jsonc-parser/lib/esm/main.js') },
   platform: 'node',
   format: 'esm',
   target: 'node20',

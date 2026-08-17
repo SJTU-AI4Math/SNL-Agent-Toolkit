@@ -57,7 +57,9 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   const dependencies = packageJson.dependencies as Record<string, string>;
   const devDependencies = packageJson.devDependencies as Record<string, string>;
   assert.equal(dependencies.tsx, undefined, 'published runtime must not install tsx/esbuild');
+  assert.equal(dependencies['@deepseek-ai/dsh-tools'], undefined, 'prebuilt DSH adapter must not install a second Harness runtime');
   assert.ok(devDependencies.tsx, 'tsx remains a development-only test runner');
+  assert.ok(devDependencies['@deepseek-ai/dsh-tools'], 'defineTool remains a build-time dependency');
   for (const [name, target] of Object.entries(packageJson.bin as Record<string, string>)) {
     assert.match(target, /^\.\/dist\/(?:cli|mcp)\//, `${name} must use a prebuilt runtime`);
   }
@@ -66,6 +68,12 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   for (const required of ['dist', 'skills', 'agent-plugin', '.agents', '.claude-plugin', 'cordis.patch.yml']) {
     assert.ok(files.includes(required), `${required} is omitted from npm files`);
   }
+});
+
+
+test('prebuilt DSH adapter bundles defineTool instead of importing a second Harness runtime', async () => {
+  const adapter = await readFile(resolve(root, 'dist/dsh/adapter.mjs'), 'utf8');
+  assert.doesNotMatch(adapter, /from ["']@deepseek-ai\/dsh-tools["']/);
 });
 
 
