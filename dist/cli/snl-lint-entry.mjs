@@ -1659,8 +1659,8 @@ var require_react_jsx_runtime_development = __commonJS({
           else validateChildKeys(children);
         if (hasOwnProperty.call(config, "key")) {
           children = getComponentNameFromType(type);
-          var keys = Object.keys(config).filter(function(k) {
-            return "key" !== k;
+          var keys = Object.keys(config).filter(function(k2) {
+            return "key" !== k2;
           });
           isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
           didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(
@@ -2704,6 +2704,68 @@ function f2(e3) {
     if (!n4 || n4.length === 0 || n4.some((e5) => !i2(e5) || typeof e5.template != "string")) return false;
     let r4 = n4.map((e5) => e5.style_name);
     if (new Set(r4).size !== r4.length || Object.keys(e4.default_style).some((e5) => e5.trim().length === 0) || Object.values(e4.default_style).some((e5) => !r4.includes(e5))) return false;
+  }
+  return true;
+}
+function O(e3) {
+  if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return false;
+  let t4 = e3;
+  return "type" in t4 || ![
+    "formula_inline",
+    "formula_display",
+    "text",
+    "block"
+  ].includes(String(t4.mode)) || typeof t4.body != "string" || t4.separator !== void 0 && typeof t4.separator != "string" ? false : t4.block_template_name === void 0 || t4.mode === "block" && typeof t4.block_template_name == "string";
+}
+var k = /* @__PURE__ */ new Set([
+  "type",
+  "default_language",
+  "values"
+]);
+function A(e3) {
+  if (O(e3)) return [e3];
+  if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return null;
+  let t4 = e3;
+  if (t4.type !== "i18n" || typeof t4.default_language != "string" || Object.keys(t4).some((e4) => !k.has(e4)) || !t4.values || typeof t4.values != "object" || Array.isArray(t4.values)) return null;
+  let n4 = t4.values;
+  return !Object.prototype.hasOwnProperty.call(n4, t4.default_language) || Object.keys(n4).length === 0 || !Object.values(n4).every(O) ? null : Object.values(n4);
+}
+function j(t4) {
+  let n4 = p(t4.body);
+  return `${n4.variadic ? "dynamic" : "fixed"}:${n4.positional_arity}`;
+}
+var M = [
+  "tag",
+  "mode",
+  "separator",
+  "block_template_name",
+  "variadic_left",
+  "variadic_join",
+  "variadic_right",
+  "react_renderer_key"
+];
+var N = /* @__PURE__ */ new Set([
+  "style_name",
+  "tags",
+  "template"
+]);
+function P(t4) {
+  if (!l2(t4)) return false;
+  for (let r4 of Object.values(t4)) {
+    if (!r4 || typeof r4 != "object" || Array.isArray(r4)) return false;
+    let t5 = r4;
+    if (!o2(t5) || typeof t5.kind != "string" || t5.kind.length === 0 || t5.kind === "partial" || "default_style" in t5 || !Array.isArray(t5.styles) || t5.styles.length === 0) return false;
+    let i6 = [];
+    for (let r5 of t5.styles) {
+      if (!r5 || typeof r5 != "object" || Array.isArray(r5)) return false;
+      let o4 = r5, s2 = A(o4.template);
+      if (typeof o4.style_name != "string" || !d(o4.style_name) || !a3(o4.tags) || !s2 || M.some((e3) => e3 in o4) || Object.keys(o4).some((e3) => !N.has(e3)) || new Set(s2.map(j)).size !== 1 || s2.some((n4) => {
+        let r6 = p(n4.body);
+        return r6.invalid || r6.variadic !== t5.dynamic_arity;
+      })) return false;
+      i6.push(o4.style_name);
+    }
+    if (new Set(i6).size !== i6.length) return false;
   }
   return true;
 }
@@ -9477,13 +9539,13 @@ function parseCD(parser) {
   for (var i6 = 0; i6 < parsedRows.length; i6++) {
     var rowNodes = parsedRows[i6];
     var cell = newCell();
-    for (var j2 = 0; j2 < rowNodes.length; j2++) {
-      if (!isStartOfArrow(rowNodes[j2])) {
-        cell.body.push(rowNodes[j2]);
+    for (var j3 = 0; j3 < rowNodes.length; j3++) {
+      if (!isStartOfArrow(rowNodes[j3])) {
+        cell.body.push(rowNodes[j3]);
       } else {
         row.push(cell);
-        j2 += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
+        j3 += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j3]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -9499,23 +9561,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k = j2 + 1; k < rowNodes.length; k++) {
-              if (isLabelEnd(rowNodes[k], arrowChar)) {
+            for (var k2 = j3 + 1; k2 < rowNodes.length; k2++) {
+              if (isLabelEnd(rowNodes[k2], arrowChar)) {
                 inLabel = false;
-                j2 = k;
+                j3 = k2;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
+              if (isStartOfArrow(rowNodes[k2])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
               }
-              labels[labelNum].body.push(rowNodes[k]);
+              labels[labelNum].body.push(rowNodes[k2]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j3]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j3]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -11514,8 +11576,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i6 = 0; i6 < group.body.length; i6++) {
     var rw = group.body[i6];
     var row = [];
-    for (var j2 = 0; j2 < rw.length; j2++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
+    for (var j3 = 0; j3 < rw.length; j3++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j3], options)]));
     }
     if (group.tags && group.tags[i6]) {
       row.unshift(glue);
@@ -17362,17 +17424,17 @@ var import_react_dom = __toESM(require_react_dom(), 1);
 function T3(e3) {
   return e3.join(".");
 }
-function j(e3) {
+function j2(e3) {
   return e3.replace(/[\\{}_$%&#^~]/g, (e4) => `\\${e4}`);
 }
-function M(e3) {
-  let t4 = "PH", n4 = [], r4 = j(e3.replace(/#(\d{1,2}|\*)/g, (e4) => (n4.push(e4), t4))), i6 = 0;
+function M2(e3) {
+  let t4 = "PH", n4 = [], r4 = j2(e3.replace(/#(\d{1,2}|\*)/g, (e4) => (n4.push(e4), t4))), i6 = 0;
   return r4.replace(RegExp(t4, "g"), () => n4[i6++]);
 }
-function N(e3, t4, n4) {
+function N2(e3, t4, n4) {
   return n4 && e3.env_mode === "text" || t4?.kind === "sub" ? "sub" : e3.kind ? e3.kind : t4?.kind ? t4.kind : t4 ? "const" : "fvar";
 }
-function P(e3) {
+function P2(e3) {
   if (/[\u0000-\u001f\u007f]/.test(e3)) throw Error(`invalid \\htmlData attribute value (control char): ${JSON.stringify(e3)}`);
   return e3.replace(/[,{}#]/g, "_");
 }
@@ -17453,10 +17515,10 @@ function ae(e3) {
   return e3?.query_environment().language ?? "en";
 }
 function H(e3, t4, n4, r4, i6) {
-  let a5 = i6 || N(e3, n4, r4?.length === 0);
+  let a5 = i6 || N2(e3, n4, r4?.length === 0);
   if (a5 === "sub") return t4;
-  let o4 = P(e3.macro_name), c3 = P(a5), d2 = i3(e3), f4 = d2 ? `,bindRef=${P(d2)}` : "", p4 = a4(e3), m4 = p4 ? `,src=${P(p4)}` : "", h4 = o3(e3), g3 = h4 === void 0 ? "" : `,source-path=${P(h4)}`, _3 = e3.scope ? `,scope=${P(e3.scope)}` : "";
-  return `\\htmlData{name=${o4},kind=${c3}${e3.style_name ? `,style=${P(e3.style_name)}` : ""}${_3}${f4}${m4}${g3}${r4 ? `,tree-path=${T3(r4)}` : ""}}{${t4}}`;
+  let o4 = P2(e3.macro_name), c3 = P2(a5), d2 = i3(e3), f4 = d2 ? `,bindRef=${P2(d2)}` : "", p4 = a4(e3), m4 = p4 ? `,src=${P2(p4)}` : "", h4 = o3(e3), g3 = h4 === void 0 ? "" : `,source-path=${P2(h4)}`, _3 = e3.scope ? `,scope=${P2(e3.scope)}` : "";
+  return `\\htmlData{name=${o4},kind=${c3}${e3.style_name ? `,style=${P2(e3.style_name)}` : ""}${_3}${f4}${m4}${g3}${r4 ? `,tree-path=${T3(r4)}` : ""}}{${t4}}`;
 }
 function U(e3, t4) {
   let n4 = 0;
@@ -17586,18 +17648,18 @@ async function ue(e3, t4, i6 = [], a5, o4, s2) {
     }
     return G2(n4, s3, p4);
   }));
-  if (m4 === "block") return H(e3, "\\text{\\color{red}\\{block macro `" + j(e3.macro_name) + "` cannot be used inside a formula\\}}", l4, i6);
+  if (m4 === "block") return H(e3, "\\text{\\color{red}\\{block macro `" + j2(e3.macro_name) + "` cannot be used inside a formula\\}}", l4, i6);
   if (e3.env_mode) {
-    let t5 = e3.env_mode === "text", n4 = e3.temporary_source ?? e3.macro_name, a6 = m(e3.temporary_format === "texttt" ? `\\texttt{${j(n4)}}` : t5 ? M(n4) : n4, { ...Object.fromEntries(g3.map((e4, t6) => [`child${t6}`, e4])) }, t5 ? "text" : "formula"), o5 = t5 ? `\\text{${a6}}` : a6;
+    let t5 = e3.env_mode === "text", n4 = e3.temporary_source ?? e3.macro_name, a6 = m(e3.temporary_format === "texttt" ? `\\texttt{${j2(n4)}}` : t5 ? M2(n4) : n4, { ...Object.fromEntries(g3.map((e4, t6) => [`child${t6}`, e4])) }, t5 ? "text" : "formula"), o5 = t5 ? `\\text{${a6}}` : a6;
     return t5 ? H(e3, o5, l4, i6) : W(o5, (t6) => H(e3, t6, l4, i6));
   }
   if (!f4) {
     let t5 = e3.macro_name.startsWith("\\");
     if (e3.children.length > 0) {
       let n4 = t5 ? e3.macro_name.slice(1) : e3.macro_name;
-      return H(e3, `${t5 ? `\\operatorname{${j(n4)}}` : e3.macro_name}(${g3.join(", ")})`, l4, i6);
+      return H(e3, `${t5 ? `\\operatorname{${j2(n4)}}` : e3.macro_name}(${g3.join(", ")})`, l4, i6);
     }
-    if (t5) return H(e3, `\\mathrm{${j(e3.macro_name.slice(1))}}`, l4, i6);
+    if (t5) return H(e3, `\\mathrm{${j2(e3.macro_name.slice(1))}}`, l4, i6);
   }
   let _3 = d2?.body ?? e3.macro_name, v3 = Object.fromEntries(g3.map((e4, t5) => [`child${t5}`, e4])), y4 = m4 === "text" ? "" : ", ", b4 = d2?.separator ?? y4, x4 = g3.join(b4);
   if (l4?.dynamic_arity) {
@@ -17789,76 +17851,6 @@ var Me = new je({ params: void 0 });
 var Be = (0, import_react2.createContext)(null);
 var Ve = (0, import_react2.createContext)(null);
 
-// lib/snl-doc-schema.ts
-function isMacroDocumentV11(value) {
-  if (!isRecord(value)) return false;
-  return Object.values(value).every((macro) => {
-    if (!isRecord(macro) || typeof macro.name !== "string" || typeof macro.description !== "string" || typeof macro.kind !== "string" || !macro.kind || macro.kind === "partial" || typeof macro.dynamic_arity !== "boolean" || !isRecord(macro.source) || !isStringArray(macro.source.entries) || !isStringArray(macro.source.urls) || !isStringArray(macro.tags) || macro.tags.some((tag) => tag.includes("\\")) || Object.hasOwn(macro, "default_style") || !Array.isArray(macro.styles) || macro.styles.length === 0) {
-      return false;
-    }
-    const names = /* @__PURE__ */ new Set();
-    return macro.styles.every((style) => {
-      if (!isRecord(style) || typeof style.style_name !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(style.style_name) || names.has(style.style_name) || !isStringArray(style.tags) || style.tags.some((tag) => tag.includes("\\")) || Object.keys(style).some((field) => !["style_name", "tags", "template"].includes(field))) {
-        return false;
-      }
-      names.add(style.style_name);
-      const projections = macroV11TemplateProjections(style.template);
-      if (!projections?.length) return false;
-      const contracts = new Set(projections.map((projection) => {
-        const placeholders = analyzePlaceholders(projection.body);
-        return `${placeholders.variadic ? "dynamic" : "fixed"}:${placeholders.arity}`;
-      }));
-      return contracts.size === 1 && projections.every((projection) => {
-        const placeholders = analyzePlaceholders(projection.body);
-        return !placeholders.invalid && placeholders.variadic === macro.dynamic_arity;
-      });
-    });
-  });
-}
-function macroV11TemplateProjections(value) {
-  if (isTemplate(value)) return [value];
-  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !value.default_language || !isRecord(value.values) || !Object.hasOwn(value.values, value.default_language) || Object.keys(value).some((field) => !["type", "default_language", "values"].includes(field))) {
-    return null;
-  }
-  const projections = Object.values(value.values);
-  return projections.length > 0 && projections.every(isTemplate) ? projections : null;
-}
-function isTemplate(value) {
-  if (!isRecord(value) || Object.hasOwn(value, "type") || !["formula_inline", "formula_display", "text", "block"].includes(String(value.mode)) || typeof value.body !== "string" || value.mode !== "block" && !value.body.trim() || value.separator !== void 0 && typeof value.separator !== "string") {
-    return false;
-  }
-  return value.block_template_name === void 0 || value.mode === "block" && typeof value.block_template_name === "string";
-}
-function analyzePlaceholders(body) {
-  let variadic = false;
-  let max = -1;
-  let invalid = false;
-  for (let index = 0; index < body.length; index += 1) {
-    if (body[index] !== "#" || index > 0 && body[index - 1] === "\\") continue;
-    const next = body[index + 1];
-    if (next === "*") {
-      variadic = true;
-      index += 1;
-    } else if (next !== void 0 && /\d/.test(next)) {
-      let end = index + 2;
-      while (end < body.length && /\d/.test(body[end])) end += 1;
-      const digits = body.slice(index + 1, end);
-      if (/^(?:0|[1-9]\d?)$/.test(digits)) max = Math.max(max, Number(digits));
-      else invalid = true;
-      index = end - 1;
-    } else {
-      invalid = true;
-    }
-  }
-  return { variadic, arity: max + 1, invalid };
-}
-function isRecord(value) {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-function isStringArray(value) {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
-}
-
 // lib/entity-storage.ts
 import { createHash } from "node:crypto";
 var PACKAGE_STORAGE_VERSION = 1;
@@ -17996,7 +17988,7 @@ async function assertSnlDoc(workspaceRoot) {
   }
 }
 function usesCurrentEntitySchemas(config) {
-  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+  return isRecord(config) && (config.version === "0.0.11" || config.version === "0.1.0");
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
@@ -18015,7 +18007,7 @@ function assertCurrentKindCatalogs(config) {
     const ids = /* @__PURE__ */ new Set();
     catalog.forEach((value, index) => {
       const kind = value;
-      if (!isRecord2(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
+      if (!isRecord(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
         throw new Error(`config.json#${field}[${index}].id must be a canonical non-empty string.`);
       }
       if (ids.has(value.id)) {
@@ -18041,25 +18033,25 @@ function assertCurrentKindCatalogs(config) {
 }
 function isLocalizedLabel(value, required) {
   if (typeof value === "string") return !required || !!value.trim();
-  if (!isRecord2(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !isRecord2(value.values)) {
+  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !isRecord(value.values)) {
     return false;
   }
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertThemedColoring(value, label) {
-  if (!isRecord2(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
+  if (!isRecord(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
     throw new Error(`${label} must contain light and dark variants.`);
   }
   for (const theme of ["light", "dark"]) {
     const variant = value[theme];
-    if (!isRecord2(variant) || typeof variant.stroke !== "string" || !variant.stroke.trim() || typeof variant.background !== "string" || !variant.background.trim()) {
+    if (!isRecord(variant) || typeof variant.stroke !== "string" || !variant.stroke.trim() || typeof variant.background !== "string" || !variant.background.trim()) {
       throw new Error(`${label}.${theme} requires non-empty string stroke and background.`);
     }
   }
 }
 function usesEntityStorage(config) {
-  if (!isRecord2(config) || typeof config.version !== "string") {
+  if (!isRecord(config) || typeof config.version !== "string") {
     throw new Error("config.json must be an object with a string version.");
   }
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
@@ -18074,7 +18066,7 @@ function usesEntityStorage(config) {
   if (!Object.prototype.hasOwnProperty.call(config, "entity_storage")) {
     throw new Error(`Workspace data ${config.version} requires entity_storage.version = 1; refusing frozen aggregate fallback.`);
   }
-  if (!isRecord2(config.entity_storage) || config.entity_storage.version !== 1) {
+  if (!isRecord(config.entity_storage) || config.entity_storage.version !== 1) {
     throw new Error(`config.json has unsupported entity_storage version ${JSON.stringify(config.entity_storage?.version)}.`);
   }
   return true;
@@ -18151,7 +18143,7 @@ async function readEntries(workspaceRoot) {
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
-      if (!isRecord2(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
+      if (!isRecord(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
         throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
       }
       assertCompatibleSchemaMarker(value, CURRENT_ENTRY_SCHEMA_VERSION, `${relativePath} Entry envelope`);
@@ -18228,14 +18220,14 @@ async function readEntityMacroPackages(workspaceRoot) {
   const macros2 = /* @__PURE__ */ new Map();
   const identities = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(macroEntitiesDir(workspaceRoot), true)) {
-    if (!isRecord2(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
+    if (!isRecord(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
     assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f2(macroDocument)) {
+    if (currentMacro ? !P(macroDocument) : !f2(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -18272,7 +18264,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
-    if (!isRecord2(value) || value.format !== "snl-package" || value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
+    if (!isRecord(value) || value.format !== "snl-package" || value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
       throw new Error(`${relativePath} is not a valid SNL Package manifest.`);
     }
     if (requireCurrentSchema) {
@@ -18329,7 +18321,7 @@ function assertExpectedEntityPath(actual, expected) {
     throw new Error(`Entity path ${actual} does not match its logical identity path ${expected}.`);
   }
 }
-function isRecord2(value) {
+function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 async function readActiveMacros(workspaceRoot) {
@@ -18449,8 +18441,8 @@ function lintEntry(raw, ctx) {
       message: "Field `kind` must be a non-empty string.",
       path: "kind"
     });
-  } else if (!ctx.entryKinds.some((k) => k.id === e3.kind)) {
-    const known = ctx.entryKinds.map((k) => k.id).join(", ") || "(none defined)";
+  } else if (!ctx.entryKinds.some((k2) => k2.id === e3.kind)) {
+    const known = ctx.entryKinds.map((k2) => k2.id).join(", ") || "(none defined)";
     issues.push({
       severity: "error",
       code: "entry.unknown-kind",
@@ -18841,26 +18833,26 @@ function fillTemplate(template, values) {
     return v3 === void 0 ? `#${d2}` : v3;
   });
   out = out.replace(/#\*/g, () => {
-    const j2 = values["children_joined"];
-    return j2 === void 0 ? "#*" : j2;
+    const j3 = values["children_joined"];
+    return j3 === void 0 ? "#*" : j3;
   });
   return out.split(ESCAPED).join("\\#");
 }
-function isRecord3(value) {
+function isRecord2(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function projectTemplate(value) {
   let candidate = value;
-  if (isRecord3(candidate) && candidate.type === "i18n" && typeof candidate.default_language === "string" && isRecord3(candidate.values)) {
+  if (isRecord2(candidate) && candidate.type === "i18n" && typeof candidate.default_language === "string" && isRecord2(candidate.values)) {
     candidate = candidate.values[candidate.default_language] ?? candidate.values.en ?? Object.values(candidate.values)[0];
   }
-  if (!isRecord3(candidate) || typeof candidate.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(candidate.mode) || typeof candidate.body !== "string") {
+  if (!isRecord2(candidate) || typeof candidate.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(candidate.mode) || typeof candidate.body !== "string") {
     return void 0;
   }
   return candidate;
 }
 function normalizeStyle(value) {
-  if (!isRecord3(value) || typeof value.style_name !== "string") return void 0;
+  if (!isRecord2(value) || typeof value.style_name !== "string") return void 0;
   const current = projectTemplate(value.template);
   if (current) return { style_name: value.style_name, template: current };
   if (typeof value.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(value.mode) || typeof value.template !== "string") {
@@ -18872,7 +18864,7 @@ function normalizeStyle(value) {
       mode: value.mode,
       body: value.template,
       ...typeof value.separator === "string" ? { separator: value.separator } : {},
-      ...isRecord3(value.latex) ? { latex: value.latex } : {},
+      ...isRecord2(value.latex) ? { latex: value.latex } : {},
       ...typeof value.text === "string" ? { text: value.text } : {}
     }
   };

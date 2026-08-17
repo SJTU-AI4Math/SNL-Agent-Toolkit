@@ -9,6 +9,7 @@
 
 import { constants, promises as fs } from 'node:fs';
 import * as path from 'node:path';
+import { isMacroDocumentV11 as isSnlBasicsMacroDocumentV11 } from '@sjtu-ai4math/snl-basics';
 import {
   type EntryData,
   type EntryKind,
@@ -20,7 +21,6 @@ import {
   type MacroPackageFile,
   type SnlConfig,
   isMacroDocumentV8,
-  isMacroDocumentV11,
 } from './snl-doc-schema.ts';
 import {
   ENTRY_STORAGE_VERSION,
@@ -436,7 +436,7 @@ async function readEntityMacroPackages(
     const macroDocument: Record<string, unknown> = Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !isMacroDocumentV8(macroDocument)) {
+    if (currentMacro ? !isSnlBasicsMacroDocumentV11(macroDocument) : !isMacroDocumentV8(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? '11' : '8'} data.`,
       );

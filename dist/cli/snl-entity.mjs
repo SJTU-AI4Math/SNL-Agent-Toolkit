@@ -227,6 +227,15 @@ function d(e) {
   }
   return true;
 }
+function p(e) {
+  let t3 = e.replace(/\\#/g, "ESCAPED_HASH"), n3 = -1;
+  for (let e2 of t3.matchAll(/#(\d{1,2})(?!\d)/g)) n3 = Math.max(n3, Number(e2[1]));
+  return {
+    positional_arity: n3 + 1,
+    variadic: /#\*/.test(t3),
+    invalid: /#\d{3,}/.test(t3)
+  };
+}
 var h = class extends Error {
   position;
   constructor(e, t3) {
@@ -515,6 +524,68 @@ function f(e) {
     if (!n3 || n3.length === 0 || n3.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
     let r3 = n3.map((e3) => e3.style_name);
     if (new Set(r3).size !== r3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r3.includes(e3))) return false;
+  }
+  return true;
+}
+function O(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t3 = e;
+  return "type" in t3 || ![
+    "formula_inline",
+    "formula_display",
+    "text",
+    "block"
+  ].includes(String(t3.mode)) || typeof t3.body != "string" || t3.separator !== void 0 && typeof t3.separator != "string" ? false : t3.block_template_name === void 0 || t3.mode === "block" && typeof t3.block_template_name == "string";
+}
+var k = /* @__PURE__ */ new Set([
+  "type",
+  "default_language",
+  "values"
+]);
+function A(e) {
+  if (O(e)) return [e];
+  if (!e || typeof e != "object" || Array.isArray(e)) return null;
+  let t3 = e;
+  if (t3.type !== "i18n" || typeof t3.default_language != "string" || Object.keys(t3).some((e2) => !k.has(e2)) || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return null;
+  let n3 = t3.values;
+  return !Object.prototype.hasOwnProperty.call(n3, t3.default_language) || Object.keys(n3).length === 0 || !Object.values(n3).every(O) ? null : Object.values(n3);
+}
+function j(t3) {
+  let n3 = p(t3.body);
+  return `${n3.variadic ? "dynamic" : "fixed"}:${n3.positional_arity}`;
+}
+var M = [
+  "tag",
+  "mode",
+  "separator",
+  "block_template_name",
+  "variadic_left",
+  "variadic_join",
+  "variadic_right",
+  "react_renderer_key"
+];
+var N = /* @__PURE__ */ new Set([
+  "style_name",
+  "tags",
+  "template"
+]);
+function P(t3) {
+  if (!l2(t3)) return false;
+  for (let r3 of Object.values(t3)) {
+    if (!r3 || typeof r3 != "object" || Array.isArray(r3)) return false;
+    let t4 = r3;
+    if (!o2(t4) || typeof t4.kind != "string" || t4.kind.length === 0 || t4.kind === "partial" || "default_style" in t4 || !Array.isArray(t4.styles) || t4.styles.length === 0) return false;
+    let i4 = [];
+    for (let r4 of t4.styles) {
+      if (!r4 || typeof r4 != "object" || Array.isArray(r4)) return false;
+      let o3 = r4, s2 = A(o3.template);
+      if (typeof o3.style_name != "string" || !d(o3.style_name) || !a(o3.tags) || !s2 || M.some((e) => e in o3) || Object.keys(o3).some((e) => !N.has(e)) || new Set(s2.map(j)).size !== 1 || s2.some((n3) => {
+        let r5 = p(n3.body);
+        return r5.invalid || r5.variadic !== t4.dynamic_arity;
+      })) return false;
+      i4.push(o3.style_name);
+    }
+    if (new Set(i4).size !== i4.length) return false;
   }
   return true;
 }
@@ -7201,13 +7272,13 @@ function parseCD(parser) {
   for (var i4 = 0; i4 < parsedRows.length; i4++) {
     var rowNodes = parsedRows[i4];
     var cell = newCell();
-    for (var j = 0; j < rowNodes.length; j++) {
-      if (!isStartOfArrow(rowNodes[j])) {
-        cell.body.push(rowNodes[j]);
+    for (var j2 = 0; j2 < rowNodes.length; j2++) {
+      if (!isStartOfArrow(rowNodes[j2])) {
+        cell.body.push(rowNodes[j2]);
       } else {
         row.push(cell);
-        j += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j]).text;
+        j2 += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -7223,23 +7294,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k = j + 1; k < rowNodes.length; k++) {
-              if (isLabelEnd(rowNodes[k], arrowChar)) {
+            for (var k2 = j2 + 1; k2 < rowNodes.length; k2++) {
+              if (isLabelEnd(rowNodes[k2], arrowChar)) {
                 inLabel = false;
-                j = k;
+                j2 = k2;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
+              if (isStartOfArrow(rowNodes[k2])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
               }
-              labels[labelNum].body.push(rowNodes[k]);
+              labels[labelNum].body.push(rowNodes[k2]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -9238,8 +9309,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i4 = 0; i4 < group.body.length; i4++) {
     var rw = group.body[i4];
     var row = [];
-    for (var j = 0; j < rw.length; j++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j], options)]));
+    for (var j2 = 0; j2 < rw.length; j2++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
     }
     if (group.tags && group.tags[i4]) {
       row.unshift(glue);
@@ -15452,7 +15523,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
+    if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -15666,8 +15737,8 @@ function lintEntry(raw, ctx) {
       message: "Field `kind` must be a non-empty string.",
       path: "kind"
     });
-  } else if (!ctx.entryKinds.some((k) => k.id === e.kind)) {
-    const known = ctx.entryKinds.map((k) => k.id).join(", ") || "(none defined)";
+  } else if (!ctx.entryKinds.some((k2) => k2.id === e.kind)) {
+    const known = ctx.entryKinds.map((k2) => k2.id).join(", ") || "(none defined)";
     issues.push({
       severity: "error",
       code: "entry.unknown-kind",

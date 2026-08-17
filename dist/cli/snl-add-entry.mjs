@@ -222,6 +222,15 @@ function d(e) {
   }
   return true;
 }
+function p(e) {
+  let t3 = e.replace(/\\#/g, "ESCAPED_HASH"), n3 = -1;
+  for (let e2 of t3.matchAll(/#(\d{1,2})(?!\d)/g)) n3 = Math.max(n3, Number(e2[1]));
+  return {
+    positional_arity: n3 + 1,
+    variadic: /#\*/.test(t3),
+    invalid: /#\d{3,}/.test(t3)
+  };
+}
 var h = class extends Error {
   position;
   constructor(e, t3) {
@@ -513,6 +522,68 @@ function f(e) {
   }
   return true;
 }
+function O(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t3 = e;
+  return "type" in t3 || ![
+    "formula_inline",
+    "formula_display",
+    "text",
+    "block"
+  ].includes(String(t3.mode)) || typeof t3.body != "string" || t3.separator !== void 0 && typeof t3.separator != "string" ? false : t3.block_template_name === void 0 || t3.mode === "block" && typeof t3.block_template_name == "string";
+}
+var k = /* @__PURE__ */ new Set([
+  "type",
+  "default_language",
+  "values"
+]);
+function A(e) {
+  if (O(e)) return [e];
+  if (!e || typeof e != "object" || Array.isArray(e)) return null;
+  let t3 = e;
+  if (t3.type !== "i18n" || typeof t3.default_language != "string" || Object.keys(t3).some((e2) => !k.has(e2)) || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return null;
+  let n3 = t3.values;
+  return !Object.prototype.hasOwnProperty.call(n3, t3.default_language) || Object.keys(n3).length === 0 || !Object.values(n3).every(O) ? null : Object.values(n3);
+}
+function j(t3) {
+  let n3 = p(t3.body);
+  return `${n3.variadic ? "dynamic" : "fixed"}:${n3.positional_arity}`;
+}
+var M = [
+  "tag",
+  "mode",
+  "separator",
+  "block_template_name",
+  "variadic_left",
+  "variadic_join",
+  "variadic_right",
+  "react_renderer_key"
+];
+var N = /* @__PURE__ */ new Set([
+  "style_name",
+  "tags",
+  "template"
+]);
+function P(t3) {
+  if (!l2(t3)) return false;
+  for (let r3 of Object.values(t3)) {
+    if (!r3 || typeof r3 != "object" || Array.isArray(r3)) return false;
+    let t4 = r3;
+    if (!o2(t4) || typeof t4.kind != "string" || t4.kind.length === 0 || t4.kind === "partial" || "default_style" in t4 || !Array.isArray(t4.styles) || t4.styles.length === 0) return false;
+    let i4 = [];
+    for (let r4 of t4.styles) {
+      if (!r4 || typeof r4 != "object" || Array.isArray(r4)) return false;
+      let o3 = r4, s2 = A(o3.template);
+      if (typeof o3.style_name != "string" || !d(o3.style_name) || !a(o3.tags) || !s2 || M.some((e) => e in o3) || Object.keys(o3).some((e) => !N.has(e)) || new Set(s2.map(j)).size !== 1 || s2.some((n3) => {
+        let r5 = p(n3.body);
+        return r5.invalid || r5.variadic !== t4.dynamic_arity;
+      })) return false;
+      i4.push(o3.style_name);
+    }
+    if (new Set(i4).size !== i4.length) return false;
+  }
+  return true;
+}
 var G = 256;
 function K(e, t3) {
   return e.reduce((n3, r3, i4) => i4 === 0 ? r3 : `${n3}${e[i4 - 1] !== "" && r3 !== "" ? `,${t3}` : ","}${r3}`, "");
@@ -659,8 +730,8 @@ function lintEntry(raw, ctx) {
       message: "Field `kind` must be a non-empty string.",
       path: "kind"
     });
-  } else if (!ctx.entryKinds.some((k) => k.id === e.kind)) {
-    const known = ctx.entryKinds.map((k) => k.id).join(", ") || "(none defined)";
+  } else if (!ctx.entryKinds.some((k2) => k2.id === e.kind)) {
+    const known = ctx.entryKinds.map((k2) => k2.id).join(", ") || "(none defined)";
     issues.push({
       severity: "error",
       code: "entry.unknown-kind",
@@ -7425,13 +7496,13 @@ function parseCD(parser) {
   for (var i4 = 0; i4 < parsedRows.length; i4++) {
     var rowNodes = parsedRows[i4];
     var cell = newCell();
-    for (var j = 0; j < rowNodes.length; j++) {
-      if (!isStartOfArrow(rowNodes[j])) {
-        cell.body.push(rowNodes[j]);
+    for (var j2 = 0; j2 < rowNodes.length; j2++) {
+      if (!isStartOfArrow(rowNodes[j2])) {
+        cell.body.push(rowNodes[j2]);
       } else {
         row.push(cell);
-        j += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j]).text;
+        j2 += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -7447,23 +7518,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k = j + 1; k < rowNodes.length; k++) {
-              if (isLabelEnd(rowNodes[k], arrowChar)) {
+            for (var k2 = j2 + 1; k2 < rowNodes.length; k2++) {
+              if (isLabelEnd(rowNodes[k2], arrowChar)) {
                 inLabel = false;
-                j = k;
+                j2 = k2;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
+              if (isStartOfArrow(rowNodes[k2])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
               }
-              labels[labelNum].body.push(rowNodes[k]);
+              labels[labelNum].body.push(rowNodes[k2]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -9462,8 +9533,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i4 = 0; i4 < group.body.length; i4++) {
     var rw = group.body[i4];
     var row = [];
-    for (var j = 0; j < rw.length; j++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j], options)]));
+    for (var j2 = 0; j2 < rw.length; j2++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
     }
     if (group.tags && group.tags[i4]) {
       row.unshift(glue);
@@ -15200,76 +15271,6 @@ var renderToDomTree = function renderToDomTree2(expression, options) {
   }
 };
 
-// lib/snl-doc-schema.ts
-function isMacroDocumentV11(value) {
-  if (!isRecord(value)) return false;
-  return Object.values(value).every((macro) => {
-    if (!isRecord(macro) || typeof macro.name !== "string" || typeof macro.description !== "string" || typeof macro.kind !== "string" || !macro.kind || macro.kind === "partial" || typeof macro.dynamic_arity !== "boolean" || !isRecord(macro.source) || !isStringArray(macro.source.entries) || !isStringArray(macro.source.urls) || !isStringArray(macro.tags) || macro.tags.some((tag) => tag.includes("\\")) || Object.hasOwn(macro, "default_style") || !Array.isArray(macro.styles) || macro.styles.length === 0) {
-      return false;
-    }
-    const names = /* @__PURE__ */ new Set();
-    return macro.styles.every((style) => {
-      if (!isRecord(style) || typeof style.style_name !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(style.style_name) || names.has(style.style_name) || !isStringArray(style.tags) || style.tags.some((tag) => tag.includes("\\")) || Object.keys(style).some((field) => !["style_name", "tags", "template"].includes(field))) {
-        return false;
-      }
-      names.add(style.style_name);
-      const projections = macroV11TemplateProjections(style.template);
-      if (!projections?.length) return false;
-      const contracts = new Set(projections.map((projection) => {
-        const placeholders = analyzePlaceholders(projection.body);
-        return `${placeholders.variadic ? "dynamic" : "fixed"}:${placeholders.arity}`;
-      }));
-      return contracts.size === 1 && projections.every((projection) => {
-        const placeholders = analyzePlaceholders(projection.body);
-        return !placeholders.invalid && placeholders.variadic === macro.dynamic_arity;
-      });
-    });
-  });
-}
-function macroV11TemplateProjections(value) {
-  if (isTemplate(value)) return [value];
-  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !value.default_language || !isRecord(value.values) || !Object.hasOwn(value.values, value.default_language) || Object.keys(value).some((field) => !["type", "default_language", "values"].includes(field))) {
-    return null;
-  }
-  const projections = Object.values(value.values);
-  return projections.length > 0 && projections.every(isTemplate) ? projections : null;
-}
-function isTemplate(value) {
-  if (!isRecord(value) || Object.hasOwn(value, "type") || !["formula_inline", "formula_display", "text", "block"].includes(String(value.mode)) || typeof value.body !== "string" || value.mode !== "block" && !value.body.trim() || value.separator !== void 0 && typeof value.separator !== "string") {
-    return false;
-  }
-  return value.block_template_name === void 0 || value.mode === "block" && typeof value.block_template_name === "string";
-}
-function analyzePlaceholders(body) {
-  let variadic = false;
-  let max = -1;
-  let invalid = false;
-  for (let index = 0; index < body.length; index += 1) {
-    if (body[index] !== "#" || index > 0 && body[index - 1] === "\\") continue;
-    const next = body[index + 1];
-    if (next === "*") {
-      variadic = true;
-      index += 1;
-    } else if (next !== void 0 && /\d/.test(next)) {
-      let end = index + 2;
-      while (end < body.length && /\d/.test(body[end])) end += 1;
-      const digits = body.slice(index + 1, end);
-      if (/^(?:0|[1-9]\d?)$/.test(digits)) max = Math.max(max, Number(digits));
-      else invalid = true;
-      index = end - 1;
-    } else {
-      invalid = true;
-    }
-  }
-  return { variadic, arity: max + 1, invalid };
-}
-function isRecord(value) {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-function isStringArray(value) {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
-}
-
 // lib/snl-doc.ts
 import { constants, promises as fs } from "node:fs";
 import * as path2 from "node:path";
@@ -15335,7 +15336,7 @@ async function assertSnlDoc(workspaceRoot) {
   }
 }
 function usesCurrentEntitySchemas(config) {
-  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+  return isRecord(config) && (config.version === "0.0.11" || config.version === "0.1.0");
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
@@ -15354,7 +15355,7 @@ function assertCurrentKindCatalogs(config) {
     const ids = /* @__PURE__ */ new Set();
     catalog.forEach((value, index) => {
       const kind = value;
-      if (!isRecord2(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
+      if (!isRecord(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
         throw new Error(`config.json#${field}[${index}].id must be a canonical non-empty string.`);
       }
       if (ids.has(value.id)) {
@@ -15380,25 +15381,25 @@ function assertCurrentKindCatalogs(config) {
 }
 function isLocalizedLabel(value, required) {
   if (typeof value === "string") return !required || !!value.trim();
-  if (!isRecord2(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !isRecord2(value.values)) {
+  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !isRecord(value.values)) {
     return false;
   }
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertThemedColoring(value, label) {
-  if (!isRecord2(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
+  if (!isRecord(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
     throw new Error(`${label} must contain light and dark variants.`);
   }
   for (const theme of ["light", "dark"]) {
     const variant = value[theme];
-    if (!isRecord2(variant) || typeof variant.stroke !== "string" || !variant.stroke.trim() || typeof variant.background !== "string" || !variant.background.trim()) {
+    if (!isRecord(variant) || typeof variant.stroke !== "string" || !variant.stroke.trim() || typeof variant.background !== "string" || !variant.background.trim()) {
       throw new Error(`${label}.${theme} requires non-empty string stroke and background.`);
     }
   }
 }
 function usesEntityStorage(config) {
-  if (!isRecord2(config) || typeof config.version !== "string") {
+  if (!isRecord(config) || typeof config.version !== "string") {
     throw new Error("config.json must be an object with a string version.");
   }
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
@@ -15413,7 +15414,7 @@ function usesEntityStorage(config) {
   if (!Object.prototype.hasOwnProperty.call(config, "entity_storage")) {
     throw new Error(`Workspace data ${config.version} requires entity_storage.version = 1; refusing frozen aggregate fallback.`);
   }
-  if (!isRecord2(config.entity_storage) || config.entity_storage.version !== 1) {
+  if (!isRecord(config.entity_storage) || config.entity_storage.version !== 1) {
     throw new Error(`config.json has unsupported entity_storage version ${JSON.stringify(config.entity_storage?.version)}.`);
   }
   return true;
@@ -15490,7 +15491,7 @@ async function readEntries(workspaceRoot) {
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
-      if (!isRecord2(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
+      if (!isRecord(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
         throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
       }
       assertCompatibleSchemaMarker(value, CURRENT_ENTRY_SCHEMA_VERSION, `${relativePath} Entry envelope`);
@@ -15567,14 +15568,14 @@ async function readEntityMacroPackages(workspaceRoot) {
   const macros2 = /* @__PURE__ */ new Map();
   const identities = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(macroEntitiesDir(workspaceRoot), true)) {
-    if (!isRecord2(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
+    if (!isRecord(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
     assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
+    if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -15611,7 +15612,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
-    if (!isRecord2(value) || value.format !== "snl-package" || value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
+    if (!isRecord(value) || value.format !== "snl-package" || value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
       throw new Error(`${relativePath} is not a valid SNL Package manifest.`);
     }
     if (requireCurrentSchema) {
@@ -15668,7 +15669,7 @@ function assertExpectedEntityPath(actual, expected) {
     throw new Error(`Entity path ${actual} does not match its logical identity path ${expected}.`);
   }
 }
-function isRecord2(value) {
+function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 async function readActiveMacros(workspaceRoot) {
@@ -15789,14 +15790,14 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
 }
 
 // lib/entity-writes.ts
-function isRecord3(value) {
+function isRecord2(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 function assertCurrentWriteConfig(config, cli) {
   if (!usesEntityStorage(config)) {
     throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
   }
-  if (!isRecord3(config) || !Array.isArray(config.entry_kinds)) {
+  if (!isRecord2(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error("Current config.json entry_kinds must be an array.");
   }
   if (!Array.isArray(config.macro_kinds)) {
@@ -15827,7 +15828,7 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot) {
   return resolved;
 }
 function normalizeEntryDraft(raw, packageOverride) {
-  if (!isRecord3(raw)) return raw;
+  if (!isRecord2(raw)) return raw;
   const normalizedOverride = typeof packageOverride === "string" ? packageOverride.trim() : packageOverride;
   const packageId = normalizedOverride !== void 0 ? normalizedOverride : raw.package !== void 0 ? typeof raw.package === "string" ? raw.package.trim() : raw.package : UNPACKAGED_PACKAGE_ID;
   return {
@@ -15911,7 +15912,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     ]);
     const normalized = normalizeEntryDraft(raw, options.package);
     const issues = [];
-    if (isRecord3(raw) && options.package !== void 0 && Object.prototype.hasOwnProperty.call(raw, "package") && (typeof raw.package !== "string" || raw.package.trim() !== options.package.trim())) {
+    if (isRecord2(raw) && options.package !== void 0 && Object.prototype.hasOwnProperty.call(raw, "package") && (typeof raw.package !== "string" || raw.package.trim() !== options.package.trim())) {
       issues.push({
         severity: "error",
         code: "entry.package-mismatch",
@@ -15926,7 +15927,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       strictMacros: options.strictMacros
     });
     issues.push(...report.issues);
-    const packageValue = isRecord3(normalized) ? normalized.package : void 0;
+    const packageValue = isRecord2(normalized) ? normalized.package : void 0;
     let packageId = "";
     if (typeof packageValue !== "string" || packageValue.length === 0) {
       issues.push({
@@ -15957,7 +15958,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       });
     }
     if (issues.some((issue) => issue.code === "entry.duplicate-id")) {
-      const id = isRecord3(normalized) && typeof normalized.id === "string" ? normalized.id : "";
+      const id = isRecord2(normalized) && typeof normalized.id === "string" ? normalized.id : "";
       return {
         status: "conflict",
         entity: "entry",

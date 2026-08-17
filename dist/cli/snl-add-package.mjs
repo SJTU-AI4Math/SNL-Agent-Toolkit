@@ -215,6 +215,15 @@ function d(e) {
   }
   return true;
 }
+function p(e) {
+  let t2 = e.replace(/\\#/g, "ESCAPED_HASH"), n2 = -1;
+  for (let e2 of t2.matchAll(/#(\d{1,2})(?!\d)/g)) n2 = Math.max(n2, Number(e2[1]));
+  return {
+    positional_arity: n2 + 1,
+    variadic: /#\*/.test(t2),
+    invalid: /#\d{3,}/.test(t2)
+  };
+}
 var h = class extends Error {
   position;
   constructor(e, t2) {
@@ -503,6 +512,68 @@ function f(e) {
     if (!n2 || n2.length === 0 || n2.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
     let r2 = n2.map((e3) => e3.style_name);
     if (new Set(r2).size !== r2.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r2.includes(e3))) return false;
+  }
+  return true;
+}
+function O(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t2 = e;
+  return "type" in t2 || ![
+    "formula_inline",
+    "formula_display",
+    "text",
+    "block"
+  ].includes(String(t2.mode)) || typeof t2.body != "string" || t2.separator !== void 0 && typeof t2.separator != "string" ? false : t2.block_template_name === void 0 || t2.mode === "block" && typeof t2.block_template_name == "string";
+}
+var k = /* @__PURE__ */ new Set([
+  "type",
+  "default_language",
+  "values"
+]);
+function A(e) {
+  if (O(e)) return [e];
+  if (!e || typeof e != "object" || Array.isArray(e)) return null;
+  let t2 = e;
+  if (t2.type !== "i18n" || typeof t2.default_language != "string" || Object.keys(t2).some((e2) => !k.has(e2)) || !t2.values || typeof t2.values != "object" || Array.isArray(t2.values)) return null;
+  let n2 = t2.values;
+  return !Object.prototype.hasOwnProperty.call(n2, t2.default_language) || Object.keys(n2).length === 0 || !Object.values(n2).every(O) ? null : Object.values(n2);
+}
+function j(t2) {
+  let n2 = p(t2.body);
+  return `${n2.variadic ? "dynamic" : "fixed"}:${n2.positional_arity}`;
+}
+var M = [
+  "tag",
+  "mode",
+  "separator",
+  "block_template_name",
+  "variadic_left",
+  "variadic_join",
+  "variadic_right",
+  "react_renderer_key"
+];
+var N = /* @__PURE__ */ new Set([
+  "style_name",
+  "tags",
+  "template"
+]);
+function P(t2) {
+  if (!l2(t2)) return false;
+  for (let r2 of Object.values(t2)) {
+    if (!r2 || typeof r2 != "object" || Array.isArray(r2)) return false;
+    let t3 = r2;
+    if (!o2(t3) || typeof t3.kind != "string" || t3.kind.length === 0 || t3.kind === "partial" || "default_style" in t3 || !Array.isArray(t3.styles) || t3.styles.length === 0) return false;
+    let i3 = [];
+    for (let r3 of t3.styles) {
+      if (!r3 || typeof r3 != "object" || Array.isArray(r3)) return false;
+      let o3 = r3, s2 = A(o3.template);
+      if (typeof o3.style_name != "string" || !d(o3.style_name) || !a(o3.tags) || !s2 || M.some((e) => e in o3) || Object.keys(o3).some((e) => !N.has(e)) || new Set(s2.map(j)).size !== 1 || s2.some((n2) => {
+        let r4 = p(n2.body);
+        return r4.invalid || r4.variadic !== t3.dynamic_arity;
+      })) return false;
+      i3.push(o3.style_name);
+    }
+    if (new Set(i3).size !== i3.length) return false;
   }
   return true;
 }
@@ -7180,13 +7251,13 @@ function parseCD(parser) {
   for (var i3 = 0; i3 < parsedRows.length; i3++) {
     var rowNodes = parsedRows[i3];
     var cell = newCell();
-    for (var j = 0; j < rowNodes.length; j++) {
-      if (!isStartOfArrow(rowNodes[j])) {
-        cell.body.push(rowNodes[j]);
+    for (var j2 = 0; j2 < rowNodes.length; j2++) {
+      if (!isStartOfArrow(rowNodes[j2])) {
+        cell.body.push(rowNodes[j2]);
       } else {
         row.push(cell);
-        j += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j]).text;
+        j2 += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -7202,23 +7273,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k = j + 1; k < rowNodes.length; k++) {
-              if (isLabelEnd(rowNodes[k], arrowChar)) {
+            for (var k2 = j2 + 1; k2 < rowNodes.length; k2++) {
+              if (isLabelEnd(rowNodes[k2], arrowChar)) {
                 inLabel = false;
-                j = k;
+                j2 = k2;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
+              if (isStartOfArrow(rowNodes[k2])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
               }
-              labels[labelNum].body.push(rowNodes[k]);
+              labels[labelNum].body.push(rowNodes[k2]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -9217,8 +9288,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i3 = 0; i3 < group.body.length; i3++) {
     var rw = group.body[i3];
     var row = [];
-    for (var j = 0; j < rw.length; j++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j], options)]));
+    for (var j2 = 0; j2 < rw.length; j2++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
     }
     if (group.tags && group.tags[i3]) {
       row.unshift(glue);
@@ -14955,76 +15026,6 @@ var renderToDomTree = function renderToDomTree2(expression, options) {
   }
 };
 
-// lib/snl-doc-schema.ts
-function isMacroDocumentV11(value) {
-  if (!isRecord(value)) return false;
-  return Object.values(value).every((macro) => {
-    if (!isRecord(macro) || typeof macro.name !== "string" || typeof macro.description !== "string" || typeof macro.kind !== "string" || !macro.kind || macro.kind === "partial" || typeof macro.dynamic_arity !== "boolean" || !isRecord(macro.source) || !isStringArray(macro.source.entries) || !isStringArray(macro.source.urls) || !isStringArray(macro.tags) || macro.tags.some((tag) => tag.includes("\\")) || Object.hasOwn(macro, "default_style") || !Array.isArray(macro.styles) || macro.styles.length === 0) {
-      return false;
-    }
-    const names = /* @__PURE__ */ new Set();
-    return macro.styles.every((style) => {
-      if (!isRecord(style) || typeof style.style_name !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(style.style_name) || names.has(style.style_name) || !isStringArray(style.tags) || style.tags.some((tag) => tag.includes("\\")) || Object.keys(style).some((field) => !["style_name", "tags", "template"].includes(field))) {
-        return false;
-      }
-      names.add(style.style_name);
-      const projections = macroV11TemplateProjections(style.template);
-      if (!projections?.length) return false;
-      const contracts = new Set(projections.map((projection) => {
-        const placeholders = analyzePlaceholders(projection.body);
-        return `${placeholders.variadic ? "dynamic" : "fixed"}:${placeholders.arity}`;
-      }));
-      return contracts.size === 1 && projections.every((projection) => {
-        const placeholders = analyzePlaceholders(projection.body);
-        return !placeholders.invalid && placeholders.variadic === macro.dynamic_arity;
-      });
-    });
-  });
-}
-function macroV11TemplateProjections(value) {
-  if (isTemplate(value)) return [value];
-  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !value.default_language || !isRecord(value.values) || !Object.hasOwn(value.values, value.default_language) || Object.keys(value).some((field) => !["type", "default_language", "values"].includes(field))) {
-    return null;
-  }
-  const projections = Object.values(value.values);
-  return projections.length > 0 && projections.every(isTemplate) ? projections : null;
-}
-function isTemplate(value) {
-  if (!isRecord(value) || Object.hasOwn(value, "type") || !["formula_inline", "formula_display", "text", "block"].includes(String(value.mode)) || typeof value.body !== "string" || value.mode !== "block" && !value.body.trim() || value.separator !== void 0 && typeof value.separator !== "string") {
-    return false;
-  }
-  return value.block_template_name === void 0 || value.mode === "block" && typeof value.block_template_name === "string";
-}
-function analyzePlaceholders(body) {
-  let variadic = false;
-  let max = -1;
-  let invalid = false;
-  for (let index = 0; index < body.length; index += 1) {
-    if (body[index] !== "#" || index > 0 && body[index - 1] === "\\") continue;
-    const next = body[index + 1];
-    if (next === "*") {
-      variadic = true;
-      index += 1;
-    } else if (next !== void 0 && /\d/.test(next)) {
-      let end = index + 2;
-      while (end < body.length && /\d/.test(body[end])) end += 1;
-      const digits = body.slice(index + 1, end);
-      if (/^(?:0|[1-9]\d?)$/.test(digits)) max = Math.max(max, Number(digits));
-      else invalid = true;
-      index = end - 1;
-    } else {
-      invalid = true;
-    }
-  }
-  return { variadic, arity: max + 1, invalid };
-}
-function isRecord(value) {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-function isStringArray(value) {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
-}
-
 // lib/snl-doc.ts
 import { constants, promises as fs } from "node:fs";
 import * as path2 from "node:path";
@@ -15090,7 +15091,7 @@ async function assertSnlDoc(workspaceRoot) {
   }
 }
 function usesCurrentEntitySchemas(config) {
-  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+  return isRecord(config) && (config.version === "0.0.11" || config.version === "0.1.0");
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
@@ -15109,7 +15110,7 @@ function assertCurrentKindCatalogs(config) {
     const ids = /* @__PURE__ */ new Set();
     catalog.forEach((value, index) => {
       const kind = value;
-      if (!isRecord2(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
+      if (!isRecord(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
         throw new Error(`config.json#${field}[${index}].id must be a canonical non-empty string.`);
       }
       if (ids.has(value.id)) {
@@ -15135,25 +15136,25 @@ function assertCurrentKindCatalogs(config) {
 }
 function isLocalizedLabel(value, required) {
   if (typeof value === "string") return !required || !!value.trim();
-  if (!isRecord2(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !isRecord2(value.values)) {
+  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !isRecord(value.values)) {
     return false;
   }
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertThemedColoring(value, label) {
-  if (!isRecord2(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
+  if (!isRecord(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
     throw new Error(`${label} must contain light and dark variants.`);
   }
   for (const theme of ["light", "dark"]) {
     const variant = value[theme];
-    if (!isRecord2(variant) || typeof variant.stroke !== "string" || !variant.stroke.trim() || typeof variant.background !== "string" || !variant.background.trim()) {
+    if (!isRecord(variant) || typeof variant.stroke !== "string" || !variant.stroke.trim() || typeof variant.background !== "string" || !variant.background.trim()) {
       throw new Error(`${label}.${theme} requires non-empty string stroke and background.`);
     }
   }
 }
 function usesEntityStorage(config) {
-  if (!isRecord2(config) || typeof config.version !== "string") {
+  if (!isRecord(config) || typeof config.version !== "string") {
     throw new Error("config.json must be an object with a string version.");
   }
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
@@ -15168,7 +15169,7 @@ function usesEntityStorage(config) {
   if (!Object.prototype.hasOwnProperty.call(config, "entity_storage")) {
     throw new Error(`Workspace data ${config.version} requires entity_storage.version = 1; refusing frozen aggregate fallback.`);
   }
-  if (!isRecord2(config.entity_storage) || config.entity_storage.version !== 1) {
+  if (!isRecord(config.entity_storage) || config.entity_storage.version !== 1) {
     throw new Error(`config.json has unsupported entity_storage version ${JSON.stringify(config.entity_storage?.version)}.`);
   }
   return true;
@@ -15275,14 +15276,14 @@ async function readEntityMacroPackages(workspaceRoot) {
   const macros2 = /* @__PURE__ */ new Map();
   const identities = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(macroEntitiesDir(workspaceRoot), true)) {
-    if (!isRecord2(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
+    if (!isRecord(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
     assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
+    if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -15319,7 +15320,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
-    if (!isRecord2(value) || value.format !== "snl-package" || value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
+    if (!isRecord(value) || value.format !== "snl-package" || value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
       throw new Error(`${relativePath} is not a valid SNL Package manifest.`);
     }
     if (requireCurrentSchema) {
@@ -15376,7 +15377,7 @@ function assertExpectedEntityPath(actual, expected) {
     throw new Error(`Entity path ${actual} does not match its logical identity path ${expected}.`);
   }
 }
-function isRecord2(value) {
+function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
@@ -15463,14 +15464,14 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
 }
 
 // lib/entity-writes.ts
-function isRecord3(value) {
+function isRecord2(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 function assertCurrentWriteConfig(config, cli) {
   if (!usesEntityStorage(config)) {
     throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
   }
-  if (!isRecord3(config) || !Array.isArray(config.entry_kinds)) {
+  if (!isRecord2(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error("Current config.json entry_kinds must be an array.");
   }
   if (!Array.isArray(config.macro_kinds)) {
@@ -15587,7 +15588,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
     assertCurrentWriteConfig(config, "snl-add-package");
     const packages = await readAllMacroPackages(workspaceRoot);
     const issues = [];
-    if (!isRecord3(raw)) {
+    if (!isRecord2(raw)) {
       issues.push({ severity: "error", code: "package.not-object", message: "Package draft must be a JSON object." });
       return { status: "invalid", entity: "package", issues };
     }

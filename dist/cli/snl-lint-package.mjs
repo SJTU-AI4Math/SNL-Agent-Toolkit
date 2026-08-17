@@ -148,6 +148,15 @@ function d(e) {
   }
   return true;
 }
+function p(e) {
+  let t2 = e.replace(/\\#/g, "ESCAPED_HASH"), n2 = -1;
+  for (let e2 of t2.matchAll(/#(\d{1,2})(?!\d)/g)) n2 = Math.max(n2, Number(e2[1]));
+  return {
+    positional_arity: n2 + 1,
+    variadic: /#\*/.test(t2),
+    invalid: /#\d{3,}/.test(t2)
+  };
+}
 var h = class extends Error {
   position;
   constructor(e, t2) {
@@ -436,6 +445,68 @@ function f(e) {
     if (!n2 || n2.length === 0 || n2.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
     let r2 = n2.map((e3) => e3.style_name);
     if (new Set(r2).size !== r2.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r2.includes(e3))) return false;
+  }
+  return true;
+}
+function O(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t2 = e;
+  return "type" in t2 || ![
+    "formula_inline",
+    "formula_display",
+    "text",
+    "block"
+  ].includes(String(t2.mode)) || typeof t2.body != "string" || t2.separator !== void 0 && typeof t2.separator != "string" ? false : t2.block_template_name === void 0 || t2.mode === "block" && typeof t2.block_template_name == "string";
+}
+var k = /* @__PURE__ */ new Set([
+  "type",
+  "default_language",
+  "values"
+]);
+function A(e) {
+  if (O(e)) return [e];
+  if (!e || typeof e != "object" || Array.isArray(e)) return null;
+  let t2 = e;
+  if (t2.type !== "i18n" || typeof t2.default_language != "string" || Object.keys(t2).some((e2) => !k.has(e2)) || !t2.values || typeof t2.values != "object" || Array.isArray(t2.values)) return null;
+  let n2 = t2.values;
+  return !Object.prototype.hasOwnProperty.call(n2, t2.default_language) || Object.keys(n2).length === 0 || !Object.values(n2).every(O) ? null : Object.values(n2);
+}
+function j(t2) {
+  let n2 = p(t2.body);
+  return `${n2.variadic ? "dynamic" : "fixed"}:${n2.positional_arity}`;
+}
+var M = [
+  "tag",
+  "mode",
+  "separator",
+  "block_template_name",
+  "variadic_left",
+  "variadic_join",
+  "variadic_right",
+  "react_renderer_key"
+];
+var N = /* @__PURE__ */ new Set([
+  "style_name",
+  "tags",
+  "template"
+]);
+function P(t2) {
+  if (!l2(t2)) return false;
+  for (let r2 of Object.values(t2)) {
+    if (!r2 || typeof r2 != "object" || Array.isArray(r2)) return false;
+    let t3 = r2;
+    if (!o2(t3) || typeof t3.kind != "string" || t3.kind.length === 0 || t3.kind === "partial" || "default_style" in t3 || !Array.isArray(t3.styles) || t3.styles.length === 0) return false;
+    let i3 = [];
+    for (let r3 of t3.styles) {
+      if (!r3 || typeof r3 != "object" || Array.isArray(r3)) return false;
+      let o3 = r3, s2 = A(o3.template);
+      if (typeof o3.style_name != "string" || !d(o3.style_name) || !a(o3.tags) || !s2 || M.some((e) => e in o3) || Object.keys(o3).some((e) => !N.has(e)) || new Set(s2.map(j)).size !== 1 || s2.some((n2) => {
+        let r4 = p(n2.body);
+        return r4.invalid || r4.variadic !== t3.dynamic_arity;
+      })) return false;
+      i3.push(o3.style_name);
+    }
+    if (new Set(i3).size !== i3.length) return false;
   }
   return true;
 }
@@ -7122,13 +7193,13 @@ function parseCD(parser) {
   for (var i3 = 0; i3 < parsedRows.length; i3++) {
     var rowNodes = parsedRows[i3];
     var cell = newCell();
-    for (var j = 0; j < rowNodes.length; j++) {
-      if (!isStartOfArrow(rowNodes[j])) {
-        cell.body.push(rowNodes[j]);
+    for (var j2 = 0; j2 < rowNodes.length; j2++) {
+      if (!isStartOfArrow(rowNodes[j2])) {
+        cell.body.push(rowNodes[j2]);
       } else {
         row.push(cell);
-        j += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j]).text;
+        j2 += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -7144,23 +7215,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k = j + 1; k < rowNodes.length; k++) {
-              if (isLabelEnd(rowNodes[k], arrowChar)) {
+            for (var k2 = j2 + 1; k2 < rowNodes.length; k2++) {
+              if (isLabelEnd(rowNodes[k2], arrowChar)) {
                 inLabel = false;
-                j = k;
+                j2 = k2;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
+              if (isStartOfArrow(rowNodes[k2])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
               }
-              labels[labelNum].body.push(rowNodes[k]);
+              labels[labelNum].body.push(rowNodes[k2]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -9159,8 +9230,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i3 = 0; i3 < group.body.length; i3++) {
     var rw = group.body[i3];
     var row = [];
-    for (var j = 0; j < rw.length; j++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j], options)]));
+    for (var j2 = 0; j2 < rw.length; j2++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
     }
     if (group.tags && group.tags[i3]) {
       row.unshift(glue);
@@ -15393,7 +15464,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
+    if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );

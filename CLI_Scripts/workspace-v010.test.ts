@@ -51,6 +51,16 @@ describe('SNL workspace v0.1.0 compatibility', () => {
     assert.equal(entries[0].id, 'entry.localized');
   });
 
+  it('accepts Macro v11 style names used by real localized workspaces', async () => {
+    const root = await fixtureCopy();
+    await mutateJson(path.join(root, '.SNL_Doc', macroEntityPath('Logic', 'FOL.implies')), (envelope) => {
+      const macro = envelope.macro as Record<string, unknown>;
+      const styles = macro.styles as Array<Record<string, unknown>>;
+      styles[0].style_name = 'localized-default';
+    });
+    assert.ok((await readAllMacroPackages(root)).Logic.macros['FOL.implies']);
+  });
+
   it('reads the known markerless 0.0.11 predecessor and rewrites touched entities to current markers', async () => {
     const root = await fixtureCopy();
     await mutateJson(path.join(root, '.SNL_Doc', 'config.json'), (config) => {
