@@ -54,10 +54,11 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   assert.equal(packageJson.version, '0.1.0');
   assert.deepEqual(packageJson.publishConfig, { access: 'public' });
   assert.deepEqual(packageJson.dsh, { bundle: { patch: './cordis.patch.yml' } });
-  const dependencies = packageJson.dependencies as Record<string, string>;
+  const dependencies = (packageJson.dependencies ?? {}) as Record<string, string>;
   const devDependencies = packageJson.devDependencies as Record<string, string>;
   assert.equal(dependencies.tsx, undefined, 'published runtime must not install tsx/esbuild');
   assert.equal(dependencies['@deepseek-ai/dsh-tools'], undefined, 'prebuilt DSH adapter must not install a second Harness runtime');
+  assert.deepEqual(dependencies, {}, 'all public entry points are self-contained prebuilt artifacts');
   assert.ok(devDependencies.tsx, 'tsx remains a development-only test runner');
   assert.ok(devDependencies['@deepseek-ai/dsh-tools'], 'defineTool remains a build-time dependency');
   for (const [name, target] of Object.entries(packageJson.bin as Record<string, string>)) {

@@ -29,17 +29,15 @@
   "engines": {
     "node": ">=20"
   },
-  "dependencies": {
-    "@sjtu-ai4math/snl-basics": "0.2.4",
-    "@types/katex": "^0.16.8",
-    "fuse.js": "^7.5.0",
-    "jsonc-parser": "^3.3.1",
-    "katex": "0.16.47"
-  },
   "devDependencies": {
     "@deepseek-ai/dsh-tools": "0.0.1-rc.1",
+    "@sjtu-ai4math/snl-basics": "0.2.4",
+    "@types/katex": "^0.16.8",
     "@types/node": "^20",
     "esbuild": "0.28.1",
+    "fuse.js": "^7.5.0",
+    "jsonc-parser": "^3.3.1",
+    "katex": "0.16.47",
     "tsx": "^4.19.0",
     "typescript": "~5.9.3"
   },
