@@ -5,9 +5,7 @@ version: 0.1.0
 author: SJTU-AI4Math
 license: MIT
 metadata:
-  hermes:
-    tags: [snl, structured-natural-language, knowledge-management, mcp]
-    related_skills: []
+  tags: "snl, structured-natural-language, knowledge-management, mcp"
 ---
 
 # SNL Agent Toolkit
