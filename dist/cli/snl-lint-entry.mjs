@@ -29,9 +29,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react.production.js
+// node_modules/react/cjs/react.production.js
 var require_react_production = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react.production.js"(exports) {
+  "node_modules/react/cjs/react.production.js"(exports) {
     "use strict";
     var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element");
     var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
@@ -276,11 +276,11 @@ var require_react_production = __commonJS({
         );
       },
       count: function(children) {
-        var n5 = 0;
+        var n4 = 0;
         mapChildren(children, function() {
-          n5++;
+          n4++;
         });
-        return n5;
+        return n4;
       },
       toArray: function(children) {
         return mapChildren(children, function(child) {
@@ -470,9 +470,9 @@ var require_react_production = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react.development.js
+// node_modules/react/cjs/react.development.js
 var require_react_development = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react.development.js"(exports, module) {
+  "node_modules/react/cjs/react.development.js"(exports, module) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function defineDeprecationWarning(methodName, info) {
@@ -580,7 +580,7 @@ var require_react_development = __commonJS({
               type = type._init;
               try {
                 return getComponentNameFromType(type(innerType));
-              } catch (x2) {
+              } catch (x4) {
               }
           }
         return null;
@@ -592,7 +592,7 @@ var require_react_development = __commonJS({
         try {
           var name = getComponentNameFromType(type);
           return name ? "<" + name + ">" : "<...>";
-        } catch (x2) {
+        } catch (x4) {
           return "<...>";
         }
       }
@@ -1047,11 +1047,11 @@ var require_react_development = __commonJS({
           );
         },
         count: function(children) {
-          var n5 = 0;
+          var n4 = 0;
           mapChildren(children, function() {
-            n5++;
+            n4++;
           });
-          return n5;
+          return n4;
         },
         toArray: function(children) {
           return mapChildren(children, function(child) {
@@ -1442,9 +1442,9 @@ var require_react_development = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/index.js
+// node_modules/react/index.js
 var require_react = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/index.js"(exports, module) {
+  "node_modules/react/index.js"(exports, module) {
     "use strict";
     if (process.env.NODE_ENV === "production") {
       module.exports = require_react_production();
@@ -1454,9 +1454,9 @@ var require_react = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react-jsx-runtime.production.js
+// node_modules/react/cjs/react-jsx-runtime.production.js
 var require_react_jsx_runtime_production = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react-jsx-runtime.production.js"(exports) {
+  "node_modules/react/cjs/react-jsx-runtime.production.js"(exports) {
     "use strict";
     var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element");
     var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
@@ -1484,9 +1484,9 @@ var require_react_jsx_runtime_production = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react-jsx-runtime.development.js
+// node_modules/react/cjs/react-jsx-runtime.development.js
 var require_react_jsx_runtime_development = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
+  "node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function getComponentNameFromType(type) {
@@ -1530,7 +1530,7 @@ var require_react_jsx_runtime_development = __commonJS({
               type = type._init;
               try {
                 return getComponentNameFromType(type(innerType));
-              } catch (x2) {
+              } catch (x4) {
               }
           }
         return null;
@@ -1564,7 +1564,7 @@ var require_react_jsx_runtime_development = __commonJS({
         try {
           var name = getComponentNameFromType(type);
           return name ? "<" + name + ">" : "<...>";
-        } catch (x2) {
+        } catch (x4) {
           return "<...>";
         }
       }
@@ -1659,8 +1659,8 @@ var require_react_jsx_runtime_development = __commonJS({
           else validateChildKeys(children);
         if (hasOwnProperty.call(config, "key")) {
           children = getComponentNameFromType(type);
-          var keys = Object.keys(config).filter(function(k2) {
-            return "key" !== k2;
+          var keys = Object.keys(config).filter(function(k) {
+            return "key" !== k;
           });
           isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
           didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(
@@ -1741,9 +1741,9 @@ var require_react_jsx_runtime_development = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/jsx-runtime.js
+// node_modules/react/jsx-runtime.js
 var require_jsx_runtime = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react/jsx-runtime.js"(exports, module) {
+  "node_modules/react/jsx-runtime.js"(exports, module) {
     "use strict";
     if (process.env.NODE_ENV === "production") {
       module.exports = require_react_jsx_runtime_production();
@@ -1753,9 +1753,9 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react-dom/cjs/react-dom.production.js
+// node_modules/react-dom/cjs/react-dom.production.js
 var require_react_dom_production = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react-dom/cjs/react-dom.production.js"(exports) {
+  "node_modules/react-dom/cjs/react-dom.production.js"(exports) {
     "use strict";
     var React = require_react();
     function formatProdErrorMessage(code) {
@@ -1902,9 +1902,9 @@ var require_react_dom_production = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react-dom/cjs/react-dom.development.js
+// node_modules/react-dom/cjs/react-dom.development.js
 var require_react_dom_development = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react-dom/cjs/react-dom.development.js"(exports) {
+  "node_modules/react-dom/cjs/react-dom.development.js"(exports) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function noop() {
@@ -2146,9 +2146,9 @@ var require_react_dom_development = __commonJS({
   }
 });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react-dom/index.js
+// node_modules/react-dom/index.js
 var require_react_dom = __commonJS({
-  "../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/react-dom/index.js"(exports, module) {
+  "node_modules/react-dom/index.js"(exports, module) {
     "use strict";
     function checkDCE() {
       if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") {
@@ -2180,14 +2180,14 @@ import * as path3 from "node:path";
 function parseArgs(argv, specs) {
   const bySpec = {};
   const shortAlias = {};
-  for (const s3 of specs) {
-    bySpec[s3.name] = s3;
-    if (s3.short) shortAlias[s3.short] = s3.name;
+  for (const s2 of specs) {
+    bySpec[s2.name] = s2;
+    if (s2.short) shortAlias[s2.short] = s2.name;
   }
   const flags = {};
   const positional = [];
-  for (const s3 of specs) {
-    if (s3.default !== void 0) flags[s3.name] = s3.default;
+  for (const s2 of specs) {
+    if (s2.default !== void 0) flags[s2.name] = s2.default;
   }
   let i6 = 0;
   let seenDashDash = false;
@@ -2253,12 +2253,12 @@ function parseArgs(argv, specs) {
 }
 function formatUsage(cliName, synopsis, specs) {
   const lines = [`Usage: ${cliName} ${synopsis}`, "", "Options:"];
-  for (const s3 of specs) {
-    const flagStr = s3.short ? `-${s3.short}, --${s3.name}` : `    --${s3.name}`;
-    const kind = s3.hasValue === false ? "" : " <value>";
-    const dflt = s3.default !== void 0 ? ` (default: ${JSON.stringify(s3.default)})` : "";
+  for (const s2 of specs) {
+    const flagStr = s2.short ? `-${s2.short}, --${s2.name}` : `    --${s2.name}`;
+    const kind = s2.hasValue === false ? "" : " <value>";
+    const dflt = s2.default !== void 0 ? ` (default: ${JSON.stringify(s2.default)})` : "";
     lines.push(`  ${flagStr}${kind}${dflt}`);
-    if (s3.help) lines.push(`      ${s3.help}`);
+    if (s2.help) lines.push(`      ${s2.help}`);
   }
   return lines.join("\n");
 }
@@ -2287,7 +2287,7 @@ var HELP_FLAG = {
 import { constants, promises as fs } from "node:fs";
 import * as path2 from "node:path";
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/runtime-Bg8CFx23.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/runtime-Bg8CFx23.js
 function i(e3) {
   if (typeof e3 != "object" || !e3 || Array.isArray(e3)) return false;
   let t4 = e3;
@@ -2296,22 +2296,22 @@ function i(e3) {
 function a(e3) {
   return ({ language: t4 }) => {
     if (!i(e3)) return e3;
-    let n5 = Object.prototype.hasOwnProperty.call(e3.values, t4) ? e3.values[t4] : void 0;
-    if (n5 !== void 0) return n5;
+    let n4 = Object.prototype.hasOwnProperty.call(e3.values, t4) ? e3.values[t4] : void 0;
+    if (n4 !== void 0) return n4;
     let r4 = Object.prototype.hasOwnProperty.call(e3.values, e3.default_language) ? e3.values[e3.default_language] : void 0;
     if (r4 !== void 0) return r4;
     for (let t5 of Object.keys(e3.values)) {
-      let n6 = e3.values[t5];
-      if (n6 !== void 0) return n6;
+      let n5 = e3.values[t5];
+      if (n5 !== void 0) return n5;
     }
     throw Error("I18n map has no values");
   };
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/render-context-TpPwfdH-.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/render-context-TpPwfdH-.js
 var e = () => ({ color_scheme: "light" });
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/template-bHqW1VSc.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e3, t4) {
   return {
     macro_name: e3,
@@ -2336,29 +2336,29 @@ var a2 = class {
   name_epochs = /* @__PURE__ */ new Map();
   constructor(t4) {
     this.queries = t4.queries, this.context_reader = t4.context_reader ?? e;
-    let n5 = t4.cache_capacity ?? 256;
-    if (!Number.isInteger(n5) || n5 < 0) throw RangeError("cache_capacity must be a non-negative integer");
-    this.cache_capacity = n5;
+    let n4 = t4.cache_capacity ?? 256;
+    if (!Number.isInteger(n4) || n4 < 0) throw RangeError("cache_capacity must be a non-negative integer");
+    this.cache_capacity = n4;
   }
   read_context() {
     return this.context_reader();
   }
   async query_macro(e3) {
-    let { macro_name: t4, signal: n5 } = e3;
-    if (n5?.aborted) throw n5.reason ?? new DOMException("Aborted", "AbortError");
+    let { macro_name: t4, signal: n4 } = e3;
+    if (n4?.aborted) throw n4.reason ?? new DOMException("Aborted", "AbortError");
     if (this.cache.has(t4)) {
       let e4 = this.cache.get(t4);
       return this.cache.delete(t4), this.cache.set(t4, e4), e4;
     }
-    let r4 = n5 ? void 0 : this.inflight.get(t4);
+    let r4 = n4 ? void 0 : this.inflight.get(t4);
     if (r4) return r4;
-    let i6 = this.cache_epoch, a5 = this.name_epochs.get(t4) ?? 0, o3 = this.queries.query_macro({
+    let i6 = this.cache_epoch, a5 = this.name_epochs.get(t4) ?? 0, o4 = this.queries.query_macro({
       macro_name: t4,
-      signal: n5
-    }).then((e4) => (this.inflight.get(t4) === o3 && this.inflight.delete(t4), i6 === this.cache_epoch && a5 === (this.name_epochs.get(t4) ?? 0) && !n5?.aborted && (this.cache.set(t4, e4), this.evict()), e4), (e4) => {
-      throw this.inflight.get(t4) === o3 && this.inflight.delete(t4), e4;
+      signal: n4
+    }).then((e4) => (this.inflight.get(t4) === o4 && this.inflight.delete(t4), i6 === this.cache_epoch && a5 === (this.name_epochs.get(t4) ?? 0) && !n4?.aborted && (this.cache.set(t4, e4), this.evict()), e4), (e4) => {
+      throw this.inflight.get(t4) === o4 && this.inflight.delete(t4), e4;
     });
-    return n5 || this.inflight.set(t4, o3), o3;
+    return n4 || this.inflight.set(t4, o4), o4;
   }
   clear_cache(e3) {
     e3 === void 0 ? (this.cache.clear(), this.inflight.clear(), this.cache_epoch += 1, this.name_epochs.clear()) : (this.cache.delete(e3), this.inflight.delete(e3), this.name_epochs.set(e3, (this.name_epochs.get(e3) ?? 0) + 1));
@@ -2377,93 +2377,115 @@ var o = /^[A-Za-z0-9_\\]$/;
 var s = /^[A-Za-z0-9_.-]$/;
 var c = /[\p{White_Space}\p{Cc}\p{Cf}\p{Cs}]/u;
 function l(e3, t4) {
-  let n5 = e3.codePointAt(t4);
-  return n5 === void 0 ? null : String.fromCodePoint(n5);
+  let n4 = e3.codePointAt(t4);
+  return n4 === void 0 ? null : String.fromCodePoint(n4);
 }
-function u(e3, t4, n5) {
+function u(e3, t4, n4) {
   let r4 = l(e3, t4);
-  return r4 === null ? 0 : r4.codePointAt(0) <= 127 ? +!!(n5 ? o : s).test(r4) : c.test(r4) ? 0 : r4.length;
+  return r4 === null ? 0 : r4.codePointAt(0) <= 127 ? +!!(n4 ? o : s).test(r4) : c.test(r4) ? 0 : r4.length;
 }
 function d(e3) {
   if (e3.length === 0) return false;
-  let t4 = 0, n5 = u(e3, t4, true);
-  if (n5 === 0) return false;
-  for (t4 += n5; t4 < e3.length; ) {
-    if (n5 = u(e3, t4, false), n5 === 0) return false;
-    t4 += n5;
+  let t4 = 0, n4 = u(e3, t4, true);
+  if (n4 === 0) return false;
+  for (t4 += n4; t4 < e3.length; ) {
+    if (n4 = u(e3, t4, false), n4 === 0) return false;
+    t4 += n4;
   }
   return true;
 }
-var f = class extends Error {
+function f(e3, t4) {
+  return t4 === "text" ? `\\htmlClass{snlMissingArg}{[${e3 === void 0 ? "?" : String(e3)}]}` : `\\mathord{\\htmlClass{snlMissingArg}{${e3 === void 0 ? "\\square" : `\\square_{${e3}}`}}}`;
+}
+function p(e3) {
+  let t4 = e3.replace(/\\#/g, "ESCAPED_HASH"), n4 = -1;
+  for (let e4 of t4.matchAll(/#(\d{1,2})(?!\d)/g)) n4 = Math.max(n4, Number(e4[1]));
+  return {
+    positional_arity: n4 + 1,
+    variadic: /#\*/.test(t4),
+    invalid: /#\d{3,}/.test(t4)
+  };
+}
+function m(e3, t4, n4 = "formula") {
+  let r4 = "ESCAPED_HASH", i6 = e3.replace(/\\#/g, r4);
+  return i6 = i6.replace(/#(\d{1,2})(?!\d)/g, (e4, r5) => {
+    let i7 = Number(r5), a5 = t4[`child${i7}`];
+    return a5 === void 0 ? f(i7, n4) : String(a5);
+  }), i6 = i6.replace(/#\*/g, () => {
+    let e4 = t4.children_joined;
+    return e4 === void 0 ? f(void 0, n4) : String(e4);
+  }), i6.split(r4).join("\\#");
+}
+var h = class extends Error {
   position;
   constructor(e3, t4) {
     super(`${e3} at position ${t4}`), this.name = "SnlSyntaxTreeParseError", this.position = t4;
   }
 };
-function p(e3, t4) {
-  let n5 = e3.length - t4;
-  if (n5 >= 2 && e3[t4] === "`") {
-    let n6 = e3.indexOf("`", t4 + 1);
-    if (n6 < 0) throw new f("Unclosed ` delimiter", t4);
+function g(e3, t4) {
+  let n4 = e3.length - t4;
+  if (n4 >= 2 && e3[t4] === "`") {
+    let n5 = e3.indexOf("`", t4 + 1);
+    if (n5 < 0) throw new h("Unclosed ` delimiter", t4);
     return {
       token: {
         type: "BACKTICK_DELIMITED",
-        value: e3.slice(t4 + 1, n6),
+        value: e3.slice(t4 + 1, n5),
         position: t4
       },
-      next: n6 + 1
+      next: n5 + 1
     };
   }
-  if (n5 >= 4 && e3[t4] === "$" && e3[t4 + 1] === "$") {
-    let n6 = e3.indexOf("$$", t4 + 2);
-    if (n6 < 0) throw new f("Unclosed $$ delimiter", t4);
+  if (n4 >= 4 && e3[t4] === "$" && e3[t4 + 1] === "$") {
+    let n5 = e3.indexOf("$$", t4 + 2);
+    if (n5 < 0) throw new h("Unclosed $$ delimiter", t4);
     return {
       token: {
         type: "DOLLAR2_DELIMITED",
-        value: e3.slice(t4 + 2, n6),
+        value: e3.slice(t4 + 2, n5),
         position: t4
       },
-      next: n6 + 2
+      next: n5 + 2
     };
   }
-  if (n5 >= 2 && e3[t4] === "$") {
-    let n6 = e3.indexOf("$", t4 + 1);
-    if (n6 < 0) throw new f("Unclosed $ delimiter", t4);
+  if (n4 >= 2 && e3[t4] === "$") {
+    let n5 = e3.indexOf("$", t4 + 1);
+    if (n5 < 0) throw new h("Unclosed $ delimiter", t4);
     return {
       token: {
         type: "DOLLAR_DELIMITED",
-        value: e3.slice(t4 + 1, n6),
+        value: e3.slice(t4 + 1, n5),
         position: t4
       },
-      next: n6 + 1
+      next: n5 + 1
     };
   }
-  if (n5 >= 2 && e3[t4] === "%") {
-    let n6 = e3.indexOf("%", t4 + 1);
-    if (n6 < 0) throw new f("Unclosed % delimiter", t4);
+  if (n4 >= 2 && e3[t4] === "%") {
+    let n5 = e3.indexOf("%", t4 + 1);
+    if (n5 < 0) throw new h("Unclosed % delimiter", t4);
     return {
       token: {
         type: "PERCENT_DELIMITED",
-        value: e3.slice(t4 + 1, n6),
+        value: e3.slice(t4 + 1, n5),
         position: t4
       },
-      next: n6 + 1
+      next: n5 + 1
     };
   }
   return null;
 }
-function m(e3) {
-  let t4 = [], n5 = 0;
-  for (; n5 < e3.length; ) {
-    let r4 = e3[n5];
+function _(e3) {
+  let t4 = [], n4 = 0;
+  for (; n4 < e3.length; ) {
+    let r4 = e3[n4];
     if (/[ \t\r\n\f\v]/.test(r4)) {
-      n5 += 1;
+      n4 += 1;
       continue;
     }
     if (r4 === "%" || r4 === "$" || r4 === "`") {
-      let r5 = p(e3, n5);
+      let r5 = g(e3, n4);
       if (r5) {
-        t4.push(r5.token), n5 = r5.next;
+        t4.push(r5.token), n4 = r5.next;
         continue;
       }
     }
@@ -2471,29 +2493,29 @@ function m(e3) {
       t4.push({
         type: "AT",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (r4 === "#") {
       t4.push({
         type: "HASH",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
-    let i6 = u(e3, n5, true);
+    let i6 = u(e3, n4, true);
     if (i6 > 0) {
-      let r5 = n5;
-      for (n5 += i6; n5 < e3.length; ) {
-        let t5 = u(e3, n5, false);
+      let r5 = n4;
+      for (n4 += i6; n4 < e3.length; ) {
+        let t5 = u(e3, n4, false);
         if (t5 === 0) break;
-        n5 += t5;
+        n4 += t5;
       }
       t4.push({
         type: "IDENT",
-        value: e3.slice(r5, n5),
+        value: e3.slice(r5, n4),
         position: r5
       });
       continue;
@@ -2502,61 +2524,61 @@ function m(e3) {
       t4.push({
         type: "LBRACKET",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (r4 === "]") {
       t4.push({
         type: "RBRACKET",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (r4 === "(") {
       t4.push({
         type: "LPAREN",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (r4 === ")") {
       t4.push({
         type: "RPAREN",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (r4 === ",") {
       t4.push({
         type: "COMMA",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (r4 === "=") {
       t4.push({
         type: "EQ",
         value: r4,
-        position: n5
-      }), n5 += 1;
+        position: n4
+      }), n4 += 1;
       continue;
     }
     if (/\d/.test(r4)) {
-      let r5 = n5;
-      for (; n5 < e3.length && /\d/.test(e3[n5]); ) n5 += 1;
+      let r5 = n4;
+      for (; n4 < e3.length && /\d/.test(e3[n4]); ) n4 += 1;
       t4.push({
         type: "NUMBER",
-        value: e3.slice(r5, n5),
+        value: e3.slice(r5, n4),
         position: r5
       });
       continue;
     }
-    throw new f(`Unexpected character "${r4}"`, n5);
+    throw new h(`Unexpected character "${r4}"`, n4);
   }
   return t4.push({
     type: "EOF",
@@ -2564,7 +2586,7 @@ function m(e3) {
     position: e3.length
   }), t4;
 }
-var h = class {
+var v = class {
   cursor = 0;
   tokens;
   constructor(e3) {
@@ -2577,15 +2599,15 @@ var h = class {
   parseNode() {
     let e3 = this.peek().type === "AT";
     e3 && this.consume("AT");
-    let n5 = this.peek(), r4;
-    if (n5.type === "IDENT") this.consume("IDENT"), r4 = t(n5.value);
-    else if (n5.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r4 = t(n5.value), r4.env_mode = "text";
-    else if (n5.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r4 = t(n5.value), r4.env_mode = "formula_inline";
-    else if (n5.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r4 = t(n5.value), r4.env_mode = "formula_display";
-    else if (n5.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r4 = t(n5.value), r4.env_mode = "formula_inline", r4.temporary_format = "texttt";
-    else throw new f(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n5.type}`, n5.position);
+    let n4 = this.peek(), r4;
+    if (n4.type === "IDENT") this.consume("IDENT"), r4 = t(n4.value);
+    else if (n4.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r4 = t(n4.value), r4.env_mode = "text";
+    else if (n4.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r4 = t(n4.value), r4.env_mode = "formula_inline";
+    else if (n4.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r4 = t(n4.value), r4.env_mode = "formula_display";
+    else if (n4.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r4 = t(n4.value), r4.env_mode = "formula_inline", r4.temporary_format = "texttt";
+    else throw new h(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n4.type}`, n4.position);
     if (this.peek().type === "AT") if (this.consume("AT"), this.peek().type === "HASH") {
-      if (e3) throw new f("Binder name override must not use #", this.peek().position);
+      if (e3) throw new h("Binder name override must not use #", this.peek().position);
       this.consume("HASH");
       let t4 = this.expect("IDENT");
       /^\d+(?:\.\d+)*$/.test(t4.value) ? r4.postfix = {
@@ -2608,7 +2630,7 @@ var h = class {
       r4.style_name = e4.value, this.expect("RBRACKET");
     }
     if (this.peek().type === "LPAREN" && (this.consume("LPAREN"), r4.children = this.parseNodeList(), this.expect("RPAREN")), e3) {
-      if (r4.children.length > 0) throw new f("Binder must be a leaf", n5.position);
+      if (r4.children.length > 0) throw new h("Binder must be a leaf", n4.position);
       r4.binder_explicit = true, r4.kind = "binder";
     }
     return r4;
@@ -2625,7 +2647,7 @@ var h = class {
   }
   expect(e3) {
     let t4 = this.peek();
-    if (t4.type !== e3) throw new f(`Expected ${e3} but got ${t4.type}`, t4.position);
+    if (t4.type !== e3) throw new h(`Expected ${e3} but got ${t4.type}`, t4.position);
     return this.cursor += 1, t4;
   }
   consume(e3) {
@@ -2635,112 +2657,99 @@ var h = class {
     return this.tokens[this.cursor];
   }
 };
-function g(e3, t4 = {}) {
-  let n5 = new h(m(e3)).parse();
-  return _(n5), n5;
+function y(e3, t4 = {}) {
+  let n4 = new v(_(e3)).parse();
+  return b(n4), n4;
 }
-function _(e3, t4 = []) {
-  e3.env_mode && (e3.temporary_source = e3.macro_name, e3.macro_name = t4.length === 0 ? "#" : `#${t4.join(".")}`), e3.binder_explicit && e3.binder_name === void 0 && (e3.binder_name = e3.temporary_source ?? e3.macro_name), e3.children.forEach((e4, n5) => _(e4, [...t4, n5]));
-}
-function E(e3, t4) {
-  return t4 === "text" ? `\\htmlClass{snlMissingArg}{[${e3 === void 0 ? "?" : String(e3)}]}` : `\\mathord{\\htmlClass{snlMissingArg}{${e3 === void 0 ? "\\square" : `\\square_{${e3}}`}}}`;
-}
-function D(e3, t4, n5 = "formula") {
-  let r4 = "ESCAPED_HASH", i6 = e3.replace(/\\#/g, r4);
-  return i6 = i6.replace(/#(\d{1,2})/g, (e4, r5) => {
-    let i7 = Number(r5), a5 = t4[`child${i7}`];
-    return a5 === void 0 ? E(i7, n5) : String(a5);
-  }), i6 = i6.replace(/#\*/g, () => {
-    let e4 = t4.children_joined;
-    return e4 === void 0 ? E(void 0, n5) : String(e4);
-  }), i6.split(r4).join("\\#");
+function b(e3, t4 = []) {
+  e3.env_mode && (e3.temporary_source = e3.macro_name, e3.macro_name = t4.length === 0 ? "#" : `#${t4.join(".")}`), e3.binder_explicit && e3.binder_name === void 0 && (e3.binder_name = e3.temporary_source ?? e3.macro_name), e3.children.forEach((e4, n4) => b(e4, [...t4, n4]));
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-BZAk_eo6.js
-function n2(e3) {
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+function r2(e3) {
   if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return false;
   let t4 = e3;
   if (t4.type !== "i18n" || typeof t4.default_language != "string" || !t4.values || typeof t4.values != "object" || Array.isArray(t4.values)) return false;
-  let n5 = t4.values, r4 = Object.keys(n5);
-  return r4.length > 0 && Object.prototype.hasOwnProperty.call(n5, t4.default_language) && typeof n5[t4.default_language] == "string" && r4.every((e4) => typeof n5[e4] == "string");
-}
-function r2(e3) {
-  if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return false;
-  let r4 = e3;
-  return typeof r4.style_name != "string" || !d(r4.style_name) || "tag" in r4 || "variadic_left" in r4 || "variadic_join" in r4 || "variadic_right" in r4 || !Array.isArray(r4.tags) || !r4.tags.every((e4) => typeof e4 == "string") || r4.separator !== void 0 && typeof r4.separator != "string" || r4.block_template_name !== void 0 && (r4.mode !== "block" || typeof r4.block_template_name != "string") ? false : r4.mode === "text" ? typeof r4.template == "string" || n2(r4.template) : r4.mode === "formula_inline" || r4.mode === "formula_display" || r4.mode === "block" ? typeof r4.template == "string" : false;
+  let n4 = t4.values, r4 = Object.keys(n4);
+  return r4.length > 0 && Object.prototype.hasOwnProperty.call(n4, t4.default_language) && typeof n4[t4.default_language] == "string" && r4.every((e4) => typeof n4[e4] == "string");
 }
 function i2(e3) {
+  if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return false;
+  let t4 = e3;
+  return typeof t4.style_name != "string" || !d(t4.style_name) || "tag" in t4 || "variadic_left" in t4 || "variadic_join" in t4 || "variadic_right" in t4 || !Array.isArray(t4.tags) || !t4.tags.every((e4) => typeof e4 == "string") || t4.separator !== void 0 && typeof t4.separator != "string" || t4.block_template_name !== void 0 && (t4.mode !== "block" || typeof t4.block_template_name != "string") ? false : t4.mode === "text" ? typeof t4.template == "string" || r2(t4.template) : t4.mode === "formula_inline" || t4.mode === "formula_display" || t4.mode === "block" ? typeof t4.template == "string" : false;
+}
+function a3(e3) {
   return Array.isArray(e3) && e3.every((e4) => typeof e4 == "string");
 }
-function a3(e3, n5 = true) {
-  if (typeof e3.name != "string" || !d(e3.name) || typeof e3.description != "string" || typeof e3.dynamic_arity != "boolean" || (n5 || e3.tags !== void 0) && !i2(e3.tags) || e3.kind !== void 0 && typeof e3.kind != "string" || !e3.source || typeof e3.source != "object" || Array.isArray(e3.source)) return false;
+function o2(e3, t4 = true) {
+  if (typeof e3.name != "string" || !d(e3.name) || typeof e3.description != "string" || typeof e3.dynamic_arity != "boolean" || (t4 || e3.tags !== void 0) && !a3(e3.tags) || e3.kind !== void 0 && typeof e3.kind != "string" || !e3.source || typeof e3.source != "object" || Array.isArray(e3.source)) return false;
   let r4 = e3.source;
-  return i2(r4.entries) && i2(r4.urls);
-}
-function s2(e3) {
-  return !e3 || typeof e3 != "object" || Array.isArray(e3) ? false : Object.values(e3).every((e4) => typeof e4 == "string");
+  return a3(r4.entries) && a3(r4.urls);
 }
 function c2(e3) {
+  return !e3 || typeof e3 != "object" || Array.isArray(e3) ? false : Object.values(e3).every((e4) => typeof e4 == "string");
+}
+function l2(e3) {
   if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return false;
   let t4 = Object.getPrototypeOf(e3);
   return t4 === Object.prototype || t4 === null;
 }
-function d2(e3) {
-  if (!c2(e3)) return false;
+function f2(e3) {
+  if (!l2(e3)) return false;
   for (let t4 of Object.values(e3)) {
     if (!t4 || typeof t4 != "object" || Array.isArray(t4)) return false;
     let e4 = t4;
-    if (!a3(e4) || !s2(e4.default_style)) return false;
-    let n5 = e4.styles;
-    if (!n5 || n5.length === 0 || n5.some((e5) => !r2(e5) || typeof e5.template != "string")) return false;
-    let i6 = n5.map((e5) => e5.style_name);
-    if (new Set(i6).size !== i6.length || Object.keys(e4.default_style).some((e5) => e5.trim().length === 0) || Object.values(e4.default_style).some((e5) => !i6.includes(e5))) return false;
+    if (!o2(e4) || !c2(e4.default_style)) return false;
+    let n4 = e4.styles;
+    if (!n4 || n4.length === 0 || n4.some((e5) => !i2(e5) || typeof e5.template != "string")) return false;
+    let r4 = n4.map((e5) => e5.style_name);
+    if (new Set(r4).size !== r4.length || Object.keys(e4.default_style).some((e5) => e5.trim().length === 0) || Object.values(e4.default_style).some((e5) => !r4.includes(e5))) return false;
   }
   return true;
 }
-var N = 256;
-function P(e3, t4) {
-  return e3.reduce((n5, r4, i6) => i6 === 0 ? r4 : `${n5}${e3[i6 - 1] !== "" && r4 !== "" ? `,${t4}` : ","}${r4}`, "");
+var G = 256;
+function K(e3, t4) {
+  return e3.reduce((n4, r4, i6) => i6 === 0 ? r4 : `${n4}${e3[i6 - 1] !== "" && r4 !== "" ? `,${t4}` : ","}${r4}`, "");
 }
-var F = class {
+var q = class {
   indentSpaces;
   inlineParenthesisDepth;
   constructor(e3 = 4, t4 = 3) {
-    this.assertIntegerInRange(e3, "indentSpaces", N), this.assertIntegerInRange(t4, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e3, this.inlineParenthesisDepth = t4;
+    this.assertIntegerInRange(e3, "indentSpaces", G), this.assertIntegerInRange(t4, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e3, this.inlineParenthesisDepth = t4;
   }
-  format(t4) {
-    return this.formatNode(g(t4), 0, " ");
+  format(e3) {
+    return this.formatNode(y(e3), 0, " ");
   }
   formatTree(e3, t4 = " ") {
     return this.formatNode(e3, 0, t4);
   }
-  formatNode(e3, t4, n5) {
+  formatNode(e3, t4, n4) {
     let r4 = this.formatNodeHead(e3);
     if (e3.children.length === 0) return r4;
-    if (this.parenthesisDepth(e3) <= this.inlineParenthesisDepth) return `${r4}(${P(e3.children.map((e4) => this.formatNode(e4, 0, n5)), n5)})`;
+    if (this.parenthesisDepth(e3) <= this.inlineParenthesisDepth) return `${r4}(${K(e3.children.map((e4) => this.formatNode(e4, 0, n4)), n4)})`;
     let i6 = " ".repeat(this.indentSpaces * (t4 + 1));
     return `${r4}(
-${e3.children.map((e4) => `${i6}${this.formatNode(e4, t4 + 1, n5)}`).join(",\n")}
+${e3.children.map((e4) => `${i6}${this.formatNode(e4, t4 + 1, n4)}`).join(",\n")}
 ${" ".repeat(this.indentSpaces * t4)})`;
   }
   formatNodeHead(e3) {
-    let t4 = e3.binder_explicit ? "@" : "", n5, r4 = e3.temporary_source ?? e3.macro_name;
-    if (e3.temporary_format === "texttt") n5 = `\`${r4}\``;
+    let t4 = e3.binder_explicit ? "@" : "", n4, r4 = e3.temporary_source ?? e3.macro_name;
+    if (e3.temporary_format === "texttt") n4 = `\`${r4}\``;
     else switch (e3.env_mode) {
       case "text":
-        n5 = `%${r4}%`;
+        n4 = `%${r4}%`;
         break;
       case "formula_inline":
-        n5 = `$${r4}$`;
+        n4 = `$${r4}$`;
         break;
       case "formula_display":
-        n5 = `$$${r4}$$`;
+        n4 = `$$${r4}$$`;
         break;
       default:
-        n5 = e3.macro_name;
+        n4 = e3.macro_name;
     }
-    let i6 = this.sourceReference(e3), a5 = i6 === void 0 ? "" : `@${i6}`, o3 = e3.style_name === void 0 ? "" : `[${e3.style_name}]`;
-    return `${t4}${n5}${a5}${o3}`;
+    let i6 = this.sourceReference(e3), a5 = i6 === void 0 ? "" : `@${i6}`, o4 = e3.style_name === void 0 ? "" : `[${e3.style_name}]`;
+    return `${t4}${n4}${a5}${o4}`;
   }
   sourceReference(e3) {
     if (e3.binder_explicit && e3.binder_name && e3.binder_name !== e3.macro_name) return e3.binder_name;
@@ -2751,43 +2760,43 @@ ${" ".repeat(this.indentSpaces * t4)})`;
     let t4 = e3.mdata.src;
     return typeof t4 == "string" ? t4 : void 0;
   }
-  assertIntegerInRange(e3, t4, n5) {
-    if (!Number.isSafeInteger(e3) || e3 < 0 || e3 > n5) throw RangeError(`${t4} must be a non-negative integer no greater than ${n5}`);
+  assertIntegerInRange(e3, t4, n4) {
+    if (!Number.isSafeInteger(e3) || e3 < 0 || e3 > n4) throw RangeError(`${t4} must be a non-negative integer no greater than ${n4}`);
   }
   parenthesisDepth(e3) {
     let t4 = -1;
-    for (let n5 of e3.children) t4 = Math.max(t4, this.parenthesisDepth(n5));
+    for (let n4 of e3.children) t4 = Math.max(t4, this.parenthesisDepth(n4));
     return t4 + 1;
   }
 };
-var I = new F(0, 2 ** 53 - 1);
-function R(e3) {
-  let t4 = [], n5 = [e3];
-  for (; n5.length > 0; ) {
-    let e4 = n5.pop();
+var J = new q(0, 2 ** 53 - 1);
+function X(e3) {
+  let t4 = [], n4 = [e3];
+  for (; n4.length > 0; ) {
+    let e4 = n4.pop();
     e4.kind === "binder" && t4.push(e4);
-    for (let t5 = e4.children.length - 1; t5 >= 0; --t5) n5.push(e4.children[t5]);
+    for (let t5 = e4.children.length - 1; t5 >= 0; --t5) n4.push(e4.children[t5]);
   }
   return t4;
 }
-function z(e3, t4 = []) {
-  let n5 = 0, r4 = () => `b${++n5}`, i6 = t4.map((e4) => ({
+function Z(e3, t4 = []) {
+  let n4 = 0, r4 = () => `b${++n4}`, i6 = t4.map((e4) => ({
     name: e4,
     ref: ""
   }));
   function a5(e4, t5) {
-    let n6 = t5;
+    let n5 = t5;
     for (let i7 of e4.children) {
-      a5(i7, n6);
-      let o3 = R(i7);
-      if (o3.length > 0) {
-        n6 === t5 && (n6 = [...t5]);
-        for (let t6 of o3) {
+      a5(i7, n5);
+      let o4 = X(i7);
+      if (o4.length > 0) {
+        n5 === t5 && (n5 = [...t5]);
+        for (let t6 of o4) {
           let i8 = t6.mdata && typeof t6.mdata == "object" ? t6.mdata : {}, a6 = (typeof i8.bindRef == "string" ? i8.bindRef : "") || r4();
           t6.mdata = {
             ...i8,
             bindRef: a6
-          }, n6.push({
+          }, n5.push({
             name: t6.binder_name ?? t6.macro_name,
             ref: a6
           }), e4.scope || (e4.scope = "binder", e4.mdata = {
@@ -2799,18 +2808,18 @@ function z(e3, t4 = []) {
     }
     if (e4.children.length === 0) {
       if (e4.kind === "bvar") {
-        let n7 = [...t5].reverse().find((t6) => t6.name === (e4.temporary_source ?? e4.macro_name)), r5 = e4.mdata && typeof e4.mdata == "object" ? e4.mdata : {};
-        n7 && n7.ref ? e4.mdata = {
+        let n6 = [...t5].reverse().find((t6) => t6.name === (e4.temporary_source ?? e4.macro_name)), r5 = e4.mdata && typeof e4.mdata == "object" ? e4.mdata : {};
+        n6 && n6.ref ? e4.mdata = {
           ...r5,
-          bindRef: n7.ref
+          bindRef: n6.ref
         } : e4.mdata = Object.keys(r5).length ? r5 : null;
         return;
       }
       if (e4.kind !== "binder" && (!e4.kind || e4.env_mode)) {
-        let n7 = [...t5].reverse().find((t6) => t6.name === (e4.temporary_source ?? e4.macro_name)), r5 = e4.mdata && typeof e4.mdata == "object" ? e4.mdata : {};
-        n7 ? (e4.kind = "bvar", n7.ref ? e4.mdata = {
+        let n6 = [...t5].reverse().find((t6) => t6.name === (e4.temporary_source ?? e4.macro_name)), r5 = e4.mdata && typeof e4.mdata == "object" ? e4.mdata : {};
+        n6 ? (e4.kind = "bvar", n6.ref ? e4.mdata = {
           ...r5,
-          bindRef: n7.ref
+          bindRef: n6.ref
         } : e4.mdata = Object.keys(r5).length ? r5 : null) : (e4.env_mode && (e4.kind = "fvar"), e4.mdata = Object.keys(r5).length ? r5 : null);
       }
     }
@@ -2818,7 +2827,7 @@ function z(e3, t4 = []) {
   a5(e3, i6);
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-apply-DUlrs057.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-apply-QZ0PkjYJ.js
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
 function i3(e3) {
@@ -2832,7 +2841,7 @@ function a4(e3) {
   let t4 = e3.mdata.src;
   if (!(t4 == null || t4 === "")) return String(t4);
 }
-function o2(e3) {
+function o3(e3) {
   return e3.source?.type === "tree_path" ? e3.source.path.join(".") : void 0;
 }
 var S = {
@@ -2846,10 +2855,10 @@ var C = [
   S.binderDecl
 ];
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-5poAAqxD.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-DTz43-3h.js
 var import_react2 = __toESM(require_react(), 1);
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/katex/dist/katex.mjs
+// node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -3012,7 +3021,7 @@ var SETTINGS_SCHEMA = {
     type: "number",
     default: Infinity,
     description: "If non-zero, all user-specified sizes, e.g. in \\rule{500em}{500em}, will be capped to maxSize ems. Otherwise, elements and spaces can be arbitrarily large",
-    processor: (s3) => Math.max(0, s3),
+    processor: (s2) => Math.max(0, s2),
     cli: "-s, --max-size <n>",
     cliProcessor: parseInt
   },
@@ -3020,9 +3029,9 @@ var SETTINGS_SCHEMA = {
     type: "number",
     default: 1e3,
     description: "Limit the number of macro expansions to the specified number, to prevent e.g. infinite macro loops. If set to Infinity, the macro expander will try to fully expand as in LaTeX.",
-    processor: (n5) => Math.max(0, n5),
+    processor: (n4) => Math.max(0, n4),
     cli: "-e, --max-expand <n>",
-    cliProcessor: (n5) => n5 === "Infinity" ? Infinity : parseInt(n5)
+    cliProcessor: (n4) => n4 === "Infinity" ? Infinity : parseInt(n4)
   },
   globalGroup: {
     type: "boolean",
@@ -3207,7 +3216,7 @@ var Style = class {
     return this.size >= 2;
   }
 };
-var D2 = 0;
+var D = 0;
 var Dc = 1;
 var T = 2;
 var Tc = 3;
@@ -3215,15 +3224,15 @@ var S2 = 4;
 var Sc = 5;
 var SS = 6;
 var SSc = 7;
-var styles = [new Style(D2, 0, false), new Style(Dc, 0, true), new Style(T, 1, false), new Style(Tc, 1, true), new Style(S2, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
+var styles = [new Style(D, 0, false), new Style(Dc, 0, true), new Style(T, 1, false), new Style(Tc, 1, true), new Style(S2, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
 var sup = [S2, Sc, S2, Sc, SS, SSc, SS, SSc];
 var sub = [Sc, Sc, Sc, Sc, SSc, SSc, SSc, SSc];
 var fracNum = [T, Tc, S2, Sc, SS, SSc, SS, SSc];
 var fracDen = [Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc];
 var cramp = [Dc, Dc, Tc, Tc, Sc, Sc, SSc, SSc];
-var text$1 = [D2, Dc, T, Tc, T, Tc, T, Tc];
+var text$1 = [D, Dc, T, Tc, T, Tc, T, Tc];
 var Style$1 = {
-  DISPLAY: styles[D2],
+  DISPLAY: styles[D],
   TEXT: styles[T],
   SCRIPT: styles[S2],
   SCRIPTSCRIPT: styles[SS]
@@ -3300,7 +3309,7 @@ function scriptFromCodepoint(codepoint) {
   return null;
 }
 var allBlocks = [];
-scriptData.forEach((s3) => s3.blocks.forEach((b4) => allBlocks.push(...b4)));
+scriptData.forEach((s2) => s2.blocks.forEach((b4) => allBlocks.push(...b4)));
 function supportedCodepoint(codepoint) {
   for (var i6 = 0; i6 < allBlocks.length; i6 += 2) {
     if (codepoint >= allBlocks[i6] && codepoint <= allBlocks[i6 + 1]) {
@@ -3326,9 +3335,9 @@ var sqrtSize3 = function sqrtSize32(extraVinculum, hLinePad2) {
 var sqrtSize4 = function sqrtSize42(extraVinculum, hLinePad2) {
   return "M473," + (2713 + extraVinculum + hLinePad2) + "\nc339.3,-1799.3,509.3,-2700,510,-2702 l" + extraVinculum / 5.298 + " -" + extraVinculum + "\nc3.3,-7.3,9.3,-11,18,-11 H400000v" + (40 + extraVinculum) + "H1017.7\ns-90.5,478,-276.2,1466c-185.7,988,-279.5,1483,-281.5,1485c-2,6,-10,9,-24,9\nc-8,0,-12,-0.7,-12,-2c0,-1.3,-5.3,-32,-16,-92c-50.7,-293.3,-119.7,-693.3,-207,-1200\nc0,-1.3,-5.3,8.7,-16,30c-10.7,21.3,-21.3,42.7,-32,64s-16,33,-16,33s-26,-26,-26,-26\ns76,-153,76,-153s77,-151,77,-151c0.7,0.7,35.7,202,105,604c67.3,400.7,102,602.7,104,\n606zM" + (1001 + extraVinculum) + " " + hLinePad2 + "h400000v" + (40 + extraVinculum) + "H1017.7z";
 };
-var phasePath = function phasePath2(y2) {
-  var x2 = y2 / 2;
-  return "M400000 " + y2 + " H0 L" + x2 + " 0 l65 45 L145 " + (y2 - 80) + " H400000z";
+var phasePath = function phasePath2(y4) {
+  var x4 = y4 / 2;
+  return "M400000 " + y4 + " H0 L" + x4 + " 0 l65 45 L145 " + (y4 - 80) + " H400000z";
 };
 var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
   var vertSegment = viewBoxHeight - 54 - hLinePad2 - extraVinculum;
@@ -3607,8 +3616,8 @@ var calculateSize = function calculateSize2(sizeValue, options) {
   }
   return Math.min(sizeValue.number * scale, options.maxSize);
 };
-var makeEm = function makeEm2(n5) {
-  return +n5.toFixed(4) + "em";
+var makeEm = function makeEm2(n4) {
+  return +n4.toFixed(4) + "em";
 };
 var createClass = function createClass2(classes) {
   return classes.filter((cls) => cls).join(" ");
@@ -7798,8 +7807,8 @@ var _traverseNonSpaceNodes = function traverseNonSpaceNodes(nodes, callback, pre
     } else if (isRoot && node.hasClass("newline")) {
       prev.node = makeSpan(["leftmost"]);
     }
-    prev.insertAfter = /* @__PURE__ */ ((index) => (n5) => {
-      nodes.splice(index + 1, 0, n5);
+    prev.insertAfter = /* @__PURE__ */ ((index) => (n4) => {
+      nodes.splice(index + 1, 0, n4);
       i6++;
     })(i6);
   }
@@ -9468,13 +9477,13 @@ function parseCD(parser) {
   for (var i6 = 0; i6 < parsedRows.length; i6++) {
     var rowNodes = parsedRows[i6];
     var cell = newCell();
-    for (var j3 = 0; j3 < rowNodes.length; j3++) {
-      if (!isStartOfArrow(rowNodes[j3])) {
-        cell.body.push(rowNodes[j3]);
+    for (var j2 = 0; j2 < rowNodes.length; j2++) {
+      if (!isStartOfArrow(rowNodes[j2])) {
+        cell.body.push(rowNodes[j2]);
       } else {
         row.push(cell);
-        j3 += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j3]).text;
+        j2 += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -9490,23 +9499,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k2 = j3 + 1; k2 < rowNodes.length; k2++) {
-              if (isLabelEnd(rowNodes[k2], arrowChar)) {
+            for (var k = j2 + 1; k < rowNodes.length; k++) {
+              if (isLabelEnd(rowNodes[k], arrowChar)) {
                 inLabel = false;
-                j3 = k2;
+                j2 = k;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k2])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
+              if (isStartOfArrow(rowNodes[k])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
               }
-              labels[labelNum].body.push(rowNodes[k2]);
+              labels[labelNum].body.push(rowNodes[k]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j3]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j3]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -11505,8 +11514,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i6 = 0; i6 < group.body.length; i6++) {
     var rw = group.body[i6];
     var row = [];
-    for (var j3 = 0; j3 < rw.length; j3++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j3], options)]));
+    for (var j2 = 0; j2 < rw.length; j2++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
     }
     if (group.tags && group.tags[i6]) {
       row.unshift(glue);
@@ -14099,8 +14108,8 @@ var styleMap = {
   "script": Style$1.SCRIPT,
   "scriptscript": Style$1.SCRIPTSCRIPT
 };
-function isStyleStr(s3) {
-  return s3 in styleMap;
+function isStyleStr(s2) {
+  return s2 in styleMap;
 }
 defineFunction({
   type: "styling",
@@ -17039,27 +17048,27 @@ var Parser = class _Parser {
    * The group will be modified in place.
    */
   formLigatures(group) {
-    var n5 = group.length - 1;
-    for (var i6 = 0; i6 < n5; ++i6) {
+    var n4 = group.length - 1;
+    for (var i6 = 0; i6 < n4; ++i6) {
       var a5 = group[i6];
       if (a5.type !== "textord") {
         continue;
       }
-      var v4 = a5.text;
+      var v3 = a5.text;
       var next = group[i6 + 1];
       if (!next || next.type !== "textord") {
         continue;
       }
-      if (v4 === "-" && next.text === "-") {
+      if (v3 === "-" && next.text === "-") {
         var afterNext = group[i6 + 2];
-        if (i6 + 1 < n5 && afterNext && afterNext.type === "textord" && afterNext.text === "-") {
+        if (i6 + 1 < n4 && afterNext && afterNext.type === "textord" && afterNext.text === "-") {
           group.splice(i6, 3, {
             type: "textord",
             mode: "text",
             loc: SourceLocation.range(a5, afterNext),
             text: "---"
           });
-          n5 -= 2;
+          n4 -= 2;
         } else {
           group.splice(i6, 2, {
             type: "textord",
@@ -17067,17 +17076,17 @@ var Parser = class _Parser {
             loc: SourceLocation.range(a5, next),
             text: "--"
           });
-          n5 -= 1;
+          n4 -= 1;
         }
       }
-      if ((v4 === "'" || v4 === "`") && next.text === v4) {
+      if ((v3 === "'" || v3 === "`") && next.text === v3) {
         group.splice(i6, 2, {
           type: "textord",
           mode: "text",
           loc: SourceLocation.range(a5, next),
-          text: v4 + v4
+          text: v3 + v3
         });
-        n5 -= 1;
+        n4 -= 1;
       }
     }
   }
@@ -17128,9 +17137,9 @@ var Parser = class _Parser {
       }
       var group = symbols[this.mode][text2].group;
       var loc = SourceLocation.range(nucleus);
-      var s3;
+      var s2;
       if (isAtom(group)) {
-        s3 = {
+        s2 = {
           type: "atom",
           mode: this.mode,
           family: group,
@@ -17138,14 +17147,14 @@ var Parser = class _Parser {
           text: text2
         };
       } else {
-        s3 = {
+        s2 = {
           type: group,
           mode: this.mode,
           loc,
           text: text2
         };
       }
-      symbol = s3;
+      symbol = s2;
     } else if (text2.charCodeAt(0) >= 128) {
       if (this.settings.strict) {
         if (!supportedCodepoint(text2.charCodeAt(0))) {
@@ -17347,235 +17356,295 @@ var katex = {
   __domTree
 };
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-5poAAqxD.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-DTz43-3h.js
 var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
 var import_react_dom = __toESM(require_react_dom(), 1);
-function E2(e3) {
+function T3(e3) {
   return e3.join(".");
 }
 function j(e3) {
   return e3.replace(/[\\{}_$%&#^~]/g, (e4) => `\\${e4}`);
 }
 function M(e3) {
-  let t4 = "PH", n5 = [], r4 = j(e3.replace(/#(\d{1,2}|\*)/g, (e4) => (n5.push(e4), t4))), i6 = 0;
-  return r4.replace(RegExp(t4, "g"), () => n5[i6++]);
+  let t4 = "PH", n4 = [], r4 = j(e3.replace(/#(\d{1,2}|\*)/g, (e4) => (n4.push(e4), t4))), i6 = 0;
+  return r4.replace(RegExp(t4, "g"), () => n4[i6++]);
 }
-function N2(e3, t4, n5) {
-  return n5 && e3.env_mode === "text" || t4?.kind === "sub" ? "sub" : e3.kind ? e3.kind : t4?.kind ? t4.kind : t4 ? "const" : "fvar";
+function N(e3, t4, n4) {
+  return n4 && e3.env_mode === "text" || t4?.kind === "sub" ? "sub" : e3.kind ? e3.kind : t4?.kind ? t4.kind : t4 ? "const" : "fvar";
 }
-function P2(e3) {
+function P(e3) {
   if (/[\u0000-\u001f\u007f]/.test(e3)) throw Error(`invalid \\htmlData attribute value (control char): ${JSON.stringify(e3)}`);
   return e3.replace(/[,{}#]/g, "_");
 }
-function F2(e3, t4, n5 = "en") {
-  if (t4.styles.length === 0) throw Error(`macro "${t4.name}" has no styles`);
-  let r4 = e3.style_name ?? t4.default_style?.[n5] ?? t4.default_style?.en;
-  if (r4 == null) return t4.styles[0];
-  let i6 = t4.styles.find((e4) => e4.style_name === r4);
-  if (!i6) throw Error(`unknown style "${r4}" for macro "${t4.name}" (available: ${t4.styles.map((e4) => e4.style_name).join(", ") || "(none)"})`);
-  return i6;
+function F(e3, t4, n4 = "en") {
+  if (z(t4), t4.styles.length === 0) throw Error(`macro "${t4.name}" has no styles`);
+  let r4 = t4.default_style, i6 = r4 && Object.prototype.hasOwnProperty.call(r4, n4) ? r4[n4] : void 0, a5 = r4 && Object.prototype.hasOwnProperty.call(r4, "en") ? r4.en : void 0, o4 = e3.style_name ?? i6 ?? a5;
+  if (o4 == null) return t4.styles[0];
+  let s2 = t4.styles.find((e4) => e4.style_name === o4);
+  if (!s2) throw Error(`unknown style "${o4}" for macro "${t4.name}" (available: ${t4.styles.map((e4) => e4.style_name).join(", ") || "(none)"})`);
+  return s2;
 }
-function te(e3) {
-  let t4 = e3.template;
-  if (e3.mode !== "text") {
-    if (typeof t4 != "string") throw Error(`style "${e3.style_name}" may localize templates only in text mode`);
+function I(e3, n4) {
+  if (!e3 || typeof e3 != "object" || Array.isArray(e3)) throw Error(`style "${n4}" has a malformed template projection`);
+  let r4 = e3;
+  if ("type" in r4 || ![
+    "formula_inline",
+    "formula_display",
+    "text",
+    "block"
+  ].includes(String(r4.mode)) || typeof r4.body != "string" || p(r4.body).invalid || r4.separator !== void 0 && typeof r4.separator != "string" || r4.block_template_name !== void 0 && (r4.mode !== "block" || typeof r4.block_template_name != "string")) throw Error(`style "${n4}" has a malformed template projection`);
+}
+function L(e3) {
+  let n4 = p(e3);
+  return `${n4.variadic ? "dynamic" : "fixed"}:${n4.positional_arity}`;
+}
+var ne = [
+  "tag",
+  "mode",
+  "separator",
+  "block_template_name",
+  "variadic_left",
+  "variadic_join",
+  "variadic_right",
+  "react_renderer_key"
+];
+var R = /* @__PURE__ */ new Set([
+  "style_name",
+  "tags",
+  "template"
+]);
+var re = /* @__PURE__ */ new Set([
+  "type",
+  "default_language",
+  "values"
+]);
+function ie(e3, n4) {
+  let r4 = e3;
+  if (ne.some((e4) => e4 in r4)) throw Error(`style "${e3.style_name}" has retired template fields outside template`);
+  if (Object.keys(r4).some((e4) => !R.has(e4))) throw Error(`style "${e3.style_name}" has fields outside the schema v11 Style boundary`);
+  let i6 = e3.template;
+  if (i6 && typeof i6 == "object" && !Array.isArray(i6) && i6.type === "i18n") {
+    let r5 = i6, a5 = r5.values;
+    if (Object.keys(r5).some((e4) => !re.has(e4)) || typeof r5.default_language != "string" || !a5 || typeof a5 != "object" || Array.isArray(a5) || !Object.prototype.hasOwnProperty.call(a5, r5.default_language)) throw Error(`style "${e3.style_name}" has a malformed localized template`);
+    let o4 = /* @__PURE__ */ new Set();
+    for (let r6 of Object.values(a5)) {
+      I(r6, e3.style_name);
+      let i7 = r6.body;
+      if (o4.add(L(i7)), n4 !== void 0 && p(i7).variadic !== n4) throw Error(`style "${e3.style_name}" template variadic marker disagrees with macro arity`);
+    }
+    if (o4.size !== 1) throw Error(`style "${e3.style_name}" has localized templates with inconsistent arity`);
     return;
   }
-  if (typeof t4 == "string") return;
-  if (!t4 || typeof t4 != "object" || Array.isArray(t4)) throw Error(`style "${e3.style_name}" has a malformed localized template`);
-  let n5 = t4, r4 = n5.values;
-  if (n5.type !== "i18n" || typeof n5.default_language != "string" || !r4 || typeof r4 != "object" || Array.isArray(r4) || Object.values(r4).some((e4) => typeof e4 != "string") || !Object.prototype.hasOwnProperty.call(r4, n5.default_language) || typeof r4[n5.default_language] != "string") throw Error(`style "${e3.style_name}" has a malformed localized template`);
+  if (I(i6, e3.style_name), n4 !== void 0 && p(i6.body).variadic !== n4) throw Error(`style "${e3.style_name}" template variadic marker disagrees with macro arity`);
 }
-function I2(t4) {
-  te(t4);
-  let n5 = t4.template;
-  return t4.mode !== "text" || typeof n5 == "string" ? () => n5 : a(n5);
+function z(e3) {
+  for (let t4 of e3.styles) ie(t4, e3.dynamic_arity);
 }
-function L(e3, t4, n5) {
-  let r4 = I2(e3);
-  return n5 === void 0 ? t4 ? t4.run_reader(r4) : r4({ language: "en" }) : r4({ language: n5 });
+function B(t4, n4) {
+  ie(t4, n4);
+  let r4 = t4.template;
+  return "type" in r4 ? a(r4) : () => r4;
 }
-function ne(e3) {
+function V(e3, t4, n4, r4) {
+  let i6 = B(e3, r4);
+  return n4 === void 0 ? t4 ? t4.run_reader(i6) : i6({ language: "en" }) : i6({ language: n4 });
+}
+function ae(e3) {
   return e3?.query_environment().language ?? "en";
 }
-function R2(e3, t4, n5, r4, i6) {
-  let a5 = i6 || N2(e3, n5, r4?.length === 0);
+function H(e3, t4, n4, r4, i6) {
+  let a5 = i6 || N(e3, n4, r4?.length === 0);
   if (a5 === "sub") return t4;
-  let s3 = P2(e3.macro_name), u3 = P2(a5), d3 = i3(e3), f5 = d3 ? `,bindRef=${P2(d3)}` : "", p4 = a4(e3), m4 = p4 ? `,src=${P2(p4)}` : "", h3 = o2(e3), g3 = h3 === void 0 ? "" : `,source-path=${P2(h3)}`, _3 = e3.scope ? `,scope=${P2(e3.scope)}` : "";
-  return `\\htmlData{name=${s3},kind=${u3}${e3.style_name ? `,style=${P2(e3.style_name)}` : ""}${_3}${f5}${m4}${g3}${r4 ? `,tree-path=${E2(r4)}` : ""}}{${t4}}`;
+  let o4 = P(e3.macro_name), c3 = P(a5), d2 = i3(e3), f4 = d2 ? `,bindRef=${P(d2)}` : "", p4 = a4(e3), m4 = p4 ? `,src=${P(p4)}` : "", h4 = o3(e3), g3 = h4 === void 0 ? "" : `,source-path=${P(h4)}`, _3 = e3.scope ? `,scope=${P(e3.scope)}` : "";
+  return `\\htmlData{name=${o4},kind=${c3}${e3.style_name ? `,style=${P(e3.style_name)}` : ""}${_3}${f4}${m4}${g3}${r4 ? `,tree-path=${T3(r4)}` : ""}}{${t4}}`;
 }
-function z2(e3, t4) {
-  let n5 = 0;
+function U(e3, t4) {
+  let n4 = 0;
   for (let r4 = t4; r4 < e3.length; r4 += 1) {
     if (e3[r4] === "\\") {
       r4 += 1;
       continue;
     }
-    if (e3[r4] === "{") n5 += 1;
-    else if (e3[r4] === "}" && (--n5, n5 === 0)) return r4;
+    if (e3[r4] === "{") n4 += 1;
+    else if (e3[r4] === "}" && (--n4, n4 === 0)) return r4;
   }
   return -1;
 }
-function B(e3) {
+function oe(e3) {
   let t4 = "";
-  for (let n5 = 0; n5 < e3.length; n5 += 1) {
-    if (e3[n5] === "%") {
+  for (let n4 = 0; n4 < e3.length; n4 += 1) {
+    if (e3[n4] === "%") {
       let r4 = 0;
-      for (let t5 = n5 - 1; t5 >= 0 && e3[t5] === "\\"; --t5) r4 += 1;
+      for (let t5 = n4 - 1; t5 >= 0 && e3[t5] === "\\"; --t5) r4 += 1;
       if (r4 === 0) t4 += "\\";
       else if (r4 % 2 == 0) return null;
     }
-    t4 += e3[n5];
+    t4 += e3[n4];
   }
   return t4;
 }
-function re(e3, t4) {
+function se(e3, t4) {
   if (e3.startsWith("\\verb", t4)) {
-    let n5 = t4 + 5;
-    e3[n5] === "*" && (n5 += 1);
-    let r4 = e3[n5];
+    let n4 = t4 + 5;
+    e3[n4] === "*" && (n4 += 1);
+    let r4 = e3[n4];
     if (r4 && !/\s/.test(r4)) {
-      let i6 = e3.indexOf(r4, n5 + 1);
+      let i6 = e3.indexOf(r4, n4 + 1);
       if (i6 >= 0) {
-        let n6 = e3.slice(t4, i6 + 1);
+        let n5 = e3.slice(t4, i6 + 1);
         return {
-          rawLength: n6.length,
-          rawSource: n6,
-          wrapperSafeSource: n6
+          rawLength: n5.length,
+          rawSource: n5,
+          wrapperSafeSource: n5
         };
       }
     }
   }
-  for (let n5 of ["\\url", "\\href"]) {
-    if (!e3.startsWith(n5, t4) || /[A-Za-z]/.test(e3[t4 + n5.length] ?? "")) continue;
-    let r4 = t4 + n5.length;
+  for (let n4 of ["\\url", "\\href"]) {
+    if (!e3.startsWith(n4, t4) || /[A-Za-z]/.test(e3[t4 + n4.length] ?? "")) continue;
+    let r4 = t4 + n4.length;
     for (; /\s/.test(e3[r4] ?? ""); ) r4 += 1;
     if (e3[r4] !== "{") continue;
-    let i6 = z2(e3, r4);
+    let i6 = U(e3, r4);
     if (i6 >= 0) {
-      let n6 = e3.slice(t4, i6 + 1);
+      let n5 = e3.slice(t4, i6 + 1);
       return {
-        rawLength: n6.length,
-        rawSource: n6,
-        wrapperSafeSource: B(n6)
+        rawLength: n5.length,
+        rawSource: n5,
+        wrapperSafeSource: oe(n5)
       };
     }
   }
   return null;
 }
-function ie(e3, t4) {
-  let n5 = [], r4 = [], i6 = [], a5 = "", o3 = true, s3 = 0, c3 = 0;
+function W(e3, t4) {
+  let n4 = [], r4 = [], i6 = [], a5 = "", o4 = true, s2 = 0, c3 = 0;
   for (let t5 = 0; t5 < e3.length; t5 += 1) {
     let l4 = e3[t5];
     if (l4 === "%") {
-      let n6 = e3.slice(t5).match(/^%[^\r\n]*(?:\r\n?|\n|$)/)?.[0] ?? "%";
-      a5 += n6, t5 += n6.length - 1;
+      let n5 = e3.slice(t5).match(/^%[^\r\n]*(?:\r\n?|\n|$)/)?.[0] ?? "%";
+      a5 += n5, t5 += n5.length - 1;
       continue;
     }
     if (l4 === "\\") {
-      let u3 = re(e3, t5);
-      if (u3) {
-        u3.wrapperSafeSource == null ? (a5 += u3.rawSource, o3 = false) : a5 += u3.wrapperSafeSource, t5 += u3.rawLength - 1;
+      let u4 = se(e3, t5);
+      if (u4) {
+        u4.wrapperSafeSource == null ? (a5 += u4.rawSource, o4 = false) : a5 += u4.wrapperSafeSource, t5 += u4.rawLength - 1;
         continue;
       }
-      let d3 = e3.slice(t5).match(/^\\(begin|end)(?:(?:[ \t\r\n]+)|(?:%[^\r\n]*(?:\r\n?|\n)))*\{[^{}]+\}/)?.[0];
-      if (d3) {
-        a5 += d3, d3.startsWith("\\begin") ? c3 += 1 : c3 = Math.max(0, c3 - 1), t5 += d3.length - 1;
+      let d2 = e3.slice(t5).match(/^\\(begin|end)(?:(?:[ \t\r\n]+)|(?:%[^\r\n]*(?:\r\n?|\n)))*\{[^{}]+\}/)?.[0];
+      if (d2) {
+        a5 += d2, d2.startsWith("\\begin") ? c3 += 1 : c3 = Math.max(0, c3 - 1), t5 += d2.length - 1;
         continue;
       }
-      let f5 = e3[t5 + 1];
-      f5 === "\\" && s3 === 0 && c3 === 0 ? (n5.push(a5), r4.push(o3), i6.push("\\\\"), a5 = "", o3 = true, t5 += 1) : (a5 += l4, f5 !== void 0 && (a5 += f5, t5 += 1));
+      let f4 = e3[t5 + 1];
+      f4 === "\\" && s2 === 0 && c3 === 0 ? (n4.push(a5), r4.push(o4), i6.push("\\\\"), a5 = "", o4 = true, t5 += 1) : (a5 += l4, f4 !== void 0 && (a5 += f4, t5 += 1));
       continue;
     }
-    l4 === "{" ? s3 += 1 : l4 === "}" && (s3 = Math.max(0, s3 - 1)), l4 === "&" && s3 === 0 && c3 === 0 ? (n5.push(a5), r4.push(o3), i6.push("&"), a5 = "", o3 = true) : a5 += l4;
+    l4 === "{" ? s2 += 1 : l4 === "}" && (s2 = Math.max(0, s2 - 1)), l4 === "&" && s2 === 0 && c3 === 0 ? (n4.push(a5), r4.push(o4), i6.push("&"), a5 = "", o4 = true) : a5 += l4;
   }
-  return n5.push(a5), r4.push(o3), n5.map((e4, n6) => r4[n6] ? t4(e4) : `${t4("")}${e4}`).map((e4, t5) => t5 < i6.length ? `${e4}${i6[t5]}` : e4).join("");
+  return n4.push(a5), r4.push(o4), n4.map((e4, n5) => r4[n5] ? t4(e4) : `${t4("")}${e4}`).map((e4, t5) => t5 < i6.length ? `${e4}${i6[t5]}` : e4).join("");
 }
-function ae(e3, t4, n5) {
-  let r4 = oe(t4), i6 = oe(n5);
+function G2(e3, t4, n4) {
+  let r4 = ce(t4), i6 = ce(n4);
   return i6 === "formula" && r4 === "text" ? `\\text{${e3}}` : i6 === "text" && r4 === "formula" ? `$${e3}$` : e3;
 }
-function oe(e3) {
+function ce(e3) {
   return e3 === "block" ? "block" : e3 === "text" ? "text" : "formula";
 }
-function se(e3, t4, n5 = "en") {
+function le(e3, t4, n4 = "en") {
   if (e3.env_mode) return e3.env_mode;
   if (!t4) return "formula_inline";
   try {
-    return F2(e3, t4, n5).mode;
+    return V(F(e3, t4, n4), void 0, n4, t4.dynamic_arity).mode;
   } catch {
     return "formula_inline";
   }
 }
-function V(e3, t4, n5 = "en") {
-  return se(e3, t4, n5) === "formula_display" ? "block" : "inline";
+function K2(e3, t4, n4 = "en") {
+  return le(e3, t4, n4) === "formula_display" ? "block" : "inline";
 }
-async function ce(e3, t4, i6 = [], a5, o3, s3) {
-  let c3 = s3 ?? ne(o3);
-  if (r(e3)) return R2(e3, `\\mathord{\\htmlClass{snlArgPlaceholder}{${i6.length > 0 ? i6[i6.length - 1] : 0}}}`, null, i6);
+async function ue(e3, t4, i6 = [], a5, o4, s2) {
+  let c3 = s2 ?? ae(o4);
+  if (r(e3)) return H(e3, `\\mathord{\\htmlClass{snlArgPlaceholder}{${i6.length > 0 ? i6[i6.length - 1] : 0}}}`, null, i6);
   let l4 = e3.env_mode ? null : await t4.query_macro({
     macro_name: e3.macro_name,
     signal: a5
-  }), u3 = l4 ? F2(e3, l4, c3) : void 0, d3 = !!l4, f5 = e3.env_mode ?? u3?.mode ?? "formula_inline", p4 = oe(f5), m4 = await Promise.all(e3.children.map((e4, n5) => ce(e4, t4, [...i6, n5], a5, o3, c3))), h3 = await Promise.all(m4.map(async (n5, r4) => {
-    let i7 = e3.children[r4], o4 = "formula_inline";
-    if (i7?.env_mode) o4 = i7.env_mode;
+  }), u4 = l4 ? F(e3, l4, c3) : void 0, d2 = u4 ? V(u4, o4, c3, l4?.dynamic_arity) : void 0, f4 = !!l4, p4 = e3.env_mode ?? d2?.mode ?? "formula_inline", m4 = ce(p4), h4 = await Promise.all(e3.children.map((e4, n4) => ue(e4, t4, [...i6, n4], a5, o4, c3))), g3 = await Promise.all(h4.map(async (n4, r4) => {
+    let i7 = e3.children[r4], s3 = "formula_inline";
+    if (i7?.env_mode) s3 = i7.env_mode;
     else {
       let e4 = await t4.query_macro({
         macro_name: i7.macro_name,
         signal: a5
       });
       if (e4) try {
-        o4 = F2(i7, e4, c3).mode;
+        s3 = V(F(i7, e4, c3), o4, c3, e4.dynamic_arity).mode;
       } catch {
-        o4 = "formula_inline";
+        s3 = "formula_inline";
       }
     }
-    return ae(n5, o4, f5);
+    return G2(n4, s3, p4);
   }));
-  if (p4 === "block") return R2(e3, "\\text{\\color{red}\\{block macro `" + j(e3.macro_name) + "` cannot be used inside a formula\\}}", l4, i6);
+  if (m4 === "block") return H(e3, "\\text{\\color{red}\\{block macro `" + j(e3.macro_name) + "` cannot be used inside a formula\\}}", l4, i6);
   if (e3.env_mode) {
-    let t5 = e3.env_mode === "text", r4 = e3.temporary_source ?? e3.macro_name, a6 = D(e3.temporary_format === "texttt" ? `\\texttt{${j(r4)}}` : t5 ? M(r4) : r4, { ...Object.fromEntries(h3.map((e4, t6) => [`child${t6}`, e4])) }, t5 ? "text" : "formula"), o4 = t5 ? `\\text{${a6}}` : a6;
-    return t5 ? R2(e3, o4, l4, i6) : ie(o4, (t6) => R2(e3, t6, l4, i6));
+    let t5 = e3.env_mode === "text", n4 = e3.temporary_source ?? e3.macro_name, a6 = m(e3.temporary_format === "texttt" ? `\\texttt{${j(n4)}}` : t5 ? M(n4) : n4, { ...Object.fromEntries(g3.map((e4, t6) => [`child${t6}`, e4])) }, t5 ? "text" : "formula"), o5 = t5 ? `\\text{${a6}}` : a6;
+    return t5 ? H(e3, o5, l4, i6) : W(o5, (t6) => H(e3, t6, l4, i6));
   }
-  if (!d3) {
+  if (!f4) {
     let t5 = e3.macro_name.startsWith("\\");
     if (e3.children.length > 0) {
-      let n5 = t5 ? e3.macro_name.slice(1) : e3.macro_name;
-      return R2(e3, `${t5 ? `\\operatorname{${j(n5)}}` : e3.macro_name}(${h3.join(", ")})`, l4, i6);
+      let n4 = t5 ? e3.macro_name.slice(1) : e3.macro_name;
+      return H(e3, `${t5 ? `\\operatorname{${j(n4)}}` : e3.macro_name}(${g3.join(", ")})`, l4, i6);
     }
-    if (t5) return R2(e3, `\\mathrm{${j(e3.macro_name.slice(1))}}`, l4, i6);
+    if (t5) return H(e3, `\\mathrm{${j(e3.macro_name.slice(1))}}`, l4, i6);
   }
-  let g3 = u3 ? L(u3, o3, c3) : e3.macro_name, _3 = Object.fromEntries(h3.map((e4, t5) => [`child${t5}`, e4])), v4 = p4 === "text" ? "" : ", ", y2 = u3?.separator ?? v4, b4 = h3.join(y2);
+  let _3 = d2?.body ?? e3.macro_name, v3 = Object.fromEntries(g3.map((e4, t5) => [`child${t5}`, e4])), y4 = m4 === "text" ? "" : ", ", b4 = d2?.separator ?? y4, x4 = g3.join(b4);
   if (l4?.dynamic_arity) {
-    if (g3.includes("#*")) {
-      let t5 = D(g3, {
-        ..._3,
-        children_joined: b4
-      }, p4);
-      return p4 === "formula" ? ie(t5, (t6) => R2(e3, t6, l4, i6)) : R2(e3, t5, l4, i6);
+    if (_3.includes("#*")) {
+      let t5 = m(_3, {
+        ...v3,
+        children_joined: x4
+      }, m4);
+      return m4 === "formula" ? W(t5, (t6) => H(e3, t6, l4, i6)) : H(e3, t5, l4, i6);
     }
     throw Error(`dynamic macro "${l4.name}" requires #* in its template`);
   }
-  let x2 = D(g3, {
-    ..._3,
-    children_joined: b4
-  }, p4);
-  return p4 === "formula" ? ie(x2, (t5) => R2(e3, t5, l4, i6)) : R2(e3, x2, l4, i6);
+  let S4 = m(_3, {
+    ...v3,
+    children_joined: x4
+  }, m4);
+  return m4 === "formula" ? W(S4, (t5) => H(e3, t5, l4, i6)) : H(e3, S4, l4, i6);
 }
-async function le(e3, t4, n5, r4 = [], i6, a5) {
-  let o3 = a5 ?? ne(i6), s3 = await ce(e3, t4, r4, n5, i6, o3), c3 = e3.env_mode ? null : await t4.query_macro({
+async function de(e3, t4, n4, r4 = [], i6, a5) {
+  let o4 = a5 ?? ae(i6), s2 = await ue(e3, t4, r4, n4, i6, o4), c3 = e3.env_mode ? null : await t4.query_macro({
     macro_name: e3.macro_name,
-    signal: n5
+    signal: n4
   }), l4 = "formula_inline";
   if (e3.env_mode) l4 = e3.env_mode;
   else if (c3) try {
-    l4 = F2(e3, c3, o3).mode;
+    l4 = V(F(e3, c3, o4), i6, o4, c3.dynamic_arity).mode;
   } catch {
     l4 = "formula_inline";
   }
-  return l4 === "text" && !e3.env_mode ? `\\text{${s3}}` : s3;
+  return l4 === "text" && !e3.env_mode ? `\\text{${s2}}` : s2;
 }
-var U = class {
+function q2(e3) {
+  if ((typeof e3 != "object" || !e3) && typeof e3 != "function") return;
+  let t4;
+  try {
+    t4 = e3.then;
+  } catch {
+    return;
+  }
+  if (typeof t4 == "function") try {
+    t4.call(e3, () => {
+    }, () => {
+    });
+  } catch {
+  }
+}
+var pe = class {
   enabled;
   defaultBehavior;
   params;
@@ -17583,19 +17652,20 @@ var U = class {
   constructor(e3) {
     this.enabled = e3.enabled ?? true, this.defaultBehavior = e3.defaultBehavior ?? true, this.params = e3.params, this.handlers = e3.handlers ?? {};
   }
-  dispatch(e3, t4, n5) {
+  dispatch(e3, t4, n4) {
     if (!this.enabled) return false;
     let r4 = false, i6 = true, a5 = () => {
-      !i6 || r4 || (r4 = true, n5());
-    }, o3 = this.handlers[e3];
-    if (o3) {
+      !i6 || r4 || (r4 = true, n4());
+    }, o4 = this.handlers[e3];
+    if (o4) {
       try {
-        o3({
+        let n5 = o4({
           phase: e3,
           event: t4,
           params: this.params,
           runDefault: a5
         });
+        i6 = false, q2(n5);
       } catch {
       } finally {
         i6 = false;
@@ -17605,8 +17675,41 @@ var U = class {
     return this.defaultBehavior && a5(), r4;
   }
 };
-var ue = new U({ params: void 0 });
-var W = (e3, t4) => ({
+var me = new pe({ params: void 0 });
+var J2 = class {
+  enabled;
+  defaultBehavior;
+  params;
+  handlers;
+  constructor(e3) {
+    this.enabled = e3.enabled ?? true, this.defaultBehavior = e3.defaultBehavior ?? true, this.params = e3.params, this.handlers = e3.handlers ?? {};
+  }
+  dispatch(e3, t4, n4, r4) {
+    if (!this.enabled) return false;
+    let i6 = false, a5 = true, o4 = () => {
+      !a5 || i6 || (i6 = true, r4());
+    }, s2 = this.handlers[e3];
+    if (s2) {
+      try {
+        let r5 = s2({
+          reason: e3,
+          event: n4,
+          params: this.params,
+          activation: t4,
+          runDefault: o4
+        });
+        a5 = false, q2(r5);
+      } catch {
+      } finally {
+        a5 = false;
+      }
+      return i6;
+    }
+    return this.defaultBehavior && o4(), a5 = false, i6;
+  }
+};
+var he = new J2({ params: void 0 });
+var Y = (e3, t4) => ({
   light: {
     stroke: e3,
     background: t4
@@ -17616,16 +17719,75 @@ var W = (e3, t4) => ({
     background: t4
   }
 });
-var de = {
-  rule: W("#009C27", "#D6FEE0"),
-  const: W("#005B9C", "#DAF0FF"),
-  bvar: W("#7700E4", "#EFDFFF"),
-  binder: W("#E07B00", "#FFEBD2"),
-  fvar: W("#D20022", "#FFD6DC"),
-  sub: W("inherit", "transparent")
+var ge = {
+  rule: Y("#009C27", "#D6FEE0"),
+  const: Y("#005B9C", "#DAF0FF"),
+  bvar: Y("#7700E4", "#EFDFFF"),
+  binder: Y("#E07B00", "#FFEBD2"),
+  fvar: Y("#D20022", "#FFD6DC"),
+  sub: Y("inherit", "transparent")
 };
-var Ce = (0, import_react2.createContext)(null);
-var Z = (0, import_react2.createContext)(null);
+var xe = /* @__PURE__ */ "alertdialog.application.button.checkbox.combobox.dialog.doc-backlink.doc-biblioref.doc-glossref.doc-noteref.grid.gridcell.link.listbox.menu.menubar.menuitem.menuitemcheckbox.menuitemradio.option.progressbar.radio.radiogroup.scrollbar.searchbox.slider.spinbutton.switch.tab.tablist.textbox.toolbar.tree.treegrid.treeitem".split(".");
+var Se = [
+  "columnheader",
+  "doc-pagebreak",
+  "row",
+  "rowheader",
+  "separator"
+];
+var Ce = [
+  "button",
+  "a[href]",
+  "input",
+  "select",
+  "textarea",
+  "option",
+  "summary",
+  "label",
+  "audio[controls]",
+  "video[controls]",
+  '[contenteditable]:not([contenteditable="false"])',
+  ...xe.map((e3) => `[role~="${e3}"]`),
+  ...Se.map((e3) => `[role~="${e3}"][tabindex]`),
+  "[data-snl-interaction-boundary]"
+].join(",");
+var je = class {
+  enabled;
+  defaultBehavior;
+  params;
+  on_request;
+  on_removed;
+  constructor(e3) {
+    this.enabled = e3.enabled ?? true, this.defaultBehavior = e3.defaultBehavior ?? true, this.params = e3.params, this.on_request = e3.on_request, this.on_removed = e3.on_removed;
+  }
+  dispatch(e3, t4) {
+    let n4 = false, r4 = true, i6 = () => {
+      !r4 || n4 || (n4 = true, t4());
+    };
+    if (this.enabled && this.on_request) try {
+      let t5 = this.on_request({
+        request: e3,
+        params: this.params,
+        runDefault: i6
+      });
+      r4 = false, q2(t5);
+    } catch {
+    } finally {
+      r4 = false;
+    }
+    else this.enabled && this.defaultBehavior && i6(), r4 = false;
+    return !e3.cancelable && !n4 && (n4 = true, t4()), n4;
+  }
+  notifyRemoved(e3) {
+    try {
+      q2(this.on_removed?.(e3));
+    } catch {
+    }
+  }
+};
+var Me = new je({ params: void 0 });
+var Be = (0, import_react2.createContext)(null);
+var Ve = (0, import_react2.createContext)(null);
 
 // lib/snl-doc-schema.ts
 function isMacroDocumentV11(value) {
@@ -18073,7 +18235,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !d2(macroDocument)) {
+    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f2(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -18205,32 +18367,32 @@ async function readEntryKinds(workspaceRoot) {
   return cfg.entry_kinds ?? [];
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-eMsdnb5x.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t3(t4) {
-  let n5 = /* @__PURE__ */ new Set();
-  if (!t4.trim()) return n5;
+  let n4 = /* @__PURE__ */ new Set();
+  if (!t4.trim()) return n4;
   let r4;
   try {
-    r4 = g(t4);
+    r4 = y(t4);
   } catch {
-    return n5;
+    return n4;
   }
   let i6 = (e3) => {
     if (e3.kind === "binder") {
-      n5.add(e3.binder_name ?? e3.temporary_source ?? e3.macro_name);
+      n4.add(e3.binder_name ?? e3.temporary_source ?? e3.macro_name);
       return;
     }
     e3.children.forEach(i6);
   };
-  return i6(r4), n5;
+  return i6(r4), n4;
 }
 
 // lib/snl-parser.ts
 function tryParseSnlSyntaxTree(input) {
   try {
-    return { ok: true, tree: g(input) };
+    return { ok: true, tree: y(input) };
   } catch (e3) {
-    if (e3 instanceof f) {
+    if (e3 instanceof h) {
       return { ok: false, error: e3.message, position: e3.position };
     }
     return { ok: false, error: e3 instanceof Error ? e3.message : String(e3) };
@@ -18272,7 +18434,7 @@ function lintEntry(raw, ctx) {
       message: "Field `id` must be a non-empty string.",
       path: "id"
     });
-  } else if (ctx.siblingEntries.some((s3) => s3.id === e3.id)) {
+  } else if (ctx.siblingEntries.some((s2) => s2.id === e3.id)) {
     issues.push({
       severity: "error",
       code: "entry.duplicate-id",
@@ -18287,8 +18449,8 @@ function lintEntry(raw, ctx) {
       message: "Field `kind` must be a non-empty string.",
       path: "kind"
     });
-  } else if (!ctx.entryKinds.some((k2) => k2.id === e3.kind)) {
-    const known = ctx.entryKinds.map((k2) => k2.id).join(", ") || "(none defined)";
+  } else if (!ctx.entryKinds.some((k) => k.id === e3.kind)) {
+    const known = ctx.entryKinds.map((k) => k.id).join(", ") || "(none defined)";
     issues.push({
       severity: "error",
       code: "entry.unknown-kind",
@@ -18398,9 +18560,9 @@ function collectSrcReferences(node) {
   const out = /* @__PURE__ */ new Map();
   visit(node);
   return [...out.values()].sort((a5, b4) => a5.sourceId.localeCompare(b4.sourceId) || a5.binderName.localeCompare(b4.binderName));
-  function visit(n5) {
-    if (!n5 || typeof n5 !== "object") return;
-    const nn = n5;
+  function visit(n4) {
+    if (!n4 || typeof n4 !== "object") return;
+    const nn = n4;
     const binderName = typeof nn.temporary_source === "string" ? nn.temporary_source : typeof nn.binder_name === "string" ? nn.binder_name : typeof nn.macro_name === "string" ? nn.macro_name : "";
     if (nn.postfix && typeof nn.postfix === "object") {
       const postfix = nn.postfix;
@@ -18437,10 +18599,10 @@ function findUnresolvedIdentifiers(snl, pool) {
   }
   return [...unresolved].sort();
 }
-function describe(v4) {
-  if (v4 === null) return "null";
-  if (Array.isArray(v4)) return "array";
-  return typeof v4;
+function describe(v3) {
+  if (v3 === null) return "null";
+  if (Array.isArray(v3)) return "array";
+  return typeof v3;
 }
 
 // lib/snl-render.ts
@@ -18604,7 +18766,7 @@ var LATEX_TO_TEXT_CHARS = {
   "\\rfloor": "\u230B"
 };
 function latexToText(input, notes) {
-  let s3 = input;
+  let s2 = input;
   const wrappers = [
     "mathrm",
     "mathbf",
@@ -18629,43 +18791,43 @@ function latexToText(input, notes) {
     "g"
   );
   for (let i6 = 0; i6 < 5; i6++) {
-    const next = s3.replace(wrapperRe, (_3, inner2) => inner2);
-    if (next === s3) break;
-    s3 = next;
+    const next = s2.replace(wrapperRe, (_3, inner2) => inner2);
+    if (next === s2) break;
+    s2 = next;
   }
   const fracRe = /\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g;
   for (let i6 = 0; i6 < 5; i6++) {
-    const next = s3.replace(fracRe, (_3, a5, b4) => `(${a5})/(${b4})`);
-    if (next === s3) break;
-    s3 = next;
+    const next = s2.replace(fracRe, (_3, a5, b4) => `(${a5})/(${b4})`);
+    if (next === s2) break;
+    s2 = next;
   }
-  s3 = s3.replace(
+  s2 = s2.replace(
     /\\sqrt(?:\[([^\]]*)\])?\s*\{([^{}]*)\}/g,
-    (_3, n5, x2) => n5 ? `${n5}\u221A(${x2})` : `\u221A(${x2})`
+    (_3, n4, x4) => n4 ? `${n4}\u221A(${x4})` : `\u221A(${x4})`
   );
   const mapped = Object.entries(LATEX_TO_TEXT_CHARS).sort(
     (a5, b4) => b4[0].length - a5[0].length
   );
   for (const [cmd, glyph] of mapped) {
-    if (!s3.includes(cmd)) continue;
+    if (!s2.includes(cmd)) continue;
     const re2 = new RegExp(
       cmd.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
       "g"
     );
-    s3 = s3.replace(re2, glyph);
+    s2 = s2.replace(re2, glyph);
   }
   const survivorRe = /\\[A-Za-z]+/g;
   const survivors = /* @__PURE__ */ new Set();
   let m4;
-  while ((m4 = survivorRe.exec(s3)) !== null) survivors.add(m4[0]);
+  while ((m4 = survivorRe.exec(s2)) !== null) survivors.add(m4[0]);
   for (const cmd of survivors) {
     notes.push(
       `Unmapped LaTeX command in text synth: \`${cmd}\` (survived as-is).`
     );
   }
-  s3 = s3.replace(/_\{([^{}]*)\}/g, "_$1").replace(/\^\{([^{}]*)\}/g, "^$1");
-  s3 = s3.replace(/[{}]/g, "");
-  return s3;
+  s2 = s2.replace(/_\{([^{}]*)\}/g, "_$1").replace(/\^\{([^{}]*)\}/g, "^$1");
+  s2 = s2.replace(/[{}]/g, "");
+  return s2;
 }
 function joinVariadic(template, rendered) {
   const defaultSep = template.mode === "text" ? "" : ", ";
@@ -18674,13 +18836,13 @@ function joinVariadic(template, rendered) {
 function fillTemplate(template, values) {
   const ESCAPED = "HASH";
   let out = template.replace(/\\#/g, ESCAPED);
-  out = out.replace(/#(\d{1,2})/g, (_3, d3) => {
-    const v4 = values[`child${Number(d3)}`];
-    return v4 === void 0 ? `#${d3}` : v4;
+  out = out.replace(/#(\d{1,2})/g, (_3, d2) => {
+    const v3 = values[`child${Number(d2)}`];
+    return v3 === void 0 ? `#${d2}` : v3;
   });
   out = out.replace(/#\*/g, () => {
-    const j3 = values["children_joined"];
-    return j3 === void 0 ? "#*" : j3;
+    const j2 = values["children_joined"];
+    return j2 === void 0 ? "#*" : j2;
   });
   return out.split(ESCAPED).join("\\#");
 }
@@ -18783,8 +18945,8 @@ function renderNode(node, mode, macros2, notes) {
   const renderedChildren = children.map((c3) => renderNode(c3, mode, macros2, notes));
   const wrappedChildren = mode === "latex" ? renderedChildren.map((child) => wrapForParent(child, template.mode)) : renderedChildren.map((child) => child.output);
   const values = {};
-  wrappedChildren.forEach((v4, i6) => {
-    values[`child${i6}`] = v4;
+  wrappedChildren.forEach((v3, i6) => {
+    values[`child${i6}`] = v3;
   });
   if (macro.dynamic_arity) {
     if (!template.body.includes("#*")) {
@@ -18894,12 +19056,12 @@ async function checkEntryPreview(entry, opts) {
   if (snl.trim().length > 0) {
     let tree;
     try {
-      tree = g(snl);
+      tree = y(snl);
     } catch {
       return issues;
     }
     try {
-      z(tree);
+      Z(tree);
     } catch {
     }
     const driver = new a2({
@@ -18910,9 +19072,9 @@ async function checkEntryPreview(entry, opts) {
     let src;
     let displayMode;
     try {
-      src = await le(tree, driver);
+      src = await de(tree, driver);
       const rootMacro = tree.env_mode ? null : await driver.query_macro({ macro_name: tree.macro_name });
-      displayMode = V(tree, rootMacro) === "block";
+      displayMode = K2(tree, rootMacro) === "block";
     } catch (err) {
       issues.push({
         path: "content.snl",
@@ -18957,8 +19119,8 @@ function parseKatexError(raw) {
   }
   return { ok: false, message: msg, position };
 }
-function escapeForKatexText(s3) {
-  return s3.replace(/\\/g, "\\textbackslash{}").replace(/\^/g, "\\textasciicircum{}").replace(/~/g, "\\textasciitilde{}").replace(/([{}$&#_%])/g, "\\$1");
+function escapeForKatexText(s2) {
+  return s2.replace(/\\/g, "\\textbackslash{}").replace(/\^/g, "\\textasciicircum{}").replace(/~/g, "\\textasciitilde{}").replace(/([{}$&#_%])/g, "\\$1");
 }
 function titleToKatexSource(src) {
   if (src.length === 0) return "";
@@ -19182,23 +19344,23 @@ async function main2() {
     process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
   } else {
     process.stdout.write(formatReport(reports) + "\n");
-    for (const s3 of synths) {
-      if (!s3.latex && !s3.text) continue;
+    for (const s2 of synths) {
+      if (!s2.latex && !s2.text) continue;
       process.stdout.write(`
---- ${path3.relative(root, s3.file)} ---
+--- ${path3.relative(root, s2.file)} ---
 `);
-      if (s3.latex) {
+      if (s2.latex) {
         process.stdout.write("  [as LaTeX]\n");
-        process.stdout.write("  " + s3.latex.output + "\n");
-        for (const n5 of s3.latex.notes) {
-          process.stdout.write("    \xB7 " + n5 + "\n");
+        process.stdout.write("  " + s2.latex.output + "\n");
+        for (const n4 of s2.latex.notes) {
+          process.stdout.write("    \xB7 " + n4 + "\n");
         }
       }
-      if (s3.text) {
+      if (s2.text) {
         process.stdout.write("  [as text]\n");
-        process.stdout.write("  " + s3.text.output + "\n");
-        for (const n5 of s3.text.notes) {
-          process.stdout.write("    \xB7 " + n5 + "\n");
+        process.stdout.write("  " + s2.text.output + "\n");
+        for (const n4 of s2.text.notes) {
+          process.stdout.write("    \xB7 " + n4 + "\n");
         }
       }
     }

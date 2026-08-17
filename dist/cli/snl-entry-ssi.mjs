@@ -3,7 +3,7 @@
 // bin/impl/entry-ssi.ts
 import * as path2 from "node:path";
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/template-bHqW1VSc.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
   return {
     macro_name: e,
@@ -19,93 +19,93 @@ var o = /^[A-Za-z0-9_\\]$/;
 var s = /^[A-Za-z0-9_.-]$/;
 var c = /[\p{White_Space}\p{Cc}\p{Cf}\p{Cs}]/u;
 function l(e, t3) {
-  let n4 = e.codePointAt(t3);
-  return n4 === void 0 ? null : String.fromCodePoint(n4);
+  let n3 = e.codePointAt(t3);
+  return n3 === void 0 ? null : String.fromCodePoint(n3);
 }
-function u(e, t3, n4) {
+function u(e, t3, n3) {
   let r3 = l(e, t3);
-  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n4 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
+  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n3 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
 }
 function d(e) {
   if (e.length === 0) return false;
-  let t3 = 0, n4 = u(e, t3, true);
-  if (n4 === 0) return false;
-  for (t3 += n4; t3 < e.length; ) {
-    if (n4 = u(e, t3, false), n4 === 0) return false;
-    t3 += n4;
+  let t3 = 0, n3 = u(e, t3, true);
+  if (n3 === 0) return false;
+  for (t3 += n3; t3 < e.length; ) {
+    if (n3 = u(e, t3, false), n3 === 0) return false;
+    t3 += n3;
   }
   return true;
 }
-var f = class extends Error {
+var h = class extends Error {
   position;
   constructor(e, t3) {
     super(`${e} at position ${t3}`), this.name = "SnlSyntaxTreeParseError", this.position = t3;
   }
 };
-function p(e, t3) {
-  let n4 = e.length - t3;
-  if (n4 >= 2 && e[t3] === "`") {
-    let n5 = e.indexOf("`", t3 + 1);
-    if (n5 < 0) throw new f("Unclosed ` delimiter", t3);
+function g(e, t3) {
+  let n3 = e.length - t3;
+  if (n3 >= 2 && e[t3] === "`") {
+    let n4 = e.indexOf("`", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed ` delimiter", t3);
     return {
       token: {
         type: "BACKTICK_DELIMITED",
-        value: e.slice(t3 + 1, n5),
+        value: e.slice(t3 + 1, n4),
         position: t3
       },
-      next: n5 + 1
+      next: n4 + 1
     };
   }
-  if (n4 >= 4 && e[t3] === "$" && e[t3 + 1] === "$") {
-    let n5 = e.indexOf("$$", t3 + 2);
-    if (n5 < 0) throw new f("Unclosed $$ delimiter", t3);
+  if (n3 >= 4 && e[t3] === "$" && e[t3 + 1] === "$") {
+    let n4 = e.indexOf("$$", t3 + 2);
+    if (n4 < 0) throw new h("Unclosed $$ delimiter", t3);
     return {
       token: {
         type: "DOLLAR2_DELIMITED",
-        value: e.slice(t3 + 2, n5),
+        value: e.slice(t3 + 2, n4),
         position: t3
       },
-      next: n5 + 2
+      next: n4 + 2
     };
   }
-  if (n4 >= 2 && e[t3] === "$") {
-    let n5 = e.indexOf("$", t3 + 1);
-    if (n5 < 0) throw new f("Unclosed $ delimiter", t3);
+  if (n3 >= 2 && e[t3] === "$") {
+    let n4 = e.indexOf("$", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed $ delimiter", t3);
     return {
       token: {
         type: "DOLLAR_DELIMITED",
-        value: e.slice(t3 + 1, n5),
+        value: e.slice(t3 + 1, n4),
         position: t3
       },
-      next: n5 + 1
+      next: n4 + 1
     };
   }
-  if (n4 >= 2 && e[t3] === "%") {
-    let n5 = e.indexOf("%", t3 + 1);
-    if (n5 < 0) throw new f("Unclosed % delimiter", t3);
+  if (n3 >= 2 && e[t3] === "%") {
+    let n4 = e.indexOf("%", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed % delimiter", t3);
     return {
       token: {
         type: "PERCENT_DELIMITED",
-        value: e.slice(t3 + 1, n5),
+        value: e.slice(t3 + 1, n4),
         position: t3
       },
-      next: n5 + 1
+      next: n4 + 1
     };
   }
   return null;
 }
-function m(e) {
-  let t3 = [], n4 = 0;
-  for (; n4 < e.length; ) {
-    let r3 = e[n4];
+function _(e) {
+  let t3 = [], n3 = 0;
+  for (; n3 < e.length; ) {
+    let r3 = e[n3];
     if (/[ \t\r\n\f\v]/.test(r3)) {
-      n4 += 1;
+      n3 += 1;
       continue;
     }
     if (r3 === "%" || r3 === "$" || r3 === "`") {
-      let r4 = p(e, n4);
+      let r4 = g(e, n3);
       if (r4) {
-        t3.push(r4.token), n4 = r4.next;
+        t3.push(r4.token), n3 = r4.next;
         continue;
       }
     }
@@ -113,29 +113,29 @@ function m(e) {
       t3.push({
         type: "AT",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "#") {
       t3.push({
         type: "HASH",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    let i3 = u(e, n4, true);
+    let i3 = u(e, n3, true);
     if (i3 > 0) {
-      let r4 = n4;
-      for (n4 += i3; n4 < e.length; ) {
-        let t4 = u(e, n4, false);
+      let r4 = n3;
+      for (n3 += i3; n3 < e.length; ) {
+        let t4 = u(e, n3, false);
         if (t4 === 0) break;
-        n4 += t4;
+        n3 += t4;
       }
       t3.push({
         type: "IDENT",
-        value: e.slice(r4, n4),
+        value: e.slice(r4, n3),
         position: r4
       });
       continue;
@@ -144,61 +144,61 @@ function m(e) {
       t3.push({
         type: "LBRACKET",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "]") {
       t3.push({
         type: "RBRACKET",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "(") {
       t3.push({
         type: "LPAREN",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === ")") {
       t3.push({
         type: "RPAREN",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === ",") {
       t3.push({
         type: "COMMA",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "=") {
       t3.push({
         type: "EQ",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (/\d/.test(r3)) {
-      let r4 = n4;
-      for (; n4 < e.length && /\d/.test(e[n4]); ) n4 += 1;
+      let r4 = n3;
+      for (; n3 < e.length && /\d/.test(e[n3]); ) n3 += 1;
       t3.push({
         type: "NUMBER",
-        value: e.slice(r4, n4),
+        value: e.slice(r4, n3),
         position: r4
       });
       continue;
     }
-    throw new f(`Unexpected character "${r3}"`, n4);
+    throw new h(`Unexpected character "${r3}"`, n3);
   }
   return t3.push({
     type: "EOF",
@@ -206,7 +206,7 @@ function m(e) {
     position: e.length
   }), t3;
 }
-var h = class {
+var v = class {
   cursor = 0;
   tokens;
   constructor(e) {
@@ -219,15 +219,15 @@ var h = class {
   parseNode() {
     let e = this.peek().type === "AT";
     e && this.consume("AT");
-    let n4 = this.peek(), r3;
-    if (n4.type === "IDENT") this.consume("IDENT"), r3 = t(n4.value);
-    else if (n4.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n4.value), r3.env_mode = "text";
-    else if (n4.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n4.value), r3.env_mode = "formula_inline";
-    else if (n4.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n4.value), r3.env_mode = "formula_display";
-    else if (n4.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n4.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
-    else throw new f(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n4.type}`, n4.position);
+    let n3 = this.peek(), r3;
+    if (n3.type === "IDENT") this.consume("IDENT"), r3 = t(n3.value);
+    else if (n3.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n3.value), r3.env_mode = "text";
+    else if (n3.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline";
+    else if (n3.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_display";
+    else if (n3.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
+    else throw new h(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n3.type}`, n3.position);
     if (this.peek().type === "AT") if (this.consume("AT"), this.peek().type === "HASH") {
-      if (e) throw new f("Binder name override must not use #", this.peek().position);
+      if (e) throw new h("Binder name override must not use #", this.peek().position);
       this.consume("HASH");
       let t3 = this.expect("IDENT");
       /^\d+(?:\.\d+)*$/.test(t3.value) ? r3.postfix = {
@@ -250,7 +250,7 @@ var h = class {
       r3.style_name = e2.value, this.expect("RBRACKET");
     }
     if (this.peek().type === "LPAREN" && (this.consume("LPAREN"), r3.children = this.parseNodeList(), this.expect("RPAREN")), e) {
-      if (r3.children.length > 0) throw new f("Binder must be a leaf", n4.position);
+      if (r3.children.length > 0) throw new h("Binder must be a leaf", n3.position);
       r3.binder_explicit = true, r3.kind = "binder";
     }
     return r3;
@@ -267,7 +267,7 @@ var h = class {
   }
   expect(e) {
     let t3 = this.peek();
-    if (t3.type !== e) throw new f(`Expected ${e} but got ${t3.type}`, t3.position);
+    if (t3.type !== e) throw new h(`Expected ${e} but got ${t3.type}`, t3.position);
     return this.cursor += 1, t3;
   }
   consume(e) {
@@ -277,21 +277,21 @@ var h = class {
     return this.tokens[this.cursor];
   }
 };
-function g(e, t3 = {}) {
-  let n4 = new h(m(e)).parse();
-  return _(n4), n4;
+function y(e, t3 = {}) {
+  let n3 = new v(_(e)).parse();
+  return b(n3), n3;
 }
-function _(e, t3 = []) {
-  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n4) => _(e2, [...t3, n4]));
+function b(e, t3 = []) {
+  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n3) => b(e2, [...t3, n3]));
 }
-function v(e) {
+function x(e) {
   try {
     return {
       ok: true,
-      tree: g(e)
+      tree: y(e)
     };
   } catch (e2) {
-    return e2 instanceof f ? {
+    return e2 instanceof h ? {
       ok: false,
       error: e2.message,
       position: e2.position
@@ -301,67 +301,67 @@ function v(e) {
     };
   }
 }
-function y(e) {
+function S(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return e;
   let t3 = { ...e };
   return delete t3.bindRef, Object.keys(t3).length > 0 ? t3 : null;
 }
-function b(e) {
+function C(e) {
   return {
     ...e,
-    mdata: y(e.mdata),
+    mdata: S(e.mdata),
     postfix: e.postfix?.type === "tree_path" ? {
       type: "tree_path",
       path: [...e.postfix.path]
     } : e.postfix ? { ...e.postfix } : void 0,
     source: void 0,
-    children: e.children.map(b)
+    children: e.children.map(C)
   };
 }
-function x(e, t3) {
-  return e.length === t3.length && e.every((e2, n4) => e2 === t3[n4]);
-}
-function S(e, t3) {
-  let n4 = 0;
-  for (; n4 < e.length && n4 < t3.length && e[n4] === t3[n4]; ) n4 += 1;
-  return n4;
-}
-function C(e, t3, n4) {
-  return e.filter((e2) => !n4 || e2.order < t3.order).sort((e2, n5) => S(n5.path, t3.path) - S(e2.path, t3.path) || n5.order - e2.order)[0];
-}
-function w(e) {
-  return e.temporary_source ?? e.macro_name;
+function w(e, t3) {
+  return e.length === t3.length && e.every((e2, n3) => e2 === t3[n3]);
 }
 function T(e, t3) {
-  let n4 = b(e), r3 = [], i3 = [], a3 = 0, o2 = (e2, n5) => {
+  let n3 = 0;
+  for (; n3 < e.length && n3 < t3.length && e[n3] === t3[n3]; ) n3 += 1;
+  return n3;
+}
+function E(e, t3, n3) {
+  return e.filter((e2) => !n3 || e2.order < t3.order).sort((e2, n4) => T(n4.path, t3.path) - T(e2.path, t3.path) || n4.order - e2.order)[0];
+}
+function D(e) {
+  return e.temporary_source ?? e.macro_name;
+}
+function O(e, t3) {
+  let n3 = C(e), r3 = [], i3 = [], a3 = 0, o3 = (e2, n4) => {
     i3.push({
       node: e2,
-      path: n5,
+      path: n4,
       order: a3++
     }), e2.scope = void 0;
-    let s4 = e2.env_mode ? void 0 : t3[e2.macro_name], c3 = n5.length === 0 && e2.env_mode === "text", l3 = s4?.kind === "sub";
+    let s3 = e2.env_mode ? void 0 : t3[e2.macro_name], c3 = n4.length === 0 && e2.env_mode === "text", l3 = s3?.kind === "sub";
     if (c3 || l3 || e2.kind === "sub") e2.kind = "sub", e2.binder_name = void 0, e2.source = void 0, (e2.postfix || e2.binder_explicit) && r3.push({
       code: "SNL_SUB_IGNORES_BINDER_SUFFIX",
       severity: "warning",
-      tree_path: [...n5],
+      tree_path: [...n4],
       message: "sub nodes ignore binder declarations and postfix sources"
     });
     else if (e2.binder_explicit) e2.kind = "binder", e2.binder_name ??= e2.macro_name;
-    else if (s4) {
-      if (e2.kind = s4.kind || "const", e2.style_name && !s4.styles.some((t4) => t4.style_name === e2.style_name) && (r3.push({
+    else if (s3) {
+      if (e2.kind = s3.kind || "const", e2.style_name && !s3.styles.some((t4) => t4.style_name === e2.style_name) && (r3.push({
         code: "SNL_STYLE_NOT_FOUND",
         severity: "warning",
-        tree_path: [...n5],
+        tree_path: [...n4],
         message: `style ${JSON.stringify(e2.style_name)} was not found; using the first style`
       }), e2.style_name = void 0), e2.postfix?.type === "name" && (e2.binder_name = e2.postfix.name), e2.source = void 0, e2.mdata && typeof e2.mdata == "object") {
         let t4 = { ...e2.mdata };
         delete t4.src, e2.mdata = Object.keys(t4).length > 0 ? t4 : null;
       }
     } else e2.kind && e2.kind !== "bvar" && e2.kind !== "fvar" || (e2.kind = "", e2.binder_name = void 0);
-    e2.children.forEach((e3, t4) => o2(e3, [...n5, t4]));
+    e2.children.forEach((e3, t4) => o3(e3, [...n4, t4]));
   };
-  o2(n4, []);
-  let s3 = i3.flatMap((e2) => {
+  o3(n3, []);
+  let s2 = i3.flatMap((e2) => {
     let t4 = e2.node.binder_name;
     return t4 && (e2.node.kind === "binder" || e2.node.kind !== "" && e2.node.source === void 0) ? [{
       ...e2,
@@ -369,7 +369,7 @@ function T(e, t3) {
     }] : [];
   });
   for (let e2 of i3) {
-    let { node: t4, path: n5 } = e2;
+    let { node: t4, path: n4 } = e2;
     if (t4.kind !== "") continue;
     let a4;
     if (t4.postfix?.type === "name") {
@@ -377,128 +377,128 @@ function T(e, t3) {
       e3 === "dangling" || e3 === "srcResolvedNoDecl" ? r3.push({
         code: e3 === "dangling" ? "SNL_ENTRY_SOURCE_NOT_FOUND" : "SNL_ENTRY_SOURCE_NO_DECL",
         severity: "warning",
-        tree_path: [...n5],
+        tree_path: [...n4],
         message: `Entry source ${JSON.stringify(t4.postfix.name)} did not export this reference`
       }) : a4 = {
         type: "entry",
         entry_id: t4.postfix.name
       };
     } else if (t4.postfix?.type === "tree_path") {
-      let e3 = i3.find((e4) => e4.node.kind !== "sub" && x(e4.path, t4.postfix.type === "tree_path" ? t4.postfix.path : []));
+      let e3 = i3.find((e4) => e4.node.kind !== "sub" && w(e4.path, t4.postfix.type === "tree_path" ? t4.postfix.path : []));
       e3 ? a4 = {
         type: "tree_path",
         path: [...e3.path]
       } : r3.push({
         code: "SNL_DANGLING_TREE_SOURCE",
         severity: "warning",
-        tree_path: [...n5],
+        tree_path: [...n4],
         message: `tree source #${t4.postfix.path.join(".")} does not name a semantic node`
       });
     } else {
-      let i4 = t4.postfix?.type === "binder_name" ? t4.postfix.name : w(t4), o3 = C(s3.filter((e3) => e3.binderName === i4), e2, true);
-      o3 ? a4 = {
+      let i4 = t4.postfix?.type === "binder_name" ? t4.postfix.name : D(t4), o4 = E(s2.filter((e3) => e3.binderName === i4), e2, true);
+      o4 ? a4 = {
         type: "tree_path",
-        path: [...o3.path]
+        path: [...o4.path]
       } : t4.postfix?.type === "binder_name" && r3.push({
         code: "SNL_BINDER_NAME_NOT_FOUND",
         severity: "warning",
-        tree_path: [...n5],
+        tree_path: [...n4],
         message: `binder source ${JSON.stringify(i4)} was not found in the current context`
       });
     }
     a4 ? (t4.kind = "bvar", t4.source = a4) : (t4.kind = "fvar", t4.source = void 0);
   }
   return {
-    tree: n4,
+    tree: n3,
     diagnostics: r3
   };
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-BZAk_eo6.js
-function n2(e) {
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
   if (t3.type !== "i18n" || typeof t3.default_language != "string" || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return false;
-  let n4 = t3.values, r3 = Object.keys(n4);
-  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n4, t3.default_language) && typeof n4[t3.default_language] == "string" && r3.every((e2) => typeof n4[e2] == "string");
-}
-function r(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let r3 = e;
-  return typeof r3.style_name != "string" || !d(r3.style_name) || "tag" in r3 || "variadic_left" in r3 || "variadic_join" in r3 || "variadic_right" in r3 || !Array.isArray(r3.tags) || !r3.tags.every((e2) => typeof e2 == "string") || r3.separator !== void 0 && typeof r3.separator != "string" || r3.block_template_name !== void 0 && (r3.mode !== "block" || typeof r3.block_template_name != "string") ? false : r3.mode === "text" ? typeof r3.template == "string" || n2(r3.template) : r3.mode === "formula_inline" || r3.mode === "formula_display" || r3.mode === "block" ? typeof r3.template == "string" : false;
+  let n3 = t3.values, r3 = Object.keys(n3);
+  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n3, t3.default_language) && typeof n3[t3.default_language] == "string" && r3.every((e2) => typeof n3[e2] == "string");
 }
 function i(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t3 = e;
+  return typeof t3.style_name != "string" || !d(t3.style_name) || "tag" in t3 || "variadic_left" in t3 || "variadic_join" in t3 || "variadic_right" in t3 || !Array.isArray(t3.tags) || !t3.tags.every((e2) => typeof e2 == "string") || t3.separator !== void 0 && typeof t3.separator != "string" || t3.block_template_name !== void 0 && (t3.mode !== "block" || typeof t3.block_template_name != "string") ? false : t3.mode === "text" ? typeof t3.template == "string" || r(t3.template) : t3.mode === "formula_inline" || t3.mode === "formula_display" || t3.mode === "block" ? typeof t3.template == "string" : false;
+}
+function a(e) {
   return Array.isArray(e) && e.every((e2) => typeof e2 == "string");
 }
-function a(e, n4 = true) {
-  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (n4 || e.tags !== void 0) && !i(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
+function o2(e, t3 = true) {
+  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (t3 || e.tags !== void 0) && !a(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
   let r3 = e.source;
-  return i(r3.entries) && i(r3.urls);
-}
-function s2(e) {
-  return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
+  return a(r3.entries) && a(r3.urls);
 }
 function c2(e) {
+  return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
+}
+function l2(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = Object.getPrototypeOf(e);
   return t3 === Object.prototype || t3 === null;
 }
-function d2(e) {
-  if (!c2(e)) return false;
+function f(e) {
+  if (!l2(e)) return false;
   for (let t3 of Object.values(e)) {
     if (!t3 || typeof t3 != "object" || Array.isArray(t3)) return false;
     let e2 = t3;
-    if (!a(e2) || !s2(e2.default_style)) return false;
-    let n4 = e2.styles;
-    if (!n4 || n4.length === 0 || n4.some((e3) => !r(e3) || typeof e3.template != "string")) return false;
-    let i3 = n4.map((e3) => e3.style_name);
-    if (new Set(i3).size !== i3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !i3.includes(e3))) return false;
+    if (!o2(e2) || !c2(e2.default_style)) return false;
+    let n3 = e2.styles;
+    if (!n3 || n3.length === 0 || n3.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
+    let r3 = n3.map((e3) => e3.style_name);
+    if (new Set(r3).size !== r3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r3.includes(e3))) return false;
   }
   return true;
 }
-var N = 256;
-function P(e, t3) {
-  return e.reduce((n4, r3, i3) => i3 === 0 ? r3 : `${n4}${e[i3 - 1] !== "" && r3 !== "" ? `,${t3}` : ","}${r3}`, "");
+var G = 256;
+function K(e, t3) {
+  return e.reduce((n3, r3, i3) => i3 === 0 ? r3 : `${n3}${e[i3 - 1] !== "" && r3 !== "" ? `,${t3}` : ","}${r3}`, "");
 }
-var F = class {
+var q = class {
   indentSpaces;
   inlineParenthesisDepth;
   constructor(e = 4, t3 = 3) {
-    this.assertIntegerInRange(e, "indentSpaces", N), this.assertIntegerInRange(t3, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t3;
+    this.assertIntegerInRange(e, "indentSpaces", G), this.assertIntegerInRange(t3, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t3;
   }
-  format(t3) {
-    return this.formatNode(g(t3), 0, " ");
+  format(e) {
+    return this.formatNode(y(e), 0, " ");
   }
   formatTree(e, t3 = " ") {
     return this.formatNode(e, 0, t3);
   }
-  formatNode(e, t3, n4) {
+  formatNode(e, t3, n3) {
     let r3 = this.formatNodeHead(e);
     if (e.children.length === 0) return r3;
-    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${P(e.children.map((e2) => this.formatNode(e2, 0, n4)), n4)})`;
+    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${K(e.children.map((e2) => this.formatNode(e2, 0, n3)), n3)})`;
     let i3 = " ".repeat(this.indentSpaces * (t3 + 1));
     return `${r3}(
-${e.children.map((e2) => `${i3}${this.formatNode(e2, t3 + 1, n4)}`).join(",\n")}
+${e.children.map((e2) => `${i3}${this.formatNode(e2, t3 + 1, n3)}`).join(",\n")}
 ${" ".repeat(this.indentSpaces * t3)})`;
   }
   formatNodeHead(e) {
-    let t3 = e.binder_explicit ? "@" : "", n4, r3 = e.temporary_source ?? e.macro_name;
-    if (e.temporary_format === "texttt") n4 = `\`${r3}\``;
+    let t3 = e.binder_explicit ? "@" : "", n3, r3 = e.temporary_source ?? e.macro_name;
+    if (e.temporary_format === "texttt") n3 = `\`${r3}\``;
     else switch (e.env_mode) {
       case "text":
-        n4 = `%${r3}%`;
+        n3 = `%${r3}%`;
         break;
       case "formula_inline":
-        n4 = `$${r3}$`;
+        n3 = `$${r3}$`;
         break;
       case "formula_display":
-        n4 = `$$${r3}$$`;
+        n3 = `$$${r3}$$`;
         break;
       default:
-        n4 = e.macro_name;
+        n3 = e.macro_name;
     }
-    let i3 = this.sourceReference(e), a3 = i3 === void 0 ? "" : `@${i3}`, o2 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
-    return `${t3}${n4}${a3}${o2}`;
+    let i3 = this.sourceReference(e), a3 = i3 === void 0 ? "" : `@${i3}`, o3 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
+    return `${t3}${n3}${a3}${o3}`;
   }
   sourceReference(e) {
     if (e.binder_explicit && e.binder_name && e.binder_name !== e.macro_name) return e.binder_name;
@@ -509,35 +509,35 @@ ${" ".repeat(this.indentSpaces * t3)})`;
     let t3 = e.mdata.src;
     return typeof t3 == "string" ? t3 : void 0;
   }
-  assertIntegerInRange(e, t3, n4) {
-    if (!Number.isSafeInteger(e) || e < 0 || e > n4) throw RangeError(`${t3} must be a non-negative integer no greater than ${n4}`);
+  assertIntegerInRange(e, t3, n3) {
+    if (!Number.isSafeInteger(e) || e < 0 || e > n3) throw RangeError(`${t3} must be a non-negative integer no greater than ${n3}`);
   }
   parenthesisDepth(e) {
     let t3 = -1;
-    for (let n4 of e.children) t3 = Math.max(t3, this.parenthesisDepth(n4));
+    for (let n3 of e.children) t3 = Math.max(t3, this.parenthesisDepth(n3));
     return t3 + 1;
   }
 };
-var I = new F(0, 2 ** 53 - 1);
+var J = new q(0, 2 ** 53 - 1);
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-eMsdnb5x.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t2(t3) {
-  let n4 = /* @__PURE__ */ new Set();
-  if (!t3.trim()) return n4;
+  let n3 = /* @__PURE__ */ new Set();
+  if (!t3.trim()) return n3;
   let r3;
   try {
-    r3 = g(t3);
+    r3 = y(t3);
   } catch {
-    return n4;
+    return n3;
   }
   let i3 = (e) => {
     if (e.kind === "binder") {
-      n4.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
+      n3.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
       return;
     }
     e.children.forEach(i3);
   };
-  return i3(r3), n4;
+  return i3(r3), n3;
 }
 
 // lib/snl-doc.ts
@@ -990,7 +990,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !d2(macroDocument)) {
+    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -1013,7 +1013,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     macros.set(value.package, packageMacros);
   }
   const out = {};
-  for (const manifest of [...manifests.values()].sort((a3, b3) => a3.id.localeCompare(b3.id))) {
+  for (const manifest of [...manifests.values()].sort((a3, b2) => a3.id.localeCompare(b2.id))) {
     defineIdentity(out, manifest.id, {
       version: usesCurrentEntitySchemas(config) ? "11" : "8",
       name: manifest.name,
@@ -1211,9 +1211,9 @@ async function loadEntry(root, id) {
 function parseEntry(entry, macros) {
   const snl = entry.content?.snl;
   if (typeof snl !== "string" || !snl.trim()) throw new Error(`Entry ${entry.id} has no SNL content.`);
-  const parsed = v(snl);
+  const parsed = x(snl);
   if (!parsed.ok) throw new Error(`Entry ${entry.id} SNL parse failed: ${parsed.error}`);
-  return T(
+  return O(
     parsed.tree,
     macros
   ).tree;
@@ -1229,14 +1229,14 @@ async function computeEntrySsi(root, id) {
 function parseArgs(argv, specs) {
   const bySpec = {};
   const shortAlias = {};
-  for (const s3 of specs) {
-    bySpec[s3.name] = s3;
-    if (s3.short) shortAlias[s3.short] = s3.name;
+  for (const s2 of specs) {
+    bySpec[s2.name] = s2;
+    if (s2.short) shortAlias[s2.short] = s2.name;
   }
   const flags = {};
   const positional = [];
-  for (const s3 of specs) {
-    if (s3.default !== void 0) flags[s3.name] = s3.default;
+  for (const s2 of specs) {
+    if (s2.default !== void 0) flags[s2.name] = s2.default;
   }
   let i3 = 0;
   let seenDashDash = false;
@@ -1302,12 +1302,12 @@ function parseArgs(argv, specs) {
 }
 function formatUsage(cliName, synopsis, specs) {
   const lines = [`Usage: ${cliName} ${synopsis}`, "", "Options:"];
-  for (const s3 of specs) {
-    const flagStr = s3.short ? `-${s3.short}, --${s3.name}` : `    --${s3.name}`;
-    const kind = s3.hasValue === false ? "" : " <value>";
-    const dflt = s3.default !== void 0 ? ` (default: ${JSON.stringify(s3.default)})` : "";
+  for (const s2 of specs) {
+    const flagStr = s2.short ? `-${s2.short}, --${s2.name}` : `    --${s2.name}`;
+    const kind = s2.hasValue === false ? "" : " <value>";
+    const dflt = s2.default !== void 0 ? ` (default: ${JSON.stringify(s2.default)})` : "";
     lines.push(`  ${flagStr}${kind}${dflt}`);
-    if (s3.help) lines.push(`      ${s3.help}`);
+    if (s2.help) lines.push(`      ${s2.help}`);
   }
   return lines.join("\n");
 }

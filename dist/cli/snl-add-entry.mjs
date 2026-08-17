@@ -7,14 +7,14 @@ import * as path5 from "node:path";
 function parseArgs(argv, specs) {
   const bySpec = {};
   const shortAlias = {};
-  for (const s3 of specs) {
-    bySpec[s3.name] = s3;
-    if (s3.short) shortAlias[s3.short] = s3.name;
+  for (const s2 of specs) {
+    bySpec[s2.name] = s2;
+    if (s2.short) shortAlias[s2.short] = s2.name;
   }
   const flags = {};
   const positional = [];
-  for (const s3 of specs) {
-    if (s3.default !== void 0) flags[s3.name] = s3.default;
+  for (const s2 of specs) {
+    if (s2.default !== void 0) flags[s2.name] = s2.default;
   }
   let i4 = 0;
   let seenDashDash = false;
@@ -80,12 +80,12 @@ function parseArgs(argv, specs) {
 }
 function formatUsage(cliName, synopsis, specs) {
   const lines = [`Usage: ${cliName} ${synopsis}`, "", "Options:"];
-  for (const s3 of specs) {
-    const flagStr = s3.short ? `-${s3.short}, --${s3.name}` : `    --${s3.name}`;
-    const kind = s3.hasValue === false ? "" : " <value>";
-    const dflt = s3.default !== void 0 ? ` (default: ${JSON.stringify(s3.default)})` : "";
+  for (const s2 of specs) {
+    const flagStr = s2.short ? `-${s2.short}, --${s2.name}` : `    --${s2.name}`;
+    const kind = s2.hasValue === false ? "" : " <value>";
+    const dflt = s2.default !== void 0 ? ` (default: ${JSON.stringify(s2.default)})` : "";
     lines.push(`  ${flagStr}${kind}${dflt}`);
-    if (s3.help) lines.push(`      ${s3.help}`);
+    if (s2.help) lines.push(`      ${s2.help}`);
   }
   return lines.join("\n");
 }
@@ -189,7 +189,7 @@ function assertCompatibleSchemaMarker(value, current, label) {
   }
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/template-bHqW1VSc.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
   return {
     macro_name: e,
@@ -205,93 +205,93 @@ var o = /^[A-Za-z0-9_\\]$/;
 var s = /^[A-Za-z0-9_.-]$/;
 var c = /[\p{White_Space}\p{Cc}\p{Cf}\p{Cs}]/u;
 function l(e, t3) {
-  let n4 = e.codePointAt(t3);
-  return n4 === void 0 ? null : String.fromCodePoint(n4);
+  let n3 = e.codePointAt(t3);
+  return n3 === void 0 ? null : String.fromCodePoint(n3);
 }
-function u(e, t3, n4) {
+function u(e, t3, n3) {
   let r3 = l(e, t3);
-  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n4 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
+  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n3 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
 }
 function d(e) {
   if (e.length === 0) return false;
-  let t3 = 0, n4 = u(e, t3, true);
-  if (n4 === 0) return false;
-  for (t3 += n4; t3 < e.length; ) {
-    if (n4 = u(e, t3, false), n4 === 0) return false;
-    t3 += n4;
+  let t3 = 0, n3 = u(e, t3, true);
+  if (n3 === 0) return false;
+  for (t3 += n3; t3 < e.length; ) {
+    if (n3 = u(e, t3, false), n3 === 0) return false;
+    t3 += n3;
   }
   return true;
 }
-var f = class extends Error {
+var h = class extends Error {
   position;
   constructor(e, t3) {
     super(`${e} at position ${t3}`), this.name = "SnlSyntaxTreeParseError", this.position = t3;
   }
 };
-function p(e, t3) {
-  let n4 = e.length - t3;
-  if (n4 >= 2 && e[t3] === "`") {
-    let n5 = e.indexOf("`", t3 + 1);
-    if (n5 < 0) throw new f("Unclosed ` delimiter", t3);
+function g(e, t3) {
+  let n3 = e.length - t3;
+  if (n3 >= 2 && e[t3] === "`") {
+    let n4 = e.indexOf("`", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed ` delimiter", t3);
     return {
       token: {
         type: "BACKTICK_DELIMITED",
-        value: e.slice(t3 + 1, n5),
+        value: e.slice(t3 + 1, n4),
         position: t3
       },
-      next: n5 + 1
+      next: n4 + 1
     };
   }
-  if (n4 >= 4 && e[t3] === "$" && e[t3 + 1] === "$") {
-    let n5 = e.indexOf("$$", t3 + 2);
-    if (n5 < 0) throw new f("Unclosed $$ delimiter", t3);
+  if (n3 >= 4 && e[t3] === "$" && e[t3 + 1] === "$") {
+    let n4 = e.indexOf("$$", t3 + 2);
+    if (n4 < 0) throw new h("Unclosed $$ delimiter", t3);
     return {
       token: {
         type: "DOLLAR2_DELIMITED",
-        value: e.slice(t3 + 2, n5),
+        value: e.slice(t3 + 2, n4),
         position: t3
       },
-      next: n5 + 2
+      next: n4 + 2
     };
   }
-  if (n4 >= 2 && e[t3] === "$") {
-    let n5 = e.indexOf("$", t3 + 1);
-    if (n5 < 0) throw new f("Unclosed $ delimiter", t3);
+  if (n3 >= 2 && e[t3] === "$") {
+    let n4 = e.indexOf("$", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed $ delimiter", t3);
     return {
       token: {
         type: "DOLLAR_DELIMITED",
-        value: e.slice(t3 + 1, n5),
+        value: e.slice(t3 + 1, n4),
         position: t3
       },
-      next: n5 + 1
+      next: n4 + 1
     };
   }
-  if (n4 >= 2 && e[t3] === "%") {
-    let n5 = e.indexOf("%", t3 + 1);
-    if (n5 < 0) throw new f("Unclosed % delimiter", t3);
+  if (n3 >= 2 && e[t3] === "%") {
+    let n4 = e.indexOf("%", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed % delimiter", t3);
     return {
       token: {
         type: "PERCENT_DELIMITED",
-        value: e.slice(t3 + 1, n5),
+        value: e.slice(t3 + 1, n4),
         position: t3
       },
-      next: n5 + 1
+      next: n4 + 1
     };
   }
   return null;
 }
-function m(e) {
-  let t3 = [], n4 = 0;
-  for (; n4 < e.length; ) {
-    let r3 = e[n4];
+function _(e) {
+  let t3 = [], n3 = 0;
+  for (; n3 < e.length; ) {
+    let r3 = e[n3];
     if (/[ \t\r\n\f\v]/.test(r3)) {
-      n4 += 1;
+      n3 += 1;
       continue;
     }
     if (r3 === "%" || r3 === "$" || r3 === "`") {
-      let r4 = p(e, n4);
+      let r4 = g(e, n3);
       if (r4) {
-        t3.push(r4.token), n4 = r4.next;
+        t3.push(r4.token), n3 = r4.next;
         continue;
       }
     }
@@ -299,29 +299,29 @@ function m(e) {
       t3.push({
         type: "AT",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "#") {
       t3.push({
         type: "HASH",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    let i4 = u(e, n4, true);
+    let i4 = u(e, n3, true);
     if (i4 > 0) {
-      let r4 = n4;
-      for (n4 += i4; n4 < e.length; ) {
-        let t4 = u(e, n4, false);
+      let r4 = n3;
+      for (n3 += i4; n3 < e.length; ) {
+        let t4 = u(e, n3, false);
         if (t4 === 0) break;
-        n4 += t4;
+        n3 += t4;
       }
       t3.push({
         type: "IDENT",
-        value: e.slice(r4, n4),
+        value: e.slice(r4, n3),
         position: r4
       });
       continue;
@@ -330,61 +330,61 @@ function m(e) {
       t3.push({
         type: "LBRACKET",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "]") {
       t3.push({
         type: "RBRACKET",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "(") {
       t3.push({
         type: "LPAREN",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === ")") {
       t3.push({
         type: "RPAREN",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === ",") {
       t3.push({
         type: "COMMA",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (r3 === "=") {
       t3.push({
         type: "EQ",
         value: r3,
-        position: n4
-      }), n4 += 1;
+        position: n3
+      }), n3 += 1;
       continue;
     }
     if (/\d/.test(r3)) {
-      let r4 = n4;
-      for (; n4 < e.length && /\d/.test(e[n4]); ) n4 += 1;
+      let r4 = n3;
+      for (; n3 < e.length && /\d/.test(e[n3]); ) n3 += 1;
       t3.push({
         type: "NUMBER",
-        value: e.slice(r4, n4),
+        value: e.slice(r4, n3),
         position: r4
       });
       continue;
     }
-    throw new f(`Unexpected character "${r3}"`, n4);
+    throw new h(`Unexpected character "${r3}"`, n3);
   }
   return t3.push({
     type: "EOF",
@@ -392,7 +392,7 @@ function m(e) {
     position: e.length
   }), t3;
 }
-var h = class {
+var v = class {
   cursor = 0;
   tokens;
   constructor(e) {
@@ -405,15 +405,15 @@ var h = class {
   parseNode() {
     let e = this.peek().type === "AT";
     e && this.consume("AT");
-    let n4 = this.peek(), r3;
-    if (n4.type === "IDENT") this.consume("IDENT"), r3 = t(n4.value);
-    else if (n4.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n4.value), r3.env_mode = "text";
-    else if (n4.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n4.value), r3.env_mode = "formula_inline";
-    else if (n4.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n4.value), r3.env_mode = "formula_display";
-    else if (n4.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n4.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
-    else throw new f(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n4.type}`, n4.position);
+    let n3 = this.peek(), r3;
+    if (n3.type === "IDENT") this.consume("IDENT"), r3 = t(n3.value);
+    else if (n3.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n3.value), r3.env_mode = "text";
+    else if (n3.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline";
+    else if (n3.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_display";
+    else if (n3.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
+    else throw new h(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n3.type}`, n3.position);
     if (this.peek().type === "AT") if (this.consume("AT"), this.peek().type === "HASH") {
-      if (e) throw new f("Binder name override must not use #", this.peek().position);
+      if (e) throw new h("Binder name override must not use #", this.peek().position);
       this.consume("HASH");
       let t3 = this.expect("IDENT");
       /^\d+(?:\.\d+)*$/.test(t3.value) ? r3.postfix = {
@@ -436,7 +436,7 @@ var h = class {
       r3.style_name = e2.value, this.expect("RBRACKET");
     }
     if (this.peek().type === "LPAREN" && (this.consume("LPAREN"), r3.children = this.parseNodeList(), this.expect("RPAREN")), e) {
-      if (r3.children.length > 0) throw new f("Binder must be a leaf", n4.position);
+      if (r3.children.length > 0) throw new h("Binder must be a leaf", n3.position);
       r3.binder_explicit = true, r3.kind = "binder";
     }
     return r3;
@@ -453,7 +453,7 @@ var h = class {
   }
   expect(e) {
     let t3 = this.peek();
-    if (t3.type !== e) throw new f(`Expected ${e} but got ${t3.type}`, t3.position);
+    if (t3.type !== e) throw new h(`Expected ${e} but got ${t3.type}`, t3.position);
     return this.cursor += 1, t3;
   }
   consume(e) {
@@ -463,99 +463,99 @@ var h = class {
     return this.tokens[this.cursor];
   }
 };
-function g(e, t3 = {}) {
-  let n4 = new h(m(e)).parse();
-  return _(n4), n4;
+function y(e, t3 = {}) {
+  let n3 = new v(_(e)).parse();
+  return b(n3), n3;
 }
-function _(e, t3 = []) {
-  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n4) => _(e2, [...t3, n4]));
+function b(e, t3 = []) {
+  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n3) => b(e2, [...t3, n3]));
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-BZAk_eo6.js
-function n2(e) {
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
   if (t3.type !== "i18n" || typeof t3.default_language != "string" || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return false;
-  let n4 = t3.values, r3 = Object.keys(n4);
-  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n4, t3.default_language) && typeof n4[t3.default_language] == "string" && r3.every((e2) => typeof n4[e2] == "string");
-}
-function r(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let r3 = e;
-  return typeof r3.style_name != "string" || !d(r3.style_name) || "tag" in r3 || "variadic_left" in r3 || "variadic_join" in r3 || "variadic_right" in r3 || !Array.isArray(r3.tags) || !r3.tags.every((e2) => typeof e2 == "string") || r3.separator !== void 0 && typeof r3.separator != "string" || r3.block_template_name !== void 0 && (r3.mode !== "block" || typeof r3.block_template_name != "string") ? false : r3.mode === "text" ? typeof r3.template == "string" || n2(r3.template) : r3.mode === "formula_inline" || r3.mode === "formula_display" || r3.mode === "block" ? typeof r3.template == "string" : false;
+  let n3 = t3.values, r3 = Object.keys(n3);
+  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n3, t3.default_language) && typeof n3[t3.default_language] == "string" && r3.every((e2) => typeof n3[e2] == "string");
 }
 function i(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t3 = e;
+  return typeof t3.style_name != "string" || !d(t3.style_name) || "tag" in t3 || "variadic_left" in t3 || "variadic_join" in t3 || "variadic_right" in t3 || !Array.isArray(t3.tags) || !t3.tags.every((e2) => typeof e2 == "string") || t3.separator !== void 0 && typeof t3.separator != "string" || t3.block_template_name !== void 0 && (t3.mode !== "block" || typeof t3.block_template_name != "string") ? false : t3.mode === "text" ? typeof t3.template == "string" || r(t3.template) : t3.mode === "formula_inline" || t3.mode === "formula_display" || t3.mode === "block" ? typeof t3.template == "string" : false;
+}
+function a(e) {
   return Array.isArray(e) && e.every((e2) => typeof e2 == "string");
 }
-function a(e, n4 = true) {
-  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (n4 || e.tags !== void 0) && !i(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
+function o2(e, t3 = true) {
+  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (t3 || e.tags !== void 0) && !a(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
   let r3 = e.source;
-  return i(r3.entries) && i(r3.urls);
-}
-function s2(e) {
-  return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
+  return a(r3.entries) && a(r3.urls);
 }
 function c2(e) {
+  return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
+}
+function l2(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = Object.getPrototypeOf(e);
   return t3 === Object.prototype || t3 === null;
 }
-function d2(e) {
-  if (!c2(e)) return false;
+function f(e) {
+  if (!l2(e)) return false;
   for (let t3 of Object.values(e)) {
     if (!t3 || typeof t3 != "object" || Array.isArray(t3)) return false;
     let e2 = t3;
-    if (!a(e2) || !s2(e2.default_style)) return false;
-    let n4 = e2.styles;
-    if (!n4 || n4.length === 0 || n4.some((e3) => !r(e3) || typeof e3.template != "string")) return false;
-    let i4 = n4.map((e3) => e3.style_name);
-    if (new Set(i4).size !== i4.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !i4.includes(e3))) return false;
+    if (!o2(e2) || !c2(e2.default_style)) return false;
+    let n3 = e2.styles;
+    if (!n3 || n3.length === 0 || n3.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
+    let r3 = n3.map((e3) => e3.style_name);
+    if (new Set(r3).size !== r3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r3.includes(e3))) return false;
   }
   return true;
 }
-var N = 256;
-function P(e, t3) {
-  return e.reduce((n4, r3, i4) => i4 === 0 ? r3 : `${n4}${e[i4 - 1] !== "" && r3 !== "" ? `,${t3}` : ","}${r3}`, "");
+var G = 256;
+function K(e, t3) {
+  return e.reduce((n3, r3, i4) => i4 === 0 ? r3 : `${n3}${e[i4 - 1] !== "" && r3 !== "" ? `,${t3}` : ","}${r3}`, "");
 }
-var F = class {
+var q = class {
   indentSpaces;
   inlineParenthesisDepth;
   constructor(e = 4, t3 = 3) {
-    this.assertIntegerInRange(e, "indentSpaces", N), this.assertIntegerInRange(t3, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t3;
+    this.assertIntegerInRange(e, "indentSpaces", G), this.assertIntegerInRange(t3, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t3;
   }
-  format(t3) {
-    return this.formatNode(g(t3), 0, " ");
+  format(e) {
+    return this.formatNode(y(e), 0, " ");
   }
   formatTree(e, t3 = " ") {
     return this.formatNode(e, 0, t3);
   }
-  formatNode(e, t3, n4) {
+  formatNode(e, t3, n3) {
     let r3 = this.formatNodeHead(e);
     if (e.children.length === 0) return r3;
-    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${P(e.children.map((e2) => this.formatNode(e2, 0, n4)), n4)})`;
+    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${K(e.children.map((e2) => this.formatNode(e2, 0, n3)), n3)})`;
     let i4 = " ".repeat(this.indentSpaces * (t3 + 1));
     return `${r3}(
-${e.children.map((e2) => `${i4}${this.formatNode(e2, t3 + 1, n4)}`).join(",\n")}
+${e.children.map((e2) => `${i4}${this.formatNode(e2, t3 + 1, n3)}`).join(",\n")}
 ${" ".repeat(this.indentSpaces * t3)})`;
   }
   formatNodeHead(e) {
-    let t3 = e.binder_explicit ? "@" : "", n4, r3 = e.temporary_source ?? e.macro_name;
-    if (e.temporary_format === "texttt") n4 = `\`${r3}\``;
+    let t3 = e.binder_explicit ? "@" : "", n3, r3 = e.temporary_source ?? e.macro_name;
+    if (e.temporary_format === "texttt") n3 = `\`${r3}\``;
     else switch (e.env_mode) {
       case "text":
-        n4 = `%${r3}%`;
+        n3 = `%${r3}%`;
         break;
       case "formula_inline":
-        n4 = `$${r3}$`;
+        n3 = `$${r3}$`;
         break;
       case "formula_display":
-        n4 = `$$${r3}$$`;
+        n3 = `$$${r3}$$`;
         break;
       default:
-        n4 = e.macro_name;
+        n3 = e.macro_name;
     }
-    let i4 = this.sourceReference(e), a3 = i4 === void 0 ? "" : `@${i4}`, o2 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
-    return `${t3}${n4}${a3}${o2}`;
+    let i4 = this.sourceReference(e), a3 = i4 === void 0 ? "" : `@${i4}`, o3 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
+    return `${t3}${n3}${a3}${o3}`;
   }
   sourceReference(e) {
     if (e.binder_explicit && e.binder_name && e.binder_name !== e.macro_name) return e.binder_name;
@@ -566,43 +566,43 @@ ${" ".repeat(this.indentSpaces * t3)})`;
     let t3 = e.mdata.src;
     return typeof t3 == "string" ? t3 : void 0;
   }
-  assertIntegerInRange(e, t3, n4) {
-    if (!Number.isSafeInteger(e) || e < 0 || e > n4) throw RangeError(`${t3} must be a non-negative integer no greater than ${n4}`);
+  assertIntegerInRange(e, t3, n3) {
+    if (!Number.isSafeInteger(e) || e < 0 || e > n3) throw RangeError(`${t3} must be a non-negative integer no greater than ${n3}`);
   }
   parenthesisDepth(e) {
     let t3 = -1;
-    for (let n4 of e.children) t3 = Math.max(t3, this.parenthesisDepth(n4));
+    for (let n3 of e.children) t3 = Math.max(t3, this.parenthesisDepth(n3));
     return t3 + 1;
   }
 };
-var I = new F(0, 2 ** 53 - 1);
+var J = new q(0, 2 ** 53 - 1);
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-eMsdnb5x.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t2(t3) {
-  let n4 = /* @__PURE__ */ new Set();
-  if (!t3.trim()) return n4;
+  let n3 = /* @__PURE__ */ new Set();
+  if (!t3.trim()) return n3;
   let r3;
   try {
-    r3 = g(t3);
+    r3 = y(t3);
   } catch {
-    return n4;
+    return n3;
   }
   let i4 = (e) => {
     if (e.kind === "binder") {
-      n4.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
+      n3.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
       return;
     }
     e.children.forEach(i4);
   };
-  return i4(r3), n4;
+  return i4(r3), n3;
 }
 
 // lib/snl-parser.ts
 function tryParseSnlSyntaxTree(input) {
   try {
-    return { ok: true, tree: g(input) };
+    return { ok: true, tree: y(input) };
   } catch (e) {
-    if (e instanceof f) {
+    if (e instanceof h) {
       return { ok: false, error: e.message, position: e.position };
     }
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
@@ -644,7 +644,7 @@ function lintEntry(raw, ctx) {
       message: "Field `id` must be a non-empty string.",
       path: "id"
     });
-  } else if (ctx.siblingEntries.some((s3) => s3.id === e.id)) {
+  } else if (ctx.siblingEntries.some((s2) => s2.id === e.id)) {
     issues.push({
       severity: "error",
       code: "entry.duplicate-id",
@@ -659,8 +659,8 @@ function lintEntry(raw, ctx) {
       message: "Field `kind` must be a non-empty string.",
       path: "kind"
     });
-  } else if (!ctx.entryKinds.some((k2) => k2.id === e.kind)) {
-    const known = ctx.entryKinds.map((k2) => k2.id).join(", ") || "(none defined)";
+  } else if (!ctx.entryKinds.some((k) => k.id === e.kind)) {
+    const known = ctx.entryKinds.map((k) => k.id).join(", ") || "(none defined)";
     issues.push({
       severity: "error",
       code: "entry.unknown-kind",
@@ -770,9 +770,9 @@ function collectSrcReferences(node) {
   const out = /* @__PURE__ */ new Map();
   visit(node);
   return [...out.values()].sort((a3, b2) => a3.sourceId.localeCompare(b2.sourceId) || a3.binderName.localeCompare(b2.binderName));
-  function visit(n4) {
-    if (!n4 || typeof n4 !== "object") return;
-    const nn = n4;
+  function visit(n3) {
+    if (!n3 || typeof n3 !== "object") return;
+    const nn = n3;
     const binderName = typeof nn.temporary_source === "string" ? nn.temporary_source : typeof nn.binder_name === "string" ? nn.binder_name : typeof nn.macro_name === "string" ? nn.macro_name : "";
     if (nn.postfix && typeof nn.postfix === "object") {
       const postfix = nn.postfix;
@@ -809,13 +809,13 @@ function findUnresolvedIdentifiers(snl, pool) {
   }
   return [...unresolved].sort();
 }
-function describe(v3) {
-  if (v3 === null) return "null";
-  if (Array.isArray(v3)) return "array";
-  return typeof v3;
+function describe(v2) {
+  if (v2 === null) return "null";
+  if (Array.isArray(v2)) return "array";
+  return typeof v2;
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/katex/dist/katex.mjs
+// node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -978,7 +978,7 @@ var SETTINGS_SCHEMA = {
     type: "number",
     default: Infinity,
     description: "If non-zero, all user-specified sizes, e.g. in \\rule{500em}{500em}, will be capped to maxSize ems. Otherwise, elements and spaces can be arbitrarily large",
-    processor: (s3) => Math.max(0, s3),
+    processor: (s2) => Math.max(0, s2),
     cli: "-s, --max-size <n>",
     cliProcessor: parseInt
   },
@@ -986,9 +986,9 @@ var SETTINGS_SCHEMA = {
     type: "number",
     default: 1e3,
     description: "Limit the number of macro expansions to the specified number, to prevent e.g. infinite macro loops. If set to Infinity, the macro expander will try to fully expand as in LaTeX.",
-    processor: (n4) => Math.max(0, n4),
+    processor: (n3) => Math.max(0, n3),
     cli: "-e, --max-expand <n>",
-    cliProcessor: (n4) => n4 === "Infinity" ? Infinity : parseInt(n4)
+    cliProcessor: (n3) => n3 === "Infinity" ? Infinity : parseInt(n3)
   },
   globalGroup: {
     type: "boolean",
@@ -1173,24 +1173,24 @@ var Style = class {
     return this.size >= 2;
   }
 };
-var D2 = 0;
+var D = 0;
 var Dc = 1;
-var T2 = 2;
+var T = 2;
 var Tc = 3;
 var S = 4;
 var Sc = 5;
 var SS = 6;
 var SSc = 7;
-var styles = [new Style(D2, 0, false), new Style(Dc, 0, true), new Style(T2, 1, false), new Style(Tc, 1, true), new Style(S, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
+var styles = [new Style(D, 0, false), new Style(Dc, 0, true), new Style(T, 1, false), new Style(Tc, 1, true), new Style(S, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
 var sup = [S, Sc, S, Sc, SS, SSc, SS, SSc];
 var sub = [Sc, Sc, Sc, Sc, SSc, SSc, SSc, SSc];
-var fracNum = [T2, Tc, S, Sc, SS, SSc, SS, SSc];
+var fracNum = [T, Tc, S, Sc, SS, SSc, SS, SSc];
 var fracDen = [Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc];
 var cramp = [Dc, Dc, Tc, Tc, Sc, Sc, SSc, SSc];
-var text$1 = [D2, Dc, T2, Tc, T2, Tc, T2, Tc];
+var text$1 = [D, Dc, T, Tc, T, Tc, T, Tc];
 var Style$1 = {
-  DISPLAY: styles[D2],
-  TEXT: styles[T2],
+  DISPLAY: styles[D],
+  TEXT: styles[T],
   SCRIPT: styles[S],
   SCRIPTSCRIPT: styles[SS]
 };
@@ -1266,7 +1266,7 @@ function scriptFromCodepoint(codepoint) {
   return null;
 }
 var allBlocks = [];
-scriptData.forEach((s3) => s3.blocks.forEach((b2) => allBlocks.push(...b2)));
+scriptData.forEach((s2) => s2.blocks.forEach((b2) => allBlocks.push(...b2)));
 function supportedCodepoint(codepoint) {
   for (var i4 = 0; i4 < allBlocks.length; i4 += 2) {
     if (codepoint >= allBlocks[i4] && codepoint <= allBlocks[i4 + 1]) {
@@ -1292,9 +1292,9 @@ var sqrtSize3 = function sqrtSize32(extraVinculum, hLinePad2) {
 var sqrtSize4 = function sqrtSize42(extraVinculum, hLinePad2) {
   return "M473," + (2713 + extraVinculum + hLinePad2) + "\nc339.3,-1799.3,509.3,-2700,510,-2702 l" + extraVinculum / 5.298 + " -" + extraVinculum + "\nc3.3,-7.3,9.3,-11,18,-11 H400000v" + (40 + extraVinculum) + "H1017.7\ns-90.5,478,-276.2,1466c-185.7,988,-279.5,1483,-281.5,1485c-2,6,-10,9,-24,9\nc-8,0,-12,-0.7,-12,-2c0,-1.3,-5.3,-32,-16,-92c-50.7,-293.3,-119.7,-693.3,-207,-1200\nc0,-1.3,-5.3,8.7,-16,30c-10.7,21.3,-21.3,42.7,-32,64s-16,33,-16,33s-26,-26,-26,-26\ns76,-153,76,-153s77,-151,77,-151c0.7,0.7,35.7,202,105,604c67.3,400.7,102,602.7,104,\n606zM" + (1001 + extraVinculum) + " " + hLinePad2 + "h400000v" + (40 + extraVinculum) + "H1017.7z";
 };
-var phasePath = function phasePath2(y) {
-  var x2 = y / 2;
-  return "M400000 " + y + " H0 L" + x2 + " 0 l65 45 L145 " + (y - 80) + " H400000z";
+var phasePath = function phasePath2(y3) {
+  var x3 = y3 / 2;
+  return "M400000 " + y3 + " H0 L" + x3 + " 0 l65 45 L145 " + (y3 - 80) + " H400000z";
 };
 var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
   var vertSegment = viewBoxHeight - 54 - hLinePad2 - extraVinculum;
@@ -1573,8 +1573,8 @@ var calculateSize = function calculateSize2(sizeValue, options) {
   }
   return Math.min(sizeValue.number * scale, options.maxSize);
 };
-var makeEm = function makeEm2(n4) {
-  return +n4.toFixed(4) + "em";
+var makeEm = function makeEm2(n3) {
+  return +n3.toFixed(4) + "em";
 };
 var createClass = function createClass2(classes) {
   return classes.filter((cls) => cls).join(" ");
@@ -5761,8 +5761,8 @@ var _traverseNonSpaceNodes = function traverseNonSpaceNodes(nodes, callback, pre
     } else if (isRoot && node.hasClass("newline")) {
       prev.node = makeSpan(["leftmost"]);
     }
-    prev.insertAfter = /* @__PURE__ */ ((index) => (n4) => {
-      nodes.splice(index + 1, 0, n4);
+    prev.insertAfter = /* @__PURE__ */ ((index) => (n3) => {
+      nodes.splice(index + 1, 0, n3);
       i4++;
     })(i4);
   }
@@ -7425,13 +7425,13 @@ function parseCD(parser) {
   for (var i4 = 0; i4 < parsedRows.length; i4++) {
     var rowNodes = parsedRows[i4];
     var cell = newCell();
-    for (var j2 = 0; j2 < rowNodes.length; j2++) {
-      if (!isStartOfArrow(rowNodes[j2])) {
-        cell.body.push(rowNodes[j2]);
+    for (var j = 0; j < rowNodes.length; j++) {
+      if (!isStartOfArrow(rowNodes[j])) {
+        cell.body.push(rowNodes[j]);
       } else {
         row.push(cell);
-        j2 += 1;
-        var arrowChar = assertSymbolNodeType(rowNodes[j2]).text;
+        j += 1;
+        var arrowChar = assertSymbolNodeType(rowNodes[j]).text;
         var labels = new Array(2);
         labels[0] = {
           type: "ordgroup",
@@ -7447,23 +7447,23 @@ function parseCD(parser) {
         else if ("<>AV".includes(arrowChar)) {
           for (var labelNum = 0; labelNum < 2; labelNum++) {
             var inLabel = true;
-            for (var k2 = j2 + 1; k2 < rowNodes.length; k2++) {
-              if (isLabelEnd(rowNodes[k2], arrowChar)) {
+            for (var k = j + 1; k < rowNodes.length; k++) {
+              if (isLabelEnd(rowNodes[k], arrowChar)) {
                 inLabel = false;
-                j2 = k2;
+                j = k;
                 break;
               }
-              if (isStartOfArrow(rowNodes[k2])) {
-                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k2]);
+              if (isStartOfArrow(rowNodes[k])) {
+                throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[k]);
               }
-              labels[labelNum].body.push(rowNodes[k2]);
+              labels[labelNum].body.push(rowNodes[k]);
             }
             if (inLabel) {
-              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j2]);
+              throw new ParseError("Missing a " + arrowChar + " character to complete a CD arrow.", rowNodes[j]);
             }
           }
         } else {
-          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j2]);
+          throw new ParseError('Expected one of "<>AV=|." after @', rowNodes[j]);
         }
         var arrow = cdArrow(arrowChar, labels, parser);
         var wrappedArrow = {
@@ -9462,8 +9462,8 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   for (var i4 = 0; i4 < group.body.length; i4++) {
     var rw = group.body[i4];
     var row = [];
-    for (var j2 = 0; j2 < rw.length; j2++) {
-      row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
+    for (var j = 0; j < rw.length; j++) {
+      row.push(new MathNode("mtd", [buildGroup2(rw[j], options)]));
     }
     if (group.tags && group.tags[i4]) {
       row.unshift(glue);
@@ -12056,8 +12056,8 @@ var styleMap = {
   "script": Style$1.SCRIPT,
   "scriptscript": Style$1.SCRIPTSCRIPT
 };
-function isStyleStr(s3) {
-  return s3 in styleMap;
+function isStyleStr(s2) {
+  return s2 in styleMap;
 }
 defineFunction({
   type: "styling",
@@ -14996,27 +14996,27 @@ var Parser = class _Parser {
    * The group will be modified in place.
    */
   formLigatures(group) {
-    var n4 = group.length - 1;
-    for (var i4 = 0; i4 < n4; ++i4) {
+    var n3 = group.length - 1;
+    for (var i4 = 0; i4 < n3; ++i4) {
       var a3 = group[i4];
       if (a3.type !== "textord") {
         continue;
       }
-      var v3 = a3.text;
+      var v2 = a3.text;
       var next = group[i4 + 1];
       if (!next || next.type !== "textord") {
         continue;
       }
-      if (v3 === "-" && next.text === "-") {
+      if (v2 === "-" && next.text === "-") {
         var afterNext = group[i4 + 2];
-        if (i4 + 1 < n4 && afterNext && afterNext.type === "textord" && afterNext.text === "-") {
+        if (i4 + 1 < n3 && afterNext && afterNext.type === "textord" && afterNext.text === "-") {
           group.splice(i4, 3, {
             type: "textord",
             mode: "text",
             loc: SourceLocation.range(a3, afterNext),
             text: "---"
           });
-          n4 -= 2;
+          n3 -= 2;
         } else {
           group.splice(i4, 2, {
             type: "textord",
@@ -15024,17 +15024,17 @@ var Parser = class _Parser {
             loc: SourceLocation.range(a3, next),
             text: "--"
           });
-          n4 -= 1;
+          n3 -= 1;
         }
       }
-      if ((v3 === "'" || v3 === "`") && next.text === v3) {
+      if ((v2 === "'" || v2 === "`") && next.text === v2) {
         group.splice(i4, 2, {
           type: "textord",
           mode: "text",
           loc: SourceLocation.range(a3, next),
-          text: v3 + v3
+          text: v2 + v2
         });
-        n4 -= 1;
+        n3 -= 1;
       }
     }
   }
@@ -15085,9 +15085,9 @@ var Parser = class _Parser {
       }
       var group = symbols[this.mode][text2].group;
       var loc = SourceLocation.range(nucleus);
-      var s3;
+      var s2;
       if (isAtom(group)) {
-        s3 = {
+        s2 = {
           type: "atom",
           mode: this.mode,
           family: group,
@@ -15095,14 +15095,14 @@ var Parser = class _Parser {
           text: text2
         };
       } else {
-        s3 = {
+        s2 = {
           type: group,
           mode: this.mode,
           loc,
           text: text2
         };
       }
-      symbol = s3;
+      symbol = s2;
     } else if (text2.charCodeAt(0) >= 128) {
       if (this.settings.strict) {
         if (!supportedCodepoint(text2.charCodeAt(0))) {
@@ -15574,7 +15574,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !d2(macroDocument)) {
+    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );

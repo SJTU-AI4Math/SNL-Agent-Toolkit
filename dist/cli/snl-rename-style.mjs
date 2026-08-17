@@ -10,7 +10,7 @@ import * as path3 from "node:path";
 import { createHash as createHash2 } from "node:crypto";
 import { types as utilTypes } from "node:util";
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/jsonc-parser/lib/esm/impl/scanner.js
+// node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text, ignoreTrivia = false) {
   const len = text.length;
   let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
@@ -431,7 +431,7 @@ var CharacterCodes;
   CharacterCodes2[CharacterCodes2["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+// node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
   return " ".repeat(index);
 });
@@ -462,7 +462,7 @@ var cachedBreakLinesWithSpaces = {
 };
 var supportedEols = ["\n", "\r", "\r\n"];
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/jsonc-parser/lib/esm/impl/format.js
+// node_modules/jsonc-parser/lib/esm/impl/format.js
 function format(documentText, range, options) {
   let initialIndentLevel;
   let formatText;
@@ -656,10 +656,10 @@ function format(documentText, range, options) {
   }
   return editOperations;
 }
-function repeat(s3, count) {
+function repeat(s2, count) {
   let result = "";
   for (let i3 = 0; i3 < count; i3++) {
-    result += s3;
+    result += s2;
   }
   return result;
 }
@@ -698,7 +698,7 @@ function isEOL(text, offset) {
   return "\r\n".indexOf(text.charAt(offset)) !== -1;
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/jsonc-parser/lib/esm/impl/parser.js
+// node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
 (function(ParseOptions2) {
   ParseOptions2.DEFAULT = {
@@ -1120,7 +1120,7 @@ function getNodeType(value) {
   }
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/jsonc-parser/lib/esm/impl/edit.js
+// node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text, originalPath, value, options) {
   const path5 = originalPath.slice();
   const errors = [];
@@ -1264,7 +1264,7 @@ function applyEdit(text, edit) {
   return text.substring(0, edit.offset) + edit.content + text.substring(edit.offset + edit.length);
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/jsonc-parser/lib/esm/main.js
+// node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError2) {
   ScanError2[ScanError2["None"] = 0] = "None";
@@ -1381,7 +1381,7 @@ function applyEdits(text, edits) {
 import { constants, promises as fs } from "node:fs";
 import * as path from "node:path";
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/template-bHqW1VSc.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t2) {
   return {
     macro_name: e,
@@ -1397,93 +1397,93 @@ var o = /^[A-Za-z0-9_\\]$/;
 var s = /^[A-Za-z0-9_.-]$/;
 var c = /[\p{White_Space}\p{Cc}\p{Cf}\p{Cs}]/u;
 function l(e, t2) {
-  let n3 = e.codePointAt(t2);
-  return n3 === void 0 ? null : String.fromCodePoint(n3);
+  let n2 = e.codePointAt(t2);
+  return n2 === void 0 ? null : String.fromCodePoint(n2);
 }
-function u(e, t2, n3) {
+function u(e, t2, n2) {
   let r3 = l(e, t2);
-  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n3 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
+  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n2 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
 }
 function d(e) {
   if (e.length === 0) return false;
-  let t2 = 0, n3 = u(e, t2, true);
-  if (n3 === 0) return false;
-  for (t2 += n3; t2 < e.length; ) {
-    if (n3 = u(e, t2, false), n3 === 0) return false;
-    t2 += n3;
+  let t2 = 0, n2 = u(e, t2, true);
+  if (n2 === 0) return false;
+  for (t2 += n2; t2 < e.length; ) {
+    if (n2 = u(e, t2, false), n2 === 0) return false;
+    t2 += n2;
   }
   return true;
 }
-var f = class extends Error {
+var h = class extends Error {
   position;
   constructor(e, t2) {
     super(`${e} at position ${t2}`), this.name = "SnlSyntaxTreeParseError", this.position = t2;
   }
 };
-function p(e, t2) {
-  let n3 = e.length - t2;
-  if (n3 >= 2 && e[t2] === "`") {
-    let n4 = e.indexOf("`", t2 + 1);
-    if (n4 < 0) throw new f("Unclosed ` delimiter", t2);
+function g(e, t2) {
+  let n2 = e.length - t2;
+  if (n2 >= 2 && e[t2] === "`") {
+    let n3 = e.indexOf("`", t2 + 1);
+    if (n3 < 0) throw new h("Unclosed ` delimiter", t2);
     return {
       token: {
         type: "BACKTICK_DELIMITED",
-        value: e.slice(t2 + 1, n4),
+        value: e.slice(t2 + 1, n3),
         position: t2
       },
-      next: n4 + 1
+      next: n3 + 1
     };
   }
-  if (n3 >= 4 && e[t2] === "$" && e[t2 + 1] === "$") {
-    let n4 = e.indexOf("$$", t2 + 2);
-    if (n4 < 0) throw new f("Unclosed $$ delimiter", t2);
+  if (n2 >= 4 && e[t2] === "$" && e[t2 + 1] === "$") {
+    let n3 = e.indexOf("$$", t2 + 2);
+    if (n3 < 0) throw new h("Unclosed $$ delimiter", t2);
     return {
       token: {
         type: "DOLLAR2_DELIMITED",
-        value: e.slice(t2 + 2, n4),
+        value: e.slice(t2 + 2, n3),
         position: t2
       },
-      next: n4 + 2
+      next: n3 + 2
     };
   }
-  if (n3 >= 2 && e[t2] === "$") {
-    let n4 = e.indexOf("$", t2 + 1);
-    if (n4 < 0) throw new f("Unclosed $ delimiter", t2);
+  if (n2 >= 2 && e[t2] === "$") {
+    let n3 = e.indexOf("$", t2 + 1);
+    if (n3 < 0) throw new h("Unclosed $ delimiter", t2);
     return {
       token: {
         type: "DOLLAR_DELIMITED",
-        value: e.slice(t2 + 1, n4),
+        value: e.slice(t2 + 1, n3),
         position: t2
       },
-      next: n4 + 1
+      next: n3 + 1
     };
   }
-  if (n3 >= 2 && e[t2] === "%") {
-    let n4 = e.indexOf("%", t2 + 1);
-    if (n4 < 0) throw new f("Unclosed % delimiter", t2);
+  if (n2 >= 2 && e[t2] === "%") {
+    let n3 = e.indexOf("%", t2 + 1);
+    if (n3 < 0) throw new h("Unclosed % delimiter", t2);
     return {
       token: {
         type: "PERCENT_DELIMITED",
-        value: e.slice(t2 + 1, n4),
+        value: e.slice(t2 + 1, n3),
         position: t2
       },
-      next: n4 + 1
+      next: n3 + 1
     };
   }
   return null;
 }
-function m(e) {
-  let t2 = [], n3 = 0;
-  for (; n3 < e.length; ) {
-    let r3 = e[n3];
+function _(e) {
+  let t2 = [], n2 = 0;
+  for (; n2 < e.length; ) {
+    let r3 = e[n2];
     if (/[ \t\r\n\f\v]/.test(r3)) {
-      n3 += 1;
+      n2 += 1;
       continue;
     }
     if (r3 === "%" || r3 === "$" || r3 === "`") {
-      let r4 = p(e, n3);
+      let r4 = g(e, n2);
       if (r4) {
-        t2.push(r4.token), n3 = r4.next;
+        t2.push(r4.token), n2 = r4.next;
         continue;
       }
     }
@@ -1491,29 +1491,29 @@ function m(e) {
       t2.push({
         type: "AT",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (r3 === "#") {
       t2.push({
         type: "HASH",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
-    let i3 = u(e, n3, true);
+    let i3 = u(e, n2, true);
     if (i3 > 0) {
-      let r4 = n3;
-      for (n3 += i3; n3 < e.length; ) {
-        let t3 = u(e, n3, false);
+      let r4 = n2;
+      for (n2 += i3; n2 < e.length; ) {
+        let t3 = u(e, n2, false);
         if (t3 === 0) break;
-        n3 += t3;
+        n2 += t3;
       }
       t2.push({
         type: "IDENT",
-        value: e.slice(r4, n3),
+        value: e.slice(r4, n2),
         position: r4
       });
       continue;
@@ -1522,61 +1522,61 @@ function m(e) {
       t2.push({
         type: "LBRACKET",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (r3 === "]") {
       t2.push({
         type: "RBRACKET",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (r3 === "(") {
       t2.push({
         type: "LPAREN",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (r3 === ")") {
       t2.push({
         type: "RPAREN",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (r3 === ",") {
       t2.push({
         type: "COMMA",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (r3 === "=") {
       t2.push({
         type: "EQ",
         value: r3,
-        position: n3
-      }), n3 += 1;
+        position: n2
+      }), n2 += 1;
       continue;
     }
     if (/\d/.test(r3)) {
-      let r4 = n3;
-      for (; n3 < e.length && /\d/.test(e[n3]); ) n3 += 1;
+      let r4 = n2;
+      for (; n2 < e.length && /\d/.test(e[n2]); ) n2 += 1;
       t2.push({
         type: "NUMBER",
-        value: e.slice(r4, n3),
+        value: e.slice(r4, n2),
         position: r4
       });
       continue;
     }
-    throw new f(`Unexpected character "${r3}"`, n3);
+    throw new h(`Unexpected character "${r3}"`, n2);
   }
   return t2.push({
     type: "EOF",
@@ -1584,7 +1584,7 @@ function m(e) {
     position: e.length
   }), t2;
 }
-var h = class {
+var v = class {
   cursor = 0;
   tokens;
   constructor(e) {
@@ -1597,15 +1597,15 @@ var h = class {
   parseNode() {
     let e = this.peek().type === "AT";
     e && this.consume("AT");
-    let n3 = this.peek(), r3;
-    if (n3.type === "IDENT") this.consume("IDENT"), r3 = t(n3.value);
-    else if (n3.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n3.value), r3.env_mode = "text";
-    else if (n3.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline";
-    else if (n3.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_display";
-    else if (n3.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
-    else throw new f(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n3.type}`, n3.position);
+    let n2 = this.peek(), r3;
+    if (n2.type === "IDENT") this.consume("IDENT"), r3 = t(n2.value);
+    else if (n2.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n2.value), r3.env_mode = "text";
+    else if (n2.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n2.value), r3.env_mode = "formula_inline";
+    else if (n2.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n2.value), r3.env_mode = "formula_display";
+    else if (n2.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n2.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
+    else throw new h(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n2.type}`, n2.position);
     if (this.peek().type === "AT") if (this.consume("AT"), this.peek().type === "HASH") {
-      if (e) throw new f("Binder name override must not use #", this.peek().position);
+      if (e) throw new h("Binder name override must not use #", this.peek().position);
       this.consume("HASH");
       let t2 = this.expect("IDENT");
       /^\d+(?:\.\d+)*$/.test(t2.value) ? r3.postfix = {
@@ -1628,7 +1628,7 @@ var h = class {
       r3.style_name = e2.value, this.expect("RBRACKET");
     }
     if (this.peek().type === "LPAREN" && (this.consume("LPAREN"), r3.children = this.parseNodeList(), this.expect("RPAREN")), e) {
-      if (r3.children.length > 0) throw new f("Binder must be a leaf", n3.position);
+      if (r3.children.length > 0) throw new h("Binder must be a leaf", n2.position);
       r3.binder_explicit = true, r3.kind = "binder";
     }
     return r3;
@@ -1645,7 +1645,7 @@ var h = class {
   }
   expect(e) {
     let t2 = this.peek();
-    if (t2.type !== e) throw new f(`Expected ${e} but got ${t2.type}`, t2.position);
+    if (t2.type !== e) throw new h(`Expected ${e} but got ${t2.type}`, t2.position);
     return this.cursor += 1, t2;
   }
   consume(e) {
@@ -1655,99 +1655,99 @@ var h = class {
     return this.tokens[this.cursor];
   }
 };
-function g(e, t2 = {}) {
-  let n3 = new h(m(e)).parse();
-  return _(n3), n3;
+function y(e, t2 = {}) {
+  let n2 = new v(_(e)).parse();
+  return b(n2), n2;
 }
-function _(e, t2 = []) {
-  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n3) => _(e2, [...t2, n3]));
+function b(e, t2 = []) {
+  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n2) => b(e2, [...t2, n2]));
 }
 
-// ../../.openclaw/workspace/cat-repos/SNL-Agent-Toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-BZAk_eo6.js
-function n2(e) {
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t2 = e;
   if (t2.type !== "i18n" || typeof t2.default_language != "string" || !t2.values || typeof t2.values != "object" || Array.isArray(t2.values)) return false;
-  let n3 = t2.values, r3 = Object.keys(n3);
-  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n3, t2.default_language) && typeof n3[t2.default_language] == "string" && r3.every((e2) => typeof n3[e2] == "string");
-}
-function r(e) {
-  if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let r3 = e;
-  return typeof r3.style_name != "string" || !d(r3.style_name) || "tag" in r3 || "variadic_left" in r3 || "variadic_join" in r3 || "variadic_right" in r3 || !Array.isArray(r3.tags) || !r3.tags.every((e2) => typeof e2 == "string") || r3.separator !== void 0 && typeof r3.separator != "string" || r3.block_template_name !== void 0 && (r3.mode !== "block" || typeof r3.block_template_name != "string") ? false : r3.mode === "text" ? typeof r3.template == "string" || n2(r3.template) : r3.mode === "formula_inline" || r3.mode === "formula_display" || r3.mode === "block" ? typeof r3.template == "string" : false;
+  let n2 = t2.values, r3 = Object.keys(n2);
+  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n2, t2.default_language) && typeof n2[t2.default_language] == "string" && r3.every((e2) => typeof n2[e2] == "string");
 }
 function i(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return false;
+  let t2 = e;
+  return typeof t2.style_name != "string" || !d(t2.style_name) || "tag" in t2 || "variadic_left" in t2 || "variadic_join" in t2 || "variadic_right" in t2 || !Array.isArray(t2.tags) || !t2.tags.every((e2) => typeof e2 == "string") || t2.separator !== void 0 && typeof t2.separator != "string" || t2.block_template_name !== void 0 && (t2.mode !== "block" || typeof t2.block_template_name != "string") ? false : t2.mode === "text" ? typeof t2.template == "string" || r(t2.template) : t2.mode === "formula_inline" || t2.mode === "formula_display" || t2.mode === "block" ? typeof t2.template == "string" : false;
+}
+function a(e) {
   return Array.isArray(e) && e.every((e2) => typeof e2 == "string");
 }
-function a(e, n3 = true) {
-  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (n3 || e.tags !== void 0) && !i(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
+function o2(e, t2 = true) {
+  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (t2 || e.tags !== void 0) && !a(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
   let r3 = e.source;
-  return i(r3.entries) && i(r3.urls);
-}
-function s2(e) {
-  return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
+  return a(r3.entries) && a(r3.urls);
 }
 function c2(e) {
+  return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
+}
+function l2(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t2 = Object.getPrototypeOf(e);
   return t2 === Object.prototype || t2 === null;
 }
-function d2(e) {
-  if (!c2(e)) return false;
+function f(e) {
+  if (!l2(e)) return false;
   for (let t2 of Object.values(e)) {
     if (!t2 || typeof t2 != "object" || Array.isArray(t2)) return false;
     let e2 = t2;
-    if (!a(e2) || !s2(e2.default_style)) return false;
-    let n3 = e2.styles;
-    if (!n3 || n3.length === 0 || n3.some((e3) => !r(e3) || typeof e3.template != "string")) return false;
-    let i3 = n3.map((e3) => e3.style_name);
-    if (new Set(i3).size !== i3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !i3.includes(e3))) return false;
+    if (!o2(e2) || !c2(e2.default_style)) return false;
+    let n2 = e2.styles;
+    if (!n2 || n2.length === 0 || n2.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
+    let r3 = n2.map((e3) => e3.style_name);
+    if (new Set(r3).size !== r3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r3.includes(e3))) return false;
   }
   return true;
 }
-var N = 256;
-function P(e, t2) {
-  return e.reduce((n3, r3, i3) => i3 === 0 ? r3 : `${n3}${e[i3 - 1] !== "" && r3 !== "" ? `,${t2}` : ","}${r3}`, "");
+var G = 256;
+function K(e, t2) {
+  return e.reduce((n2, r3, i3) => i3 === 0 ? r3 : `${n2}${e[i3 - 1] !== "" && r3 !== "" ? `,${t2}` : ","}${r3}`, "");
 }
-var F = class {
+var q = class {
   indentSpaces;
   inlineParenthesisDepth;
   constructor(e = 4, t2 = 3) {
-    this.assertIntegerInRange(e, "indentSpaces", N), this.assertIntegerInRange(t2, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t2;
+    this.assertIntegerInRange(e, "indentSpaces", G), this.assertIntegerInRange(t2, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t2;
   }
-  format(t2) {
-    return this.formatNode(g(t2), 0, " ");
+  format(e) {
+    return this.formatNode(y(e), 0, " ");
   }
   formatTree(e, t2 = " ") {
     return this.formatNode(e, 0, t2);
   }
-  formatNode(e, t2, n3) {
+  formatNode(e, t2, n2) {
     let r3 = this.formatNodeHead(e);
     if (e.children.length === 0) return r3;
-    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${P(e.children.map((e2) => this.formatNode(e2, 0, n3)), n3)})`;
+    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${K(e.children.map((e2) => this.formatNode(e2, 0, n2)), n2)})`;
     let i3 = " ".repeat(this.indentSpaces * (t2 + 1));
     return `${r3}(
-${e.children.map((e2) => `${i3}${this.formatNode(e2, t2 + 1, n3)}`).join(",\n")}
+${e.children.map((e2) => `${i3}${this.formatNode(e2, t2 + 1, n2)}`).join(",\n")}
 ${" ".repeat(this.indentSpaces * t2)})`;
   }
   formatNodeHead(e) {
-    let t2 = e.binder_explicit ? "@" : "", n3, r3 = e.temporary_source ?? e.macro_name;
-    if (e.temporary_format === "texttt") n3 = `\`${r3}\``;
+    let t2 = e.binder_explicit ? "@" : "", n2, r3 = e.temporary_source ?? e.macro_name;
+    if (e.temporary_format === "texttt") n2 = `\`${r3}\``;
     else switch (e.env_mode) {
       case "text":
-        n3 = `%${r3}%`;
+        n2 = `%${r3}%`;
         break;
       case "formula_inline":
-        n3 = `$${r3}$`;
+        n2 = `$${r3}$`;
         break;
       case "formula_display":
-        n3 = `$$${r3}$$`;
+        n2 = `$$${r3}$$`;
         break;
       default:
-        n3 = e.macro_name;
+        n2 = e.macro_name;
     }
-    let i3 = this.sourceReference(e), a3 = i3 === void 0 ? "" : `@${i3}`, o2 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
-    return `${t2}${n3}${a3}${o2}`;
+    let i3 = this.sourceReference(e), a3 = i3 === void 0 ? "" : `@${i3}`, o3 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
+    return `${t2}${n2}${a3}${o3}`;
   }
   sourceReference(e) {
     if (e.binder_explicit && e.binder_name && e.binder_name !== e.macro_name) return e.binder_name;
@@ -1758,16 +1758,16 @@ ${" ".repeat(this.indentSpaces * t2)})`;
     let t2 = e.mdata.src;
     return typeof t2 == "string" ? t2 : void 0;
   }
-  assertIntegerInRange(e, t2, n3) {
-    if (!Number.isSafeInteger(e) || e < 0 || e > n3) throw RangeError(`${t2} must be a non-negative integer no greater than ${n3}`);
+  assertIntegerInRange(e, t2, n2) {
+    if (!Number.isSafeInteger(e) || e < 0 || e > n2) throw RangeError(`${t2} must be a non-negative integer no greater than ${n2}`);
   }
   parenthesisDepth(e) {
     let t2 = -1;
-    for (let n3 of e.children) t2 = Math.max(t2, this.parenthesisDepth(n3));
+    for (let n2 of e.children) t2 = Math.max(t2, this.parenthesisDepth(n2));
     return t2 + 1;
   }
 };
-var I = new F(0, 2 ** 53 - 1);
+var J = new q(0, 2 ** 53 - 1);
 
 // lib/snl-doc-schema.ts
 function isMacroDocumentV11(value) {
@@ -2215,7 +2215,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
-    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !d2(macroDocument)) {
+    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
       );
@@ -2765,7 +2765,7 @@ function snlSources(file) {
   return [];
 }
 function scanSnlStyleSelections(source) {
-  g(source);
+  y(source);
   const tokens = tokenizeSnl(source);
   const out = [];
   for (let index = 0; index < tokens.length; index += 1) {
@@ -3124,7 +3124,7 @@ function validateSchemaShape(absPath, relPath, data) {
       if (isRecord3(rel.metadata) && rel.metadata.generator === "macro-source-scan") {
         for (const field of ["macros", "postfixes"]) {
           const values = rel.metadata[field];
-          if (values !== void 0 && (!Array.isArray(values) || !values.every((v3) => typeof v3 === "string"))) {
+          if (values !== void 0 && (!Array.isArray(values) || !values.every((v2) => typeof v2 === "string"))) {
             fail(`relationship ${index} metadata.${field} must be a string array when present.`);
           }
         }
@@ -3220,14 +3220,14 @@ function offsetPosition(source, offset) {
 function parseArgs(argv, specs) {
   const bySpec = {};
   const shortAlias = {};
-  for (const s3 of specs) {
-    bySpec[s3.name] = s3;
-    if (s3.short) shortAlias[s3.short] = s3.name;
+  for (const s2 of specs) {
+    bySpec[s2.name] = s2;
+    if (s2.short) shortAlias[s2.short] = s2.name;
   }
   const flags = {};
   const positional = [];
-  for (const s3 of specs) {
-    if (s3.default !== void 0) flags[s3.name] = s3.default;
+  for (const s2 of specs) {
+    if (s2.default !== void 0) flags[s2.name] = s2.default;
   }
   let i3 = 0;
   let seenDashDash = false;
@@ -3293,12 +3293,12 @@ function parseArgs(argv, specs) {
 }
 function formatUsage(cliName, synopsis, specs) {
   const lines = [`Usage: ${cliName} ${synopsis}`, "", "Options:"];
-  for (const s3 of specs) {
-    const flagStr = s3.short ? `-${s3.short}, --${s3.name}` : `    --${s3.name}`;
-    const kind = s3.hasValue === false ? "" : " <value>";
-    const dflt = s3.default !== void 0 ? ` (default: ${JSON.stringify(s3.default)})` : "";
+  for (const s2 of specs) {
+    const flagStr = s2.short ? `-${s2.short}, --${s2.name}` : `    --${s2.name}`;
+    const kind = s2.hasValue === false ? "" : " <value>";
+    const dflt = s2.default !== void 0 ? ` (default: ${JSON.stringify(s2.default)})` : "";
     lines.push(`  ${flagStr}${kind}${dflt}`);
-    if (s3.help) lines.push(`      ${s3.help}`);
+    if (s2.help) lines.push(`      ${s2.help}`);
   }
   return lines.join("\n");
 }
