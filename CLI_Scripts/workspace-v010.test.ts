@@ -51,6 +51,36 @@ describe('SNL workspace v0.1.0 compatibility', () => {
     assert.equal(entries[0].id, 'entry.localized');
   });
 
+  it('reads the known markerless 0.0.11 predecessor and rewrites touched entities to current markers', async () => {
+    const root = await fixtureCopy();
+    await mutateJson(path.join(root, '.SNL_Doc', 'config.json'), (config) => {
+      config.version = '0.0.11';
+    });
+    await mutateJson(path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized')), (entity) => {
+      delete entity.schema_version;
+    });
+    await mutateJson(path.join(root, '.SNL_Doc', macroEntityPath('Logic', 'FOL.implies')), (entity) => {
+      delete entity.schema_version;
+    });
+
+    assert.equal((await readEntries(root))[0].id, 'entry.localized');
+    assert.ok((await readActiveMacros(root))['FOL.implies']);
+
+    const result = await addEntryEntity(root, {
+      id: 'entry.predecessor-write',
+      kind: 'definition',
+      title: 'Predecessor write',
+      content: {},
+    });
+    assert.equal(result.status, 'created');
+    const written = JSON.parse(await readFile(path.join(
+      root,
+      '.SNL_Doc',
+      entryEntityPath('_unpackaged', 'entry.predecessor-write'),
+    ), 'utf8'));
+    assert.equal(written.schema_version, 1);
+  });
+
   it('rejects missing, extra, duplicate, and unsorted Package entry_ids', async () => {
     for (const entryIds of [
       [],

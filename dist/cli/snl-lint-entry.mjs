@@ -17833,6 +17833,9 @@ async function assertSnlDoc(workspaceRoot) {
     throw new Error(`${dir} must be a regular, non-symlink directory.`);
   }
 }
+function usesCurrentEntitySchemas(config) {
+  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+}
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
   const p4 = configPath(workspaceRoot);
@@ -17840,7 +17843,7 @@ async function readConfig(workspaceRoot) {
     return { version: "0.0.0" };
   }
   const config = await readJson(p4);
-  if (config.version === "0.1.0") assertCurrentKindCatalogs(config);
+  if (usesCurrentEntitySchemas(config)) assertCurrentKindCatalogs(config);
   return config;
 }
 function assertCurrentKindCatalogs(config) {
@@ -17900,7 +17903,7 @@ function usesEntityStorage(config) {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
   if (!match) throw new Error(`config.json has invalid data version ${JSON.stringify(config.version)}.`);
   const parts = match.slice(1).map(Number);
-  const current = config.version === "0.1.0" || config.version === "0.0.6";
+  const current = usesCurrentEntitySchemas(config) || config.version === "0.0.6";
   const legacy = parts[0] === 0 && parts[1] === 0 && parts[2] < 6;
   if (legacy) return false;
   if (!current) {
@@ -17982,7 +17985,7 @@ async function readEntries(workspaceRoot) {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, config.version === "0.1.0");
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
@@ -18003,7 +18006,7 @@ async function readEntries(workspaceRoot) {
       ids.add(value.entry.id);
       return value.entry;
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
-    if (config.version === "0.1.0") {
+    if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
         const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
         if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
@@ -18059,7 +18062,7 @@ async function readAllMacroPackages(workspaceRoot) {
 }
 async function readEntityMacroPackages(workspaceRoot) {
   const config = await readConfig(workspaceRoot);
-  const manifests = await readEntityPackageManifests(workspaceRoot, config.version === "0.1.0");
+  const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
   const macros2 = /* @__PURE__ */ new Map();
   const identities = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(macroEntitiesDir(workspaceRoot), true)) {
@@ -18069,7 +18072,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
-    const currentMacro = config.version === "0.1.0";
+    const currentMacro = usesCurrentEntitySchemas(config);
     if (currentMacro ? !isMacroDocumentV11(macroDocument) : !d2(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
@@ -18095,7 +18098,7 @@ async function readEntityMacroPackages(workspaceRoot) {
   const out = {};
   for (const manifest of [...manifests.values()].sort((a5, b4) => a5.id.localeCompare(b4.id))) {
     defineIdentity(out, manifest.id, {
-      version: config.version === "0.1.0" ? "11" : "8",
+      version: usesCurrentEntitySchemas(config) ? "11" : "8",
       name: manifest.name,
       description: manifest.description,
       macros: macros2.get(manifest.id) ?? {}

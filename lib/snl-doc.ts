@@ -145,6 +145,11 @@ export async function assertSnlDoc(workspaceRoot: string): Promise<void> {
  * corrupt config is a fatal error (throws) — we don't silently mask JSON
  * damage.
  */
+export function usesCurrentEntitySchemas(config: unknown): boolean {
+  return isRecord(config) &&
+    (config.version === '0.0.11' || config.version === '0.1.0');
+}
+
 export async function readConfig(workspaceRoot: string): Promise<SnlConfig> {
   await assertSnlDoc(workspaceRoot);
   const p = configPath(workspaceRoot);
@@ -152,7 +157,7 @@ export async function readConfig(workspaceRoot: string): Promise<SnlConfig> {
     return { version: '0.0.0' };
   }
   const config = await readJson<SnlConfig>(p);
-  if (config.version === '0.1.0') assertCurrentKindCatalogs(config);
+  if (usesCurrentEntitySchemas(config)) assertCurrentKindCatalogs(config);
   return config;
 }
 
@@ -221,7 +226,7 @@ export function usesEntityStorage(config: unknown): boolean {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
   if (!match) throw new Error(`config.json has invalid data version ${JSON.stringify(config.version)}.`);
   const parts = match.slice(1).map(Number);
-  const current = config.version === '0.1.0' || config.version === '0.0.6';
+  const current = usesCurrentEntitySchemas(config) || config.version === '0.0.6';
   const legacy = parts[0] === 0 && parts[1] === 0 && parts[2] < 6;
   if (legacy) return false;
   if (!current) {
@@ -319,7 +324,7 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, config.version === '0.1.0');
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const ids = new Set<string>();
     const entries = records.map(({ relativePath, value }) => {
@@ -343,7 +348,7 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
       ids.add(value.entry.id);
       return value.entry as unknown as EntryData & { package: string };
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
-    if (config.version === '0.1.0') {
+    if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
         const actual = entries
           .filter((entry) => entry.package === manifest.id)
@@ -416,7 +421,7 @@ async function readEntityMacroPackages(
   workspaceRoot: string,
 ): Promise<Record<string, MacroPackageFile>> {
   const config = await readConfig(workspaceRoot);
-  const manifests = await readEntityPackageManifests(workspaceRoot, config.version === '0.1.0');
+  const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
 
   const macros = new Map<string, Record<string, MacroPackageEntryWithoutName>>();
   const identities = new Set<string>();
@@ -430,7 +435,7 @@ async function readEntityMacroPackages(
     assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument: Record<string, unknown> = Object.create(null);
     macroDocument[value.macro.name] = value.macro;
-    const currentMacro = config.version === '0.1.0';
+    const currentMacro = usesCurrentEntitySchemas(config);
     if (currentMacro ? !isMacroDocumentV11(macroDocument) : !isMacroDocumentV8(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? '11' : '8'} data.`,
@@ -457,7 +462,7 @@ async function readEntityMacroPackages(
   const out: Record<string, MacroPackageFile> = {};
   for (const manifest of [...manifests.values()].sort((a, b) => a.id.localeCompare(b.id))) {
     defineIdentity(out, manifest.id, {
-      version: config.version === '0.1.0' ? '11' : '8',
+      version: usesCurrentEntitySchemas(config) ? '11' : '8',
       name: manifest.name,
       description: manifest.description,
       macros: macros.get(manifest.id) ?? {},

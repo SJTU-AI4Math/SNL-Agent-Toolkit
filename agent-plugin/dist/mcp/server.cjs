@@ -15249,6 +15249,9 @@ async function assertSnlDoc(workspaceRoot) {
     throw new Error(`${dir} must be a regular, non-symlink directory.`);
   }
 }
+function usesCurrentEntitySchemas(config) {
+  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+}
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
   const p3 = configPath(workspaceRoot);
@@ -15256,7 +15259,7 @@ async function readConfig(workspaceRoot) {
     return { version: "0.0.0" };
   }
   const config = await readJson(p3);
-  if (config.version === "0.1.0") assertCurrentKindCatalogs(config);
+  if (usesCurrentEntitySchemas(config)) assertCurrentKindCatalogs(config);
   return config;
 }
 function assertCurrentKindCatalogs(config) {
@@ -15316,7 +15319,7 @@ function usesEntityStorage(config) {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
   if (!match) throw new Error(`config.json has invalid data version ${JSON.stringify(config.version)}.`);
   const parts = match.slice(1).map(Number);
-  const current = config.version === "0.1.0" || config.version === "0.0.6";
+  const current = usesCurrentEntitySchemas(config) || config.version === "0.0.6";
   const legacy = parts[0] === 0 && parts[1] === 0 && parts[2] < 6;
   if (legacy) return false;
   if (!current) {
@@ -15398,7 +15401,7 @@ async function readEntries(workspaceRoot) {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, config.version === "0.1.0");
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
@@ -15419,7 +15422,7 @@ async function readEntries(workspaceRoot) {
       ids.add(value.entry.id);
       return value.entry;
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
-    if (config.version === "0.1.0") {
+    if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
         const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
         if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
@@ -15475,7 +15478,7 @@ async function readAllMacroPackages(workspaceRoot) {
 }
 async function readEntityMacroPackages(workspaceRoot) {
   const config = await readConfig(workspaceRoot);
-  const manifests = await readEntityPackageManifests(workspaceRoot, config.version === "0.1.0");
+  const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
   const macros2 = /* @__PURE__ */ new Map();
   const identities = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(macroEntitiesDir(workspaceRoot), true)) {
@@ -15485,7 +15488,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
-    const currentMacro = config.version === "0.1.0";
+    const currentMacro = usesCurrentEntitySchemas(config);
     if (currentMacro ? !isMacroDocumentV11(macroDocument) : !d2(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
@@ -15511,7 +15514,7 @@ async function readEntityMacroPackages(workspaceRoot) {
   const out = {};
   for (const manifest of [...manifests.values()].sort((a3, b2) => a3.id.localeCompare(b2.id))) {
     defineIdentity(out, manifest.id, {
-      version: config.version === "0.1.0" ? "11" : "8",
+      version: usesCurrentEntitySchemas(config) ? "11" : "8",
       name: manifest.name,
       description: manifest.description,
       macros: macros2.get(manifest.id) ?? {}
@@ -17712,7 +17715,7 @@ function isRecord5(value) {
 }
 function assertCurrentWriteConfig(config, cli) {
   if (!usesEntityStorage(config)) {
-    throw new Error(`${cli} requires workspace data 0.0.6 or 0.1.0 per-entity storage.`);
+    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
   }
   if (!isRecord5(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error("Current config.json entry_kinds must be an array.");
@@ -17935,7 +17938,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     const envelope = {
       format: "snl-entry",
       version: ENTRY_STORAGE_VERSION,
-      ...config.version === "0.1.0" ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
+      ...usesCurrentEntitySchemas(config) ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
       package: entry.package,
       entry
     };
@@ -17943,7 +17946,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       snlDocRoot(workspaceRoot),
       packageManifestPath(entry.package)
     );
-    const originalManifest = config.version === "0.1.0" ? await readRegularText(manifestFile) : null;
+    const originalManifest = usesCurrentEntitySchemas(config) ? await readRegularText(manifestFile) : null;
     const nextManifest = originalManifest ? (() => {
       const manifest = JSON.parse(originalManifest.text);
       const entryIds = Array.isArray(manifest.entry_ids) ? manifest.entry_ids.filter((value) => typeof value === "string") : [];
@@ -18031,7 +18034,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
         path: "package"
       });
     }
-    const current = config.version === "0.1.0";
+    const current = usesCurrentEntitySchemas(config);
     const normalized = normalizeMacroDraft(raw, current);
     const name = isRecord5(normalized) && typeof normalized.name === "string" ? normalized.name : "";
     if (!name || /[@#$%\s()[\]{}]/u.test(name)) {
@@ -18159,7 +18162,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       ...raw,
       format: "snl-package",
       version: PACKAGE_STORAGE_VERSION,
-      ...config.version === "0.1.0" ? { schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] } : {},
+      ...usesCurrentEntitySchemas(config) ? { schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] } : {},
       id,
       name,
       description

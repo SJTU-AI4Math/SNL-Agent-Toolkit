@@ -17,6 +17,7 @@ import {
   readActiveMacros,
   readEntries,
   snlDocRoot,
+  usesCurrentEntitySchemas,
   usesEntityStorage,
 } from './snl-doc.ts';
 import {
@@ -444,7 +445,7 @@ async function styleRenameUnlocked(
   if (!isTraceableSnlIdentity('macro', newStyle)) throw new Error(`Style name '${newStyle}' is not representable as an SNL identifier.`);
   const files = await loadWorkspaceJson(root);
   const { occurrences, changed } = buildStyleRename(files, packageId, macroId, oldStyle, newStyle);
-  const currentWorkspace = (files.find((file) => file.relPath === 'config.json')?.data as any)?.version === '0.1.0';
+  const currentWorkspace = usesCurrentEntitySchemas(files.find((file) => file.relPath === 'config.json')?.data);
   if (currentWorkspace) {
     for (const file of changed.values()) {
       if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
@@ -655,7 +656,7 @@ async function renameEntityIdUnlocked(
   }
 
   const rewriteSnlMacroTokens = entityType !== 'macro' || macroIsActive(files, oldId);
-  const currentWorkspace = (files.find((file) => file.relPath === 'config.json')?.data as any)?.version === '0.1.0';
+  const currentWorkspace = usesCurrentEntitySchemas(files.find((file) => file.relPath === 'config.json')?.data);
   const changed = new Map<string, LoadedJson & { next: string; targetAbsPath: string; targetRelPath: string }>();
   for (const file of files) {
     const edits = buildStructuredEdits(

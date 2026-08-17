@@ -28,6 +28,7 @@ import {
   readEntryKinds,
   snlDocRoot,
   configPath,
+  usesCurrentEntitySchemas,
   usesEntityStorage,
 } from './snl-doc.ts';
 import { withWorkspaceDataLock } from './workspace-data-lock.ts';
@@ -65,7 +66,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function assertCurrentWriteConfig(config: unknown, cli: string): asserts config is Record<string, unknown> {
   if (!usesEntityStorage(config)) {
-    throw new Error(`${cli} requires workspace data 0.0.6 or 0.1.0 per-entity storage.`);
+    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
   }
   if (!isRecord(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error('Current config.json entry_kinds must be an array.');
@@ -329,7 +330,7 @@ export async function addEntryEntity(
     const envelope: EntryEnvelope = {
       format: 'snl-entry',
       version: ENTRY_STORAGE_VERSION,
-      ...(config.version === '0.1.0'
+      ...(usesCurrentEntitySchemas(config)
         ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION }
         : {}),
       package: entry.package,
@@ -339,7 +340,7 @@ export async function addEntryEntity(
       snlDocRoot(workspaceRoot),
       packageManifestPath(entry.package),
     );
-    const originalManifest = config.version === '0.1.0'
+    const originalManifest = usesCurrentEntitySchemas(config)
       ? await readRegularText(manifestFile)
       : null;
     const nextManifest = originalManifest
@@ -434,7 +435,7 @@ export async function addMacroEntity(
         path: 'package',
       });
     }
-    const current = config.version === '0.1.0';
+    const current = usesCurrentEntitySchemas(config);
     const normalized = normalizeMacroDraft(raw, current);
     const name = isRecord(normalized) && typeof normalized.name === 'string' ? normalized.name : '';
     if (!name || /[@#$%\s()[\]{}]/u.test(name)) {
@@ -555,7 +556,7 @@ export async function addPackageEntity(
     const manifest: PackageManifest = {
       ...raw,
       format: 'snl-package', version: PACKAGE_STORAGE_VERSION,
-      ...(config.version === '0.1.0'
+      ...(usesCurrentEntitySchemas(config)
         ? { schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] }
         : {}),
       id, name: name as string, description: description as string,
