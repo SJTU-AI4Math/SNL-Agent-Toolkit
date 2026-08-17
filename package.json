@@ -4,19 +4,19 @@
   "description": "Portable SNL workspace Skills, CLIs, and MCP tools for AI coding agents.",
   "type": "module",
   "bin": {
-    "snl-add-entry": "./bin/snl-add-entry.mjs",
-    "snl-add-macro": "./bin/snl-add-macro.mjs",
-    "snl-add-package": "./bin/snl-add-package.mjs",
-    "snl-entry-latex": "./bin/snl-entry-latex.mjs",
-    "snl-entry-ssi": "./bin/snl-entry-ssi.mjs",
-    "snl-find-refs": "./bin/snl-find-refs.mjs",
-    "snl-lint-entry": "./bin/snl-lint-entry.mjs",
-    "snl-lint-graph": "./bin/snl-lint-graph.mjs",
-    "snl-lint-package": "./bin/snl-lint-package.mjs",
-    "snl-rename-id": "./bin/snl-rename-id.mjs",
-    "snl-rename-style": "./bin/snl-rename-style.mjs",
-    "snoogle": "./bin/snoogle.mjs",
-    "snl-entity": "./bin/snl-entity.mjs",
+    "snl-add-entry": "./dist/cli/snl-add-entry.mjs",
+    "snl-add-macro": "./dist/cli/snl-add-macro.mjs",
+    "snl-add-package": "./dist/cli/snl-add-package.mjs",
+    "snl-entry-latex": "./dist/cli/snl-entry-latex.mjs",
+    "snl-entry-ssi": "./dist/cli/snl-entry-ssi.mjs",
+    "snl-find-refs": "./dist/cli/snl-find-refs.mjs",
+    "snl-lint-entry": "./dist/cli/snl-lint-entry.mjs",
+    "snl-lint-graph": "./dist/cli/snl-lint-graph.mjs",
+    "snl-lint-package": "./dist/cli/snl-lint-package.mjs",
+    "snl-rename-id": "./dist/cli/snl-rename-id.mjs",
+    "snl-rename-style": "./dist/cli/snl-rename-style.mjs",
+    "snoogle": "./dist/cli/snoogle.mjs",
+    "snl-entity": "./dist/cli/snl-entity.mjs",
     "snl-agent-mcp": "./dist/mcp/server.cjs"
   },
   "scripts": {
@@ -34,13 +34,13 @@
     "@types/katex": "^0.16.8",
     "fuse.js": "^7.5.0",
     "jsonc-parser": "^3.3.1",
-    "katex": "0.16.47",
-    "tsx": "^4.19.0"
+    "katex": "0.16.47"
   },
   "devDependencies": {
     "@types/node": "^20",
     "typescript": "~5.9.3",
-    "esbuild": "0.28.1"
+    "esbuild": "0.28.1",
+    "tsx": "^4.19.0"
   },
   "repository": {
     "type": "git",

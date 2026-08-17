@@ -54,6 +54,14 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   assert.equal(packageJson.version, '0.1.0');
   assert.deepEqual(packageJson.publishConfig, { access: 'public' });
   assert.deepEqual(packageJson.dsh, { bundle: { patch: './cordis.patch.yml' } });
+  const dependencies = packageJson.dependencies as Record<string, string>;
+  const devDependencies = packageJson.devDependencies as Record<string, string>;
+  assert.equal(dependencies.tsx, undefined, 'published runtime must not install tsx/esbuild');
+  assert.ok(devDependencies.tsx, 'tsx remains a development-only test runner');
+  for (const [name, target] of Object.entries(packageJson.bin as Record<string, string>)) {
+    assert.match(target, /^\.\/dist\/(?:cli|mcp)\//, `${name} must use a prebuilt runtime`);
+  }
+
   const files = packageJson.files as string[];
   for (const required of ['dist', 'skills', '.agents', 'plugin.json', 'mcp.json', '.claude-plugin', '.codex-plugin', '.mcp.json', 'cordis.patch.yml']) {
     assert.ok(files.includes(required), `${required} is omitted from npm files`);
