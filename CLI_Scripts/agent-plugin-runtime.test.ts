@@ -7,6 +7,7 @@ import {
   type EntityAdapter,
 } from '../plugin-src/toolkit-tools.ts';
 import { createMcpDispatcher } from '../plugin-src/mcp-server.ts';
+import { ToolArgsError } from '@deepseek-ai/dsh-tools';
 import { apply as applyDshAdapter } from '../plugin-src/dsh-adapter.ts';
 import { createEntityAdapter } from '../plugin-src/entity-adapter.ts';
 
@@ -96,17 +97,27 @@ test('MCP dispatcher returns protocol errors without crashing the stdio server',
 });
 
 
-test('DeepSeek Harness apply(ctx) registers the same four generic tools', async () => {
+test('DeepSeek Harness apply(ctx) registers the same four generic tools through defineTool', async () => {
   const calls: Array<{ method: string; request: unknown }> = [];
-  const registered: Array<{ name: string; execute(input: unknown): Promise<unknown> }> = [];
-  const ctx = { tools: { register(tool: { name: string; execute(input: unknown): Promise<unknown> }) { registered.push(tool); return () => {}; } } };
+  const registered: Array<Record<string, any>> = [];
+  const ctx = { tools: { register(tool: Record<string, any>) { registered.push(tool); return () => {}; } } };
   await applyDshAdapter(ctx, { adapter: fixtureAdapter(calls) });
   assert.deepEqual(registered.map((tool) => tool.name), [
     'snl_entities_list', 'snl_entity_get', 'snl_entity_apply', 'snl_workspace_validate',
   ]);
-  assert.deepEqual(
-    await registered[3].execute({ root }),
-    { valid: true, issues: [] },
+  assert.ok(registered.every((tool) => tool.parameters && tool.output && typeof tool.execute === 'function'));
+  assert.ok(registered.every((tool) => tool.inputSchema === undefined && tool.handler === undefined));
+  const value = await registered[3].execute(
+    { root },
+    { signal: new AbortController().signal },
+  );
+  assert.deepEqual(value, { valid: true, issues: [] });
+  await assert.rejects(
+    registered[3].execute(
+      { root: 42 },
+      { signal: new AbortController().signal },
+    ),
+    ToolArgsError,
   );
 });
 

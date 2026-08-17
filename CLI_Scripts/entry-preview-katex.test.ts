@@ -27,18 +27,18 @@ function makeMacros(literalTemplate: string): Record<string, MacroPackageEntry> 
   return {
     'Type.judge': {
       name: 'Type.judge', description: '', source: { entries: [], urls: [] },
-      dynamic_arity: false, default_style: { en: 'default' }, tags: [],
-      styles: [{ style_name: 'default', mode: 'formula_inline', template: '#0\\texttt{: }#1', tags: [] }],
+      dynamic_arity: false, tags: [],
+      styles: [{ style_name: 'default', tags: [], template: { mode: 'formula_inline', body: '#0\\texttt{: }#1' } }],
     },
     'Type.union': {
       name: 'Type.union', description: '', source: { entries: [], urls: [] },
-      dynamic_arity: true, default_style: { en: 'default' }, tags: [],
-      styles: [{ style_name: 'default', mode: 'formula_inline', template: '#*', separator: ' \\cup ', tags: [] }],
+      dynamic_arity: true, tags: [],
+      styles: [{ style_name: 'default', tags: [], template: { mode: 'formula_inline', body: '#*', separator: ' \\cup ' } }],
     },
     'Type.literal': {
       name: 'Type.literal', description: '', source: { entries: [], urls: [] },
-      dynamic_arity: false, default_style: { en: 'default' }, tags: [],
-      styles: [{ style_name: 'default', mode: 'formula_inline', template: literalTemplate, tags: [] }],
+      dynamic_arity: false, tags: [],
+      styles: [{ style_name: 'default', tags: [], template: { mode: 'formula_inline', body: literalTemplate } }],
     },
   };
 }
