@@ -402,6 +402,7 @@ async function locateFile(root: string, type: ManagedEntityType, entity: Managed
 } throw new Error(`No entity file for ${type}.`); }
 type DirectMutationOptions = {
     beforeConfigInstall?: () => void | Promise<void>;
+    beforeEntityInstall?: () => void | Promise<void>;
     beforeManifestDelete?: () => void | Promise<void>;
 };
 async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entry-kind" | "macro-kind">, operation: "update" | "delete", id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> {
@@ -431,6 +432,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         else {
             const file = await locateFile(root, type, current);
             if (type === "entry-package" || type === "macro-package") {
+                const originalManifest = await readRegularText(file);
                 const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
                 if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
                     return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
@@ -444,7 +446,8 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                     } : {}),
                 };
                 delete (manifest as RecordJson).macros;
-                await atomicWriteJson(file, manifest);
+                await options.beforeEntityInstall?.();
+                await replaceJsonIfUnchanged(file, originalManifest.text, manifest);
             }
             else if (type === "entry") {
                 const originalEntity = await readRegularText(file);
@@ -461,7 +464,8 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                 const oldPackage = typeof current.value.package === "string" ? current.value.package : "";
                 const newPackage = typeof value.package === "string" ? value.package : "";
                 if (oldPackage === newPackage) {
-                    await atomicWriteJson(file, nextEnvelope);
+                    await options.beforeEntityInstall?.();
+                    await replaceJsonIfUnchanged(file, originalEntity.text, nextEnvelope);
                 }
                 else {
                     const destinationFile = path.join(docRoot(root), entryEntityPath(newPackage, id));
@@ -536,16 +540,19 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                 const split = id.indexOf("::");
                 const pkg = id.slice(0, split);
                 const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
-                const envelope = requireRecord(await readJson(file), "Macro envelope");
+                const originalMacro = await readRegularText(file);
+                const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
                 const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
-                await atomicWriteJson(file, {
+                const nextEnvelope = {
                     ...envelope,
                     format: "snl-macro",
                     version: MACRO_STORAGE_VERSION,
                     ...(currentSchema ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {}),
                     package: pkg,
                     macro,
-                });
+                };
+                await options.beforeEntityInstall?.();
+                await replaceJsonIfUnchanged(file, originalMacro.text, nextEnvelope);
             }
         }
         const entity = await getManagedEntity(root, type, id);
@@ -647,7 +654,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
     else
         await fs.unlink(await locateFile(root, type, current)); return { status: "ok", operation, type, entity: current }; });
 }
-export async function updateManagedEntity(root: string, type: ManagedEntityType, id: string, input: unknown, ifMatch: string): Promise<EntityMutationResult> { root = await canonicalWriteWorkspace(root); await assertWorkspace(root); if (type === "entry-kind" || type === "macro-kind")
-    return mutateConfigEntity(root, type, "update", id, input, ifMatch); return mutateDirect(root, type, "update", id, input, ifMatch); }
+export async function updateManagedEntity(root: string, type: ManagedEntityType, id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> { root = await canonicalWriteWorkspace(root); await assertWorkspace(root); if (type === "entry-kind" || type === "macro-kind")
+    return mutateConfigEntity(root, type, "update", id, input, ifMatch); return mutateDirect(root, type, "update", id, input, ifMatch, options); }
 export async function deleteManagedEntity(root: string, type: ManagedEntityType, id: string, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> { root = await canonicalWriteWorkspace(root); await assertWorkspace(root); if (type === "entry-kind" || type === "macro-kind")
     return mutateConfigEntity(root, type, "delete", id, undefined, ifMatch); return mutateDirect(root, type, "delete", id, undefined, ifMatch, options); }

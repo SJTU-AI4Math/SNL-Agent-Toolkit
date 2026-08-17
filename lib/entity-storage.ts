@@ -134,8 +134,12 @@ export function assertCompatibleSchemaMarker(
   value: Record<string, unknown>,
   current: number,
   label: string,
+  required = false,
 ): void {
-  if (!Object.hasOwn(value, 'schema_version')) return;
+  if (!Object.hasOwn(value, 'schema_version')) {
+    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
+    return;
+  }
   if (!Number.isInteger(value.schema_version) || (value.schema_version as number) < 1) {
     throw new Error(`${label} schema_version must be a positive integer.`);
   }

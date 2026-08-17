@@ -173,8 +173,11 @@ function macroEntityPath(packageId, macroName) {
   if (!macroName) throw new Error("Macro name must be non-empty.");
   return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
 }
-function assertCompatibleSchemaMarker(value, current, label) {
-  if (!Object.hasOwn(value, "schema_version")) return;
+function assertCompatibleSchemaMarker(value, current, label, required = false) {
+  if (!Object.hasOwn(value, "schema_version")) {
+    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
+    return;
+  }
   if (!Number.isInteger(value.schema_version) || value.schema_version < 1) {
     throw new Error(`${label} schema_version must be a positive integer.`);
   }
@@ -15335,6 +15338,19 @@ function isLocalizedLabel(value, required) {
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
+function assertCurrentEntryPayload(value, label) {
+  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, true) || !isRecord2(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
+    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+  }
+  if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
+    throw new Error(`${label}#content.snl must be a string when present.`);
+  }
+  for (const field of ["typst", "latex", "markdown", "text"]) {
+    if (value.content[field] !== void 0 && !isLocalizedLabel(value.content[field], false)) {
+      throw new Error(`${label}#content.${field} must be a string or valid I18n map when present.`);
+    }
+  }
+}
 function assertThemedColoring(value, label) {
   if (!isRecord2(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
     throw new Error(`${label} must contain light and dark variants.`);
@@ -15442,7 +15458,15 @@ async function readEntries(workspaceRoot) {
       if (!isRecord2(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
         throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
       }
-      assertCompatibleSchemaMarker(value, CURRENT_ENTRY_SCHEMA_VERSION, `${relativePath} Entry envelope`);
+      assertCompatibleSchemaMarker(
+        value,
+        CURRENT_ENTRY_SCHEMA_VERSION,
+        `${relativePath} Entry envelope`,
+        config.version === "0.1.0"
+      );
+      if (usesCurrentEntitySchemas(config)) {
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+      }
       if (value.entry.package !== value.package) {
         throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);
       }
@@ -15519,7 +15543,12 @@ async function readEntityMacroPackages(workspaceRoot) {
     if (!isRecord2(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
-    assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
+    assertCompatibleSchemaMarker(
+      value,
+      CURRENT_MACRO_SCHEMA_VERSION,
+      `${relativePath} Macro envelope`,
+      config.version === "0.1.0"
+    );
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
@@ -18703,6 +18732,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       } else {
         const file = await locateFile(root, type, current);
         if (type === "entry-package" || type === "macro-package") {
+          const originalManifest = await readRegularText2(file);
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
             return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
@@ -18716,7 +18746,8 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             } : {}
           };
           delete manifest.macros;
-          await atomicWriteJson(file, manifest);
+          await options.beforeEntityInstall?.();
+          await replaceJsonIfUnchanged2(file, originalManifest.text, manifest);
         } else if (type === "entry") {
           const originalEntity = await readRegularText2(file);
           const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
@@ -18732,7 +18763,8 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const oldPackage = typeof current.value.package === "string" ? current.value.package : "";
           const newPackage = typeof value.package === "string" ? value.package : "";
           if (oldPackage === newPackage) {
-            await atomicWriteJson(file, nextEnvelope);
+            await options.beforeEntityInstall?.();
+            await replaceJsonIfUnchanged2(file, originalEntity.text, nextEnvelope);
           } else {
             const destinationFile = path6.join(docRoot(root), entryEntityPath(newPackage, id));
             if (!currentSchema) {
@@ -18811,16 +18843,19 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const split = id.indexOf("::");
           const pkg = id.slice(0, split);
           const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
-          const envelope = requireRecord(await readJson2(file), "Macro envelope");
+          const originalMacro = await readRegularText2(file);
+          const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
-          await atomicWriteJson(file, {
+          const nextEnvelope = {
             ...envelope,
             format: "snl-macro",
             version: MACRO_STORAGE_VERSION,
             ...currentSchema ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
             package: pkg,
             macro
-          });
+          };
+          await options.beforeEntityInstall?.();
+          await replaceJsonIfUnchanged2(file, originalMacro.text, nextEnvelope);
         }
       }
       const entity = await getManagedEntity(root, type, id);
@@ -18910,12 +18945,12 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
     return { status: "ok", operation, type, entity: current };
   });
 }
-async function updateManagedEntity(root, type, id, input, ifMatch) {
+async function updateManagedEntity(root, type, id, input, ifMatch, options = {}) {
   root = await canonicalWriteWorkspace(root);
   await assertWorkspace(root);
   if (type === "entry-kind" || type === "macro-kind")
     return mutateConfigEntity(root, type, "update", id, input, ifMatch);
-  return mutateDirect(root, type, "update", id, input, ifMatch);
+  return mutateDirect(root, type, "update", id, input, ifMatch, options);
 }
 async function deleteManagedEntity(root, type, id, ifMatch, options = {}) {
   root = await canonicalWriteWorkspace(root);

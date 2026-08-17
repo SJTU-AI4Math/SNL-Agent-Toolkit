@@ -205,6 +205,22 @@ function isLocalizedLabel(value: unknown, required: boolean): boolean {
     (!required || values.some((item) => (item as string).trim()));
 }
 
+function assertCurrentEntryPayload(value: Record<string, unknown>, label: string): void {
+  if (typeof value.kind !== 'string' || !value.kind.trim() || value.kind !== value.kind.trim() ||
+      !isLocalizedLabel(value.title, true) || !isRecord(value.content) ||
+      !Object.hasOwn(value, 'contribution_info') || !Object.hasOwn(value, 'pointer')) {
+    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+  }
+  if (value.content.snl !== undefined && typeof value.content.snl !== 'string') {
+    throw new Error(`${label}#content.snl must be a string when present.`);
+  }
+  for (const field of ['typst', 'latex', 'markdown', 'text'] as const) {
+    if (value.content[field] !== undefined && !isLocalizedLabel(value.content[field], false)) {
+      throw new Error(`${label}#content.${field} must be a string or valid I18n map when present.`);
+    }
+  }
+}
+
 function assertThemedColoring(value: unknown, label: string): void {
   if (!isRecord(value) || Object.hasOwn(value, 'stroke') || Object.hasOwn(value, 'background')) {
     throw new Error(`${label} must contain light and dark variants.`);
@@ -334,7 +350,15 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
           value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== 'string') {
         throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
       }
-      assertCompatibleSchemaMarker(value, CURRENT_ENTRY_SCHEMA_VERSION, `${relativePath} Entry envelope`);
+      assertCompatibleSchemaMarker(
+        value,
+        CURRENT_ENTRY_SCHEMA_VERSION,
+        `${relativePath} Entry envelope`,
+        config.version === '0.1.0',
+      );
+      if (usesCurrentEntitySchemas(config)) {
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+      }
       if (value.entry.package !== value.package) {
         throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);
       }
@@ -432,7 +456,12 @@ async function readEntityMacroPackages(
         value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
-    assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
+    assertCompatibleSchemaMarker(
+      value,
+      CURRENT_MACRO_SCHEMA_VERSION,
+      `${relativePath} Macro envelope`,
+      config.version === '0.1.0',
+    );
     const macroDocument: Record<string, unknown> = Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);

@@ -265,6 +265,7 @@ describe('SNL workspace v0.1.0 compatibility', () => {
 
   it('rewrites markerless Entries as schema v1 and keeps Package membership exact on rename', async () => {
     const root = await fixtureCopy();
+    await mutateJson(path.join(root, '.SNL_Doc', 'config.json'), (config) => { config.version = '0.0.11'; });
     const oldPath = path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized'));
     await mutateJson(oldPath, (envelope) => {
       delete envelope.schema_version;
@@ -287,6 +288,7 @@ describe('SNL workspace v0.1.0 compatibility', () => {
 
   it('rewrites markerless Macros as schema v1 on rename without losing extensions', async () => {
     const root = await fixtureCopy();
+    await mutateJson(path.join(root, '.SNL_Doc', 'config.json'), (config) => { config.version = '0.0.11'; });
     const oldPath = path.join(root, '.SNL_Doc', macroEntityPath('Logic', 'FOL.implies'));
     await mutateJson(oldPath, (envelope) => {
       delete envelope.schema_version;
@@ -305,6 +307,7 @@ describe('SNL workspace v0.1.0 compatibility', () => {
 
   it('renames Macro v11 styles and stamps markerless rewritten envelopes', async () => {
     const root = await fixtureCopy();
+    await mutateJson(path.join(root, '.SNL_Doc', 'config.json'), (config) => { config.version = '0.0.11'; });
     const macroPath = path.join(root, '.SNL_Doc', macroEntityPath('Logic', 'FOL.implies'));
     const entryPath = path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized'));
     await mutateJson(macroPath, (envelope) => {

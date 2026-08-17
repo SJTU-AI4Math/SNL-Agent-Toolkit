@@ -165,8 +165,11 @@ function macroEntityPath(packageId, macroName) {
   if (!macroName) throw new Error("Macro name must be non-empty.");
   return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
 }
-function assertCompatibleSchemaMarker(value, current, label) {
-  if (!Object.hasOwn(value, "schema_version")) return;
+function assertCompatibleSchemaMarker(value, current, label, required = false) {
+  if (!Object.hasOwn(value, "schema_version")) {
+    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
+    return;
+  }
   if (!Number.isInteger(value.schema_version) || value.schema_version < 1) {
     throw new Error(`${label} schema_version must be a positive integer.`);
   }
@@ -15279,7 +15282,12 @@ async function readEntityMacroPackages(workspaceRoot) {
     if (!isRecord(value) || value.format !== "snl-macro" || value.version !== MACRO_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.macro) || typeof value.macro.name !== "string" || !value.macro.name || value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
-    assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
+    assertCompatibleSchemaMarker(
+      value,
+      CURRENT_MACRO_SCHEMA_VERSION,
+      `${relativePath} Macro envelope`,
+      config.version === "0.1.0"
+    );
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);

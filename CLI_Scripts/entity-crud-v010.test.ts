@@ -44,6 +44,41 @@ describe('unified CRUD on workspace v0.1.0', () => {
     }
   });
 
+  it('requires current schema markers in v0.1.0 while keeping markerless 0.0.11 compatibility', async () => {
+    const cases = [
+      { type: 'entry-package' as const, relative: packageManifestPath('Logic') },
+      { type: 'entry' as const, relative: entryEntityPath('_unpackaged', 'entry.localized') },
+      { type: 'macro' as const, relative: macroEntityPath('Logic', 'FOL.implies') },
+    ];
+    for (const item of cases) {
+      const root = await fixtureCopy();
+      await mutateJson(path.join(root, '.SNL_Doc', item.relative), (value) => {
+        delete value.schema_version;
+      });
+      await assert.rejects(() => listManagedEntities(root, item.type), /schema_version|current Package manifest/i);
+    }
+    const legacy = await fixtureCopy();
+    await mutateJson(path.join(legacy, '.SNL_Doc', 'config.json'), (config) => { config.version = '0.0.11'; });
+    for (const relative of [
+      entryEntityPath('_unpackaged', 'entry.localized'),
+      macroEntityPath('Logic', 'FOL.implies'),
+    ]) {
+      await mutateJson(path.join(legacy, '.SNL_Doc', relative), (value) => { delete value.schema_version; });
+    }
+    assert.equal((await listManagedEntities(legacy, 'entry')).length, 1);
+    assert.equal((await listManagedEntities(legacy, 'macro')).length, 1);
+  });
+
+  it('rejects every missing required Entry schema-1 payload field', async () => {
+    for (const field of ['kind', 'title', 'content', 'contribution_info', 'pointer']) {
+      const root = await fixtureCopy();
+      await mutateJson(path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized')), (envelope) => {
+        delete (envelope.entry as Record<string, unknown>)[field];
+      });
+      await assert.rejects(() => listManagedEntities(root, 'entry'), /Entry payload|valid SNL Entry/i, field);
+    }
+  });
+
   it('preserves unknown Entry and Macro envelope fields while writing current markers', async () => {
     const root = await fixtureCopy();
     const macroFile = path.join(root, '.SNL_Doc', macroEntityPath('Logic', 'FOL.implies'));
@@ -102,6 +137,24 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(manifest.description, '');
   });
 
+
+  it('does not overwrite a concurrently replaced Package manifest during update', async () => {
+    const root = await fixtureCopy();
+    const pkg = await getManagedEntity(root, 'entry-package', 'Logic');
+    assert.ok(pkg);
+    pkg.value.description = 'mine';
+    const file = path.join(root, '.SNL_Doc', packageManifestPath('Logic'));
+    const concurrent = JSON.parse(await readFile(file, 'utf8'));
+    concurrent.description = 'external';
+    concurrent.concurrent_extension = { keep: true };
+    await assert.rejects(
+      () => updateManagedEntity(root, 'entry-package', pkg.id, pkg.value, pkg.revision, {
+        beforeEntityInstall: async () => writeFile(file, `${JSON.stringify(concurrent, null, 2)}\n`),
+      }),
+      /changed.*refusing/i,
+    );
+    assert.deepEqual(JSON.parse(await readFile(file, 'utf8')), concurrent);
+  });
 
   it('removes a deleted Entry from its owning Package membership index', async () => {
     const root = await fixtureCopy();
