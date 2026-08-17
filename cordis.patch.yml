@@ -1,0 +1,3 @@
+- insert:
+    - id: snl-agent-toolkit
+      name: '@snl-doc/agent-toolkit/dsh'

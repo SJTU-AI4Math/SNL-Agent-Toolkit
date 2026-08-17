@@ -1,9 +1,8 @@
 {
   "name": "@snl-doc/agent-toolkit",
-  "version": "0.0.0",
-  "description": "CLIs and agent-facing docs for authoring SNL documents in a .SNL_Doc/ workspace without the VS Code extension.",
+  "version": "0.1.0",
+  "description": "Portable SNL workspace Skills, CLIs, and MCP tools for AI coding agents.",
   "type": "module",
-  "private": true,
   "bin": {
     "snl-add-entry": "./bin/snl-add-entry.mjs",
     "snl-add-macro": "./bin/snl-add-macro.mjs",
@@ -17,11 +16,15 @@
     "snl-rename-id": "./bin/snl-rename-id.mjs",
     "snl-rename-style": "./bin/snl-rename-style.mjs",
     "snoogle": "./bin/snoogle.mjs",
-    "snl-entity": "./bin/snl-entity.mjs"
+    "snl-entity": "./bin/snl-entity.mjs",
+    "snl-agent-mcp": "./dist/mcp/server.mjs"
   },
   "scripts": {
+    "generate:plugin": "node scripts/generate-plugin-metadata.mjs",
+    "build:plugin": "npm run generate:plugin && node scripts/build-plugin.mjs",
     "test": "tsx --test CLI_Scripts/*.test.ts",
-    "lint-types": "tsc --noEmit"
+    "lint-types": "tsc --noEmit",
+    "prepack": "npm run build:plugin && npm test && npm run lint-types"
   },
   "engines": {
     "node": ">=20"
@@ -36,7 +39,8 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "esbuild": "0.28.1"
   },
   "repository": {
     "type": "git",
@@ -49,5 +53,35 @@
     "cli"
   ],
   "author": "SJTU-AI4Math",
-  "license": "MIT"
+  "license": "MIT",
+  "exports": {
+    "./dsh": "./dist/dsh/adapter.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "Skills",
+    "examples",
+    "dist",
+    "skills",
+    "plugin",
+    "plugin.json",
+    "mcp.json",
+    ".claude-plugin",
+    ".codex-plugin",
+    ".mcp.json",
+    "cordis.patch.yml",
+    "AGENT.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
 }

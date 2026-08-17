@@ -1,0 +1,21 @@
+{
+  "name": "snl-agent-toolkit",
+  "version": "0.1.0",
+  "description": "Portable SNL workspace Skills and MCP tools for Entry Kinds, Macro Kinds, Entry Packages, Macro Packages, Entries, Macros, Relationships, and Libraries.",
+  "author": {
+    "name": "SJTU-AI4Math",
+    "url": "https://github.com/SJTU-AI4Math"
+  },
+  "homepage": "https://github.com/SJTU-AI4Math/SNL-Agent-Toolkit#readme",
+  "repository": "https://github.com/SJTU-AI4Math/SNL-Agent-Toolkit",
+  "license": "MIT",
+  "keywords": [
+    "snl",
+    "snl-doc",
+    "agent",
+    "mcp",
+    "agent-skill"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}
