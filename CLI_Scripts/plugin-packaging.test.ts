@@ -77,6 +77,18 @@ test('prebuilt DSH adapter bundles defineTool instead of importing a second Harn
   assert.doesNotMatch(adapter, /from ["']@deepseek-ai\/dsh-tools["']/);
   const loaded = await import(`${new URL(adapterPath, import.meta.url).href}?test=${Date.now()}`);
   assert.equal(typeof loaded.apply, 'function');
+  const registered: Array<Record<string, any>> = [];
+  const noopAdapter = {
+    async list() { return {}; }, async get() { return {}; },
+    async apply() { return {}; }, async validate() { return {}; },
+  };
+  await loaded.apply({ tools: { register(tool: Record<string, any>) { registered.push(tool); } } }, { adapter: noopAdapter });
+  await assert.rejects(
+    registered[3].execute({ root: 42 }, { signal: new AbortController().signal }),
+    (error: unknown) => error instanceof Error
+      && error.name === 'ToolArgsError'
+      && (error as Error & { code?: string }).code === 'INVALID_ARGS',
+  );
 });
 
 
