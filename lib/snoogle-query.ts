@@ -203,12 +203,17 @@ export async function querySnoogl(
   if (mode === 'entry') {
     const entries = await readEntries(workspaceRoot);
     const hits: SnoogleEntryHit[] = entries.map((entry) => ({
-      kind: 'entry', id: entry.id, title: entry.title ?? '', entryKind: entry.kind ?? null, score: 0,
+      kind: 'entry', id: entry.id, title: localizedText(entry.title), entryKind: entry.kind ?? null, score: 0,
     }));
     const results = rankSnoogleDocuments(query.trim().toLowerCase(), hits.map((hit) =>
       createSnoogleSearchDocument({ id: hit.id, value: hit, labels: hit.title ? [hit.title] : [] })))
       .map((result) => ({ ...result.value, score: result.score }));
     return { schemaVersion: 1, mode, query, results };
+  }
+
+  function localizedText(value: import('./snl-doc-schema.ts').LocalizedString): string {
+    if (typeof value === 'string') return value;
+    return value.values[value.default_language] ?? value.values.en ?? Object.values(value.values)[0] ?? '';
   }
 
   const [config, packages] = await Promise.all([readConfig(workspaceRoot), readAllMacroPackages(workspaceRoot)]);

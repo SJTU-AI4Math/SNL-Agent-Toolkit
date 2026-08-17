@@ -30,6 +30,7 @@ import { annotateBindings } from '@sjtu-ai4math/snl-basics/core';
 import {
   nodeDisplay,
   resolveRootLatex,
+  type SnlMacro,
 } from '@sjtu-ai4math/snl-basics';
 import { MacroDataDriver } from '@sjtu-ai4math/snl-basics/core';
 
@@ -111,7 +112,8 @@ export async function checkEntryPreview(
     }
     const driver = new MacroDataDriver({
       queries: {
-        query_macro: async ({ macro_name }) => opts.macros[macro_name] ?? null,
+        query_macro: async ({ macro_name }) =>
+          (opts.macros[macro_name] as unknown as SnlMacro | undefined) ?? null,
       },
     });
     let src: string;

@@ -5,6 +5,8 @@ import { createHash } from 'node:crypto';
 import { types as utilTypes } from 'node:util';
 import {
   findNodeAtLocation,
+  applyEdits as applyJsonEdits,
+  modify as modifyJson,
   parseTree,
   printParseErrorCode,
   type JSONPath,
@@ -17,7 +19,13 @@ import {
   snlDocRoot,
   usesEntityStorage,
 } from './snl-doc.ts';
-import { entryEntityPath, macroEntityPath, packageManifestPath } from './entity-storage.ts';
+import {
+  CURRENT_ENTRY_SCHEMA_VERSION,
+  CURRENT_MACRO_SCHEMA_VERSION,
+  entryEntityPath,
+  macroEntityPath,
+  packageManifestPath,
+} from './entity-storage.ts';
 import { parseSnlSyntaxTree } from './snl-parser.ts';
 import { withWorkspaceDataLock } from './workspace-data-lock.ts';
 
@@ -28,7 +36,7 @@ export interface EntityOccurrence {
   entityType: EntityType;
   id: string;
   role: OccurrenceRole;
-  category: 'definition' | 'snl' | 'library-index' | 'macro-source' | 'relationship' | 'generated-witness';
+  category: 'definition' | 'snl' | 'library-index' | 'macro-source' | 'package-membership' | 'relationship' | 'generated-witness';
   file: string;
   path: string;
   offset?: number;
@@ -436,6 +444,16 @@ async function styleRenameUnlocked(
   if (!isTraceableSnlIdentity('macro', newStyle)) throw new Error(`Style name '${newStyle}' is not representable as an SNL identifier.`);
   const files = await loadWorkspaceJson(root);
   const { occurrences, changed } = buildStyleRename(files, packageId, macroId, oldStyle, newStyle);
+  const currentWorkspace = (files.find((file) => file.relPath === 'config.json')?.data as any)?.version === '0.1.0';
+  if (currentWorkspace) {
+    for (const file of changed.values()) {
+      if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
+        file.next = stampSchemaVersion(file.next, CURRENT_ENTRY_SCHEMA_VERSION);
+      } else if (/^macros\/[^/]+\.json$/.test(file.relPath)) {
+        file.next = stampSchemaVersion(file.next, CURRENT_MACRO_SCHEMA_VERSION);
+      }
+    }
+  }
   const plan = fingerprintPlan<StyleRenamePlan>({
     packageId, macroId, oldStyle, newStyle,
     occurrences: occurrences.sort((a, b) => a.file.localeCompare(b.file) || a.path.localeCompare(b.path) || (a.offset ?? -1) - (b.offset ?? -1)),
@@ -514,12 +532,13 @@ function buildStyleRename(
   const stylePath = [...definition.base, 'styles', oldIndexes[0], 'style_name'];
   addEdit(definition.file, stringValueEdit(definition.file, stylePath, newStyle));
   occurrences.push({ category: 'style-definition', file: definition.file.relPath, path: jsonPathLabel(stylePath) });
-  if (!isRecord(definition.macro.default_style)) throw new Error(`Macro '${macroId}' must contain object default_style.`);
-  for (const [locale, value] of Object.entries(definition.macro.default_style)) {
-    if (value !== oldStyle) continue;
-    const defaultPath = [...definition.base, 'default_style', locale];
-    addEdit(definition.file, stringValueEdit(definition.file, defaultPath, newStyle));
-    occurrences.push({ category: 'default-style', file: definition.file.relPath, path: jsonPathLabel(defaultPath) });
+  if (isRecord(definition.macro.default_style)) {
+    for (const [locale, value] of Object.entries(definition.macro.default_style)) {
+      if (value !== oldStyle) continue;
+      const defaultPath = [...definition.base, 'default_style', locale];
+      addEdit(definition.file, stringValueEdit(definition.file, defaultPath, newStyle));
+      occurrences.push({ category: 'default-style', file: definition.file.relPath, path: jsonPathLabel(defaultPath) });
+    }
   }
   const resolved = targetMacroResolves(files, packageId, macroId);
   for (const file of files) {
@@ -636,6 +655,7 @@ async function renameEntityIdUnlocked(
   }
 
   const rewriteSnlMacroTokens = entityType !== 'macro' || macroIsActive(files, oldId);
+  const currentWorkspace = (files.find((file) => file.relPath === 'config.json')?.data as any)?.version === '0.1.0';
   const changed = new Map<string, LoadedJson & { next: string; targetAbsPath: string; targetRelPath: string }>();
   for (const file of files) {
     const edits = buildStructuredEdits(
@@ -650,9 +670,15 @@ async function renameEntityIdUnlocked(
                  (file.data as any)?.macro?.name === oldId) {
         targetRelPath = macroEntityPath((file.data as any).package, newId);
       }
+      let next = applyTextEdits(file.raw, edits);
+      if (currentWorkspace && /^entries\/[^/]+\.json$/.test(file.relPath)) {
+        next = stampSchemaVersion(next, CURRENT_ENTRY_SCHEMA_VERSION);
+      } else if (currentWorkspace && /^macros\/[^/]+\.json$/.test(file.relPath)) {
+        next = stampSchemaVersion(next, CURRENT_MACRO_SCHEMA_VERSION);
+      }
       changed.set(file.absPath, {
         ...file,
-        next: applyTextEdits(file.raw, edits),
+        next,
         targetAbsPath: path.join(file.docRoot, targetRelPath),
         targetRelPath,
       });
@@ -803,6 +829,16 @@ function collectFileOccurrences(
   includeSnlMacroTokens: boolean,
 ): void {
   const data = file.data as any;
+  if (/^packages\/[^/]+\.json$/.test(file.relPath)) {
+    if (entityType === 'entry' && Array.isArray(data?.entry_ids)) {
+      data.entry_ids.forEach((entryId: unknown, index: number) => {
+        if (entryId === id) {
+          out.push(occurrence(file, entityType, id, 'reference', `entry_ids[${index}]`));
+        }
+      });
+    }
+    return;
+  }
   if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
     const entry = data?.entry;
     if (entityType === 'entry' && entry?.id === id) {
@@ -937,6 +973,17 @@ function buildStructuredEdits(
 ): TextEdit[] {
   const edits: TextEdit[] = [];
   const data = file.data as any;
+  if (/^packages\/[^/]+\.json$/.test(file.relPath)) {
+    if (entityType === 'entry' && Array.isArray(data?.entry_ids) && data.entry_ids.includes(oldId)) {
+      const entryIds = data.entry_ids.map((value: unknown) => value === oldId ? newId : value);
+      edits.push(jsonValueEdit(
+        file,
+        ['entry_ids'],
+        [...entryIds].sort((left, right) => String(left).localeCompare(String(right))),
+      ));
+    }
+    return edits;
+  }
   if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
     const entry = data?.entry;
     if (entityType === 'entry' && entry?.id === oldId) {
@@ -1047,6 +1094,19 @@ function stringValueEdit(file: LoadedJson, jsonPath: JSONPath, value: string): T
     throw new Error(`${file.absPath}: expected string at ${JSON.stringify(jsonPath)}.`);
   }
   return { offset: node.offset, length: node.length, content: JSON.stringify(value) };
+}
+
+function jsonValueEdit(file: LoadedJson, jsonPath: JSONPath, value: unknown): TextEdit {
+  const node = findNodeAtLocation(file.tree, jsonPath);
+  if (!node) throw new Error(`${file.absPath}: expected value at ${JSON.stringify(jsonPath)}.`);
+  return { offset: node.offset, length: node.length, content: JSON.stringify(value) };
+}
+
+function stampSchemaVersion(raw: string, schemaVersion: number): string {
+  const edits = modifyJson(raw, ['schema_version'], schemaVersion, {
+    formattingOptions: { insertSpaces: true, tabSize: 2, eol: raw.includes('\r\n') ? '\r\n' : '\n' },
+  });
+  return applyJsonEdits(raw, edits);
 }
 
 function propertyKeyEdit(file: LoadedJson, valuePath: JSONPath, key: string): TextEdit {
@@ -1557,6 +1617,7 @@ function occurrence(
 ): EntityOccurrence {
   let category: EntityOccurrence['category'];
   if (role === 'definition') category = 'definition';
+  else if (file.relPath.startsWith('packages/') && jsonPath.startsWith('entry_ids[')) category = 'package-membership';
   else if (jsonPath.includes('.content.snl')) category = 'snl';
   else if (/^libraries\//.test(file.relPath)) category = 'library-index';
   else if (jsonPath.includes('.source.entries[')) category = 'macro-source';

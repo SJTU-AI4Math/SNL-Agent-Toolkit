@@ -8,7 +8,7 @@
 
 - ✅ **`snl-add-package`** — create and activate a canonical Package manifest.
 - ✅ **`snl-add-entry`** — validate an inner Entry draft and install its canonical entity.
-- ✅ **`snl-add-macro`** — normalize a Macro v8 draft and install it in a Package.
+- ✅ **`snl-add-macro`** — normalize a Macro v11 draft and install it in a Package.
 - ✅ **`snl-lint-entry`** — schema + SNL syntax + identifier resolution for EntryData JSON payloads.
 - ✅ **`snl-lint-graph`** — schema + label vocabulary + branch-tree integrity for library graph.json.
 - ✅ **`snl-lint-package`** — schema + template placeholder rules for macro package files.
@@ -41,7 +41,7 @@ Minimal Macro draft:
 {
   "name": "mul",
   "styles": [
-    { "style_name": "default", "mode": "formula_inline", "template": "#0 \\cdot #1" }
+    { "style_name": "default", "template": { "mode": "formula_inline", "body": "#0 \\cdot #1" } }
   ]
 }
 ```
@@ -66,7 +66,7 @@ unknown config fields.
 
 All three commands:
 
-- require a canonical, non-symlink current `0.0.6` workspace;
+- require a canonical, non-symlink `0.1.0` workspace (with legacy `0.0.6` write compatibility);
 - validate topology, receipt, Package ownership, catalogs, identity collisions, and payload;
 - compute canonical filenames and storage envelopes internally;
 - acquire the Extension-compatible `.data-write.lock`;
@@ -181,15 +181,16 @@ node bin/snl-lint-package.mjs --root . path/to/draft-pkg.json
 Checks:
 - **Schema** — top-level `version` / `name` / optional `description` /
   `macros` (name → entry map). Per macro: `description` / `source` /
-  `dynamic_arity` / required `default_style` / required `tags[]` /
+  `kind` / `dynamic_arity` / required `tags[]` /
   non-empty `styles[]`. Per style:
-  valid unique `style_name`, `mode`, `template`, and required `tags[]`.
+  valid unique `style_name`, atomic `template`, and required `tags[]`.
 - **Template placeholders** — canonical `#0` through `#99` and `#*` are
   recognised; anything else (`#foo`, `#-1`, `##`, `#00`, `#100`, …) is an
   error. Escape a literal hash as `\#`. `#*` is only legal when the
   macro's `dynamic_arity` is `true`; every dynamic style must contain it.
-- **Macro v8 rules** — `default_style` values resolve to declared styles;
-  every template is a string; `separator`, when present, is a string (including
+- **Macro v11 rules** — `styles[0]` is the implicit default and `default_style`
+  is retired; every template is an atomic `{ mode, body, ... }` object (or an
+  i18n map of complete template objects); `separator`, when present, is a string (including
   explicit `""`); `block_template_name` is valid only in block mode; tags
   cannot contain backslashes; pre-v7 style fields are errors rather than
   runtime aliases.

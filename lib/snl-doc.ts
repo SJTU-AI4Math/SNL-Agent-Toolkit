@@ -20,11 +20,16 @@ import {
   type MacroPackageFile,
   type SnlConfig,
   isMacroDocumentV8,
+  isMacroDocumentV11,
 } from './snl-doc-schema.ts';
 import {
   ENTRY_STORAGE_VERSION,
   MACRO_STORAGE_VERSION,
   PACKAGE_STORAGE_VERSION,
+  CURRENT_PACKAGE_SCHEMA_VERSION,
+  CURRENT_ENTRY_SCHEMA_VERSION,
+  CURRENT_MACRO_SCHEMA_VERSION,
+  assertCompatibleSchemaMarker,
   UNPACKAGED_PACKAGE_ID,
   entryEntityPath,
   macroEntityPath,
@@ -146,7 +151,66 @@ export async function readConfig(workspaceRoot: string): Promise<SnlConfig> {
   if (!(await pathExists(p))) {
     return { version: '0.0.0' };
   }
-  return readJson<SnlConfig>(p);
+  const config = await readJson<SnlConfig>(p);
+  if (config.version === '0.1.0') assertCurrentKindCatalogs(config);
+  return config;
+}
+
+function assertCurrentKindCatalogs(config: SnlConfig): void {
+  for (const field of ['entry_kinds', 'macro_kinds'] as const) {
+    const catalog = config[field];
+    if (!Array.isArray(catalog)) throw new Error(`config.json#${field} must be an array.`);
+    const ids = new Set<string>();
+    catalog.forEach((value, index) => {
+      const kind = value as unknown as Record<string, unknown>;
+      if (!isRecord(value) || typeof value.id !== 'string' || !value.id ||
+          value.id !== value.id.trim()) {
+        throw new Error(`config.json#${field}[${index}].id must be a canonical non-empty string.`);
+      }
+      if (ids.has(value.id)) {
+        throw new Error(`config.json#${field} contains duplicate id ${JSON.stringify(value.id)}.`);
+      }
+      ids.add(value.id);
+      if (field === 'entry_kinds') {
+        if (!isLocalizedLabel(kind.name, true)) {
+          throw new Error(`config.json#entry_kinds[${index}].name must be a non-empty string or valid I18n map.`);
+        }
+        if (kind.description !== undefined && !isLocalizedLabel(kind.description, false)) {
+          throw new Error(`config.json#entry_kinds[${index}].description must be a string or valid I18n map.`);
+        }
+        if (typeof kind.defaultCounterName !== 'string' || typeof kind.style !== 'string') {
+          throw new Error(`config.json#entry_kinds[${index}] requires string defaultCounterName and style.`);
+        }
+      } else if (typeof kind.name !== 'string' || typeof kind.description !== 'string') {
+        throw new Error(`config.json#macro_kinds[${index}] requires string name and description.`);
+      }
+      assertThemedColoring(kind.coloring, `config.json#${field}[${index}].coloring`);
+    });
+  }
+}
+
+function isLocalizedLabel(value: unknown, required: boolean): boolean {
+  if (typeof value === 'string') return !required || !!value.trim();
+  if (!isRecord(value) || value.type !== 'i18n' ||
+      typeof value.default_language !== 'string' || !isRecord(value.values)) {
+    return false;
+  }
+  const values = Object.values(value.values);
+  return values.length > 0 && values.every((item) => typeof item === 'string') &&
+    (!required || values.some((item) => (item as string).trim()));
+}
+
+function assertThemedColoring(value: unknown, label: string): void {
+  if (!isRecord(value) || Object.hasOwn(value, 'stroke') || Object.hasOwn(value, 'background')) {
+    throw new Error(`${label} must contain light and dark variants.`);
+  }
+  for (const theme of ['light', 'dark'] as const) {
+    const variant = value[theme];
+    if (!isRecord(variant) || typeof variant.stroke !== 'string' || !variant.stroke.trim() ||
+        typeof variant.background !== 'string' || !variant.background.trim()) {
+      throw new Error(`${label}.${theme} requires non-empty string stroke and background.`);
+    }
+  }
 }
 
 /** Select live storage without ever falling through to frozen backups. */
@@ -157,7 +221,7 @@ export function usesEntityStorage(config: unknown): boolean {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(config.version);
   if (!match) throw new Error(`config.json has invalid data version ${JSON.stringify(config.version)}.`);
   const parts = match.slice(1).map(Number);
-  const current = parts[0] === 0 && parts[1] === 0 && parts[2] === 6;
+  const current = config.version === '0.1.0' || config.version === '0.0.6';
   const legacy = parts[0] === 0 && parts[1] === 0 && parts[2] < 6;
   if (legacy) return false;
   if (!current) {
@@ -181,7 +245,7 @@ async function assertEntityStorageTopology(workspaceRoot: string, config: SnlCon
     storage.entry_default_package !== UNPACKAGED_PACKAGE_ID ||
     !storage.receipt || typeof storage.receipt !== 'object' || Array.isArray(storage.receipt)
   ) {
-    throw new Error('Workspace data 0.0.6 requires complete entity_storage v1 metadata and receipt.');
+    throw new Error(`Workspace data ${config.version} requires complete entity_storage v1 metadata and receipt.`);
   }
 
   for (const [name, directory] of [
@@ -255,16 +319,17 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot);
+    const manifests = await readEntityPackageManifests(workspaceRoot, config.version === '0.1.0');
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const ids = new Set<string>();
-    return records.map(({ relativePath, value }) => {
+    const entries = records.map(({ relativePath, value }) => {
       if (!isRecord(value) || value.format !== 'snl-entry' ||
           value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== 'string' ||
           !isRecord(value.entry) || typeof value.entry.id !== 'string' || !value.entry.id ||
           value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== 'string') {
         throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
       }
+      assertCompatibleSchemaMarker(value, CURRENT_ENTRY_SCHEMA_VERSION, `${relativePath} Entry envelope`);
       if (value.entry.package !== value.package) {
         throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);
       }
@@ -278,6 +343,20 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
       ids.add(value.entry.id);
       return value.entry as unknown as EntryData & { package: string };
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
+    if (config.version === '0.1.0') {
+      for (const manifest of manifests.values()) {
+        const actual = entries
+          .filter((entry) => entry.package === manifest.id)
+          .map((entry) => entry.id)
+          .sort((left, right) => left.localeCompare(right));
+        if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
+          throw new Error(
+            `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`,
+          );
+        }
+      }
+    }
+    return entries;
   }
 
   const p = entriesPath(workspaceRoot);
@@ -336,7 +415,8 @@ export async function readAllMacroPackages(
 async function readEntityMacroPackages(
   workspaceRoot: string,
 ): Promise<Record<string, MacroPackageFile>> {
-  const manifests = await readEntityPackageManifests(workspaceRoot);
+  const config = await readConfig(workspaceRoot);
+  const manifests = await readEntityPackageManifests(workspaceRoot, config.version === '0.1.0');
 
   const macros = new Map<string, Record<string, MacroPackageEntryWithoutName>>();
   const identities = new Set<string>();
@@ -347,10 +427,14 @@ async function readEntityMacroPackages(
         value.macro.name !== value.macro.name.trim()) {
       throw new Error(`${relativePath} is not a valid SNL Macro envelope.`);
     }
+    assertCompatibleSchemaMarker(value, CURRENT_MACRO_SCHEMA_VERSION, `${relativePath} Macro envelope`);
     const macroDocument: Record<string, unknown> = Object.create(null);
     macroDocument[value.macro.name] = value.macro;
-    if (!isMacroDocumentV8(macroDocument)) {
-      throw new Error(`${relativePath} Macro payload is not valid Macro v8 data.`);
+    const currentMacro = config.version === '0.1.0';
+    if (currentMacro ? !isMacroDocumentV11(macroDocument) : !isMacroDocumentV8(macroDocument)) {
+      throw new Error(
+        `${relativePath} Macro payload is not valid Macro v${currentMacro ? '11' : '8'} data.`,
+      );
     }
     assertExpectedEntityPath(relativePath, macroEntityPath(value.package, value.macro.name));
     if (!manifests.has(value.package)) {
@@ -373,7 +457,7 @@ async function readEntityMacroPackages(
   const out: Record<string, MacroPackageFile> = {};
   for (const manifest of [...manifests.values()].sort((a, b) => a.id.localeCompare(b.id))) {
     defineIdentity(out, manifest.id, {
-      version: '8',
+      version: config.version === '0.1.0' ? '11' : '8',
       name: manifest.name,
       description: manifest.description,
       macros: macros.get(manifest.id) ?? {},
@@ -384,6 +468,7 @@ async function readEntityMacroPackages(
 
 async function readEntityPackageManifests(
   workspaceRoot: string,
+  requireCurrentSchema = false,
 ): Promise<Map<string, PackageManifest>> {
   const manifests = new Map<string, PackageManifest>();
   const foldedIds = new Set<string>();
@@ -392,6 +477,26 @@ async function readEntityPackageManifests(
         value.version !== PACKAGE_STORAGE_VERSION || typeof value.id !== 'string' ||
         typeof value.name !== 'string' || typeof value.description !== 'string') {
       throw new Error(`${relativePath} is not a valid SNL Package manifest.`);
+    }
+    if (requireCurrentSchema) {
+      if (value.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION) {
+        throw new Error(
+          `${relativePath} must carry current Package manifest schema_version ${CURRENT_PACKAGE_SCHEMA_VERSION}.`,
+        );
+      }
+      const entryIds = value.entry_ids;
+      if (
+        !Array.isArray(entryIds) ||
+        entryIds.some((entryId: unknown) =>
+          typeof entryId !== 'string' || !entryId || entryId !== entryId.trim()) ||
+        new Set(entryIds).size !== entryIds.length ||
+        entryIds.some((entryId: string, index: number) =>
+          index > 0 && entryIds[index - 1].localeCompare(entryId) > 0)
+      ) {
+        throw new Error(
+          `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`,
+        );
+      }
     }
     assertExpectedEntityPath(relativePath, packageManifestPath(value.id));
     const folded = value.id.toLowerCase();

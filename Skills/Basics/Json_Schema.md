@@ -44,7 +44,7 @@ Identity changes use `snl-rename-id`, never a partial JSON edit.
 
 ```json
 {
-  "version": "0.0.6",
+  "version": "0.1.0",
   "entity_storage": {
     "version": 1,
     "legacy_backup_version": "0.0.5",
@@ -54,8 +54,11 @@ Identity changes use `snl-rename-id`, never a partial JSON edit.
   "entry_kinds": [
     {
       "id": "definition",
-      "name": "Definition",
-      "coloring": { "stroke": "#1565c0", "background": "#e3f2fd" },
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Definition" } },
+      "coloring": {
+        "light": { "stroke": "#1565c0", "background": "#e3f2fd" },
+        "dark": { "stroke": "#90caf9", "background": "#0d47a1" }
+      },
       "defaultCounterName": "Definition",
       "style": ""
     }
@@ -65,7 +68,10 @@ Identity changes use `snl-rename-id`, never a partial JSON edit.
       "id": "operator",
       "name": "Operator",
       "description": "Operators",
-      "coloring": { "stroke": "#6a1b9a", "background": "#f3e5f5" }
+      "coloring": {
+        "light": { "stroke": "#6a1b9a", "background": "#f3e5f5" },
+        "dark": { "stroke": "#ce93d8", "background": "#4a148c" }
+      }
     }
   ],
   "active_macro_packages": ["Algebra"]
@@ -101,13 +107,17 @@ Package IDs are immutable, case-preserved, 1–64 Windows-safe ASCII characters 
 {
   "format": "snl-package",
   "version": 1,
+  "schema_version": 2,
   "id": "Algebra",
   "name": "Algebra",
-  "description": "Algebra terms"
+  "description": "Algebra terms",
+  "entry_ids": ["algebra.def.group"]
 }
 ```
 
-A Package groups both Entries and Macros. `id` is immutable; `name`, `description`, and unknown extension fields are mutable and must round-trip.
+A Package groups both Entries and Macros. `entry_ids` is the exact sorted,
+duplicate-free set of Entry ids owned by the Package. `id` is immutable;
+`name`, `description`, and unknown extension fields are mutable and must round-trip.
 
 ## Entry entity
 
@@ -115,6 +125,7 @@ A Package groups both Entries and Macros. `id` is immutable; `name`, `descriptio
 {
   "format": "snl-entry",
   "version": 1,
+  "schema_version": 1,
   "package": "Algebra",
   "entry": {
     "id": "algebra.def.group",
@@ -131,7 +142,7 @@ A Package groups both Entries and Macros. `id` is immutable; `name`, `descriptio
 - Envelope and inner `package` must agree.
 - `entry.id` is globally unique even across Packages.
 - Moving an Entry changes its hash-derived filename and both Package fields, but not its id or references.
-- `kind` references `config.entry_kinds[].id`.
+- `kind` references `config.entry_kinds[].id`; `title` may be a string or an i18n object.
 - `content.snl` is the canonical structured form; other optional dialects are `typst`, `latex`, `markdown`, and `text`.
 - `contribution_info`, `pointer`, and unknown fields are pass-through data.
 
@@ -141,6 +152,7 @@ A Package groups both Entries and Macros. `id` is immutable; `name`, `descriptio
 {
   "format": "snl-macro",
   "version": 1,
+  "schema_version": 1,
   "package": "Algebra",
   "macro": {
     "name": "Group",
@@ -148,9 +160,12 @@ A Package groups both Entries and Macros. `id` is immutable; `name`, `descriptio
     "source": { "entries": ["algebra.def.group"], "urls": [] },
     "kind": "structure",
     "dynamic_arity": false,
-    "default_style": { "en": "default" },
     "styles": [
-      { "style_name": "default", "mode": "text", "template": "group", "tags": [] }
+      {
+        "style_name": "default",
+        "tags": [],
+        "template": { "mode": "text", "body": "group" }
+      }
     ],
     "tags": []
   }
@@ -161,10 +176,11 @@ A Package groups both Entries and Macros. `id` is immutable; `name`, `descriptio
   canonical Package filename order determines last-wins precedence for same-named Macros.
 - `source.entries[]` references Entry ids.
 - `kind`, when present, references a Macro Kind id.
-- `default_style` is required. It maps language ids to declared style names;
-  implicit resolution is current language, then `en`, then `styles[0]`.
+- `styles[0]` is the implicit default; Macro v11 retires `default_style`.
 - Style names are unique within one Macro and follow the SNL identifier grammar.
-- Valid modes are `formula_inline`, `formula_display`, `text`, and `block`.
+- Each style has an atomic `template` object (or an i18n map of complete
+  objects) with `mode` and `body`. Valid modes are `formula_inline`,
+  `formula_display`, `text`, and `block`.
 - Macro and style `tags` are required arrays and may not contain backslashes.
 - Dynamic Macros put `#*` in every style template; optional string `separator` joins children.
 - `block_template_name` is valid only in `block` mode.

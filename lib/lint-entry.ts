@@ -138,11 +138,11 @@ export function lintEntry(
   }
 
   // title (may be empty string per 2026-07-06 spec, but must be present)
-  if (typeof e.title !== 'string') {
+  if (typeof e.title !== 'string' && !isValidI18nString(e.title)) {
     issues.push({
       severity: 'error',
       code: 'entry.missing-title',
-      message: 'Field `title` must be a string (may be empty).',
+      message: 'Field `title` must be a string or valid I18n map.',
       path: 'title',
     });
   }

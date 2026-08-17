@@ -1,0 +1,39 @@
+{
+  "format": "snl-macro",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Logic",
+  "macro": {
+    "name": "FOL.implies",
+    "description": "Implication",
+    "source": {
+      "entries": [
+        "entry.localized"
+      ],
+      "urls": []
+    },
+    "kind": "rule",
+    "dynamic_arity": false,
+    "styles": [
+      {
+        "style_name": "default",
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "#0 \\to #1",
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": "#0 \\to #1"
+            }
+          }
+        }
+      }
+    ],
+    "tags": [],
+    "vendor_extension": {
+      "keep": "macro"
+    }
+  }
+}

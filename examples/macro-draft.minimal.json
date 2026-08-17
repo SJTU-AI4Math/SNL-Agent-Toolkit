@@ -4,8 +4,10 @@
   "styles": [
     {
       "style_name": "default",
-      "mode": "text",
-      "template": "continuous function"
+      "template": {
+        "mode": "text",
+        "body": "continuous function"
+      }
     }
   ]
 }

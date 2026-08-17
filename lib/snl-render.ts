@@ -43,10 +43,8 @@
  *     structure stays legible.
  */
 
-import { resolveStyle, resolve_style_template } from '@sjtu-ai4math/snl-basics';
 import type {
   MacroPackageEntry,
-  MacroPackageStyle,
 } from './snl-doc-schema.ts';
 import type { SnlSyntaxTree } from './snl-parser.ts';
 
@@ -323,12 +321,27 @@ function latexToText(input: string, notes: string[]): string {
  * from the ACTIVE style. For text mode, formula-default `', '` is
  * fine but we let the style override.
  */
+type RenderMode = 'formula_inline' | 'formula_display' | 'text' | 'block';
+
+interface RenderTemplate {
+  mode: RenderMode;
+  body: string;
+  separator?: string;
+  latex?: { synthesis?: { macro?: string } };
+  text?: string;
+}
+
+interface RenderStyle {
+  style_name: string;
+  template: RenderTemplate;
+}
+
 function joinVariadic(
-  style: MacroPackageStyle,
+  template: RenderTemplate,
   rendered: string[],
 ): string {
-  const defaultSep = style.mode === 'text' ? '' : ', ';
-  return rendered.join(style.separator ?? defaultSep);
+  const defaultSep = template.mode === 'text' ? '' : ', ';
+  return rendered.join(template.separator ?? defaultSep);
 }
 
 /**
@@ -353,13 +366,68 @@ function fillTemplate(
   return out.split(ESCAPED).join('\\#');
 }
 
-/** Pick the SNL-Basics v0.2.0 runtime-compatible style: explicit bracket, language default, English, then styles[0]. */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function projectTemplate(value: unknown): RenderTemplate | undefined {
+  let candidate = value;
+  if (isRecord(candidate) && candidate.type === 'i18n' &&
+      typeof candidate.default_language === 'string' && isRecord(candidate.values)) {
+    candidate = candidate.values[candidate.default_language] ??
+      candidate.values.en ??
+      Object.values(candidate.values)[0];
+  }
+  if (!isRecord(candidate) || typeof candidate.mode !== 'string' ||
+      !['formula_inline', 'formula_display', 'text', 'block'].includes(candidate.mode) ||
+      typeof candidate.body !== 'string') {
+    return undefined;
+  }
+  return candidate as unknown as RenderTemplate;
+}
+
+function normalizeStyle(value: unknown): RenderStyle | undefined {
+  if (!isRecord(value) || typeof value.style_name !== 'string') return undefined;
+  const current = projectTemplate(value.template);
+  if (current) return { style_name: value.style_name, template: current };
+
+  if (typeof value.mode !== 'string' || !['formula_inline', 'formula_display', 'text', 'block'].includes(value.mode) ||
+      typeof value.template !== 'string') {
+    return undefined;
+  }
+  return {
+    style_name: value.style_name,
+    template: {
+      mode: value.mode as RenderMode,
+      body: value.template,
+      ...(typeof value.separator === 'string' ? { separator: value.separator } : {}),
+      ...(isRecord(value.latex) ? { latex: value.latex as RenderTemplate['latex'] } : {}),
+      ...(typeof value.text === 'string' ? { text: value.text } : {}),
+    },
+  };
+}
+
+/** Pick an explicit style, the legacy localized default, or the v11 implicit styles[0] default. */
 function pickStyle(
   macro: MacroPackageEntry,
   node: SnlSyntaxTree,
-): MacroPackageStyle | undefined {
+): RenderStyle | undefined {
   if (macro.styles.length === 0) return undefined;
-  return resolveStyle(node, macro, 'en') as MacroPackageStyle;
+  const requested = (node as SnlSyntaxTree & { style_name?: string }).style_name;
+  const legacyDefault = (macro as MacroPackageEntry & {
+    default_style?: string | Record<string, string>;
+  }).default_style;
+  const defaultName = typeof legacyDefault === 'string'
+    ? legacyDefault
+    : legacyDefault?.en;
+  const selectedName = requested ?? defaultName;
+  const selected = selectedName
+    ? macro.styles.find((style) => style.style_name === selectedName)
+    : macro.styles[0];
+  if (!selected && requested) {
+    throw new Error(`Unknown style "${requested}" for macro "${macro.name}".`);
+  }
+  return normalizeStyle(selected);
 }
 
 /** Escape temporary backtick payload for a LaTeX `\\texttt{...}` group. */
@@ -379,9 +447,9 @@ function ownMacro(macros: Record<string, MacroPackageEntry>, name: string): Macr
   return Object.hasOwn(macros, name) ? macros[name] : undefined;
 }
 
-type RenderedNode = { output: string; mode: MacroPackageStyle['mode'] };
+type RenderedNode = { output: string; mode: RenderMode };
 
-function wrapForParent(child: RenderedNode, parentMode: MacroPackageStyle['mode']): string {
+function wrapForParent(child: RenderedNode, parentMode: RenderMode): string {
   const childText = child.mode === 'text';
   const parentText = parentMode === 'text';
   if (!parentText && childText) return `\\text{${child.output}}`;
@@ -423,9 +491,9 @@ function renderNode(
       return { output: mode === 'latex' ? escapeTemporaryText(raw) : raw, mode: 'text' };
     }
     if (mode === 'latex') {
-      return { output: raw, mode: envMode as MacroPackageStyle['mode'] };
+      return { output: raw, mode: envMode as RenderMode };
     }
-    return { output: `$${latexToText(raw, notes)}$`, mode: envMode as MacroPackageStyle['mode'] };
+    return { output: `$${latexToText(raw, notes)}$`, mode: envMode as RenderMode };
   }
 
   const name = node.macro_name;
@@ -453,10 +521,10 @@ function renderNode(
     return { output: `${name}(${renderedChildren.map((child) => child.output).join(', ')})`, mode: 'formula_inline' };
   }
 
-  const template = resolve_style_template(style, undefined, 'en');
+  const template = style.template;
   const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
   const wrappedChildren = mode === 'latex'
-    ? renderedChildren.map((child) => wrapForParent(child, style.mode))
+    ? renderedChildren.map((child) => wrapForParent(child, template.mode))
     : renderedChildren.map((child) => child.output);
 
   // Assemble the slot map.
@@ -465,10 +533,10 @@ function renderNode(
     values[`child${i}`] = v;
   });
   if (macro.dynamic_arity) {
-    if (!template.includes('#*')) {
+    if (!template.body.includes('#*')) {
       throw new Error(`Dynamic macro '${name}' style '${style.style_name}' requires #* in its template.`);
     }
-    values['children_joined'] = joinVariadic(style, wrappedChildren);
+    values['children_joined'] = joinVariadic(template, wrappedChildren);
   }
 
   // Pick the source template. LaTeX synth prefers style.latex.synthesis
@@ -479,22 +547,22 @@ function renderNode(
   // 是完全一样的." No index/htmlData annotation — those only appear in
   // the KaTeX-in-React output.
   if (mode === 'latex') {
-    const explicit = style.latex?.synthesis?.macro;
+    const explicit = template.latex?.synthesis?.macro;
     const src = typeof explicit === 'string' && explicit.length > 0
       ? explicit
-      : template;
-    return { output: fillTemplate(src, values), mode: style.mode };
+      : template.body;
+    return { output: fillTemplate(src, values), mode: template.mode };
   }
   // Text mode: prefer style.text if provided, else convert the KaTeX
   // template to Unicode-char text and fill afterwards (fill AFTER
   // conversion so child strings — already text-synthesized — don't get
   // char-mapped twice).
-  const explicitText = style.text;
+  const explicitText = template.text;
   if (typeof explicitText === 'string' && explicitText.length > 0) {
-    return { output: fillTemplate(explicitText, values), mode: style.mode };
+    return { output: fillTemplate(explicitText, values), mode: template.mode };
   }
-  const converted = latexToText(template, notes);
-  return { output: fillTemplate(converted, values), mode: style.mode };
+  const converted = latexToText(template.body, notes);
+  return { output: fillTemplate(converted, values), mode: template.mode };
 }
 
 /**

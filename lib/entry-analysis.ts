@@ -105,7 +105,10 @@ function parseEntry(entry: EntryData, macros: Record<string, MacroPackageEntry>)
   if (typeof snl !== 'string' || !snl.trim()) throw new Error(`Entry ${entry.id} has no SNL content.`);
   const parsed = tryParseSnlSyntaxTree(snl);
   if (!parsed.ok) throw new Error(`Entry ${entry.id} SNL parse failed: ${parsed.error}`);
-  return resolveSnlSemantics(parsed.tree, macros).tree;
+  return resolveSnlSemantics(
+    parsed.tree,
+    macros as unknown as Parameters<typeof resolveSnlSemantics>[1],
+  ).tree;
 }
 
 export async function computeEntrySsi(root: string, id: string): Promise<SnlStructuralMetrics> {

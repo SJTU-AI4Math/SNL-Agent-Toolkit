@@ -1,0 +1,9 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "schema_version": 2,
+  "id": "Logic",
+  "name": "Logic",
+  "description": "Logical macros",
+  "entry_ids": []
+}

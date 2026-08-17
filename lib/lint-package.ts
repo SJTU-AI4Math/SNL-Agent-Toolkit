@@ -4,6 +4,7 @@ import type {
   MacroPackageFile,
   MacroPackageStyle,
 } from './snl-doc-schema.ts';
+import { isMacroDocumentV11, macroV11TemplateProjections } from './snl-doc-schema.ts';
 import type { LintIssue, LintReport } from './lint-report.ts';
 import {
   checkKatex,
@@ -45,6 +46,51 @@ export function lintPackage(raw: unknown, opts: LintPackageOptions = {}): LintRe
   if (!isRecord(pkg.macros)) {
     issues.push({ severity: 'error', code: 'package.missing-macros', message: '`macros` must be an object (name → macro).', path: 'macros' });
     return { issues };
+  }
+  if (pkg.version === '11') {
+    const document = Object.fromEntries(Object.entries(pkg.macros).map(([name, macro]) => [
+      name,
+      isRecord(macro) ? { name, ...macro } : macro,
+    ]));
+    if (!isMacroDocumentV11(document)) {
+      issues.push({
+        severity: 'error',
+        code: 'package.macro-v11',
+        message: 'Package macros must satisfy the canonical Macro v11 schema.',
+        path: 'macros',
+      });
+    }
+    if (opts.checkKatex !== false) lintMacroV11Katex(pkg.macros, issues);
+    return { issues };
+  }
+
+  function lintMacroV11Katex(macros: Record<string, MacroPackageEntryWithoutName>, issues: LintIssue[]): void {
+    for (const [name, rawMacro] of Object.entries(macros)) {
+      if (!isRecord(rawMacro) || rawMacro.kind === 'sub' || !Array.isArray(rawMacro.styles)) continue;
+      rawMacro.styles.forEach((rawStyle, styleIndex) => {
+        if (!isRecord(rawStyle)) return;
+        const projections = macroV11TemplateProjections(rawStyle.template);
+        if (!projections) return;
+        projections.forEach((template, projectionIndex) => {
+          if (!templateNeedsKatex(template.mode, template.body)) return;
+          const filled = fillTemplateWithPlaceholders(template.body, {
+            separator: template.separator,
+          });
+          const result = checkKatex(filled, { displayMode: template.mode === 'formula_display' });
+          if (!result.ok) {
+            const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : '';
+            const path = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            issues.push({
+              severity: 'error',
+              code: 'style.katex-compile',
+              message: `${path} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path,
+              position: result.position,
+            });
+          }
+        });
+      });
+    }
   }
   for (const [name, macro] of Object.entries(pkg.macros)) {
     lintMacroEntry(name, macro, issues, opts.checkKatex !== false);

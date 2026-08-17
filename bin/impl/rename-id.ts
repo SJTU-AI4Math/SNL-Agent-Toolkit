@@ -17,7 +17,7 @@ async function main(): Promise<number> {
   try {
     parsed = parseArgs(process.argv.slice(2), SPECS);
   } catch (error) {
-    process.stderr.write(`${(error as Error).message}\n\n${usage()}\n`);
+    emitError((error as Error).message, process.argv.slice(2).includes('--json'), true);
     return 2;
   }
   if (parsed.flags.help === true) {
@@ -27,7 +27,7 @@ async function main(): Promise<number> {
   const type = parsed.flags.type;
   const [oldId, newId] = parsed.positional;
   if ((type !== 'entry' && type !== 'macro') || !oldId || !newId || parsed.positional.length !== 2) {
-    process.stderr.write(`Expected --type entry|macro and exactly <old-id> <new-id>.\n\n${usage()}\n`);
+    emitError('Expected --type entry|macro and exactly <old-id> <new-id>.', parsed.flags.json === true, true);
     return 2;
   }
   try {
@@ -47,8 +47,16 @@ async function main(): Promise<number> {
     }
     return 0;
   } catch (error) {
-    process.stderr.write(`${(error as Error).message}\n`);
+    emitError((error as Error).message, parsed.flags.json === true);
     return 2;
+  }
+
+  function emitError(message: string, asJson: boolean, includeUsage = false): void {
+    if (asJson) {
+      process.stdout.write(JSON.stringify({ status: 'error', code: 'rename.failed', message }) + '\n');
+    } else {
+      process.stderr.write(`${message}${includeUsage ? `\n\n${usage()}` : ''}\n`);
+    }
   }
 }
 

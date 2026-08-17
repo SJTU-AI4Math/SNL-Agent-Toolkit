@@ -1,0 +1,14 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "schema_version": 2,
+  "id": "_unpackaged",
+  "name": "Unpackaged",
+  "description": "",
+  "entry_ids": [
+    "entry.localized"
+  ],
+  "vendor_extension": {
+    "keep": "package"
+  }
+}

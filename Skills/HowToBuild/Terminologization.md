@@ -124,7 +124,7 @@ For each term, author one inner Macro draft and run:
 node bin/snl-add-macro.mjs --root . --package <PackageId> --json macro-draft.json
 ```
 
-The CLI owns Macro v8 defaults, envelope construction, hash-derived filenames,
+The CLI owns Macro v11 defaults, schema-v1 envelope construction, hash-derived filenames,
 validation, activation, and writer locking. Do not copy an aggregate Package shape
 into `macros/`, manually derive a path, edit the receipt, or touch legacy backups.
 

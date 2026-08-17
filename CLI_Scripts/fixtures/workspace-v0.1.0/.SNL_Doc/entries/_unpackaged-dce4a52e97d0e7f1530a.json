@@ -1,0 +1,30 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "_unpackaged",
+  "entry": {
+    "id": "entry.localized",
+    "package": "_unpackaged",
+    "kind": "definition",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Implication",
+        "zh": "蕴含"
+      }
+    },
+    "content": {
+      "snl": "FOL.implies"
+    },
+    "contribution_info": null,
+    "pointer": null,
+    "vendor_extension": {
+      "keep": "entry"
+    }
+  },
+  "vendor_extension": {
+    "keep": "envelope"
+  }
+}

@@ -183,6 +183,20 @@ describe('renderTreeAsLatex', () => {
     assert.throws(() => synthLatex('plus[missing](a,b)', macros), /unknown style "missing"/i);
   });
 
+  test('legacy locale defaults fall back to styles[0] when English is absent', () => {
+    const localized: Record<string, MacroPackageEntry> = {
+      symbol: {
+        name: 'symbol', description: '', source: { entries: [], urls: [] },
+        dynamic_arity: false, default_style: { zh: 'localized' }, tags: [],
+        styles: [
+          { style_name: 'default', mode: 'formula_inline', template: 'D', tags: [] },
+          { style_name: 'localized', mode: 'formula_inline', template: 'L', tags: [] },
+        ],
+      },
+    };
+    assert.equal(synthLatex('symbol', localized).output, 'D');
+  });
+
   test('throws when a dynamic style omits #*', () => {
     const invalid: Record<string, MacroPackageEntry> = {
       join: {

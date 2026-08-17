@@ -3,6 +3,9 @@ import { createHash } from 'node:crypto';
 export const PACKAGE_STORAGE_VERSION = 1 as const;
 export const ENTRY_STORAGE_VERSION = 1 as const;
 export const MACRO_STORAGE_VERSION = 1 as const;
+export const CURRENT_PACKAGE_SCHEMA_VERSION = 2 as const;
+export const CURRENT_ENTRY_SCHEMA_VERSION = 1 as const;
+export const CURRENT_MACRO_SCHEMA_VERSION = 1 as const;
 export const UNPACKAGED_PACKAGE_ID = '_unpackaged' as const;
 
 export type EntityIdentityKind = 'package' | 'entry' | 'macro';
@@ -21,7 +24,7 @@ function semanticDigest(value: unknown): string {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
-/** Exact receipt contract used by Extension workspace data 0.0.6. */
+/** Exact legacy-backup receipt contract introduced by Extension workspace data 0.0.6. */
 export function makeEntityStorageReceipt(
   entries: unknown,
   macroPackages: Map<string, unknown>,
@@ -49,14 +52,17 @@ export interface PackageManifest {
   [key: string]: unknown;
   format: 'snl-package';
   version: typeof PACKAGE_STORAGE_VERSION;
+  schema_version?: typeof CURRENT_PACKAGE_SCHEMA_VERSION;
   id: string;
   name: string;
   description: string;
+  entry_ids?: string[];
 }
 
 export interface EntryEnvelope<T extends Record<string, unknown> = Record<string, unknown>> {
   format: 'snl-entry';
   version: typeof ENTRY_STORAGE_VERSION;
+  schema_version?: typeof CURRENT_ENTRY_SCHEMA_VERSION;
   package: string;
   entry: T;
 }
@@ -64,6 +70,7 @@ export interface EntryEnvelope<T extends Record<string, unknown> = Record<string
 export interface MacroEnvelope<T extends Record<string, unknown> = Record<string, unknown>> {
   format: 'snl-macro';
   version: typeof MACRO_STORAGE_VERSION;
+  schema_version?: typeof CURRENT_MACRO_SCHEMA_VERSION;
   package: string;
   macro: T;
 }
@@ -110,4 +117,36 @@ export function macroEntityPath(packageId: string, macroName: string): string {
   assertPackageId(packageId);
   if (!macroName) throw new Error('Macro name must be non-empty.');
   return `macros/${packageId}-${entityIdentityHash('macro', packageId, macroName)}.json`;
+}
+
+export function assertCanonicalEntryIds(value: unknown, label = 'Package entry_ids'): asserts value is string[] {
+  if (
+    !Array.isArray(value) ||
+    value.some((entryId) => typeof entryId !== 'string' || !entryId || entryId !== entryId.trim()) ||
+    new Set(value).size !== value.length ||
+    value.some((entryId, index) => index > 0 && value[index - 1].localeCompare(entryId) > 0)
+  ) {
+    throw new Error(`${label} must be a sorted array of unique, non-empty canonical Entry ids.`);
+  }
+}
+
+export function assertCompatibleSchemaMarker(
+  value: Record<string, unknown>,
+  current: number,
+  label: string,
+): void {
+  if (!Object.hasOwn(value, 'schema_version')) return;
+  if (!Number.isInteger(value.schema_version) || (value.schema_version as number) < 1) {
+    throw new Error(`${label} schema_version must be a positive integer.`);
+  }
+  if ((value.schema_version as number) > current) {
+    throw new Error(
+      `${label} schema version ${String(value.schema_version)} is newer than this Toolkit supports (${current}).`,
+    );
+  }
+  if ((value.schema_version as number) < current) {
+    throw new Error(
+      `${label} schema_version ${String(value.schema_version)} has no registered migration to ${current}.`,
+    );
+  }
 }

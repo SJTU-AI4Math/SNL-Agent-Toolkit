@@ -14,13 +14,13 @@ function usage(): string {
 async function main(): Promise<number> {
   let parsed;
   try { parsed = parseArgs(process.argv.slice(2), SPECS); }
-  catch (error) { process.stderr.write(`${(error as Error).message}\n\n${usage()}\n`); return 2; }
+  catch (error) { emitError((error as Error).message, process.argv.slice(2).includes('--json'), true); return 2; }
   if (parsed.flags.help === true) { process.stdout.write(usage() + '\n'); return 0; }
   const packageId = parsed.flags.package;
   const macroId = parsed.flags.macro;
   const [oldStyle, newStyle] = parsed.positional;
   if (typeof packageId !== 'string' || typeof macroId !== 'string' || !oldStyle || !newStyle || parsed.positional.length !== 2) {
-    process.stderr.write(`Expected --package <id> --macro <id> and exactly <old-style> <new-style>.\n\n${usage()}\n`);
+    emitError('Expected --package <id> --macro <id> and exactly <old-style> <new-style>.', parsed.flags.json === true, true);
     return 2;
   }
   const dryRun = parsed.flags['dry-run'] === true;
@@ -33,7 +33,15 @@ async function main(): Promise<number> {
       for (const file of plan.changedFiles) process.stdout.write(`    ${file}\n`);
     }
     return 0;
-  } catch (error) { process.stderr.write(`${(error as Error).message}\n`); return 2; }
+  } catch (error) { emitError((error as Error).message, parsed.flags.json === true); return 2; }
+}
+
+function emitError(message: string, asJson: boolean, includeUsage = false): void {
+  if (asJson) {
+    process.stdout.write(JSON.stringify({ status: 'error', code: 'rename.failed', message }) + '\n');
+  } else {
+    process.stderr.write(`${message}${includeUsage ? `\n\n${usage()}` : ''}\n`);
+  }
 }
 
 process.exitCode = await main();

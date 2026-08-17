@@ -50,8 +50,9 @@
  */
 export interface EntryKind {
   id: string;
-  name: string;
-  coloring: { stroke: string; background: string };
+  name: LocalizedString;
+  description?: LocalizedString;
+  coloring: ThemedColoring | LegacyColoring;
   defaultCounterName?: string;
   /** Legacy pre-counter-tree compatibility field. */
   numbering?: string;
@@ -67,7 +68,19 @@ export interface MacroKind {
   id: string;
   name: string;
   description: string;
-  coloring: { stroke: string; background: string };
+  coloring: ThemedColoring | LegacyColoring;
+}
+
+export interface LegacyColoring {
+  stroke: string;
+  background: string;
+  [key: string]: unknown;
+}
+
+export interface ThemedColoring {
+  light: { stroke: string; background: string; [key: string]: unknown };
+  dark: { stroke: string; background: string; [key: string]: unknown };
+  [key: string]: unknown;
 }
 
 /** Root of `.SNL_Doc/config.json`. */
@@ -117,12 +130,18 @@ export interface I18nString {
 
 export type LocalizedString = string | I18nString;
 
+export interface I18n<TLanguage extends string, TValue> {
+  type: 'i18n';
+  default_language: TLanguage;
+  values: Partial<Record<TLanguage, TValue>>;
+}
+
 export interface EntryData {
   id: string;
   /** Immutable Package identity in per-entity storage. */
   package?: string;
   kind: string;
-  title: string;
+  title: LocalizedString;
   content: {
     snl?: string;
     typst?: LocalizedString;
@@ -186,15 +205,36 @@ export interface LibraryGraph {
 // macros/*.json — inner Macro payload and synthetic Package compatibility view
 // ===========================================================================
 
-/**
- * Macro v8 is owned by SNL-Basics. Re-export its canonical runtime types and
- * migration functions rather than maintaining a second, drifting schema.
- */
-export type {
-  SnlMacro,
-  SnlMacroSource,
-  SnlMacroStyle,
-} from '@sjtu-ai4math/snl-basics';
+/** Macro v11 is owned by SNL-Basics 0.2.4. */
+export interface SnlMacroSource {
+  entries: string[];
+  urls: string[];
+}
+
+export interface SnlMacroTemplate {
+  [key: string]: unknown;
+  mode: 'formula_inline' | 'formula_display' | 'text' | 'block';
+  body: string;
+  separator?: string;
+  block_template_name?: string;
+}
+
+export interface SnlMacroStyle {
+  style_name: string;
+  tags: string[];
+  template: SnlMacroTemplate | I18n<string, SnlMacroTemplate>;
+}
+
+export interface SnlMacro {
+  name: string;
+  description: string;
+  source: SnlMacroSource;
+  kind: string;
+  dynamic_arity: boolean;
+  styles: SnlMacroStyle[];
+  tags: string[];
+}
+
 export type {
   MacroStyleV6,
   MacroV6,
@@ -208,12 +248,7 @@ export {
   migrateStyleV6toV7,
 } from '@sjtu-ai4math/snl-basics';
 
-import type {
-  SnlMacro,
-  SnlMacroStyle,
-} from '@sjtu-ai4math/snl-basics';
-
-/** Consumer-owned output backends preserved by Toolkit package operations. */
+/** Consumer-owned output backends accepted inside Macro v11 templates. */
 export interface MacroPackageOutputBackends {
   typst?: {
     built_in: string;
@@ -227,13 +262,31 @@ export interface MacroPackageOutputBackends {
   text?: string;
 }
 
-/** Canonical SNL-Basics v8 style plus Toolkit-preserved output backends. */
-export type MacroPackageStyle = SnlMacroStyle & MacroPackageOutputBackends;
+/** Compatibility style accepted from legacy Macro v8 and current Macro v11 workspaces. */
+export interface MacroPackageStyle {
+  style_name: string;
+  tags: string[];
+  template: string | SnlMacroTemplate | I18n<string, SnlMacroTemplate>;
+  mode?: SnlMacroTemplate['mode'];
+  separator?: string;
+  block_template_name?: string;
+  typst?: MacroPackageOutputBackends['typst'];
+  latex?: MacroPackageOutputBackends['latex'];
+  markdown?: string;
+  text?: string;
+}
 
-/** Canonical SNL-Basics v8 macro with backend-extended styles. */
-export type MacroPackageEntry = Omit<SnlMacro, 'styles'> & {
+/** Compatibility Macro view returned by Toolkit readers. */
+export interface MacroPackageEntry {
+  name: string;
+  description: string;
+  source: SnlMacroSource;
+  kind?: string;
+  dynamic_arity: boolean;
+  default_style?: Record<string, string>;
   styles: MacroPackageStyle[];
-};
+  tags: string[];
+}
 
 /** MacroPackageEntry without redundant `name` (the name is the map key). */
 export type MacroPackageEntryWithoutName = Omit<MacroPackageEntry, 'name'>;
@@ -245,6 +298,101 @@ export interface MacroPackageFile {
   description?: string;
   /** key = macro.name; the on-disk value omits the redundant name field. */
   macros: Record<string, MacroPackageEntryWithoutName>;
+}
+
+export function isMacroDocumentV11(value: unknown): value is Record<string, SnlMacro> {
+  if (!isRecord(value)) return false;
+  return Object.values(value).every((macro) => {
+    if (!isRecord(macro) || typeof macro.name !== 'string' ||
+        typeof macro.description !== 'string' || typeof macro.kind !== 'string' ||
+        !macro.kind || macro.kind === 'partial' || typeof macro.dynamic_arity !== 'boolean' ||
+        !isRecord(macro.source) || !isStringArray(macro.source.entries) ||
+        !isStringArray(macro.source.urls) || !isStringArray(macro.tags) ||
+        macro.tags.some((tag) => tag.includes('\\')) ||
+        Object.hasOwn(macro, 'default_style') || !Array.isArray(macro.styles) ||
+        macro.styles.length === 0) {
+      return false;
+    }
+    const names = new Set<string>();
+    return macro.styles.every((style) => {
+      if (!isRecord(style) || typeof style.style_name !== 'string' ||
+          !/^[A-Za-z_][A-Za-z0-9_]*$/.test(style.style_name) ||
+          names.has(style.style_name) || !isStringArray(style.tags) ||
+          style.tags.some((tag) => tag.includes('\\')) ||
+          Object.keys(style).some((field) => !['style_name', 'tags', 'template'].includes(field))) {
+        return false;
+      }
+      names.add(style.style_name);
+      const projections = macroV11TemplateProjections(style.template);
+      if (!projections?.length) return false;
+      const contracts = new Set(projections.map((projection) => {
+        const placeholders = analyzePlaceholders(projection.body);
+        return `${placeholders.variadic ? 'dynamic' : 'fixed'}:${placeholders.arity}`;
+      }));
+      return contracts.size === 1 && projections.every((projection) => {
+        const placeholders = analyzePlaceholders(projection.body);
+        return !placeholders.invalid && placeholders.variadic === macro.dynamic_arity;
+      });
+    });
+  });
+}
+
+export function macroV11TemplateProjections(value: unknown): SnlMacroTemplate[] | null {
+  if (isTemplate(value)) return [value];
+  if (!isRecord(value) || value.type !== 'i18n' ||
+      typeof value.default_language !== 'string' || !value.default_language ||
+      !isRecord(value.values) || !Object.hasOwn(value.values, value.default_language) ||
+      Object.keys(value).some((field) => !['type', 'default_language', 'values'].includes(field))) {
+    return null;
+  }
+  const projections = Object.values(value.values);
+  return projections.length > 0 && projections.every(isTemplate)
+    ? projections as SnlMacroTemplate[]
+    : null;
+}
+
+function isTemplate(value: unknown): value is SnlMacroTemplate {
+  if (!isRecord(value) || Object.hasOwn(value, 'type') ||
+      !['formula_inline', 'formula_display', 'text', 'block'].includes(String(value.mode)) ||
+      typeof value.body !== 'string' ||
+      (value.mode !== 'block' && !value.body.trim()) ||
+      (value.separator !== undefined && typeof value.separator !== 'string')) {
+    return false;
+  }
+  return value.block_template_name === undefined ||
+    (value.mode === 'block' && typeof value.block_template_name === 'string');
+}
+
+function analyzePlaceholders(body: string): { variadic: boolean; arity: number; invalid: boolean } {
+  let variadic = false;
+  let max = -1;
+  let invalid = false;
+  for (let index = 0; index < body.length; index += 1) {
+    if (body[index] !== '#' || (index > 0 && body[index - 1] === '\\')) continue;
+    const next = body[index + 1];
+    if (next === '*') {
+      variadic = true;
+      index += 1;
+    } else if (next !== undefined && /\d/.test(next)) {
+      let end = index + 2;
+      while (end < body.length && /\d/.test(body[end])) end += 1;
+      const digits = body.slice(index + 1, end);
+      if (/^(?:0|[1-9]\d?)$/.test(digits)) max = Math.max(max, Number(digits));
+      else invalid = true;
+      index = end - 1;
+    } else {
+      invalid = true;
+    }
+  }
+  return { variadic, arity: max + 1, invalid };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }
 
 /** Safe package-shape adapter around SNL-Basics's canonical v6→v7→v8 migration. */

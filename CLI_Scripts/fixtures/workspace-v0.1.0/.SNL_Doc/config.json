@@ -1,0 +1,70 @@
+{
+  "version": "0.1.0",
+  "entry_kinds": [
+    {
+      "id": "definition",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Definition",
+          "zh": "定义"
+        }
+      },
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "A defining statement",
+          "zh": "定义性陈述"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#334155",
+          "background": "#f8fafc"
+        },
+        "dark": {
+          "stroke": "#cbd5e1",
+          "background": "#1e293b"
+        }
+      },
+      "defaultCounterName": "Definition",
+      "style": ""
+    }
+  ],
+  "macro_kinds": [
+    {
+      "id": "rule",
+      "name": "Rule",
+      "description": "A logical rule",
+      "coloring": {
+        "light": {
+          "stroke": "#1d4ed8",
+          "background": "#dbeafe"
+        },
+        "dark": {
+          "stroke": "#93c5fd",
+          "background": "#172554"
+        }
+      }
+    }
+  ],
+  "active_macro_packages": [
+    "Logic"
+  ],
+  "entity_storage": {
+    "version": 1,
+    "legacy_backup_version": "0.0.5",
+    "entry_default_package": "_unpackaged",
+    "receipt": {
+      "legacy_backup_present": false,
+      "legacy_entries_present": false,
+      "entry_count": 0,
+      "macro_package_count": 0,
+      "macro_count": 0,
+      "entries_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "macro_packages_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  }
+}

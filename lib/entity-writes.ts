@@ -3,8 +3,11 @@ import * as path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import {
   ENTRY_STORAGE_VERSION,
+  CURRENT_ENTRY_SCHEMA_VERSION,
   MACRO_STORAGE_VERSION,
+  CURRENT_MACRO_SCHEMA_VERSION,
   PACKAGE_STORAGE_VERSION,
+  CURRENT_PACKAGE_SCHEMA_VERSION,
   UNPACKAGED_PACKAGE_ID,
   assertPackageId,
   entryEntityPath,
@@ -62,7 +65,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function assertCurrentWriteConfig(config: unknown, cli: string): asserts config is Record<string, unknown> {
   if (!usesEntityStorage(config)) {
-    throw new Error(`${cli} requires current workspace data 0.0.6 per-entity storage.`);
+    throw new Error(`${cli} requires workspace data 0.0.6 or 0.1.0 per-entity storage.`);
   }
   if (!isRecord(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error('Current config.json entry_kinds must be an array.');
@@ -138,7 +141,7 @@ function templateUsesVariadic(value: unknown): boolean {
   return false;
 }
 
-function normalizeMacroDraft(raw: unknown): Record<string, unknown> | unknown {
+function normalizeMacroDraft(raw: unknown, current = false): Record<string, unknown> | unknown {
   if (!isRecord(raw)) return raw;
   const styles = Array.isArray(raw.styles)
     ? raw.styles.map((style) => isRecord(style)
@@ -159,15 +162,31 @@ function normalizeMacroDraft(raw: unknown): Record<string, unknown> | unknown {
     ...raw,
     description: raw.description === undefined ? '' : raw.description,
     source: normalizedSource,
+    kind: current && raw.kind === undefined ? 'const' : raw.kind,
     dynamic_arity: raw.dynamic_arity === undefined
-      ? Array.isArray(styles) && styles.some((style) => isRecord(style) && templateUsesVariadic(style.template))
+      ? Array.isArray(styles) && styles.some((style) =>
+          isRecord(style) && (current
+            ? macroV11TemplateUsesVariadic(style.template)
+            : templateUsesVariadic(style.template)))
       : raw.dynamic_arity,
-    default_style: raw.default_style === undefined
-      ? (firstStyle ? { en: firstStyle } : undefined)
-      : raw.default_style,
+    ...(current
+      ? {}
+      : {
+          default_style: raw.default_style === undefined
+            ? (firstStyle ? { en: firstStyle } : undefined)
+            : raw.default_style,
+        }),
     tags: raw.tags === undefined ? [] : raw.tags,
     styles,
   };
+}
+
+function macroV11TemplateUsesVariadic(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  if (value.type === 'i18n' && isRecord(value.values)) {
+    return Object.values(value.values).some(macroV11TemplateUsesVariadic);
+  }
+  return templateUsesVariadic(value.body);
 }
 
 async function installNewJson(docRoot: string, relativePath: string, value: unknown): Promise<void> {
@@ -233,7 +252,12 @@ async function replaceJsonIfUnchanged(file: string, expected: string, value: unk
 export async function addEntryEntity(
   workspaceRoot: string,
   raw: unknown,
-  options: { package?: string; strictMacros?: boolean } = {},
+  options: {
+    package?: string;
+    strictMacros?: boolean;
+    /** Test/concurrency integration hook invoked after entity installation. */
+    beforePackageManifestInstall?: () => Promise<void>;
+  } = {},
 ): Promise<AddEntryResult> {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
   return withWorkspaceDataLock(workspaceRoot, 'add Entry entity', async () => {
@@ -305,11 +329,52 @@ export async function addEntryEntity(
     const envelope: EntryEnvelope = {
       format: 'snl-entry',
       version: ENTRY_STORAGE_VERSION,
+      ...(config.version === '0.1.0'
+        ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION }
+        : {}),
       package: entry.package,
       entry,
     };
+    const manifestFile = path.join(
+      snlDocRoot(workspaceRoot),
+      packageManifestPath(entry.package),
+    );
+    const originalManifest = config.version === '0.1.0'
+      ? await readRegularText(manifestFile)
+      : null;
+    const nextManifest = originalManifest
+      ? (() => {
+          const manifest = JSON.parse(originalManifest.text) as Record<string, unknown>;
+          const entryIds = Array.isArray(manifest.entry_ids)
+            ? manifest.entry_ids.filter((value): value is string => typeof value === 'string')
+            : [];
+          return {
+            ...manifest,
+            entry_ids: [...new Set([...entryIds, entry.id])]
+              .sort((left, right) => left.localeCompare(right)),
+          };
+        })()
+      : null;
     try {
       await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
+      if (originalManifest && nextManifest) {
+        try {
+          await options.beforePackageManifestInstall?.();
+          await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
+        } catch (error) {
+          const entityFile = path.join(snlDocRoot(workspaceRoot), relativePath);
+          try {
+            await removeJsonIfUnchanged(entityFile, jsonText(envelope));
+          } catch (rollbackError) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} ` +
+              `Rollback of ${entityFile} failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`,
+              { cause: error },
+            );
+          }
+          throw error;
+        }
+      }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'EEXIST') {
         return {
@@ -317,6 +382,7 @@ export async function addEntryEntity(
           message: `Entry id ${JSON.stringify(entry.id)} already exists.`,
         };
       }
+
       throw error;
     }
     return {
@@ -324,6 +390,24 @@ export async function addEntryEntity(
       package: entry.package, path: relativePath, issues,
     };
   });
+}
+
+async function removeJsonIfUnchanged(file: string, expected: string): Promise<void> {
+  let handle;
+  try {
+    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || await handle.readFile('utf8') !== expected) {
+      throw new Error('installed entity changed concurrently; refusing to remove it');
+    }
+    const current = await fs.lstat(file);
+    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino) {
+      throw new Error('installed entity path changed concurrently; refusing to remove it');
+    }
+    await fs.rm(file);
+  } finally {
+    await handle?.close();
+  }
 }
 
 export async function addMacroEntity(
@@ -350,7 +434,8 @@ export async function addMacroEntity(
         path: 'package',
       });
     }
-    const normalized = normalizeMacroDraft(raw);
+    const current = config.version === '0.1.0';
+    const normalized = normalizeMacroDraft(raw, current);
     const name = isRecord(normalized) && typeof normalized.name === 'string' ? normalized.name : '';
     if (!name || /[@#$%\s()[\]{}]/u.test(name)) {
       issues.push({
@@ -364,7 +449,7 @@ export async function addMacroEntity(
       : normalized;
     const packageExists = Object.prototype.hasOwnProperty.call(packages, packageId);
     const synthetic = {
-      version: '8',
+      version: current ? '11' : '8',
       name: packageExists ? packages[packageId].name : packageId,
       description: packageExists ? packages[packageId].description : '',
       macros: name ? { [name]: macroBody } : {},
@@ -390,7 +475,11 @@ export async function addMacroEntity(
     const macro = normalized as Record<string, unknown> & { name: string };
     const relativePath = macroEntityPath(packageId, macro.name);
     const envelope: MacroEnvelope = {
-      format: 'snl-macro', version: MACRO_STORAGE_VERSION, package: packageId, macro,
+      format: 'snl-macro',
+      version: MACRO_STORAGE_VERSION,
+      ...(current ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {}),
+      package: packageId,
+      macro,
     };
     try {
       await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
@@ -466,6 +555,9 @@ export async function addPackageEntity(
     const manifest: PackageManifest = {
       ...raw,
       format: 'snl-package', version: PACKAGE_STORAGE_VERSION,
+      ...(config.version === '0.1.0'
+        ? { schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] }
+        : {}),
       id, name: name as string, description: description as string,
     };
     const relativePath = packageManifestPath(id);
