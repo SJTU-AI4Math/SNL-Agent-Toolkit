@@ -575,12 +575,17 @@ export async function addPackageEntity(
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
     } catch (error) {
       const manifestFile = path.join(snlDocRoot(workspaceRoot), relativePath);
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} ` +
-        `The new Package manifest remains at ${manifestFile}. Its effective activation follows the unchanged config and it may already be active when active_macro_packages is omitted. ` +
-        'Guarded failure handling intentionally does not unlink a live path because a non-cooperating writer could replace it between verification and deletion.',
-        { cause: error },
-      );
+      try {
+        await removeJsonIfUnchanged(manifestFile, jsonText(manifest));
+      } catch (rollbackError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} ` +
+          `Rollback of ${manifestFile} failed without deleting a concurrent replacement: ` +
+          `${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`,
+          { cause: error },
+        );
+      }
+      throw error;
     }
     return { status: 'created', entity: 'package', id, path: relativePath, active: true };
   });

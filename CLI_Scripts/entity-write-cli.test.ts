@@ -318,19 +318,22 @@ describe('agent-facing entity write CLIs', () => {
     await assert.rejects(() => stat(path.join(doc, packageManifestPath('Logic'))), { code: 'ENOENT' });
   });
 
-  it('Package creation preserves config conflicts and reports an inactive manifest residue', async () => {
+  it('Package creation rolls back its manifest on config conflict and is retry-safe', async () => {
     const { root, doc } = await workspace();
     const configFile = path.join(doc, 'config.json');
+    const manifestFile = path.join(doc, packageManifestPath('Logic'));
     const concurrentConfig = JSON.parse(await readFile(configFile, 'utf8'));
     concurrentConfig.vendor_extension = { keep: 'concurrent' };
 
     await assert.rejects(() => addPackageEntity(root, { id: 'Logic' }, {
       beforeConfigInstall: async () => json(configFile, concurrentConfig),
-    }), /manifest remains.*effective activation/is);
+    }), /changed.*refusing/i);
     assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
-    assert.deepEqual(JSON.parse(await readFile(path.join(doc, packageManifestPath('Logic')), 'utf8')), {
-      format: 'snl-package', version: 1, id: 'Logic', name: 'Logic', description: '',
-    });
+    await assert.rejects(() => stat(manifestFile), { code: 'ENOENT' });
+
+    const retry = await addPackageEntity(root, { id: 'Logic' });
+    assert.equal(retry.status, 'created');
+    assert.equal((await stat(manifestFile)).isFile(), true);
   });
 
   it('Package creation never unlinks a concurrently replaced manifest on config failure', async () => {
@@ -349,14 +352,15 @@ describe('agent-facing entity write CLIs', () => {
         await json(manifestFile, concurrentManifest);
         await json(configFile, concurrentConfig);
       },
-    }), /manifest remains.*effective activation/is);
+    }), /rollback.*failed.*concurrent|rollback.*failed.*changed/is);
     assert.deepEqual(JSON.parse(await readFile(manifestFile, 'utf8')), concurrentManifest);
     assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
   });
 
-  it('reports that a config-failure residue may be active under effective-all semantics', async () => {
+  it('rolls back its own manifest on config failure under effective-all semantics', async () => {
     const { root, doc } = await workspace();
     const configFile = path.join(doc, 'config.json');
+    const manifestFile = path.join(doc, packageManifestPath('Logic'));
     const config = JSON.parse(await readFile(configFile, 'utf8'));
     delete config.active_macro_packages;
     await json(configFile, config);
@@ -364,14 +368,9 @@ describe('agent-facing entity write CLIs', () => {
 
     await assert.rejects(() => addPackageEntity(root, { id: 'Logic' }, {
       beforeConfigInstall: async () => json(configFile, concurrentConfig),
-    }), /may already be active when active_macro_packages is omitted/i);
-    const macroResult = await addMacroEntity(root, 'Logic', {
-      name: 'Logic.residue',
-      styles: [{ style_name: 'default', mode: 'text', template: 'residue' }],
-    });
-    assert.equal(macroResult.status, 'created');
-    assert.equal(macroResult.issues.some((issue) => issue.code === 'macro.package-inactive'), false);
-    assert.equal(Object.hasOwn(await readActiveMacros(root), 'Logic.residue'), true);
+    }), /changed.*refusing/i);
+    await assert.rejects(() => stat(manifestFile), { code: 'ENOENT' });
+    assert.deepEqual(JSON.parse(await readFile(configFile, 'utf8')).vendor_extension, { keep: 'concurrent' });
   });
 
   it('agent JSON mode reports invocation errors as JSON on stdout', async () => {
