@@ -78,4 +78,3 @@ async function main(): Promise<number> {
     }
 }
 main().then(code => { process.exitCode = code; });
-

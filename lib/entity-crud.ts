@@ -431,4 +431,3 @@ export async function updateManagedEntity(root: string, type: ManagedEntityType,
     return mutateConfigEntity(root, type, "update", id, input, ifMatch); return mutateDirect(root, type, "update", id, input, ifMatch); }
 export async function deleteManagedEntity(root: string, type: ManagedEntityType, id: string, ifMatch: string): Promise<EntityMutationResult> { root = await canonicalWriteWorkspace(root); await assertWorkspace(root); if (type === "entry-kind" || type === "macro-kind")
     return mutateConfigEntity(root, type, "delete", id, undefined, ifMatch); return mutateDirect(root, type, "delete", id, undefined, ifMatch); }
-
