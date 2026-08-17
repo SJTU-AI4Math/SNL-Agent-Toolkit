@@ -5,6 +5,7 @@ TypeScript implementation under `impl/`, executed via `tsx` so no build step
 is required.
 
 **Shipped:**
+- `snl-entity.mjs` — unified exact list/get/create/update/delete for all eight managed entity families, with CAS revisions.
 - `snl-add-package.mjs` — create and activate a canonical Package manifest from a business draft.
 - `snl-add-entry.mjs` — validate an inner Entry draft and install its canonical envelope/path.
 - `snl-add-macro.mjs` — normalize and validate a Macro v8 draft, then install it in a Package.

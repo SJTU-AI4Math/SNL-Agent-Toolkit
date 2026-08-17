@@ -16,7 +16,8 @@
     "snl-lint-package": "./bin/snl-lint-package.mjs",
     "snl-rename-id": "./bin/snl-rename-id.mjs",
     "snl-rename-style": "./bin/snl-rename-style.mjs",
-    "snoogle": "./bin/snoogle.mjs"
+    "snoogle": "./bin/snoogle.mjs",
+    "snl-entity": "./bin/snl-entity.mjs"
   },
   "scripts": {
     "test": "tsx --test CLI_Scripts/*.test.ts",

@@ -16,7 +16,38 @@
 - ✅ **`snl-rename-id`** — collision-checked global Entry/Macro id rename with dry-run and rollback.
 - ✅ **`snl-rename-style`** — parser-scoped Style rename for one Package/Macro owner.
 - ✅ **`snoogle`** — fuzzy Entry or active-Macro query with the shared SNoogL ranker.
-- ⏳ **Other Read CLIs (P1)** — exact `snl-entry-get`, `snl-macro-get`, and `snl-list-*` commands.
+- ✅ **`snl-entity`** — unified exact query and guarded CRUD for all eight managed entity families.
+
+### Unified entity CRUD/query
+
+`snl-entity` exposes one machine-stable surface for `entry-kind`, `macro-kind`,
+`entry-package`, `macro-package`, `entry`, `macro`, `relationship`, and
+`library`:
+
+```bash
+node bin/snl-entity.mjs --root . --json list --type entry-kind
+node bin/snl-entity.mjs --root . --json get --type entry algebra.def.group
+node bin/snl-entity.mjs --root . --json create --type relationship --input relationship.json
+node bin/snl-entity.mjs --root . --json update --type entry --if-match <revision> --input entry.json algebra.def.group
+node bin/snl-entity.mjs --root . --json delete --type entry --if-match <revision> algebra.def.group
+```
+
+Every listed/get entity has `{type,id,revision,value}`. Updates and deletes
+require the exact 64-hex `revision` returned by a fresh read; stale revisions
+exit `1` with `entity.revision-conflict`. Macro ids are exact composite
+`<PackageId>::<MacroName>` identities. On the current `0.0.6` schema,
+`entry-package` and `macro-package` are deliberately separate adapter views of
+the shared Package manifest: the Macro view additionally includes `macros`.
+This compatibility adapter is isolated in `lib/entity-crud.ts` for integration
+with a future authoritative split-package schema; it does not redesign disk
+distribution.
+
+Writes require canonical non-symlink workspaces, use `.data-write.lock`, and use
+same-directory temporary files plus rename for atomic single-file replacement.
+Package/Library multi-file operations are guarded cooperative transactions, not
+lock-free or crash-atomic database transactions. Exit codes are `0` success,
+`1` not-found/invalid/conflict, and `2` usage/input/workspace/lock failure.
+JSON mode always emits one object; no process-global entity cache is used.
 
 ### Write CLI rule: drafts in, storage plumbing stays inside
 

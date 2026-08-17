@@ -34,6 +34,8 @@ Invoke a CLI directly. For agent-authored writes, always use the add CLIs rather
 than creating hash-named entity files yourself:
 
 ```bash
+node bin/snl-entity.mjs --root /path/to/project --json list --type entry-kind
+node bin/snl-entity.mjs --root /path/to/project --json get --type entry algebra.def.group
 node bin/snl-add-package.mjs --root /path/to/project --json examples/package-draft.minimal.json
 node bin/snl-add-macro.mjs --root /path/to/project --package Topology --json examples/macro-draft.minimal.json
 node bin/snl-add-entry.mjs --root /path/to/project --json examples/entry-draft.minimal.json
