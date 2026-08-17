@@ -23,8 +23,13 @@ test('portable Hermes and host-native manifests select the bundled stdio runtime
   assert.deepEqual(Object.keys(hermesMcp), ['$schema', 'mcpServers']);
   assert.equal(
     ((hermesMcp.mcpServers as Record<string, { args: string[] }>)['snl-agent-toolkit']).args[0],
-    '${PLUGIN_ROOT}/dist/mcp/server.mjs',
+    '${PLUGIN_ROOT}/dist/mcp/server.cjs',
   );
+
+  const nativeMcp = await json('.mcp.json');
+  const nativeServer = (nativeMcp.mcpServers as Record<string, { args: string[]; cwd: string }>)['snl-agent-toolkit'];
+  assert.equal(nativeServer.args[0], './dist/mcp/server.cjs');
+  assert.equal(nativeServer.cwd, '.');
 
   for (const path of ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json']) {
     const manifest = await json(path);
@@ -35,6 +40,14 @@ test('portable Hermes and host-native manifests select the bundled stdio runtime
   }
 });
 
+test('Claude and Codex marketplace catalogs expose the root plugin', async () => {
+  for (const path of ['.claude-plugin/marketplace.json', '.agents/plugins/marketplace.json']) {
+    const marketplace = await json(path);
+    assert.equal(marketplace.name, 'snl-agent-toolkit');
+    assert.deepEqual(marketplace.plugins, [{ name: 'snl-agent-toolkit', source: './' }]);
+  }
+});
+
 test('package manifest declares a DSH profile bundle and distributable payload', async () => {
   const packageJson = await json('package.json');
   assert.equal(packageJson.private, undefined);
@@ -42,7 +55,7 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   assert.deepEqual(packageJson.publishConfig, { access: 'public' });
   assert.deepEqual(packageJson.dsh, { bundle: { patch: './cordis.patch.yml' } });
   const files = packageJson.files as string[];
-  for (const required of ['dist', 'skills', 'plugin.json', 'mcp.json', '.claude-plugin', '.codex-plugin', '.mcp.json', 'cordis.patch.yml']) {
+  for (const required of ['dist', 'skills', '.agents', 'plugin.json', 'mcp.json', '.claude-plugin', '.codex-plugin', '.mcp.json', 'cordis.patch.yml']) {
     assert.ok(files.includes(required), `${required} is omitted from npm files`);
   }
 });
@@ -57,7 +70,7 @@ test('shared Agent Skill and DSH layer point at packaged components', async () =
 });
 
 test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', async () => {
-  const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.mjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
   const output = new Promise<string>((resolveOutput, reject) => {
     let text = '';
     child.stdout.setEncoding('utf8');
@@ -71,5 +84,32 @@ test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', 
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })}\n`);
   const response = JSON.parse((await output).trim()) as { result: { tools: unknown[] } };
   assert.equal(response.result.tools.length, 4);
+  child.kill();
+});
+
+
+test('prebuilt MCP artifact uses the bundled v0.1.0 entity adapter without host configuration', async () => {
+  const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const output = new Promise<string>((resolveOutput, reject) => {
+    let text = '';
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (chunk: string) => { text += chunk; if (text.includes('\n')) resolveOutput(text); });
+    child.once('error', reject);
+    child.once('exit', (code) => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
+  });
+  child.stdin.write(`${JSON.stringify({
+    jsonrpc: '2.0', id: 2, method: 'tools/call',
+    params: {
+      name: 'snl_entity_get',
+      arguments: {
+        root: resolve(root, 'CLI_Scripts/fixtures/workspace-v0.1.0'),
+        entityType: 'macro',
+        id: 'Logic::FOL.implies',
+      },
+    },
+  })}\n`);
+  const response = JSON.parse((await output).trim()) as { result: { structuredContent: { entity: { id: string }; revision: string } } };
+  assert.equal(response.result.structuredContent.entity.id, 'Logic::FOL.implies');
+  assert.match(response.result.structuredContent.revision, /^[0-9a-f]{64}$/);
   child.kill();
 });

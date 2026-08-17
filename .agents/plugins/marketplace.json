@@ -1,0 +1,16 @@
+{
+  "name": "snl-agent-toolkit",
+  "owner": {
+    "name": "SJTU-AI4Math",
+    "url": "https://github.com/SJTU-AI4Math"
+  },
+  "metadata": {
+    "description": "Portable SNL workspace Skills and MCP tools for Entry Kinds, Macro Kinds, Entry Packages, Macro Packages, Entries, Macros, Relationships, and Libraries."
+  },
+  "plugins": [
+    {
+      "name": "snl-agent-toolkit",
+      "source": "./"
+    }
+  ]
+}

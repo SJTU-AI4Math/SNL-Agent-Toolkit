@@ -26,7 +26,7 @@ export async function generatedMetadata(root = ownRoot) {
     mcpServers: {
       [source.name]: {
         command: 'node',
-        args: ['./dist/mcp/server.mjs'],
+        args: ['./dist/mcp/server.cjs'],
         cwd: '.',
       },
     },
@@ -42,13 +42,25 @@ export async function generatedMetadata(root = ownRoot) {
         [source.name]: {
           type: 'stdio',
           command: 'node',
-          args: ['${PLUGIN_ROOT}/dist/mcp/server.mjs'],
+          args: ['${PLUGIN_ROOT}/dist/mcp/server.cjs'],
           cwd: '${PLUGIN_ROOT}',
         },
       },
     },
     '.claude-plugin/plugin.json': hostManifest,
     '.codex-plugin/plugin.json': hostManifest,
+    '.claude-plugin/marketplace.json': {
+      name: source.name,
+      owner: source.author,
+      metadata: { description: source.description },
+      plugins: [{ name: source.name, source: './' }],
+    },
+    '.agents/plugins/marketplace.json': {
+      name: source.name,
+      owner: source.author,
+      metadata: { description: source.description },
+      plugins: [{ name: source.name, source: './' }],
+    },
     '.mcp.json': nativeMcp,
   };
 }

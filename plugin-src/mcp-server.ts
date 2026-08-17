@@ -2,6 +2,7 @@ import { createInterface } from 'node:readline';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { createToolkitTools, type EntityAdapter } from './toolkit-tools.ts';
+import { createEntityAdapter } from './entity-adapter.ts';
 
 const SERVER_VERSION = '0.1.0';
 const PROTOCOL_VERSION = '2025-06-18';
@@ -66,15 +67,8 @@ export function createMcpDispatcher(adapter: EntityAdapter) {
   };
 }
 
-function unavailableAdapter(reason: string): EntityAdapter {
-  const fail = async (): Promise<never> => {
-    throw new Error(`SNL entity adapter unavailable: ${reason}. Set SNL_ENTITY_ADAPTER_MODULE to the compiled adapter module.`);
-  };
-  return { list: fail, get: fail, apply: fail, validate: fail };
-}
-
 export async function loadEntityAdapter(specifier = process.env.SNL_ENTITY_ADAPTER_MODULE): Promise<EntityAdapter> {
-  if (!specifier) return unavailableAdapter('no adapter module was configured');
+  if (!specifier) return createEntityAdapter();
   const url = specifier.startsWith('file:') || specifier.startsWith('data:') || specifier.startsWith('node:')
     ? specifier : pathToFileURL(resolve(specifier)).href;
   const loaded = await import(url) as {
@@ -105,12 +99,4 @@ export async function runStdioServer(adapter?: EntityAdapter): Promise<void> {
     const response = await dispatch(request);
     if (response) process.stdout.write(`${JSON.stringify(response)}\n`);
   }
-}
-
-const isMain = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
-if (isMain) {
-  runStdioServer().catch((error: unknown) => {
-    process.stderr.write(`snl-agent-toolkit MCP: ${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
-    process.exitCode = 1;
-  });
 }

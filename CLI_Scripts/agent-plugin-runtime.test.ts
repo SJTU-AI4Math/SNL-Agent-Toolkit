@@ -8,6 +8,7 @@ import {
 } from '../plugin-src/toolkit-tools.ts';
 import { createMcpDispatcher } from '../plugin-src/mcp-server.ts';
 import { apply as applyDshAdapter } from '../plugin-src/dsh-adapter.ts';
+import { createEntityAdapter } from '../plugin-src/entity-adapter.ts';
 
 const root = '/tmp/snl-workspace';
 
@@ -107,4 +108,18 @@ test('DeepSeek Harness apply(ctx) registers the same four generic tools', async 
     await registered[3].execute({ root }),
     { valid: true, issues: [] },
   );
+});
+
+
+test('built-in adapter serves all eight entity families from a v0.1.0 workspace', async () => {
+  const adapter = createEntityAdapter();
+  const workspace = new URL('./fixtures/workspace-v0.1.0/', import.meta.url).pathname;
+  const entryPackages = await adapter.list({ root: workspace, entityType: 'entry-package', limit: 20 }) as { entities: Array<{ id: string }> };
+  assert.deepEqual(entryPackages.entities.map(({ id }) => id), ['_unpackaged', 'Logic']);
+  const macro = await adapter.get({ root: workspace, entityType: 'macro', id: 'Logic::FOL.implies' }) as { entity: { id: string }; revision: string };
+  assert.equal(macro.entity.id, 'Logic::FOL.implies');
+  assert.match(macro.revision, /^[0-9a-f]{64}$/);
+  const validation = await adapter.validate({ root: workspace }) as { valid: boolean; counts: Record<string, number> };
+  assert.equal(validation.valid, true);
+  assert.deepEqual(Object.keys(validation.counts), ENTITY_TYPES);
 });

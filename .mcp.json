@@ -3,7 +3,7 @@
     "snl-agent-toolkit": {
       "command": "node",
       "args": [
-        "./dist/mcp/server.mjs"
+        "./dist/mcp/server.cjs"
       ],
       "cwd": "."
     }

@@ -17,7 +17,7 @@
     "snl-rename-style": "./bin/snl-rename-style.mjs",
     "snoogle": "./bin/snoogle.mjs",
     "snl-entity": "./bin/snl-entity.mjs",
-    "snl-agent-mcp": "./dist/mcp/server.mjs"
+    "snl-agent-mcp": "./dist/mcp/server.cjs"
   },
   "scripts": {
     "generate:plugin": "node scripts/generate-plugin-metadata.mjs",
@@ -70,6 +70,7 @@
     "mcp.json",
     ".claude-plugin",
     ".codex-plugin",
+    ".agents",
     ".mcp.json",
     "cordis.patch.yml",
     "AGENT.md",

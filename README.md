@@ -72,3 +72,44 @@ future workspace or entity schema versions instead of guessing.
 ## License
 
 MIT (TBD — will match SNL-Doc-Extension once that repository picks one).
+
+## Agent Plugin
+
+The repository ships one prebuilt Node core, one shared Agent Skill, one stdio MCP server, and thin manifests for Claude Code, Codex, Hermes Agent, and DeepSeek Harness. The four MCP tools cover all managed entity families through a stable surface:
+
+- `snl_entities_list`
+- `snl_entity_get`
+- `snl_entity_apply` (`create`, `update`, `delete` with revision CAS)
+- `snl_workspace_validate`
+
+Managed entity types are `entry-kind`, `macro-kind`, `entry-package`, `macro-package`, `entry`, `macro`, `relationship`, and `library`.
+
+### Build and verify locally
+
+```bash
+npm ci
+npm run build:plugin
+npm test
+npm run lint-types
+npm pack --dry-run
+```
+
+### Install from this repository
+
+```bash
+# Claude Code marketplace + plugin
+claude plugin marketplace add SJTU-AI4Math/SNL-Agent-Toolkit
+claude plugin install snl-agent-toolkit@snl-agent-toolkit
+
+# Codex marketplace + plugin
+codex plugin marketplace add SJTU-AI4Math/SNL-Agent-Toolkit
+codex plugin add snl-agent-toolkit@snl-agent-toolkit
+
+# Hermes portable Agent Plugin
+hermes plugins install SJTU-AI4Math/SNL-Agent-Toolkit --enable
+
+# DeepSeek Harness profile bundle, from a checkout or packed npm artifact
+dsh plugin --profile default add .
+```
+
+The npm package also exposes `@snl-doc/agent-toolkit/dsh`, `snl-agent-mcp`, and the batch-oriented `snl-entity` CLI. The plugin runtime is prebuilt and does not require `tsx` or TypeScript source execution.

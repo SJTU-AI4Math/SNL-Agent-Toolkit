@@ -12,7 +12,13 @@ metadata:
 
 # SNL Agent Toolkit
 
-Use this skill for `.SNL_Doc` workspaces managed by SNL Doc Extension.
+## Overview
+
+Use this skill for `.SNL_Doc` workspaces managed by SNL Doc Extension. It keeps agent work on the validated, revision-checked API instead of fragile direct JSON edits.
+
+## When to Use
+
+Use it when a task reads, searches, creates, updates, deletes, renames, or validates an SNL entity or workspace. Do not use it for plain Markdown/LaTeX that is outside an SNL workspace.
 
 ## Managed entities
 
@@ -46,6 +52,21 @@ For batch-oriented work, the equivalent `snl-entity` CLI remains available and e
 - Unknown identifiers may intentionally be fvar/bvar fallback; use strict validation only when the task requires every identifier to resolve as a Macro.
 - Preserve localized maps and unknown extension fields. Resolve localized display values only for presentation or search.
 - Package membership, references, and canonical filenames are authoritative cross-file invariants. Use Toolkit writes so they update atomically.
+
+## Common Pitfalls
+
+1. Do not collapse Entry Packages and Macro Packages into a single public entity type. They are separate management projections even while the current storage manifest is shared.
+2. Do not retry a revision conflict with a fabricated or stale token. Read the entity again and reconsider the proposed value.
+3. Do not treat a successful JSON parse as workspace validity. Membership, references, identities, and schema generations are cross-file invariants.
+4. Do not hand-edit `.SNL_Doc` while a Toolkit write is in progress. All writers share one lock and use atomic replacement.
+
+## Verification Checklist
+
+- [ ] All affected entity IDs were discovered from the workspace.
+- [ ] Every update/delete used the latest opaque revision.
+- [ ] The write result is structured success rather than conflict/invalid/not-found.
+- [ ] `snl_workspace_validate` succeeds after the complete change.
+- [ ] No hash filenames, migration receipts, or frozen backups were edited manually.
 
 ## Resources
 

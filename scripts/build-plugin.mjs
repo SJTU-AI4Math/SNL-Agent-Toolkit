@@ -9,11 +9,12 @@ await mkdir(resolve(root, 'dist/dsh'), { recursive: true });
 
 await build({
   absWorkingDir: root,
-  entryPoints: ['plugin-src/mcp-server.ts'],
-  outfile: 'dist/mcp/server.mjs',
+  entryPoints: ['plugin-src/mcp-bin.ts'],
+  outfile: 'dist/mcp/server.cjs',
   bundle: true,
+  alias: { 'jsonc-parser': resolve(root, 'node_modules/jsonc-parser/lib/esm/main.js') },
   platform: 'node',
-  format: 'esm',
+  format: 'cjs',
   target: 'node20',
   banner: { js: '#!/usr/bin/env node' },
   legalComments: 'none',
@@ -24,6 +25,7 @@ await build({
   entryPoints: ['plugin-src/dsh-adapter.ts'],
   outfile: 'dist/dsh/adapter.mjs',
   bundle: true,
+  packages: 'external',
   platform: 'node',
   format: 'esm',
   target: 'node20',
