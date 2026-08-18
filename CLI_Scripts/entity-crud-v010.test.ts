@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -290,6 +290,51 @@ describe('unified CRUD on workspace v0.1.0', () => {
   });
 
 
+  it('never deletes a replacement libraries parent after initial durability failure', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const parked = path.join(root, '.SNL_Doc', 'parked-libraries-parent');
+    await rm(libraries, { recursive: true, force: true });
+    await assert.rejects(
+      () => createManagedEntity(root, 'library', {
+        slug: 'first', meta: {}, graph: { nodes: [], relationships: [] }, counters: { counters: [] },
+      }, {
+        beforeLibraryCreateParentSync: async () => {
+          await rename(libraries, parked);
+          await mkdir(libraries);
+          assert.equal((await stat(libraries)).isDirectory(), true);
+          throw new Error('force parent durability failure');
+        },
+      }),
+      /force parent durability failure/,
+    );
+    await stat(parked);
+    await stat(libraries);
+  });
+
+  it('never deletes a concurrent replacement while cleaning up failed Library creation', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'new-library');
+    const parkedOwned = path.join(libraries, 'parked-owned-create');
+    await assert.rejects(
+      () => createManagedEntity(root, 'library', {
+        slug: 'new-library', meta: {}, graph: { nodes: [], relationships: [] }, counters: { counters: [] },
+      }, {
+        beforeLibraryCreateResource: name => { if (name === 'counters.json') throw new Error('force create cleanup'); },
+        beforeLibraryCreateCleanupCapture: async () => {
+          await rename(dir, parkedOwned);
+          await mkdir(dir);
+        },
+      }),
+      /replacement is preserved|force create cleanup/,
+    );
+    await stat(parkedOwned);
+    const recovery = (await readdir(libraries)).find(name => name.startsWith('.new-library.snl-entity-') && name.endsWith('.create-failed'));
+    assert.ok(recovery);
+    await stat(path.join(libraries, recovery));
+  });
+
   it('creates the first Library durably when the optional libraries directory is absent', async () => {
     const root = await fixtureCopy();
     await rm(path.join(root, '.SNL_Doc', 'libraries'), { recursive: true, force: true });
@@ -337,6 +382,53 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(report.valid, false);
     assert.ok(report.issues.some(issue => issue.code === 'relationship.dangling-from'));
     assert.ok(report.issues.some(issue => issue.path?.startsWith('library:broken/graph.json')));
+  });
+
+  it('rejects Entries whose Kind is absent and reports the workspace invalid', async () => {
+    const root = await fixtureCopy();
+    const file = path.join(root, '.SNL_Doc', 'entries', '_unpackaged-dce4a52e97d0e7f1530a.json');
+    await mutateJson(file, value => { (value.entry as Record<string, unknown>).kind = 'missing-kind'; });
+    await assert.rejects(() => listManagedEntities(root, 'entry'), /missing Entry Kind "missing-kind"/);
+    const report = await validateManagedWorkspace(root);
+    assert.equal(report.valid, false);
+    assert.ok(report.issues.some(issue => issue.code === 'entry.read-failed' && issue.message.includes('missing-kind')));
+  });
+
+  it('reports malformed Relationship fields during workspace validation', async () => {
+    const root = await fixtureCopy();
+    await writeFile(path.join(root, '.SNL_Doc', 'relationships.json'), '{"version":1,"relationships":[{"id":"malformed"}]}\n');
+    const report = await validateManagedWorkspace(root);
+    assert.equal(report.valid, false);
+    assert.ok(report.issues.some(issue => issue.code === 'relationship.invalid-from'));
+    assert.ok(report.issues.some(issue => issue.code === 'relationship.invalid-to'));
+    assert.ok(report.issues.some(issue => issue.code === 'relationship.invalid-label'));
+  });
+
+  it('rejects derived Macro Package contents instead of silently discarding them', async () => {
+    const root = await fixtureCopy();
+    const pkg = await getManagedEntity(root, 'macro-package', 'Logic');
+    assert.ok(pkg);
+    const result = await updateManagedEntity(root, 'macro-package', 'Logic', {
+      ...pkg.value,
+      macros: { injected: {} },
+    }, pkg.revision);
+    assert.equal(result.status, 'invalid');
+    assert.match(result.message, /macros.*derived/i);
+    assert.deepEqual((await getManagedEntity(root, 'macro-package', 'Logic'))?.value.macros, pkg.value.macros);
+  });
+
+  it('preflights Package creation before publishing into a corrupt topology', async () => {
+    const root = await fixtureCopy();
+    const configFile = path.join(root, '.SNL_Doc', 'config.json');
+    const configBefore = await readFile(configFile, 'utf8');
+    const manifest = path.join(root, '.SNL_Doc', 'packages', '_unpackaged-60979c6e210d0e2a20cb.json');
+    await mutateJson(manifest, value => { value.entry_ids = []; });
+    await assert.rejects(
+      () => createManagedEntity(root, 'entry-package', { id: 'NewPkg', name: 'New', description: '' }),
+      /entry_ids does not exactly match/i,
+    );
+    assert.equal(await readFile(configFile, 'utf8'), configBefore);
+    assert.equal((await readdir(path.join(root, '.SNL_Doc', 'packages'))).some(name => name.startsWith('NewPkg-')), false);
   });
 
   it('rejects symlinked Relationship and Library payload files', async () => {
@@ -567,6 +659,37 @@ describe('unified CRUD on workspace v0.1.0', () => {
     );
     assert.deepEqual(await readdir(dir), []);
     assert.equal(await readFile(path.join(displacedReservation, 'meta.json'), 'utf8'), '{}\n');
+  });
+
+  it('pins the captured Library across the final restore copy seam', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'sample');
+    const parkedCapture = path.join(libraries, 'parked-captured-library');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{"owner":"original"}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    let replacementCapture = '';
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeLibraryDeleteCommitSync: () => { throw new Error('force restoration'); },
+        afterLibraryRestoreReservationCheck: async () => {
+          const name = (await readdir(libraries)).find(candidate => candidate.startsWith('.sample.snl-entity-') && candidate.endsWith('.deleted'));
+          assert.ok(name);
+          replacementCapture = path.join(libraries, name);
+          await rename(replacementCapture, parkedCapture);
+          await mkdir(replacementCapture);
+          await writeFile(path.join(replacementCapture, 'meta.json'), '{"owner":"external"}\n');
+        },
+      }),
+      /changed while deletion was in flight|force restoration/,
+    );
+    assert.equal(await readFile(path.join(dir, 'meta.json'), 'utf8'), '{"owner":"original"}\n');
+    assert.equal(await readFile(path.join(parkedCapture, 'meta.json'), 'utf8'), '{"owner":"original"}\n');
+    assert.equal(await readFile(path.join(replacementCapture, 'meta.json'), 'utf8'), '{"owner":"external"}\n');
   });
 
   it('refuses to delete a Library that still contains documents or exports', async () => {

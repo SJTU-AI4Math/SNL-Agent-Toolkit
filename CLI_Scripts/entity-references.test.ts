@@ -797,6 +797,16 @@ describe('scoped Style rename', () => {
     assert.equal(JSON.parse(await fs.readFile(secondPath, 'utf8')).entry.content.snl, 'Other[shared](x)');
   });
 
+  it('fails closed on malformed Relationships before planning a rename', async () => {
+    const root = await entityFixture();
+    const file = path.join(root, '.SNL_Doc', 'relationships.json');
+    await fs.writeFile(file, JSON.stringify({ version: 1, relationships: [{ from: 'entry.old', to: 'entry.old' }] }) + '\n');
+    await assert.rejects(
+      planEntityRename(root, 'entry', 'entry.old', 'entry.new'),
+      /non-empty string id\/from\/to\/label/,
+    );
+  });
+
   it('fails closed on malformed SNL before writing a Style definition', async () => {
     const root = await entityFixture();
     const doc = path.join(root, '.SNL_Doc');

@@ -439,6 +439,7 @@ export async function addPackageEntity(
     const originalConfig = await readRegularText(configFile);
     const config: unknown = JSON.parse(originalConfig.text);
     assertCurrentWriteConfig(config, 'snl-add-package');
+    await readEntries(workspaceRoot);
     const packages = await readAllMacroPackages(workspaceRoot);
     const issues: LintIssue[] = [];
     if (!isRecord(raw)) {

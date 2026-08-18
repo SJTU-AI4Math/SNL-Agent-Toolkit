@@ -75,11 +75,30 @@ async function sameInode(left: string, right: string): Promise<boolean> {
     return false;
   }
 }
+async function quarantineAndRemoveOwnedPath(file: string, ownedLink: string): Promise<boolean> {
+  const quarantine = path.join(path.dirname(file), `.${path.basename(file)}.snl-rollback-${process.pid}-${randomUUID()}.captured`);
+  try { await fs.rename(file, quarantine); }
+  catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await fs.rm(quarantine);
+    return true;
+  }
+  // We captured an unrelated concurrent replacement. Restore it without
+  // clobbering any newer canonical writer; otherwise preserve the quarantine.
+  try {
+    await fs.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await fs.rm(quarantine);
+  } catch { /* Preserve the unrelated inode at the reported private path. */ }
+  return false;
+}
 
 export async function installNewJson(
   file: string,
   value: unknown,
-  hooks: { beforeDirectorySync?: () => void | Promise<void> } = {},
+  hooks: { beforeDirectorySync?: () => void | Promise<void>; beforeRollbackQuarantine?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const directory = path.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
@@ -101,10 +120,8 @@ export async function installNewJson(
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
-      if (await sameInode(file, temp)) {
-        await fs.rm(file);
-        installed = false;
-      }
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
       throw error;
     }
   } finally {
@@ -139,7 +156,7 @@ export async function replaceJsonIfUnchanged(
   file: string,
   expected: string,
   value: unknown,
-  hooks: { beforeCapture?: () => void | Promise<void>; afterParentCheckBeforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
+  hooks: { beforeCapture?: () => void | Promise<void>; afterParentCheckBeforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void>; beforeRollbackQuarantine?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
@@ -191,13 +208,13 @@ export async function replaceJsonIfUnchanged(
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
     } catch (error) {
-      if (!await sameInode(file, temp)) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
         throw new Error(
           `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
           { cause: error },
         );
       }
-      await fs.rm(file);
       installed = false;
       await restoreCapturedPath(captured, file);
       capturedPresent = false;

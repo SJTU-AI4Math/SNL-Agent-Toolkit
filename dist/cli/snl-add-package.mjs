@@ -117,8 +117,10 @@ import * as path5 from "node:path";
 // lib/entity-storage.ts
 import { createHash } from "node:crypto";
 var PACKAGE_STORAGE_VERSION = 1;
+var ENTRY_STORAGE_VERSION = 1;
 var MACRO_STORAGE_VERSION = 1;
 var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
+var CURRENT_ENTRY_SCHEMA_VERSION = 1;
 var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
 function semanticDigest(value) {
@@ -158,6 +160,11 @@ function entityIdentityHash(kind, ...segments) {
 function packageManifestPath(packageId) {
   assertPackageId(packageId);
   return `packages/${packageId}-${entityIdentityHash("package", packageId)}.json`;
+}
+function entryEntityPath(packageId, entryId) {
+  assertPackageId(packageId);
+  if (!entryId) throw new Error("Entry id must be non-empty.");
+  return `entries/${packageId}-${entityIdentityHash("entry", packageId, entryId)}.json`;
 }
 function macroEntityPath(packageId, macroName) {
   assertPackageId(packageId);
@@ -15098,6 +15105,25 @@ async function sameInode(left, right) {
     return false;
   }
 }
+async function quarantineAndRemoveOwnedPath(file, ownedLink) {
+  const quarantine = path2.join(path2.dirname(file), `.${path2.basename(file)}.snl-rollback-${process.pid}-${randomUUID()}.captured`);
+  try {
+    await fs.rename(file, quarantine);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await fs.rm(quarantine);
+    return true;
+  }
+  try {
+    await fs.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await fs.rm(quarantine);
+  } catch {
+  }
+  return false;
+}
 async function installNewJson(file, value, hooks = {}) {
   const directory = path2.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
@@ -15119,10 +15145,8 @@ async function installNewJson(file, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
-      if (await sameInode(file, temp)) {
-        await fs.rm(file);
-        installed = false;
-      }
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
       throw error;
     }
   } finally {
@@ -15192,13 +15216,13 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
     } catch (error) {
-      if (!await sameInode(file, temp)) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
         throw new Error(
           `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
           { cause: error }
         );
       }
-      await fs.rm(file);
       installed = false;
       await restoreCapturedPath(captured, file);
       capturedPresent = false;
@@ -15395,6 +15419,19 @@ function isLocalizedLabel(value, required) {
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
+function assertCurrentEntryPayload(value, label) {
+  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
+    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+  }
+  if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
+    throw new Error(`${label}#content.snl must be a string when present.`);
+  }
+  for (const field of ["typst", "latex", "markdown", "text"]) {
+    if (value.content[field] !== void 0 && !isLocalizedLabel(value.content[field], false)) {
+      throw new Error(`${label}#content.${field} must be a string or valid I18n map when present.`);
+    }
+  }
+}
 function assertThemedColoring(value, label) {
   if (!isRecord(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
     throw new Error(`${label} must contain light and dark variants.`);
@@ -15490,6 +15527,65 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
       throw new Error(`Active Macro Package ${JSON.stringify(packageId)} has no Package manifest.`);
     }
   }
+}
+async function readEntries(workspaceRoot) {
+  const config = await readConfig(workspaceRoot);
+  if (usesEntityStorage(config)) {
+    await assertEntityStorageTopology(workspaceRoot, config);
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
+    const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
+    const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
+    const ids = /* @__PURE__ */ new Set();
+    const entries = records.map(({ relativePath, value }) => {
+      if (!isRecord(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
+        throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
+      }
+      assertCompatibleSchemaMarker(
+        value,
+        CURRENT_ENTRY_SCHEMA_VERSION,
+        `${relativePath} Entry envelope`,
+        config.version === "0.1.0"
+      );
+      if (usesCurrentEntitySchemas(config)) {
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        if (!entryKindIds.has(value.entry.kind)) {
+          throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
+        }
+      }
+      if (value.entry.package !== value.package) {
+        throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);
+      }
+      if (!manifests.has(value.package)) {
+        throw new Error(`${relativePath} references missing Package ${JSON.stringify(value.package)}.`);
+      }
+      assertExpectedEntityPath(relativePath, entryEntityPath(value.package, value.entry.id));
+      if (ids.has(value.entry.id)) {
+        throw new Error(`Duplicate Entry identity ${JSON.stringify(value.entry.id)}.`);
+      }
+      ids.add(value.entry.id);
+      return value.entry;
+    }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
+    if (usesCurrentEntitySchemas(config)) {
+      for (const manifest of manifests.values()) {
+        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
+        if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
+          throw new Error(
+            `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`
+          );
+        }
+      }
+    }
+    return entries;
+  }
+  const p3 = entriesPath(workspaceRoot);
+  if (!await pathExists(p3)) {
+    return [];
+  }
+  const raw = await readJson(p3);
+  if (!Array.isArray(raw)) {
+    throw new Error(`${p3} is not a JSON array`);
+  }
+  return raw;
 }
 function defineIdentity(target, key, value) {
   Object.defineProperty(target, key, {
@@ -15779,6 +15875,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
     const originalConfig = await readRegularText(configFile);
     const config = JSON.parse(originalConfig.text);
     assertCurrentWriteConfig(config, "snl-add-package");
+    await readEntries(workspaceRoot);
     const packages = await readAllMacroPackages(workspaceRoot);
     const issues = [];
     if (!isRecord2(raw)) {

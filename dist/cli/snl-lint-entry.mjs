@@ -18201,6 +18201,7 @@ async function readEntries(workspaceRoot) {
     await assertEntityStorageTopology(workspaceRoot, config);
     const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
+    const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
       if (!isRecord(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
@@ -18214,6 +18215,9 @@ async function readEntries(workspaceRoot) {
       );
       if (usesCurrentEntitySchemas(config)) {
         assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        if (!entryKindIds.has(value.entry.kind)) {
+          throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
+        }
       }
       if (value.entry.package !== value.package) {
         throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);

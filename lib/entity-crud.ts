@@ -94,21 +94,28 @@ async function restoreCapturedDirectory(
     try {
         await assertDirectoryIdentity(parent, parentIdentity);
         await assertDirectoryIdentity(target, reservation);
-        const targetHandle = await fs.open(target, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
+        const capturedIdentity = await readDirectoryIdentity(captured);
+        const [targetHandle, capturedHandle] = await Promise.all([
+            fs.open(target, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY),
+            fs.open(captured, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY),
+        ]);
         try {
-            const targetStat = await targetHandle.stat();
+            const [targetStat, capturedStat] = await Promise.all([targetHandle.stat(), capturedHandle.stat()]);
             if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
                 throw new Error(`${target} changed concurrently before restoration copy.`);
+            if (capturedStat.dev !== capturedIdentity.dev || capturedStat.ino !== capturedIdentity.ino)
+                throw new Error(`${captured} changed concurrently before restoration copy.`);
             if (process.platform !== "linux")
                 throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
             const pinnedTarget = `/proc/self/fd/${targetHandle.fd}`;
+            const pinnedCaptured = `/proc/self/fd/${capturedHandle.fd}`;
             await hooks.afterReservationCheckBeforeCopy?.();
-            for (const name of await fs.readdir(captured)) {
-                await fs.cp(path.join(captured, name), path.join(pinnedTarget, name), { recursive: true, force: false, errorOnExist: true, preserveTimestamps: true, verbatimSymlinks: true });
+            for (const name of await fs.readdir(pinnedCaptured)) {
+                await fs.cp(path.join(pinnedCaptured, name), path.join(pinnedTarget, name), { recursive: true, force: false, errorOnExist: true, preserveTimestamps: true, verbatimSymlinks: true });
             }
             await targetHandle.sync();
         }
-        finally { await targetHandle.close(); }
+        finally { await Promise.all([targetHandle.close(), capturedHandle.close()]); }
         await assertDirectoryIdentity(parent, parentIdentity);
         await assertDirectoryIdentity(target, reservation);
         await syncDirectoryDurably(parent, hooks.beforeSync, parentIdentity);
@@ -118,11 +125,9 @@ async function restoreCapturedDirectory(
         // it would re-open a late-arriving-data race through an outstanding dirfd.
     }
     catch (error) {
-        try {
-            await assertDirectoryIdentity(target, reservation);
-            await fs.rmdir(target);
-        }
-        catch { /* Preserve a concurrent replacement or a partial recovery tree. */ }
+        // Never clean up the canonical pathname after failure: a check followed
+        // by rmdir would reopen the exact replacement race restoration avoids.
+        // Preserve either the owned partial reservation or concurrent owner.
         throw new Error(`${target} could not be restored without touching a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
 }
@@ -267,21 +272,40 @@ export async function validateManagedWorkspace(root: string): Promise<{
 }> {
     const counts: Record<string, number> = Object.create(null) as Record<string, number>;
     const rows = new Map<ManagedEntityType, ManagedEntity[]>();
-    for (const type of ENTITY_TYPES) {
-        const entities = await listManagedEntities(root, type);
-        rows.set(type, entities);
-        counts[type] = entities.length;
-    }
-    const entries = await readEntries(root);
-    const entryIds = new Set(entries.map(entry => entry.id));
     const issues: Array<{ severity: "error" | "warning" | "info"; code: string; message: string; path?: string }> = [];
+    for (const type of ENTITY_TYPES) {
+        try {
+            const entities = await listManagedEntities(root, type);
+            rows.set(type, entities);
+            counts[type] = entities.length;
+        }
+        catch (error) {
+            rows.set(type, []);
+            counts[type] = 0;
+            issues.push({ severity: "error", code: `${type}.read-failed`, message: error instanceof Error ? error.message : String(error), path: type });
+        }
+    }
+    let entries: Awaited<ReturnType<typeof readEntries>> = [];
+    try { entries = await readEntries(root); }
+    catch (error) {
+        if (!issues.some(issue => issue.code === "entry.read-failed"))
+            issues.push({ severity: "error", code: "entry.read-failed", message: error instanceof Error ? error.message : String(error), path: "entry" });
+    }
+    const entryIds = new Set(entries.map(entry => entry.id));
     for (const relationship of rows.get("relationship") ?? []) {
         const from = relationship.value.from;
         const to = relationship.value.to;
-        if (typeof from === "string" && !entryIds.has(from))
+        const label = relationship.value.label;
+        if (typeof from !== "string" || !from)
+            issues.push({ severity: "error", code: "relationship.invalid-from", message: `Relationship ${relationship.id} requires a non-empty from Entry id.`, path: `relationship:${relationship.id}.from` });
+        else if (!entryIds.has(from))
             issues.push({ severity: "error", code: "relationship.dangling-from", message: `Relationship ${relationship.id} references missing Entry ${from}.`, path: `relationship:${relationship.id}.from` });
-        if (typeof to === "string" && !entryIds.has(to))
+        if (typeof to !== "string" || !to)
+            issues.push({ severity: "error", code: "relationship.invalid-to", message: `Relationship ${relationship.id} requires a non-empty to Entry id.`, path: `relationship:${relationship.id}.to` });
+        else if (!entryIds.has(to))
             issues.push({ severity: "error", code: "relationship.dangling-to", message: `Relationship ${relationship.id} references missing Entry ${to}.`, path: `relationship:${relationship.id}.to` });
+        if (typeof label !== "string" || !label)
+            issues.push({ severity: "error", code: "relationship.invalid-label", message: `Relationship ${relationship.id} requires a non-empty label.`, path: `relationship:${relationship.id}.label` });
     }
     for (const library of rows.get("library") ?? []) {
         for (const issue of lintGraph(library.value.graph, { poolEntries: entries }).issues) {
@@ -393,7 +417,12 @@ function identityFor(type: ManagedEntityType, value: RecordJson): string {
         return requireId(value, "slug");
     return requireId(value);
 }
-async function createDirect(root: string, type: "relationship" | "library", input: unknown): Promise<EntityMutationResult> {
+type DirectCreateOptions = {
+    beforeLibraryCreateParentSync?: () => void | Promise<void>;
+    beforeLibraryCreateResource?: (name: string) => void | Promise<void>;
+    beforeLibraryCreateCleanupCapture?: () => void | Promise<void>;
+};
+async function createDirect(root: string, type: "relationship" | "library", input: unknown, options: DirectCreateOptions = {}): Promise<EntityMutationResult> {
     const value = requireRecord(input, type);
     const problem = await validationMessage(root, type, value);
     if (problem)
@@ -423,17 +452,16 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         const dir = path.join(librariesDir, id);
         if (path.basename(id) !== id || id === "." || id === "..")
             return invalid("Library slug must be one safe path segment.");
-        let createdLibrariesDir = false;
         const docDirectoryIdentity = await readDirectoryIdentity(docRoot(root));
         let librariesDirectoryIdentity: { dev: number; ino: number };
         try {
             await fs.mkdir(librariesDir);
-            createdLibrariesDir = true;
-            await syncDirectoryDurably(docRoot(root), undefined, docDirectoryIdentity);
+            await syncDirectoryDurably(docRoot(root), options.beforeLibraryCreateParentSync, docDirectoryIdentity);
         }
         catch (error) {
             if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-                if (createdLibrariesDir) await fs.rmdir(librariesDir).catch(() => undefined);
+                // The newly-created directory may have been replaced after
+                // the failed parent sync; never pathname-delete it here.
                 throw error;
             }
             await readDirectoryIdentity(librariesDir);
@@ -449,6 +477,7 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         const installed: typeof resources = [];
         try {
             for (const resource of resources) {
+                await options.beforeLibraryCreateResource?.(path.basename(resource.file));
                 await assertDirectoryIdentity(dir, directoryIdentity);
                 await installNewJson(resource.file, resource.value);
                 installed.push(resource);
@@ -469,12 +498,19 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
                 catch (cleanup) { cleanupErrors.push(`${resource.file}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`); }
             }
             try {
-                await fs.rmdir(dir);
-                await syncDirectoryDurably(librariesDir, undefined, librariesDirectoryIdentity);
-                if (createdLibrariesDir) {
-                    await fs.rmdir(librariesDir);
-                    await syncDirectoryDurably(docRoot(root), undefined, docDirectoryIdentity);
+                await options.beforeLibraryCreateCleanupCapture?.();
+                const recovery = path.join(librariesDir, `.${id}.snl-entity-${process.pid}-${randomUUID()}.create-failed`);
+                await fs.rename(dir, recovery);
+                const capturedIdentity = await readDirectoryIdentity(recovery);
+                if (capturedIdentity.dev === directoryIdentity.dev && capturedIdentity.ino === directoryIdentity.ino) {
+                    await fs.rmdir(recovery);
+                    await syncDirectoryDurably(librariesDir, undefined, librariesDirectoryIdentity);
                 }
+                else {
+                    cleanupErrors.push(`${dir} was replaced concurrently; the replacement is preserved at ${recovery}`);
+                }
+                // Keep a newly-created empty libraries directory. Removing it
+                // would introduce the same check-to-rmdir race one level up.
             }
             catch (cleanup) { cleanupErrors.push(`${dir}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`); }
             if (cleanupErrors.length) {
@@ -488,7 +524,7 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
     } const entity = await getManagedEntity(root, type, id); if (!entity)
         throw new Error(`Created ${type} could not be read back.`); return { status: "ok", operation: "create", type, entity }; });
 }
-export async function createManagedEntity(root: string, type: ManagedEntityType, input: unknown): Promise<EntityMutationResult> {
+export async function createManagedEntity(root: string, type: ManagedEntityType, input: unknown, options: DirectCreateOptions = {}): Promise<EntityMutationResult> {
     root = await canonicalWriteWorkspace(root);
     await assertWorkspace(root);
     if (type === "entry-kind" || type === "macro-kind")
@@ -524,7 +560,7 @@ export async function createManagedEntity(root: string, type: ManagedEntityType,
             throw new Error("Created Macro could not be read back.");
         return { status: "ok", operation: "create", type, entity };
     }
-    return createDirect(root, type, input);
+    return createDirect(root, type, input, options);
 }
 async function locateFile(root: string, type: ManagedEntityType, entity: ManagedEntity): Promise<string> { const doc = docRoot(root); if (type === "entry-package" || type === "macro-package")
     return path.join(doc, packageManifestPath(entity.id)); if (type === "entry") {
@@ -655,6 +691,9 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                 const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
                 if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
                     return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
+                if (type === "macro-package" && Object.hasOwn(value, "macros") &&
+                    JSON.stringify(value.macros) !== JSON.stringify(current.value.macros))
+                    return invalid("Macro Package macros are derived from owned Macros and cannot be changed directly.");
                 const manifest = {
                     ...value,
                     format: "snl-package",

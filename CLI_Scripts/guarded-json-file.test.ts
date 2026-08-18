@@ -161,6 +161,24 @@ describe('guarded JSON path capture', () => {
     assert.deepEqual(await readdir(root), []);
   });
 
+  it('never deletes a concurrent create replacement during fsync rollback', async () => {
+    const { root, file } = await scratch();
+    const parked = path.join(root, 'parked-created.json');
+    const external = '{"owner":"external"}\n';
+    await assert.rejects(
+      () => installNewJson(file, { owner: 'mine' }, {
+        beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
+        beforeRollbackQuarantine: async () => {
+          await rename(file, parked);
+          await writeFile(file, external);
+        },
+      }),
+      /fsync failure/,
+    );
+    assert.equal(await readFile(file, 'utf8'), external);
+    assert.equal(JSON.parse(await readFile(parked, 'utf8')).owner, 'mine');
+  });
+
   it('does not report private temp cleanup failure after create commits', async () => {
     const root = await mkdtemp(path.join(tmpdir(), 'snl-guarded-cleanup-'));
     roots.push(root);
@@ -187,6 +205,27 @@ describe('guarded JSON path capture', () => {
     );
     assert.equal(await readFile(file, 'utf8'), original);
     assert.deepEqual(await readdir(root), ['entity.json']);
+  });
+
+  it('never deletes a concurrent replace replacement during fsync rollback', async () => {
+    const { root, file } = await scratch();
+    const original = '{"owner":"original"}\n';
+    const external = '{"owner":"external"}\n';
+    const parked = path.join(root, 'parked-new.json');
+    await writeFile(file, original);
+    await assert.rejects(
+      () => replaceJsonIfUnchanged(file, original, { owner: 'mine' }, {
+        beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
+        beforeRollbackQuarantine: async () => {
+          await rename(file, parked);
+          await writeFile(file, external);
+        },
+      }),
+      /changed before.*durably committed|fsync failure/,
+    );
+    assert.equal(await readFile(file, 'utf8'), external);
+    assert.equal(JSON.parse(await readFile(parked, 'utf8')).owner, 'mine');
+    assert.ok((await readdir(root)).some(name => name.includes('.captured')));
   });
 
   it('restores a removed file when directory fsync fails before commit', async () => {

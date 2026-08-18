@@ -1499,10 +1499,15 @@ function validateSchemaShape(absPath: string, relPath: string, data: unknown): v
     if (!isRecord(value) || !Array.isArray(value.relationships)) {
       fail('relationships.json must contain relationships[].');
     }
+    const ids = new Set<string>();
     value.relationships.forEach((rel: any, index: number) => {
-      if (!isRecord(rel) || typeof rel.from !== 'string' || typeof rel.to !== 'string') {
-        fail(`relationship ${index} must contain string from/to.`);
+      if (!isRecord(rel) || typeof rel.id !== 'string' || !rel.id ||
+          typeof rel.from !== 'string' || !rel.from || typeof rel.to !== 'string' || !rel.to ||
+          typeof rel.label !== 'string' || !rel.label) {
+        fail(`relationship ${index} must contain non-empty string id/from/to/label.`);
       }
+      if (ids.has(rel.id)) fail(`relationship ${index} duplicates id ${JSON.stringify(rel.id)}.`);
+      ids.add(rel.id);
       if (isRecord(rel.metadata) && rel.metadata.generator === 'macro-source-scan') {
         for (const field of ['macros', 'postfixes']) {
           const values = rel.metadata[field];

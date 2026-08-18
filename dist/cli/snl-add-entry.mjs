@@ -15343,6 +15343,25 @@ async function sameInode(left, right) {
     return false;
   }
 }
+async function quarantineAndRemoveOwnedPath(file, ownedLink) {
+  const quarantine = path2.join(path2.dirname(file), `.${path2.basename(file)}.snl-rollback-${process.pid}-${randomUUID()}.captured`);
+  try {
+    await fs.rename(file, quarantine);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await fs.rm(quarantine);
+    return true;
+  }
+  try {
+    await fs.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await fs.rm(quarantine);
+  } catch {
+  }
+  return false;
+}
 async function installNewJson(file, value, hooks = {}) {
   const directory = path2.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
@@ -15364,10 +15383,8 @@ async function installNewJson(file, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
-      if (await sameInode(file, temp)) {
-        await fs.rm(file);
-        installed = false;
-      }
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
       throw error;
     }
   } finally {
@@ -15437,13 +15454,13 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
     } catch (error) {
-      if (!await sameInode(file, temp)) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
         throw new Error(
           `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
           { cause: error }
         );
       }
-      await fs.rm(file);
       installed = false;
       await restoreCapturedPath(captured, file);
       capturedPresent = false;
@@ -15755,6 +15772,7 @@ async function readEntries(workspaceRoot) {
     await assertEntityStorageTopology(workspaceRoot, config);
     const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
+    const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
       if (!isRecord(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
@@ -15768,6 +15786,9 @@ async function readEntries(workspaceRoot) {
       );
       if (usesCurrentEntitySchemas(config)) {
         assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        if (!entryKindIds.has(value.entry.kind)) {
+          throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
+        }
       }
       if (value.entry.package !== value.package) {
         throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { watch } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -487,6 +487,26 @@ describe('agent-facing entity write CLIs', () => {
     const packageResult = run(packageWorkspace.root, 'snl-add-package', [packageDraft]);
     assert.equal(packageResult.status, 1);
     assert.equal(JSON.parse(packageResult.stdout).status, 'invalid');
+  });
+
+  it('snl-add-package preflights authoritative Entry membership before publishing', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'snl-add-current-corrupt-'));
+    roots.push(root);
+    const fixture = path.join(import.meta.dirname, 'fixtures', 'workspace-v0.1.0', '.SNL_Doc');
+    const doc = path.join(root, '.SNL_Doc');
+    await cp(fixture, doc, { recursive: true });
+    const unpackaged = path.join(doc, packageManifestPath('_unpackaged'));
+    const manifest = JSON.parse(await readFile(unpackaged, 'utf8')) as Record<string, unknown>;
+    manifest.entry_ids = [];
+    await json(unpackaged, manifest);
+    const configBefore = await readFile(path.join(doc, 'config.json'), 'utf8');
+    const draft = path.join(root, 'new-package.json');
+    await json(draft, { id: 'NewPkg', name: 'New', description: '' });
+    const result = run(root, 'snl-add-package', [draft]);
+    assert.equal(result.status, 2, result.stderr || result.stdout);
+    assert.match(JSON.parse(result.stdout).message, /entry_ids does not exactly match/i);
+    assert.equal(await readFile(path.join(doc, 'config.json'), 'utf8'), configBefore);
+    await assert.rejects(() => stat(path.join(doc, packageManifestPath('NewPkg'))), { code: 'ENOENT' });
   });
 
   it('rejects a symlinked .SNL_Doc before creating a lock in its target', async () => {

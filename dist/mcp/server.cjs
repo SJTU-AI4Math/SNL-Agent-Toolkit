@@ -304,6 +304,25 @@ async function sameInode(left, right) {
     return false;
   }
 }
+async function quarantineAndRemoveOwnedPath(file, ownedLink) {
+  const quarantine = import_node_path.default.join(import_node_path.default.dirname(file), `.${import_node_path.default.basename(file)}.snl-rollback-${process.pid}-${(0, import_node_crypto2.randomUUID)()}.captured`);
+  try {
+    await import_node_fs.promises.rename(file, quarantine);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await import_node_fs.promises.rm(quarantine);
+    return true;
+  }
+  try {
+    await import_node_fs.promises.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await import_node_fs.promises.rm(quarantine);
+  } catch {
+  }
+  return false;
+}
 async function installNewJson(file, value, hooks = {}) {
   const directory = import_node_path.default.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
@@ -325,10 +344,8 @@ async function installNewJson(file, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
-      if (await sameInode(file, temp)) {
-        await import_node_fs.promises.rm(file);
-        installed = false;
-      }
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
       throw error;
     }
   } finally {
@@ -398,13 +415,13 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
     } catch (error) {
-      if (!await sameInode(file, temp)) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
         throw new Error(
           `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
           { cause: error }
         );
       }
-      await import_node_fs.promises.rm(file);
       installed = false;
       await restoreCapturedPath(captured, file);
       capturedPresent = false;
@@ -15741,6 +15758,7 @@ async function readEntries(workspaceRoot) {
     await assertEntityStorageTopology(workspaceRoot, config);
     const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
+    const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
     const entries = records.map(({ relativePath, value }) => {
       if (!isRecord2(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
@@ -15754,6 +15772,9 @@ async function readEntries(workspaceRoot) {
       );
       if (usesCurrentEntitySchemas(config)) {
         assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        if (!entryKindIds.has(value.entry.kind)) {
+          throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
+        }
       }
       if (value.entry.package !== value.package) {
         throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);
@@ -18271,10 +18292,13 @@ function validateSchemaShape(absPath, relPath, data) {
     if (!isRecord4(value) || !Array.isArray(value.relationships)) {
       fail("relationships.json must contain relationships[].");
     }
+    const ids = /* @__PURE__ */ new Set();
     value.relationships.forEach((rel2, index) => {
-      if (!isRecord4(rel2) || typeof rel2.from !== "string" || typeof rel2.to !== "string") {
-        fail(`relationship ${index} must contain string from/to.`);
+      if (!isRecord4(rel2) || typeof rel2.id !== "string" || !rel2.id || typeof rel2.from !== "string" || !rel2.from || typeof rel2.to !== "string" || !rel2.to || typeof rel2.label !== "string" || !rel2.label) {
+        fail(`relationship ${index} must contain non-empty string id/from/to/label.`);
       }
+      if (ids.has(rel2.id)) fail(`relationship ${index} duplicates id ${JSON.stringify(rel2.id)}.`);
+      ids.add(rel2.id);
       if (isRecord4(rel2.metadata) && rel2.metadata.generator === "macro-source-scan") {
         for (const field of ["macros", "postfixes"]) {
           const values = rel2.metadata[field];
@@ -18645,6 +18669,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
     const originalConfig = await readRegularText(configFile);
     const config = JSON.parse(originalConfig.text);
     assertCurrentWriteConfig(config, "snl-add-package");
+    await readEntries(workspaceRoot);
     const packages = await readAllMacroPackages(workspaceRoot);
     const issues = [];
     if (!isRecord5(raw)) {
@@ -18804,21 +18829,28 @@ async function restoreCapturedDirectory(captured, target, hooks = {}) {
   try {
     await assertDirectoryIdentity(parent, parentIdentity);
     await assertDirectoryIdentity(target, reservation);
-    const targetHandle = await import_node_fs6.promises.open(target, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
+    const capturedIdentity = await readDirectoryIdentity(captured);
+    const [targetHandle, capturedHandle] = await Promise.all([
+      import_node_fs6.promises.open(target, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY),
+      import_node_fs6.promises.open(captured, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY)
+    ]);
     try {
-      const targetStat = await targetHandle.stat();
+      const [targetStat, capturedStat] = await Promise.all([targetHandle.stat(), capturedHandle.stat()]);
       if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
         throw new Error(`${target} changed concurrently before restoration copy.`);
+      if (capturedStat.dev !== capturedIdentity.dev || capturedStat.ino !== capturedIdentity.ino)
+        throw new Error(`${captured} changed concurrently before restoration copy.`);
       if (process.platform !== "linux")
         throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
       const pinnedTarget = `/proc/self/fd/${targetHandle.fd}`;
+      const pinnedCaptured = `/proc/self/fd/${capturedHandle.fd}`;
       await hooks.afterReservationCheckBeforeCopy?.();
-      for (const name of await import_node_fs6.promises.readdir(captured)) {
-        await import_node_fs6.promises.cp(import_node_path2.default.join(captured, name), import_node_path2.default.join(pinnedTarget, name), { recursive: true, force: false, errorOnExist: true, preserveTimestamps: true, verbatimSymlinks: true });
+      for (const name of await import_node_fs6.promises.readdir(pinnedCaptured)) {
+        await import_node_fs6.promises.cp(import_node_path2.default.join(pinnedCaptured, name), import_node_path2.default.join(pinnedTarget, name), { recursive: true, force: false, errorOnExist: true, preserveTimestamps: true, verbatimSymlinks: true });
       }
       await targetHandle.sync();
     } finally {
-      await targetHandle.close();
+      await Promise.all([targetHandle.close(), capturedHandle.close()]);
     }
     await assertDirectoryIdentity(parent, parentIdentity);
     await assertDirectoryIdentity(target, reservation);
@@ -18826,11 +18858,6 @@ async function restoreCapturedDirectory(captured, target, hooks = {}) {
     await assertDirectoryIdentity(parent, parentIdentity);
     await assertDirectoryIdentity(target, reservation);
   } catch (error) {
-    try {
-      await assertDirectoryIdentity(target, reservation);
-      await import_node_fs6.promises.rmdir(target);
-    } catch {
-    }
     throw new Error(`${target} could not be restored without touching a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   }
 }
@@ -18979,21 +19006,40 @@ async function listManagedEntities(root, type, options = {}) {
 async function validateManagedWorkspace(root) {
   const counts = /* @__PURE__ */ Object.create(null);
   const rows = /* @__PURE__ */ new Map();
-  for (const type of ENTITY_TYPES2) {
-    const entities = await listManagedEntities(root, type);
-    rows.set(type, entities);
-    counts[type] = entities.length;
-  }
-  const entries = await readEntries(root);
-  const entryIds = new Set(entries.map((entry) => entry.id));
   const issues = [];
+  for (const type of ENTITY_TYPES2) {
+    try {
+      const entities = await listManagedEntities(root, type);
+      rows.set(type, entities);
+      counts[type] = entities.length;
+    } catch (error) {
+      rows.set(type, []);
+      counts[type] = 0;
+      issues.push({ severity: "error", code: `${type}.read-failed`, message: error instanceof Error ? error.message : String(error), path: type });
+    }
+  }
+  let entries = [];
+  try {
+    entries = await readEntries(root);
+  } catch (error) {
+    if (!issues.some((issue) => issue.code === "entry.read-failed"))
+      issues.push({ severity: "error", code: "entry.read-failed", message: error instanceof Error ? error.message : String(error), path: "entry" });
+  }
+  const entryIds = new Set(entries.map((entry) => entry.id));
   for (const relationship of rows.get("relationship") ?? []) {
     const from = relationship.value.from;
     const to = relationship.value.to;
-    if (typeof from === "string" && !entryIds.has(from))
+    const label = relationship.value.label;
+    if (typeof from !== "string" || !from)
+      issues.push({ severity: "error", code: "relationship.invalid-from", message: `Relationship ${relationship.id} requires a non-empty from Entry id.`, path: `relationship:${relationship.id}.from` });
+    else if (!entryIds.has(from))
       issues.push({ severity: "error", code: "relationship.dangling-from", message: `Relationship ${relationship.id} references missing Entry ${from}.`, path: `relationship:${relationship.id}.from` });
-    if (typeof to === "string" && !entryIds.has(to))
+    if (typeof to !== "string" || !to)
+      issues.push({ severity: "error", code: "relationship.invalid-to", message: `Relationship ${relationship.id} requires a non-empty to Entry id.`, path: `relationship:${relationship.id}.to` });
+    else if (!entryIds.has(to))
       issues.push({ severity: "error", code: "relationship.dangling-to", message: `Relationship ${relationship.id} references missing Entry ${to}.`, path: `relationship:${relationship.id}.to` });
+    if (typeof label !== "string" || !label)
+      issues.push({ severity: "error", code: "relationship.invalid-label", message: `Relationship ${relationship.id} requires a non-empty label.`, path: `relationship:${relationship.id}.label` });
   }
   for (const library of rows.get("library") ?? []) {
     for (const issue of lintGraph(library.value.graph, { poolEntries: entries }).issues) {
@@ -19134,7 +19180,7 @@ function identityFor(type, value) {
     return requireId(value, "slug");
   return requireId(value);
 }
-async function createDirect(root, type, input) {
+async function createDirect(root, type, input, options = {}) {
   const value = requireRecord(input, type);
   const problem = await validationMessage(root, type, value);
   if (problem)
@@ -19164,16 +19210,13 @@ async function createDirect(root, type, input) {
       const dir = import_node_path2.default.join(librariesDir, id);
       if (import_node_path2.default.basename(id) !== id || id === "." || id === "..")
         return invalid("Library slug must be one safe path segment.");
-      let createdLibrariesDir = false;
       const docDirectoryIdentity = await readDirectoryIdentity(docRoot(root));
       let librariesDirectoryIdentity;
       try {
         await import_node_fs6.promises.mkdir(librariesDir);
-        createdLibrariesDir = true;
-        await syncDirectoryDurably(docRoot(root), void 0, docDirectoryIdentity);
+        await syncDirectoryDurably(docRoot(root), options.beforeLibraryCreateParentSync, docDirectoryIdentity);
       } catch (error) {
         if (error.code !== "EEXIST") {
-          if (createdLibrariesDir) await import_node_fs6.promises.rmdir(librariesDir).catch(() => void 0);
           throw error;
         }
         await readDirectoryIdentity(librariesDir);
@@ -19189,6 +19232,7 @@ async function createDirect(root, type, input) {
       const installed = [];
       try {
         for (const resource of resources) {
+          await options.beforeLibraryCreateResource?.(import_node_path2.default.basename(resource.file));
           await assertDirectoryIdentity(dir, directoryIdentity);
           await installNewJson(resource.file, resource.value);
           installed.push(resource);
@@ -19212,11 +19256,15 @@ async function createDirect(root, type, input) {
           }
         }
         try {
-          await import_node_fs6.promises.rmdir(dir);
-          await syncDirectoryDurably(librariesDir, void 0, librariesDirectoryIdentity);
-          if (createdLibrariesDir) {
-            await import_node_fs6.promises.rmdir(librariesDir);
-            await syncDirectoryDurably(docRoot(root), void 0, docDirectoryIdentity);
+          await options.beforeLibraryCreateCleanupCapture?.();
+          const recovery = import_node_path2.default.join(librariesDir, `.${id}.snl-entity-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.create-failed`);
+          await import_node_fs6.promises.rename(dir, recovery);
+          const capturedIdentity = await readDirectoryIdentity(recovery);
+          if (capturedIdentity.dev === directoryIdentity.dev && capturedIdentity.ino === directoryIdentity.ino) {
+            await import_node_fs6.promises.rmdir(recovery);
+            await syncDirectoryDurably(librariesDir, void 0, librariesDirectoryIdentity);
+          } else {
+            cleanupErrors.push(`${dir} was replaced concurrently; the replacement is preserved at ${recovery}`);
           }
         } catch (cleanup) {
           cleanupErrors.push(`${dir}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
@@ -19236,7 +19284,7 @@ async function createDirect(root, type, input) {
     return { status: "ok", operation: "create", type, entity };
   });
 }
-async function createManagedEntity(root, type, input) {
+async function createManagedEntity(root, type, input, options = {}) {
   root = await canonicalWriteWorkspace(root);
   await assertWorkspace(root);
   if (type === "entry-kind" || type === "macro-kind")
@@ -19272,7 +19320,7 @@ async function createManagedEntity(root, type, input) {
       throw new Error("Created Macro could not be read back.");
     return { status: "ok", operation: "create", type, entity };
   }
-  return createDirect(root, type, input);
+  return createDirect(root, type, input, options);
 }
 async function locateFile(root, type, entity) {
   const doc = docRoot(root);
@@ -19395,6 +19443,8 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
             return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
+          if (type === "macro-package" && Object.hasOwn(value, "macros") && JSON.stringify(value.macros) !== JSON.stringify(current.value.macros))
+            return invalid("Macro Package macros are derived from owned Macros and cannot be changed directly.");
           const manifest = {
             ...value,
             format: "snl-package",

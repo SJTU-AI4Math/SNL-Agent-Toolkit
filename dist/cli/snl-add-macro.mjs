@@ -15586,6 +15586,25 @@ async function sameInode(left, right) {
     return false;
   }
 }
+async function quarantineAndRemoveOwnedPath(file, ownedLink) {
+  const quarantine = path2.join(path2.dirname(file), `.${path2.basename(file)}.snl-rollback-${process.pid}-${randomUUID()}.captured`);
+  try {
+    await fs.rename(file, quarantine);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await fs.rm(quarantine);
+    return true;
+  }
+  try {
+    await fs.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await fs.rm(quarantine);
+  } catch {
+  }
+  return false;
+}
 async function installNewJson(file, value, hooks = {}) {
   const directory = path2.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
@@ -15607,10 +15626,8 @@ async function installNewJson(file, value, hooks = {}) {
     try {
       await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
-      if (await sameInode(file, temp)) {
-        await fs.rm(file);
-        installed = false;
-      }
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
       throw error;
     }
   } finally {
