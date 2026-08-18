@@ -39,6 +39,10 @@ export async function readRegularText(file: string): Promise<{ text: string; mod
       dev: stat.dev, ino: stat.ino,
       directoryDev: directoryIdentity.dev, directoryIno: directoryIdentity.ino,
     };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ELOOP')
+      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
+    throw error;
   } finally {
     await handle?.close();
   }

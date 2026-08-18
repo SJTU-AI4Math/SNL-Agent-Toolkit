@@ -231,8 +231,254 @@ function assertCompatibleSchemaMarker(value, current, label, required = false) {
 }
 
 // lib/snl-doc.ts
+var import_node_fs2 = require("node:fs");
+var path3 = __toESM(require("node:path"), 1);
+
+// lib/guarded-json-file.ts
 var import_node_fs = require("node:fs");
-var path2 = __toESM(require("node:path"), 1);
+var import_node_path = __toESM(require("node:path"), 1);
+var import_node_crypto2 = require("node:crypto");
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readCanonicalDirectoryIdentity(directory) {
+  const resolved = import_node_path.default.resolve(directory);
+  const stat = await import_node_fs.promises.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await import_node_fs.promises.realpath(resolved) !== resolved) {
+    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
+  }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${import_node_path.default.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
+}
+async function readRegularText(file) {
+  const directory = import_node_path.default.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  let handle;
+  try {
+    handle = await import_node_fs.promises.open(file, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
+  } catch (error) {
+    if (error.code === "ELOOP")
+      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
+    throw error;
+  } finally {
+    await handle?.close();
+  }
+}
+async function syncDirectory(directory, beforeSync) {
+  await beforeSync?.();
+  const handle = await import_node_fs.promises.open(directory, import_node_fs.constants.O_RDONLY);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
+async function sameInode(left, right) {
+  try {
+    const [a3, b2] = await Promise.all([import_node_fs.promises.lstat(left), import_node_fs.promises.lstat(right)]);
+    return a3.dev === b2.dev && a3.ino === b2.ino;
+  } catch {
+    return false;
+  }
+}
+async function installNewJson(file, value, hooks = {}) {
+  const directory = import_node_path.default.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const temp = import_node_path.default.join(
+    directory,
+    `.${import_node_path.default.basename(file)}.snl-create-${process.pid}-${(0, import_node_crypto2.randomUUID)()}.tmp`
+  );
+  let handle;
+  let installed = false;
+  try {
+    handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, 420);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    await import_node_fs.promises.link(temp, file);
+    installed = true;
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync);
+    } catch (error) {
+      if (await sameInode(file, temp)) {
+        await import_node_fs.promises.rm(file);
+        installed = false;
+      }
+      throw error;
+    }
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await import_node_fs.promises.rm(temp, { force: true }).catch(() => void 0);
+    if (installed) {
+    }
+  }
+}
+async function restoreCapturedPath(captured, target) {
+  try {
+    await import_node_fs.promises.link(captured, target);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
+      { cause: error }
+    );
+  }
+  await import_node_fs.promises.rm(captured);
+}
+async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+  const directory = import_node_path.default.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
+  const nonce = `${process.pid}-${(0, import_node_crypto2.randomUUID)()}`;
+  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.tmp`);
+  const captured = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.captured`);
+  let handle;
+  let capturedPresent = false;
+  let installed = false;
+  try {
+    handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, current.mode);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await hooks.beforeCapture?.();
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
+    await import_node_fs.promises.rename(file, captured);
+    capturedPresent = true;
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
+    const observed = await readRegularText(captured);
+    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+    }
+    try {
+      await import_node_fs.promises.link(temp, file);
+      installed = true;
+    } catch (error) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync);
+    } catch (error) {
+      if (!await sameInode(file, temp)) {
+        throw new Error(
+          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
+          { cause: error }
+        );
+      }
+      await import_node_fs.promises.rm(file);
+      installed = false;
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw error;
+    }
+    try {
+      await import_node_fs.promises.rm(captured);
+      capturedPresent = false;
+    } catch {
+    }
+  } catch (error) {
+    if (capturedPresent && !installed) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+    }
+    throw error;
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await import_node_fs.promises.rm(temp, { force: true }).catch(() => void 0);
+  }
+}
+async function removeJsonIfUnchanged(file, expected, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  const directory = import_node_path.default.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
+  const captured = import_node_path.default.join(
+    directory,
+    `.${import_node_path.default.basename(file)}.snl-remove-${process.pid}-${(0, import_node_crypto2.randomUUID)()}.captured`
+  );
+  await hooks.beforeCapture?.();
+  await assertCanonicalDirectory(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
+  await import_node_fs.promises.rename(file, captured);
+  let observed;
+  try {
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
+    observed = await readRegularText(captured);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
+    await restoreCapturedPath(captured, file);
+    throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  }
+  try {
+    await syncDirectory(directory, hooks.beforeDirectorySync);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  try {
+    await import_node_fs.promises.rm(captured);
+  } catch {
+  }
+}
 
 // node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
@@ -1226,7 +1472,7 @@ var innerPath = function innerPath2(name, height) {
       return "";
   }
 };
-var path = {
+var path2 = {
   // The doubleleftarrow geometry is from glyph U+21D0 in the font KaTeX Main
   doubleleftarrow: "M262 157\nl10-10c34-36 62.7-77 86-123 3.3-8 5-13.3 5-16 0-5.3-6.7-8-20-8-7.3\n 0-12.2.5-14.5 1.5-2.3 1-4.8 4.5-7.5 10.5-49.3 97.3-121.7 169.3-217 216-28\n 14-57.3 25-88 33-6.7 2-11 3.8-13 5.5-2 1.7-3 4.2-3 7.5s1 5.8 3 7.5\nc2 1.7 6.3 3.5 13 5.5 68 17.3 128.2 47.8 180.5 91.5 52.3 43.7 93.8 96.2 124.5\n 157.5 9.3 8 15.3 12.3 18 13h6c12-.7 18-4 18-10 0-2-1.7-7-5-15-23.3-46-52-87\n-86-123l-10-10h399738v-40H218c328 0 0 0 0 0l-10-8c-26.7-20-65.7-43-117-69 2.7\n-2 6-3.7 10-5 36.7-16 72.3-37.3 107-64l10-8h399782v-40z\nm8 0v40h399730v-40zm0 194v40h399730v-40z",
   // doublerightarrow is from glyph U+21D2 in font KaTeX Main
@@ -1755,7 +2001,7 @@ var PathNode = class {
     if (this.alternate) {
       node.setAttribute("d", this.alternate);
     } else {
-      node.setAttribute("d", path[this.pathName]);
+      node.setAttribute("d", path2[this.pathName]);
     }
     return node;
   }
@@ -1763,7 +2009,7 @@ var PathNode = class {
     if (this.alternate) {
       return '<path d="' + escape(this.alternate) + '"/>';
     } else {
-      return '<path d="' + escape(path[this.pathName]) + '"/>';
+      return '<path d="' + escape(path2[this.pathName]) + '"/>';
     }
   }
 };
@@ -15263,29 +15509,29 @@ function isStringArray(value) {
 
 // lib/snl-doc.ts
 function snlDocRoot(workspaceRoot) {
-  return path2.resolve(workspaceRoot, ".SNL_Doc");
+  return path3.resolve(workspaceRoot, ".SNL_Doc");
 }
 function configPath(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "config.json");
+  return path3.join(snlDocRoot(workspaceRoot), "config.json");
 }
 function entriesPath(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "entries.json");
+  return path3.join(snlDocRoot(workspaceRoot), "entries.json");
 }
 function entryEntitiesDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "entries");
+  return path3.join(snlDocRoot(workspaceRoot), "entries");
 }
 function macroEntitiesDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "macros");
+  return path3.join(snlDocRoot(workspaceRoot), "macros");
 }
 function packageManifestsDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "packages");
+  return path3.join(snlDocRoot(workspaceRoot), "packages");
 }
 function termMacrosDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "term_macros");
+  return path3.join(snlDocRoot(workspaceRoot), "term_macros");
 }
 async function pathExists(p3) {
   try {
-    await import_node_fs.promises.lstat(p3);
+    await import_node_fs2.promises.lstat(p3);
     return true;
   } catch (error) {
     if (error.code === "ENOENT") return false;
@@ -15295,7 +15541,7 @@ async function pathExists(p3) {
 async function readJson(p3) {
   let handle;
   try {
-    handle = await import_node_fs.promises.open(p3, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW);
+    handle = await import_node_fs2.promises.open(p3, import_node_fs2.constants.O_RDONLY | import_node_fs2.constants.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${p3} must be a regular, non-symlink file.`);
     return JSON.parse(await handle.readFile("utf8"));
@@ -15312,7 +15558,7 @@ async function assertSnlDoc(workspaceRoot) {
   const dir = snlDocRoot(workspaceRoot);
   let stat;
   try {
-    stat = await import_node_fs.promises.lstat(dir);
+    stat = await import_node_fs2.promises.lstat(dir);
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
     throw new Error(
@@ -15431,7 +15677,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     ["macros", macroEntitiesDir(workspaceRoot)]
   ]) {
     try {
-      const stat = await import_node_fs.promises.lstat(directory);
+      const stat = await import_node_fs2.promises.lstat(directory);
       if (!stat.isDirectory() || stat.isSymbolicLink()) {
         throw new Error(`${directory} must be a regular, non-symlink directory.`);
       }
@@ -15459,7 +15705,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   const entriesFile = entriesPath(workspaceRoot);
   let legacyEntries = null;
   if (await pathExists(entriesFile)) {
-    const stat = await import_node_fs.promises.lstat(entriesFile);
+    const stat = await import_node_fs2.promises.lstat(entriesFile);
     if (!stat.isFile() || stat.isSymbolicLink()) {
       throw new Error(`${entriesFile} must be a regular, non-symlink legacy backup file.`);
     }
@@ -15467,7 +15713,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   }
   const legacyPackages = /* @__PURE__ */ new Map();
   for (const { relativePath, value } of await readJsonDirectory(termMacrosDir(workspaceRoot))) {
-    legacyPackages.set(path2.basename(relativePath), value);
+    legacyPackages.set(path3.basename(relativePath), value);
   }
   const actual = makeEntityStorageReceipt(
     legacyEntries,
@@ -15557,13 +15803,13 @@ async function readAllMacroPackages(workspaceRoot) {
   if (!await pathExists(dir)) {
     return {};
   }
-  const names = await import_node_fs.promises.readdir(dir);
+  const names = await import_node_fs2.promises.readdir(dir);
   const out = {};
   for (const name of names) {
     if (!name.endsWith(".json")) continue;
     const bare = name.replace(/\.json$/i, "");
     try {
-      defineIdentity(out, bare, await readJson(path2.join(dir, name)));
+      defineIdentity(out, bare, await readJson(path3.join(dir, name)));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       throw new Error(`Failed to read macro package '${bare}': ${msg}`);
@@ -15660,23 +15906,29 @@ async function readJsonDirectory(directory, required = false) {
     if (required) throw new Error(`Required entity directory is missing: ${directory}.`);
     return [];
   }
-  const directoryStat = await import_node_fs.promises.lstat(directory);
-  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a real directory, not a symlink.`);
+  const resolvedDirectory = path3.resolve(directory);
+  const directoryStat = await import_node_fs2.promises.lstat(resolvedDirectory);
+  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink() || await import_node_fs2.promises.realpath(resolvedDirectory) !== resolvedDirectory) {
+    throw new Error(`${directory} must be a canonical real directory, not a symlink.`);
   }
-  const base = path2.basename(directory);
-  const names = (await import_node_fs.promises.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
-  return Promise.all(names.map(async (name) => {
-    const absolute = path2.join(directory, name);
-    const stat = await import_node_fs.promises.lstat(absolute);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      throw new Error(`${absolute} must be a regular, non-symlink file.`);
+  const base = path3.basename(directory);
+  const names = (await import_node_fs2.promises.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
+  const rows = await Promise.all(names.map(async (name) => {
+    const absolute = path3.join(directory, name);
+    const text2 = (await readRegularText(absolute)).text;
+    let value;
+    try {
+      value = JSON.parse(text2);
+    } catch (error) {
+      throw new Error(`Invalid JSON in ${absolute}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
-    return {
-      relativePath: `${base}/${name}`,
-      value: await readJson(absolute)
-    };
+    return { relativePath: `${base}/${name}`, value };
   }));
+  const finalDirectoryStat = await import_node_fs2.promises.lstat(resolvedDirectory);
+  if (!finalDirectoryStat.isDirectory() || finalDirectoryStat.isSymbolicLink() || finalDirectoryStat.dev !== directoryStat.dev || finalDirectoryStat.ino !== directoryStat.ino) {
+    throw new Error(`${directory} changed concurrently while its entities were read.`);
+  }
+  return rows;
 }
 function assertExpectedEntityPath(actual, expected) {
   if (actual !== expected) {
@@ -16265,9 +16517,9 @@ function describe2(value) {
 }
 
 // lib/entity-references.ts
-var import_node_fs2 = require("node:fs");
 var import_node_fs3 = require("node:fs");
-var path4 = __toESM(require("node:path"), 1);
+var import_node_fs4 = require("node:fs");
+var path5 = __toESM(require("node:path"), 1);
 
 // node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text2, ignoreTrivia = false) {
@@ -17201,10 +17453,10 @@ function printParseErrorCode(code) {
 }
 
 // lib/workspace-data-lock.ts
-var import_node_crypto2 = require("node:crypto");
+var import_node_crypto3 = require("node:crypto");
 var import_node_os = require("node:os");
 var import_promises = require("node:fs/promises");
-var path3 = __toESM(require("node:path"), 1);
+var path4 = __toESM(require("node:path"), 1);
 var DATA_WRITE_LOCK_FILENAME = ".data-write.lock";
 function errorCode(error) {
   return error && typeof error === "object" && "code" in error ? String(error.code) : void 0;
@@ -17231,12 +17483,12 @@ async function readLock(lockPath) {
   }
 }
 async function acquireLock(workspaceRoot, purpose) {
-  const lockPath = path3.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
+  const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
   const record = {
     version: 1,
     pid: process.pid,
     hostname: (0, import_node_os.hostname)(),
-    token: (0, import_node_crypto2.randomUUID)(),
+    token: (0, import_node_crypto3.randomUUID)(),
     purpose,
     createdAt: (/* @__PURE__ */ new Date()).toISOString()
   };
@@ -17299,7 +17551,7 @@ function macroIsActive(files, id) {
       return file.data?.macro?.name === id;
     }
     if (!file.relPath.startsWith("term_macros/")) return false;
-    const bare = path4.posix.basename(file.relPath, ".json");
+    const bare = path5.posix.basename(file.relPath, ".json");
     if (active && !active.has(bare)) return false;
     const macros2 = file.data?.macros;
     return isRecord4(macros2) && Object.prototype.hasOwnProperty.call(macros2, id);
@@ -17515,19 +17767,19 @@ function tokenizeSnl(source) {
   return tokens;
 }
 async function validateWorkspaceBoundary(workspaceRoot) {
-  const requestedRoot = path4.resolve(workspaceRoot);
+  const requestedRoot = path5.resolve(workspaceRoot);
   let canonicalRoot;
   try {
-    canonicalRoot = await import_node_fs3.promises.realpath(requestedRoot);
+    canonicalRoot = await import_node_fs4.promises.realpath(requestedRoot);
   } catch {
     throw new Error(`Workspace root does not exist: ${requestedRoot}`);
   }
-  const rootStat = await import_node_fs3.promises.lstat(canonicalRoot);
+  const rootStat = await import_node_fs4.promises.lstat(canonicalRoot);
   if (!rootStat.isDirectory()) throw new Error(`Workspace root is not a directory: ${canonicalRoot}`);
-  const requestedDoc = path4.join(requestedRoot, ".SNL_Doc");
+  const requestedDoc = path5.join(requestedRoot, ".SNL_Doc");
   let docStat;
   try {
-    docStat = await import_node_fs3.promises.lstat(requestedDoc);
+    docStat = await import_node_fs4.promises.lstat(requestedDoc);
   } catch {
     throw new Error(
       `No .SNL_Doc/ folder at ${requestedRoot}. Point --root at the workspace that contains .SNL_Doc/.`
@@ -17536,29 +17788,29 @@ async function validateWorkspaceBoundary(workspaceRoot) {
   if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
     throw new Error(`${requestedDoc} must be a real directory, not a symlink.`);
   }
-  const canonicalDoc = await import_node_fs3.promises.realpath(requestedDoc);
-  const expectedDoc = path4.join(canonicalRoot, ".SNL_Doc");
+  const canonicalDoc = await import_node_fs4.promises.realpath(requestedDoc);
+  const expectedDoc = path5.join(canonicalRoot, ".SNL_Doc");
   if (canonicalDoc !== expectedDoc) {
     throw new Error(`${requestedDoc} escapes the canonical workspace boundary.`);
   }
   return canonicalRoot;
 }
-async function assertCanonicalDirectory(dir, docRoot2) {
-  const stat = await import_node_fs3.promises.lstat(dir);
+async function assertCanonicalDirectory2(dir, docRoot2) {
+  const stat = await import_node_fs4.promises.lstat(dir);
   if (!stat.isDirectory() || stat.isSymbolicLink()) {
     throw new Error(`${dir} must be a real directory, not a symlink.`);
   }
-  const real = await import_node_fs3.promises.realpath(dir);
-  const relative2 = path4.relative(docRoot2, real);
-  if (relative2.startsWith("..") || path4.isAbsolute(relative2)) {
+  const real = await import_node_fs4.promises.realpath(dir);
+  const relative2 = path5.relative(docRoot2, real);
+  if (relative2.startsWith("..") || path5.isAbsolute(relative2)) {
     throw new Error(`${dir} escapes the canonical .SNL_Doc boundary.`);
   }
 }
 async function workspaceUsesEntityStorage(root) {
-  const configPath2 = path4.join(root, "config.json");
+  const configPath2 = path5.join(root, "config.json");
   let handle;
   try {
-    handle = await import_node_fs3.promises.open(configPath2, import_node_fs2.constants.O_RDONLY | import_node_fs2.constants.O_NOFOLLOW);
+    handle = await import_node_fs4.promises.open(configPath2, import_node_fs3.constants.O_RDONLY | import_node_fs3.constants.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${configPath2} must be a regular, non-symlink file.`);
     const config = JSON.parse(await handle.readFile("utf8"));
@@ -17574,16 +17826,16 @@ async function workspaceUsesEntityStorage(root) {
   }
 }
 async function appendJsonDirectoryCandidates(root, relativeDirectory, candidates) {
-  const directory = path4.join(root, relativeDirectory);
+  const directory = path5.join(root, relativeDirectory);
   try {
-    await assertCanonicalDirectory(directory, root);
-    for (const entry of await import_node_fs3.promises.readdir(directory, { withFileTypes: true })) {
-      const absolute = path4.join(directory, entry.name);
+    await assertCanonicalDirectory2(directory, root);
+    for (const entry of await import_node_fs4.promises.readdir(directory, { withFileTypes: true })) {
+      const absolute = path5.join(directory, entry.name);
       if (entry.name.endsWith(".json") && entry.isSymbolicLink()) {
         throw new Error(`${absolute} must not be a symlink.`);
       }
       if (entry.isFile() && entry.name.endsWith(".json")) {
-        candidates.push(path4.join(relativeDirectory, entry.name));
+        candidates.push(path5.join(relativeDirectory, entry.name));
       }
     }
   } catch (error) {
@@ -17592,7 +17844,7 @@ async function appendJsonDirectoryCandidates(root, relativeDirectory, candidates
 }
 async function loadWorkspaceJson(workspaceRoot) {
   const root = snlDocRoot(workspaceRoot);
-  await assertCanonicalDirectory(root, root);
+  await assertCanonicalDirectory2(root, root);
   const entityStorage = await workspaceUsesEntityStorage(root);
   const candidates = ["config.json", "relationships.json"];
   if (entityStorage) {
@@ -17607,17 +17859,17 @@ async function loadWorkspaceJson(workspaceRoot) {
     candidates.push("entries.json");
     await appendJsonDirectoryCandidates(root, "term_macros", candidates);
   }
-  const libraryRoot = path4.join(root, "libraries");
+  const libraryRoot = path5.join(root, "libraries");
   try {
-    await assertCanonicalDirectory(libraryRoot, root);
-    const libraries = await import_node_fs3.promises.readdir(libraryRoot, { withFileTypes: true });
+    await assertCanonicalDirectory2(libraryRoot, root);
+    const libraries = await import_node_fs4.promises.readdir(libraryRoot, { withFileTypes: true });
     for (const entry of libraries) {
       if (!entry.name.startsWith(".") && entry.isSymbolicLink()) {
-        throw new Error(`${path4.join(libraryRoot, entry.name)} must not be a symlink.`);
+        throw new Error(`${path5.join(libraryRoot, entry.name)} must not be a symlink.`);
       }
       if (entry.isDirectory() && !entry.name.startsWith(".")) {
-        await assertCanonicalDirectory(path4.join(libraryRoot, entry.name), root);
-        candidates.push(path4.join("libraries", entry.name, "graph.json"));
+        await assertCanonicalDirectory2(path5.join(libraryRoot, entry.name), root);
+        candidates.push(path5.join("libraries", entry.name, "graph.json"));
       }
     }
   } catch (error) {
@@ -17626,13 +17878,13 @@ async function loadWorkspaceJson(workspaceRoot) {
   const unique = [...new Set(candidates)].sort();
   const loaded = [];
   for (const relPath of unique) {
-    const absPath = path4.join(root, relPath);
-    await assertCanonicalDirectory(path4.dirname(absPath), root);
+    const absPath = path5.join(root, relPath);
+    await assertCanonicalDirectory2(path5.dirname(absPath), root);
     let raw;
     let stat;
     let handle;
     try {
-      handle = await import_node_fs3.promises.open(absPath, import_node_fs2.constants.O_RDONLY | import_node_fs2.constants.O_NOFOLLOW);
+      handle = await import_node_fs4.promises.open(absPath, import_node_fs3.constants.O_RDONLY | import_node_fs3.constants.O_NOFOLLOW);
       stat = await handle.stat();
       if (!stat.isFile()) {
         throw new Error(`${absPath} must be a regular, non-symlink file.`);
@@ -17660,7 +17912,7 @@ async function loadWorkspaceJson(workspaceRoot) {
     } catch (error) {
       throw new Error(`Failed to parse ${absPath}: ${error.message}`);
     }
-    const rel2 = relPath.split(path4.sep).join("/");
+    const rel2 = relPath.split(path5.sep).join("/");
     validateSchemaShape(absPath, rel2, data);
     loaded.push({
       absPath,
@@ -17809,250 +18061,6 @@ function compareOccurrence(a3, b2) {
 // lib/entity-writes.ts
 var import_node_fs5 = require("node:fs");
 var path6 = __toESM(require("node:path"), 1);
-
-// lib/guarded-json-file.ts
-var import_node_fs4 = require("node:fs");
-var import_node_path = __toESM(require("node:path"), 1);
-var import_node_crypto3 = require("node:crypto");
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readCanonicalDirectoryIdentity(directory) {
-  const resolved = import_node_path.default.resolve(directory);
-  const stat = await import_node_fs4.promises.lstat(resolved);
-  if (!stat.isDirectory() || stat.isSymbolicLink() || await import_node_fs4.promises.realpath(resolved) !== resolved) {
-    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
-  }
-  return { dev: stat.dev, ino: stat.ino };
-}
-async function assertCanonicalDirectory2(directory, expected) {
-  const observed = await readCanonicalDirectoryIdentity(directory);
-  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
-    throw new Error(`${import_node_path.default.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
-  }
-  return observed;
-}
-async function readRegularText(file) {
-  const directory = import_node_path.default.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory2(directory);
-  let handle;
-  try {
-    handle = await import_node_fs4.promises.open(file, import_node_fs4.constants.O_RDONLY | import_node_fs4.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    await assertCanonicalDirectory2(directory, directoryIdentity);
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return {
-      text: await handle.readFile("utf8"),
-      mode: stat.mode & 511,
-      dev: stat.dev,
-      ino: stat.ino,
-      directoryDev: directoryIdentity.dev,
-      directoryIno: directoryIdentity.ino
-    };
-  } finally {
-    await handle?.close();
-  }
-}
-async function syncDirectory(directory, beforeSync) {
-  await beforeSync?.();
-  const handle = await import_node_fs4.promises.open(directory, import_node_fs4.constants.O_RDONLY);
-  try {
-    await handle.sync();
-  } finally {
-    await handle.close();
-  }
-}
-async function sameInode(left, right) {
-  try {
-    const [a3, b2] = await Promise.all([import_node_fs4.promises.lstat(left), import_node_fs4.promises.lstat(right)]);
-    return a3.dev === b2.dev && a3.ino === b2.ino;
-  } catch {
-    return false;
-  }
-}
-async function installNewJson(file, value, hooks = {}) {
-  const directory = import_node_path.default.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory2(directory);
-  const temp = import_node_path.default.join(
-    directory,
-    `.${import_node_path.default.basename(file)}.snl-create-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.tmp`
-  );
-  let handle;
-  let installed = false;
-  try {
-    handle = await import_node_fs4.promises.open(temp, import_node_fs4.constants.O_CREAT | import_node_fs4.constants.O_EXCL | import_node_fs4.constants.O_WRONLY, 420);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await assertCanonicalDirectory2(directory, directoryIdentity);
-    await import_node_fs4.promises.link(temp, file);
-    installed = true;
-    try {
-      await syncDirectory(directory, hooks.beforeDirectorySync);
-    } catch (error) {
-      if (await sameInode(file, temp)) {
-        await import_node_fs4.promises.rm(file);
-        installed = false;
-      }
-      throw error;
-    }
-  } finally {
-    await handle?.close().catch(() => void 0);
-    await import_node_fs4.promises.rm(temp, { force: true }).catch(() => void 0);
-    if (installed) {
-    }
-  }
-}
-async function restoreCapturedPath(captured, target) {
-  try {
-    await import_node_fs4.promises.link(captured, target);
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    throw new Error(
-      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
-      { cause: error }
-    );
-  }
-  await import_node_fs4.promises.rm(captured);
-}
-async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
-  const directory = import_node_path.default.dirname(file);
-  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
-  const nonce = `${process.pid}-${(0, import_node_crypto3.randomUUID)()}`;
-  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.tmp`);
-  const captured = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.captured`);
-  let handle;
-  let capturedPresent = false;
-  let installed = false;
-  try {
-    handle = await import_node_fs4.promises.open(temp, import_node_fs4.constants.O_CREAT | import_node_fs4.constants.O_EXCL | import_node_fs4.constants.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await hooks.beforeCapture?.();
-    await assertCanonicalDirectory2(directory, expectedDirectory);
-    await hooks.afterParentCheckBeforeCapture?.();
-    await import_node_fs4.promises.rename(file, captured);
-    capturedPresent = true;
-    await assertCanonicalDirectory2(directory, expectedDirectory);
-    await hooks.afterCapture?.();
-    const observed = await readRegularText(captured);
-    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
-      await restoreCapturedPath(captured, file);
-      capturedPresent = false;
-      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
-    }
-    try {
-      await import_node_fs4.promises.link(temp, file);
-      installed = true;
-    } catch (error) {
-      try {
-        await restoreCapturedPath(captured, file);
-        capturedPresent = false;
-      } catch (restoreError) {
-        throw new Error(
-          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-          { cause: error }
-        );
-      }
-      throw error;
-    }
-    try {
-      await syncDirectory(directory, hooks.beforeDirectorySync);
-    } catch (error) {
-      if (!await sameInode(file, temp)) {
-        throw new Error(
-          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
-          { cause: error }
-        );
-      }
-      await import_node_fs4.promises.rm(file);
-      installed = false;
-      await restoreCapturedPath(captured, file);
-      capturedPresent = false;
-      throw error;
-    }
-    try {
-      await import_node_fs4.promises.rm(captured);
-      capturedPresent = false;
-    } catch {
-    }
-  } catch (error) {
-    if (capturedPresent && !installed) {
-      try {
-        await restoreCapturedPath(captured, file);
-        capturedPresent = false;
-      } catch (restoreError) {
-        throw new Error(
-          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-          { cause: error }
-        );
-      }
-    }
-    throw error;
-  } finally {
-    await handle?.close().catch(() => void 0);
-    await import_node_fs4.promises.rm(temp, { force: true }).catch(() => void 0);
-  }
-}
-async function removeJsonIfUnchanged(file, expected, hooks = {}) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
-  const directory = import_node_path.default.dirname(file);
-  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
-  const captured = import_node_path.default.join(
-    directory,
-    `.${import_node_path.default.basename(file)}.snl-remove-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.captured`
-  );
-  await hooks.beforeCapture?.();
-  await assertCanonicalDirectory2(directory, expectedDirectory);
-  await hooks.afterParentCheckBeforeCapture?.();
-  await import_node_fs4.promises.rename(file, captured);
-  let observed;
-  try {
-    await assertCanonicalDirectory2(directory, expectedDirectory);
-    await hooks.afterCapture?.();
-    observed = await readRegularText(captured);
-  } catch (error) {
-    try {
-      await restoreCapturedPath(captured, file);
-    } catch (restoreError) {
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-        { cause: error }
-      );
-    }
-    throw error;
-  }
-  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
-    await restoreCapturedPath(captured, file);
-    throw new Error(`${file} changed concurrently; refusing to remove it.`);
-  }
-  try {
-    await syncDirectory(directory, hooks.beforeDirectorySync);
-  } catch (error) {
-    try {
-      await restoreCapturedPath(captured, file);
-    } catch (restoreError) {
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-        { cause: error }
-      );
-    }
-    throw error;
-  }
-  try {
-    await import_node_fs4.promises.rm(captured);
-  } catch {
-  }
-}
-
-// lib/entity-writes.ts
 function isRecord5(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
@@ -18525,12 +18533,15 @@ async function syncDirectoryDurably(directory, beforeSync) {
     await handle.close();
   }
 }
-async function restoreCapturedDirectory(captured, target, beforeSync) {
+async function restoreCapturedDirectory(captured, target, hooks = {}) {
   try {
     await import_node_fs6.promises.mkdir(target);
   } catch (error) {
     throw new Error(`${target} could not be restored without overwriting a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   }
+  const reservation = await readDirectoryIdentity(target);
+  await hooks.beforeInstall?.();
+  await assertDirectoryIdentity(target, reservation);
   try {
     await import_node_fs6.promises.rename(captured, target);
   } catch (error) {
@@ -18538,7 +18549,7 @@ async function restoreCapturedDirectory(captured, target, beforeSync) {
     throw new Error(`${target} could not be restored; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   }
   try {
-    await syncDirectoryDurably(import_node_path2.default.dirname(target), beforeSync);
+    await syncDirectoryDurably(import_node_path2.default.dirname(target), hooks.beforeSync);
   } catch (error) {
     try {
       await import_node_fs6.promises.rename(target, captured);
@@ -19247,7 +19258,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         await syncDirectoryDurably(import_node_path2.default.dirname(dir), options.beforeLibraryCaptureSync);
       } catch (error) {
         try {
-          await restoreCapturedDirectory(tomb, dir);
+          await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
         } catch (restoreError) {
           throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
         }
@@ -19255,14 +19266,14 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       }
       const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
       if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
-        await restoreCapturedDirectory(tomb, dir);
+        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
         throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
       }
       let captured;
       try {
         captured = await readLibraryDirectoryValue(tomb, id);
       } catch (error) {
-        await restoreCapturedDirectory(tomb, dir);
+        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
         throw new Error(
           `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
           { cause: error }
@@ -19270,7 +19281,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       }
       const capturedExtras = await libraryExtraNames(tomb);
       if (sha(captured) !== current.revision || capturedExtras.length) {
-        await restoreCapturedDirectory(tomb, dir);
+        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
         throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
       }
       await options.beforeLibraryDirectoryRemove?.(tomb);
@@ -19311,7 +19322,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           }
         }
         try {
-          await restoreCapturedDirectory(tomb, dir);
+          await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
         } catch (restoreError) {
           recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
         }

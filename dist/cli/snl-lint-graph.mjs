@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // bin/impl/lint-graph.ts
-import { promises as fs2 } from "node:fs";
-import * as path2 from "node:path";
+import { promises as fs3 } from "node:fs";
+import * as path3 from "node:path";
 
 // lib/cli-args.ts
 function parseArgs(argv, specs) {
@@ -112,8 +112,52 @@ var HELP_FLAG = {
 };
 
 // lib/snl-doc.ts
+import { constants as constants2, promises as fs2 } from "node:fs";
+import * as path2 from "node:path";
+
+// lib/guarded-json-file.ts
 import { constants, promises as fs } from "node:fs";
-import * as path from "node:path";
+import path from "node:path";
+async function readCanonicalDirectoryIdentity(directory) {
+  const resolved = path.resolve(directory);
+  const stat = await fs.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
+    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
+  }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${path.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
+}
+async function readRegularText(file) {
+  const directory = path.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  let handle;
+  try {
+    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
+  } catch (error) {
+    if (error.code === "ELOOP")
+      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
+    throw error;
+  } finally {
+    await handle?.close();
+  }
+}
 
 // lib/entity-storage.ts
 import { createHash } from "node:crypto";
@@ -187,38 +231,38 @@ function assertCompatibleSchemaMarker(value, current, label, required = false) {
 
 // lib/snl-doc.ts
 function snlDocRoot(workspaceRoot) {
-  return path.resolve(workspaceRoot, ".SNL_Doc");
+  return path2.resolve(workspaceRoot, ".SNL_Doc");
 }
 function configPath(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "config.json");
+  return path2.join(snlDocRoot(workspaceRoot), "config.json");
 }
 function entriesPath(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "entries.json");
+  return path2.join(snlDocRoot(workspaceRoot), "entries.json");
 }
 function entryEntitiesDir(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "entries");
+  return path2.join(snlDocRoot(workspaceRoot), "entries");
 }
 function macroEntitiesDir(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "macros");
+  return path2.join(snlDocRoot(workspaceRoot), "macros");
 }
 function packageManifestsDir(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "packages");
+  return path2.join(snlDocRoot(workspaceRoot), "packages");
 }
 function termMacrosDir(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "term_macros");
+  return path2.join(snlDocRoot(workspaceRoot), "term_macros");
 }
 function librariesDir(workspaceRoot) {
-  return path.join(snlDocRoot(workspaceRoot), "libraries");
+  return path2.join(snlDocRoot(workspaceRoot), "libraries");
 }
 function libraryDir(workspaceRoot, slug) {
-  return path.join(librariesDir(workspaceRoot), slug);
+  return path2.join(librariesDir(workspaceRoot), slug);
 }
 function libraryGraphPath(workspaceRoot, slug) {
-  return path.join(libraryDir(workspaceRoot, slug), "graph.json");
+  return path2.join(libraryDir(workspaceRoot, slug), "graph.json");
 }
 async function pathExists(p) {
   try {
-    await fs.lstat(p);
+    await fs2.lstat(p);
     return true;
   } catch (error) {
     if (error.code === "ENOENT") return false;
@@ -228,7 +272,7 @@ async function pathExists(p) {
 async function readJson(p) {
   let handle;
   try {
-    handle = await fs.open(p, constants.O_RDONLY | constants.O_NOFOLLOW);
+    handle = await fs2.open(p, constants2.O_RDONLY | constants2.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${p} must be a regular, non-symlink file.`);
     return JSON.parse(await handle.readFile("utf8"));
@@ -245,7 +289,7 @@ async function assertSnlDoc(workspaceRoot) {
   const dir = snlDocRoot(workspaceRoot);
   let stat;
   try {
-    stat = await fs.lstat(dir);
+    stat = await fs2.lstat(dir);
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
     throw new Error(
@@ -364,7 +408,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     ["macros", macroEntitiesDir(workspaceRoot)]
   ]) {
     try {
-      const stat = await fs.lstat(directory);
+      const stat = await fs2.lstat(directory);
       if (!stat.isDirectory() || stat.isSymbolicLink()) {
         throw new Error(`${directory} must be a regular, non-symlink directory.`);
       }
@@ -392,7 +436,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   const entriesFile = entriesPath(workspaceRoot);
   let legacyEntries = null;
   if (await pathExists(entriesFile)) {
-    const stat = await fs.lstat(entriesFile);
+    const stat = await fs2.lstat(entriesFile);
     if (!stat.isFile() || stat.isSymbolicLink()) {
       throw new Error(`${entriesFile} must be a regular, non-symlink legacy backup file.`);
     }
@@ -400,7 +444,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   }
   const legacyPackages = /* @__PURE__ */ new Map();
   for (const { relativePath, value } of await readJsonDirectory(termMacrosDir(workspaceRoot))) {
-    legacyPackages.set(path.basename(relativePath), value);
+    legacyPackages.set(path2.basename(relativePath), value);
   }
   const actual = makeEntityStorageReceipt(
     legacyEntries,
@@ -510,23 +554,29 @@ async function readJsonDirectory(directory, required = false) {
     if (required) throw new Error(`Required entity directory is missing: ${directory}.`);
     return [];
   }
-  const directoryStat = await fs.lstat(directory);
-  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a real directory, not a symlink.`);
+  const resolvedDirectory = path2.resolve(directory);
+  const directoryStat = await fs2.lstat(resolvedDirectory);
+  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink() || await fs2.realpath(resolvedDirectory) !== resolvedDirectory) {
+    throw new Error(`${directory} must be a canonical real directory, not a symlink.`);
   }
-  const base = path.basename(directory);
-  const names = (await fs.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
-  return Promise.all(names.map(async (name) => {
-    const absolute = path.join(directory, name);
-    const stat = await fs.lstat(absolute);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      throw new Error(`${absolute} must be a regular, non-symlink file.`);
+  const base = path2.basename(directory);
+  const names = (await fs2.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
+  const rows = await Promise.all(names.map(async (name) => {
+    const absolute = path2.join(directory, name);
+    const text = (await readRegularText(absolute)).text;
+    let value;
+    try {
+      value = JSON.parse(text);
+    } catch (error) {
+      throw new Error(`Invalid JSON in ${absolute}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
-    return {
-      relativePath: `${base}/${name}`,
-      value: await readJson(absolute)
-    };
+    return { relativePath: `${base}/${name}`, value };
   }));
+  const finalDirectoryStat = await fs2.lstat(resolvedDirectory);
+  if (!finalDirectoryStat.isDirectory() || finalDirectoryStat.isSymbolicLink() || finalDirectoryStat.dev !== directoryStat.dev || finalDirectoryStat.ino !== directoryStat.ino) {
+    throw new Error(`${directory} changed concurrently while its entities were read.`);
+  }
+  return rows;
 }
 function assertExpectedEntityPath(actual, expected) {
   if (actual !== expected) {
@@ -541,7 +591,7 @@ async function listLibrarySlugs(workspaceRoot) {
   if (!await pathExists(dir)) {
     return [];
   }
-  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const entries = await fs2.readdir(dir, { withFileTypes: true });
   return entries.filter((e) => e.isDirectory() && !e.name.startsWith(".")).map((e) => e.name).sort();
 }
 
@@ -880,7 +930,7 @@ async function main() {
     process.stdout.write(usage() + "\n");
     return 0;
   }
-  const root = path2.resolve(String(parsed.flags.root));
+  const root = path3.resolve(String(parsed.flags.root));
   const asJson = parsed.flags.json === true;
   try {
     await assertSnlDoc(root);
@@ -889,7 +939,7 @@ async function main() {
 `);
     return 2;
   }
-  const targets = [...parsed.positional.map((p) => path2.resolve(p))];
+  const targets = [...parsed.positional.map((p) => path3.resolve(p))];
   for (const slug of slugs) {
     targets.push(libraryGraphPath(root, slug));
   }
@@ -901,7 +951,7 @@ async function main() {
     }
     if (targets.length === 0) {
       process.stderr.write(
-        `No graph.json files found under ${path2.join(root, ".SNL_Doc/libraries")}.
+        `No graph.json files found under ${path3.join(root, ".SNL_Doc/libraries")}.
 `
       );
       return 2;
@@ -912,7 +962,7 @@ async function main() {
   for (const abs of targets) {
     let raw;
     try {
-      const text = await fs2.readFile(abs, "utf8");
+      const text = await fs3.readFile(abs, "utf8");
       raw = JSON.parse(text);
     } catch (err) {
       reports.push({

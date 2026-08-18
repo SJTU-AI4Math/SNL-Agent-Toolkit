@@ -15313,6 +15313,10 @@ async function readRegularText(file) {
       directoryDev: directoryIdentity.dev,
       directoryIno: directoryIdentity.ino
     };
+  } catch (error) {
+    if (error.code === "ELOOP")
+      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
+    throw error;
   } finally {
     await handle?.close();
   }
@@ -15916,23 +15920,29 @@ async function readJsonDirectory(directory, required = false) {
     if (required) throw new Error(`Required entity directory is missing: ${directory}.`);
     return [];
   }
-  const directoryStat = await fs2.lstat(directory);
-  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a real directory, not a symlink.`);
+  const resolvedDirectory = path3.resolve(directory);
+  const directoryStat = await fs2.lstat(resolvedDirectory);
+  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink() || await fs2.realpath(resolvedDirectory) !== resolvedDirectory) {
+    throw new Error(`${directory} must be a canonical real directory, not a symlink.`);
   }
   const base = path3.basename(directory);
   const names = (await fs2.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
-  return Promise.all(names.map(async (name) => {
+  const rows = await Promise.all(names.map(async (name) => {
     const absolute = path3.join(directory, name);
-    const stat = await fs2.lstat(absolute);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      throw new Error(`${absolute} must be a regular, non-symlink file.`);
+    const text2 = (await readRegularText(absolute)).text;
+    let value;
+    try {
+      value = JSON.parse(text2);
+    } catch (error) {
+      throw new Error(`Invalid JSON in ${absolute}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
-    return {
-      relativePath: `${base}/${name}`,
-      value: await readJson(absolute)
-    };
+    return { relativePath: `${base}/${name}`, value };
   }));
+  const finalDirectoryStat = await fs2.lstat(resolvedDirectory);
+  if (!finalDirectoryStat.isDirectory() || finalDirectoryStat.isSymbolicLink() || finalDirectoryStat.dev !== directoryStat.dev || finalDirectoryStat.ino !== directoryStat.ino) {
+    throw new Error(`${directory} changed concurrently while its entities were read.`);
+  }
+  return rows;
 }
 function assertExpectedEntityPath(actual, expected) {
   if (actual !== expected) {

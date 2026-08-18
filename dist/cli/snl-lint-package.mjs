@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // bin/impl/lint-package.ts
-import { promises as fs2 } from "node:fs";
-import * as path3 from "node:path";
+import { promises as fs3 } from "node:fs";
+import * as path4 from "node:path";
 
 // lib/cli-args.ts
 function parseArgs(argv, specs) {
@@ -112,8 +112,52 @@ var HELP_FLAG = {
 };
 
 // lib/snl-doc.ts
+import { constants as constants2, promises as fs2 } from "node:fs";
+import * as path3 from "node:path";
+
+// lib/guarded-json-file.ts
 import { constants, promises as fs } from "node:fs";
-import * as path2 from "node:path";
+import path from "node:path";
+async function readCanonicalDirectoryIdentity(directory) {
+  const resolved = path.resolve(directory);
+  const stat = await fs.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
+    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
+  }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${path.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
+}
+async function readRegularText(file) {
+  const directory = path.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  let handle;
+  try {
+    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
+  } catch (error) {
+    if (error.code === "ELOOP")
+      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
+    throw error;
+  } finally {
+    await handle?.close();
+  }
+}
 
 // node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t2) {
@@ -1061,27 +1105,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path4 = "";
+  var path5 = "";
   switch (size) {
     case "sqrtMain":
-      path4 = sqrtMain(extraVinculum, hLinePad);
+      path5 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path4 = sqrtSize1(extraVinculum, hLinePad);
+      path5 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path4 = sqrtSize2(extraVinculum, hLinePad);
+      path5 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path4 = sqrtSize3(extraVinculum, hLinePad);
+      path5 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path4 = sqrtSize4(extraVinculum, hLinePad);
+      path5 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path4 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path5 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path4;
+  return path5;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -1107,7 +1151,7 @@ var innerPath = function innerPath2(name, height) {
       return "";
   }
 };
-var path = {
+var path2 = {
   // The doubleleftarrow geometry is from glyph U+21D0 in the font KaTeX Main
   doubleleftarrow: "M262 157\nl10-10c34-36 62.7-77 86-123 3.3-8 5-13.3 5-16 0-5.3-6.7-8-20-8-7.3\n 0-12.2.5-14.5 1.5-2.3 1-4.8 4.5-7.5 10.5-49.3 97.3-121.7 169.3-217 216-28\n 14-57.3 25-88 33-6.7 2-11 3.8-13 5.5-2 1.7-3 4.2-3 7.5s1 5.8 3 7.5\nc2 1.7 6.3 3.5 13 5.5 68 17.3 128.2 47.8 180.5 91.5 52.3 43.7 93.8 96.2 124.5\n 157.5 9.3 8 15.3 12.3 18 13h6c12-.7 18-4 18-10 0-2-1.7-7-5-15-23.3-46-52-87\n-86-123l-10-10h399738v-40H218c328 0 0 0 0 0l-10-8c-26.7-20-65.7-43-117-69 2.7\n-2 6-3.7 10-5 36.7-16 72.3-37.3 107-64l10-8h399782v-40z\nm8 0v40h399730v-40zm0 194v40h399730v-40z",
   // doublerightarrow is from glyph U+21D2 in font KaTeX Main
@@ -1636,7 +1680,7 @@ var PathNode = class {
     if (this.alternate) {
       node.setAttribute("d", this.alternate);
     } else {
-      node.setAttribute("d", path[this.pathName]);
+      node.setAttribute("d", path2[this.pathName]);
     }
     return node;
   }
@@ -1644,7 +1688,7 @@ var PathNode = class {
     if (this.alternate) {
       return '<path d="' + escape(this.alternate) + '"/>';
     } else {
-      return '<path d="' + escape(path[this.pathName]) + '"/>';
+      return '<path d="' + escape(path2[this.pathName]) + '"/>';
     }
   }
 };
@@ -5264,8 +5308,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path4 = new PathNode(pathName);
-  var svgNode = new SvgNode([path4], {
+  var path5 = new PathNode(pathName);
+  var svgNode = new SvgNode([path5], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -6434,8 +6478,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path4 = new PathNode(pathName);
-      var svgNode = new SvgNode([path4], {
+      var path5 = new PathNode(pathName);
+      var svgNode = new SvgNode([path5], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -7732,8 +7776,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path4 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path4], {
+  var path5 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path5], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -7902,10 +7946,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path4 = new PathNode(svgLabel, pathStr);
+    var path5 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path4], {
+    var svg = new SvgNode([path5], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -7946,8 +7990,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path4 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path4);
+  var path5 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path5);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -8454,8 +8498,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path4 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path4)], {
+    var path5 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path5)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -15214,29 +15258,29 @@ function assertCompatibleSchemaMarker(value, current, label, required = false) {
 
 // lib/snl-doc.ts
 function snlDocRoot(workspaceRoot) {
-  return path2.resolve(workspaceRoot, ".SNL_Doc");
+  return path3.resolve(workspaceRoot, ".SNL_Doc");
 }
 function configPath(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "config.json");
+  return path3.join(snlDocRoot(workspaceRoot), "config.json");
 }
 function entriesPath(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "entries.json");
+  return path3.join(snlDocRoot(workspaceRoot), "entries.json");
 }
 function entryEntitiesDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "entries");
+  return path3.join(snlDocRoot(workspaceRoot), "entries");
 }
 function macroEntitiesDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "macros");
+  return path3.join(snlDocRoot(workspaceRoot), "macros");
 }
 function packageManifestsDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "packages");
+  return path3.join(snlDocRoot(workspaceRoot), "packages");
 }
 function termMacrosDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "term_macros");
+  return path3.join(snlDocRoot(workspaceRoot), "term_macros");
 }
 async function pathExists(p3) {
   try {
-    await fs.lstat(p3);
+    await fs2.lstat(p3);
     return true;
   } catch (error) {
     if (error.code === "ENOENT") return false;
@@ -15246,7 +15290,7 @@ async function pathExists(p3) {
 async function readJson(p3) {
   let handle;
   try {
-    handle = await fs.open(p3, constants.O_RDONLY | constants.O_NOFOLLOW);
+    handle = await fs2.open(p3, constants2.O_RDONLY | constants2.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${p3} must be a regular, non-symlink file.`);
     return JSON.parse(await handle.readFile("utf8"));
@@ -15263,7 +15307,7 @@ async function assertSnlDoc(workspaceRoot) {
   const dir = snlDocRoot(workspaceRoot);
   let stat;
   try {
-    stat = await fs.lstat(dir);
+    stat = await fs2.lstat(dir);
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
     throw new Error(
@@ -15369,7 +15413,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     ["macros", macroEntitiesDir(workspaceRoot)]
   ]) {
     try {
-      const stat = await fs.lstat(directory);
+      const stat = await fs2.lstat(directory);
       if (!stat.isDirectory() || stat.isSymbolicLink()) {
         throw new Error(`${directory} must be a regular, non-symlink directory.`);
       }
@@ -15397,7 +15441,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   const entriesFile = entriesPath(workspaceRoot);
   let legacyEntries = null;
   if (await pathExists(entriesFile)) {
-    const stat = await fs.lstat(entriesFile);
+    const stat = await fs2.lstat(entriesFile);
     if (!stat.isFile() || stat.isSymbolicLink()) {
       throw new Error(`${entriesFile} must be a regular, non-symlink legacy backup file.`);
     }
@@ -15405,7 +15449,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   }
   const legacyPackages = /* @__PURE__ */ new Map();
   for (const { relativePath, value } of await readJsonDirectory(termMacrosDir(workspaceRoot))) {
-    legacyPackages.set(path2.basename(relativePath), value);
+    legacyPackages.set(path3.basename(relativePath), value);
   }
   const actual = makeEntityStorageReceipt(
     legacyEntries,
@@ -15440,13 +15484,13 @@ async function readAllMacroPackages(workspaceRoot) {
   if (!await pathExists(dir)) {
     return {};
   }
-  const names = await fs.readdir(dir);
+  const names = await fs2.readdir(dir);
   const out = {};
   for (const name of names) {
     if (!name.endsWith(".json")) continue;
     const bare = name.replace(/\.json$/i, "");
     try {
-      defineIdentity(out, bare, await readJson(path2.join(dir, name)));
+      defineIdentity(out, bare, await readJson(path3.join(dir, name)));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       throw new Error(`Failed to read macro package '${bare}': ${msg}`);
@@ -15543,23 +15587,29 @@ async function readJsonDirectory(directory, required = false) {
     if (required) throw new Error(`Required entity directory is missing: ${directory}.`);
     return [];
   }
-  const directoryStat = await fs.lstat(directory);
-  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a real directory, not a symlink.`);
+  const resolvedDirectory = path3.resolve(directory);
+  const directoryStat = await fs2.lstat(resolvedDirectory);
+  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink() || await fs2.realpath(resolvedDirectory) !== resolvedDirectory) {
+    throw new Error(`${directory} must be a canonical real directory, not a symlink.`);
   }
-  const base = path2.basename(directory);
-  const names = (await fs.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
-  return Promise.all(names.map(async (name) => {
-    const absolute = path2.join(directory, name);
-    const stat = await fs.lstat(absolute);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      throw new Error(`${absolute} must be a regular, non-symlink file.`);
+  const base = path3.basename(directory);
+  const names = (await fs2.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
+  const rows = await Promise.all(names.map(async (name) => {
+    const absolute = path3.join(directory, name);
+    const text2 = (await readRegularText(absolute)).text;
+    let value;
+    try {
+      value = JSON.parse(text2);
+    } catch (error) {
+      throw new Error(`Invalid JSON in ${absolute}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
-    return {
-      relativePath: `${base}/${name}`,
-      value: await readJson(absolute)
-    };
+    return { relativePath: `${base}/${name}`, value };
   }));
+  const finalDirectoryStat = await fs2.lstat(resolvedDirectory);
+  if (!finalDirectoryStat.isDirectory() || finalDirectoryStat.isSymbolicLink() || finalDirectoryStat.dev !== directoryStat.dev || finalDirectoryStat.ino !== directoryStat.ino) {
+    throw new Error(`${directory} changed concurrently while its entities were read.`);
+  }
+  return rows;
 }
 function assertExpectedEntityPath(actual, expected) {
   if (actual !== expected) {
@@ -15701,12 +15751,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path4 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path5 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path4} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path4,
+              message: `${path5} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path5,
               position: result.position
             });
           }
@@ -15720,43 +15770,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path4 = `macros.${name}`;
+  const path5 = `macros.${name}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path4}: macro entry must be an object.`, path: path4 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path5}: macro entry must be an object.`, path: path5 });
     return;
   }
   const macro = raw;
   if (typeof macro.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path4}.description must be a string (may be empty).`, path: `${path4}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path5}.description must be a string (may be empty).`, path: `${path5}.description` });
   }
   if (!isRecord3(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path4}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path4}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path5}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path5}.source` });
   }
   if (typeof macro.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path4}.dynamic_arity must be a boolean.`, path: `${path4}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path5}.dynamic_arity must be a boolean.`, path: `${path5}.dynamic_arity` });
   }
   if (macro.kind !== void 0 && typeof macro.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path4}.kind must be a string when present.`, path: `${path4}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path5}.kind must be a string when present.`, path: `${path5}.kind` });
   }
   if (!isStringArray2(macro.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path4}.tags must be a string array (may be empty).`, path: `${path4}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path5}.tags must be a string array (may be empty).`, path: `${path5}.tags` });
   } else if (macro.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path4}.tags must not contain backslashes.`, path: `${path4}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path5}.tags must not contain backslashes.`, path: `${path5}.tags` });
   }
   const defaultStyle = macro.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path4}.default_style must be a language \u2192 style-name object.`, path: `${path4}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path5}.default_style must be a language \u2192 style-name object.`, path: `${path5}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path4}.default_style must map language keys to style-name strings.`, path: `${path4}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path5}.default_style must map language keys to style-name strings.`, path: `${path5}.default_style` });
   }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path4}.styles must be a non-empty array.`, path: `${path4}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path5}.styles must be a non-empty array.`, path: `${path5}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path4}.styles[${index}]`;
+    const stylePath = `${path5}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -15820,12 +15870,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path4}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path4}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path5}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path5}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path4}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a2, b2) => a2 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path4}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path5}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a2, b2) => a2 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path5}.styles` });
   }
 }
 function scanTemplatePlaceholders(template) {
@@ -15968,7 +16018,7 @@ async function main2() {
     process.stdout.write(usage() + "\n");
     return 0;
   }
-  const root = path3.resolve(String(parsed.flags.root));
+  const root = path4.resolve(String(parsed.flags.root));
   const asJson = parsed.flags.json === true;
   const checkKatexEnabled = parsed.flags["no-katex"] !== true;
   try {
@@ -15980,7 +16030,7 @@ async function main2() {
   }
   const reports = [];
   const targets = parsed.positional.map((p3) => ({
-    file: path3.resolve(p3)
+    file: path4.resolve(p3)
   }));
   if (names.length > 0 || targets.length === 0) {
     let packages;
@@ -15988,7 +16038,7 @@ async function main2() {
       packages = await readAllMacroPackages(root);
     } catch (error) {
       const failure = {
-        file: path3.join(root, ".SNL_Doc"),
+        file: path4.join(root, ".SNL_Doc"),
         issues: [{ severity: "error", code: "file.read", message: error.message }]
       };
       if (asJson) process.stdout.write(JSON.stringify([failure], null, 2) + "\n");
@@ -15997,7 +16047,7 @@ async function main2() {
     }
     const selected = names.length > 0 ? names.map((name) => name.replace(/\.json$/i, "")) : Object.keys(packages).sort();
     if (selected.length === 0) {
-      process.stderr.write(`No Packages found in ${path3.join(root, ".SNL_Doc")}.
+      process.stderr.write(`No Packages found in ${path4.join(root, ".SNL_Doc")}.
 `);
       return 2;
     }
@@ -16018,7 +16068,7 @@ async function main2() {
       raw = target.raw;
     } else {
       try {
-        const text2 = await fs2.readFile(target.file, "utf8");
+        const text2 = await fs3.readFile(target.file, "utf8");
         raw = JSON.parse(text2);
       } catch (err) {
         reports.push({

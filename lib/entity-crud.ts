@@ -62,7 +62,11 @@ async function syncDirectoryDurably(directory: string, beforeSync?: () => void |
     finally { await handle.close(); }
 }
 
-async function restoreCapturedDirectory(captured: string, target: string, beforeSync?: () => void | Promise<void>): Promise<void> {
+async function restoreCapturedDirectory(
+    captured: string,
+    target: string,
+    hooks: { beforeInstall?: () => void | Promise<void>; beforeSync?: () => void | Promise<void> } = {},
+): Promise<void> {
     try {
         // Reserve the absent canonical name without replacing anything a
         // concurrent writer may have created there.
@@ -71,12 +75,15 @@ async function restoreCapturedDirectory(captured: string, target: string, before
     catch (error) {
         throw new Error(`${target} could not be restored without overwriting a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
+    const reservation = await readDirectoryIdentity(target);
+    await hooks.beforeInstall?.();
+    await assertDirectoryIdentity(target, reservation);
     try { await fs.rename(captured, target); }
     catch (error) {
         await fs.rmdir(target).catch(() => undefined);
         throw new Error(`${target} could not be restored; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
-    try { await syncDirectoryDurably(path.dirname(target), beforeSync); }
+    try { await syncDirectoryDurably(path.dirname(target), hooks.beforeSync); }
     catch (error) {
         try {
             await fs.rename(target, captured);
@@ -427,6 +434,7 @@ type DirectMutationOptions = {
     beforeLibraryDirectoryRemove?: (capturedDirectory: string) => void | Promise<void>;
     beforeLibraryCaptureSync?: () => void | Promise<void>;
     beforeLibraryDeleteCommitSync?: () => void | Promise<void>;
+    beforeLibraryRestoreInstall?: () => void | Promise<void>;
 };
 async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entry-kind" | "macro-kind">, operation: "update" | "delete", id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> {
     return withWorkspaceDataLock(root, `${operation} ${type}`, async () => { const current = await getManagedEntity(root, type, id); if (!current)
@@ -739,7 +747,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         await fs.rename(dir, tomb);
         try { await syncDirectoryDurably(path.dirname(dir), options.beforeLibraryCaptureSync); }
         catch (error) {
-            try { await restoreCapturedDirectory(tomb, dir); }
+            try { await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall }); }
             catch (restoreError) {
                 throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
             }
@@ -747,7 +755,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         }
         const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
         if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
-            await restoreCapturedDirectory(tomb, dir);
+            await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
             throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
         }
         let captured: RecordJson;
@@ -755,7 +763,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             captured = await readLibraryDirectoryValue(tomb, id);
         }
         catch (error) {
-            await restoreCapturedDirectory(tomb, dir);
+            await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
             throw new Error(
                 `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
                 { cause: error },
@@ -763,7 +771,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         }
         const capturedExtras = await libraryExtraNames(tomb);
         if (sha(captured) !== current.revision || capturedExtras.length) {
-            await restoreCapturedDirectory(tomb, dir);
+            await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall });
             throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
         }
         await options.beforeLibraryDirectoryRemove?.(tomb);
@@ -803,7 +811,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                 try { await fs.rename(item.captured, path.join(tomb, item.name)); }
                 catch (restoreError) { recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
             }
-            try { await restoreCapturedDirectory(tomb, dir); }
+            try { await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall }); }
             catch (restoreError) { recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
             if (recoveryErrors.length)
                 throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });

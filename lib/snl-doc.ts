@@ -9,6 +9,7 @@
 
 import { constants, promises as fs } from 'node:fs';
 import * as path from 'node:path';
+import { readRegularText } from './guarded-json-file.ts';
 import { isMacroDocumentV11 as isSnlBasicsMacroDocumentV11 } from '@sjtu-ai4math/snl-basics';
 import {
   type EntryData,
@@ -554,23 +555,27 @@ async function readJsonDirectory(
     if (required) throw new Error(`Required entity directory is missing: ${directory}.`);
     return [];
   }
-  const directoryStat = await fs.lstat(directory);
-  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a real directory, not a symlink.`);
+  const resolvedDirectory = path.resolve(directory);
+  const directoryStat = await fs.lstat(resolvedDirectory);
+  if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink() || await fs.realpath(resolvedDirectory) !== resolvedDirectory) {
+    throw new Error(`${directory} must be a canonical real directory, not a symlink.`);
   }
   const base = path.basename(directory);
   const names = (await fs.readdir(directory)).filter((name) => name.endsWith('.json')).sort();
-  return Promise.all(names.map(async (name) => {
+  const rows = await Promise.all(names.map(async (name) => {
     const absolute = path.join(directory, name);
-    const stat = await fs.lstat(absolute);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      throw new Error(`${absolute} must be a regular, non-symlink file.`);
-    }
-    return {
-      relativePath: `${base}/${name}`,
-      value: await readJson<unknown>(absolute),
-    };
+    const text = (await readRegularText(absolute)).text;
+    let value: unknown;
+    try { value = JSON.parse(text); }
+    catch (error) { throw new Error(`Invalid JSON in ${absolute}: ${error instanceof Error ? error.message : String(error)}`, { cause: error }); }
+    return { relativePath: `${base}/${name}`, value };
   }));
+  const finalDirectoryStat = await fs.lstat(resolvedDirectory);
+  if (!finalDirectoryStat.isDirectory() || finalDirectoryStat.isSymbolicLink()
+      || finalDirectoryStat.dev !== directoryStat.dev || finalDirectoryStat.ino !== directoryStat.ino) {
+    throw new Error(`${directory} changed concurrently while its entities were read.`);
+  }
+  return rows;
 }
 
 function assertExpectedEntityPath(actual: string, expected: string): void {

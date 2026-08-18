@@ -445,6 +445,33 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal((await getManagedEntity(root, 'library', 'sample'))?.revision, library.revision);
   });
 
+  it('never overwrites a concurrent empty directory during Library restore', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'sample');
+    const displacedReservation = path.join(libraries, 'displaced-reservation');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeLibraryDeleteCommitSync: () => { throw new Error('force restoration'); },
+        beforeLibraryRestoreInstall: async () => {
+          await rename(dir, displacedReservation);
+          await mkdir(dir);
+        },
+      }),
+      /replacement directory|captured directory remains/i,
+    );
+    assert.deepEqual(await readdir(dir), []);
+    const recovery = (await readdir(libraries)).find(name => name.startsWith('.sample.snl-entity-'));
+    assert.ok(recovery);
+    assert.equal(await readFile(path.join(libraries, recovery, 'meta.json'), 'utf8'), '{}\n');
+  });
+
   it('refuses to delete a Library that still contains documents or exports', async () => {
     const root = await fixtureCopy();
     const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
