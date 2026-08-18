@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -67,6 +67,22 @@ describe('unified CRUD on workspace v0.1.0', () => {
     }
     assert.equal((await listManagedEntities(legacy, 'entry')).length, 1);
     assert.equal((await listManagedEntities(legacy, 'macro')).length, 1);
+  });
+
+  it('creates and reads schema-1 Entries with the blank title allowed by the Entry linter', async () => {
+    const root = await fixtureCopy();
+    const result = await createManagedEntity(root, 'entry', {
+      id: 'entry.blank',
+      package: 'Logic',
+      kind: 'definition',
+      title: '',
+      content: { snl: 'FOL.implies' },
+      contribution_info: null,
+      pointer: null,
+    });
+    assert.equal(result.status, 'ok');
+    const readBack = await getManagedEntity(root, 'entry', 'entry.blank');
+    assert.equal(readBack?.value.title, '');
   });
 
   it('rejects every missing required Entry schema-1 payload field', async () => {
@@ -282,6 +298,92 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.deepEqual(JSON.parse(await readFile(path.join(dir, 'meta.json'), 'utf8')), originalMeta);
     assert.deepEqual(JSON.parse(await readFile(path.join(dir, 'graph.json'), 'utf8')), concurrentGraph);
     assert.deepEqual(JSON.parse(await readFile(path.join(dir, 'counters.json'), 'utf8')), originalCounters);
+  });
+
+  it('refuses a Library update when its directory is replaced by a symlink', async () => {
+    const root = await fixtureCopy();
+    const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
+    const parked = path.join(root, 'parked-library');
+    const external = path.join(root, 'external-library');
+    await mkdir(dir, { recursive: true });
+    await mkdir(external);
+    for (const [name, value] of [
+      ['meta.json', { title: 'original' }],
+      ['graph.json', { nodes: [], relationships: [] }],
+      ['counters.json', { counters: [] }],
+    ] as const) {
+      await writeFile(path.join(dir, name), `${JSON.stringify(value, null, 2)}\n`);
+      await writeFile(path.join(external, name), `${JSON.stringify(value, null, 2)}\n`);
+    }
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    const externalBefore = await Promise.all(['meta.json', 'graph.json', 'counters.json'].map(name => readFile(path.join(external, name), 'utf8')));
+    await assert.rejects(
+      () => updateManagedEntity(root, 'library', 'sample', {
+        ...library.value,
+        meta: { title: 'mine' },
+      }, library.revision, {
+        beforeEntityInstall: async () => {
+          await rename(dir, parked);
+          await symlink(external, dir, 'dir');
+        },
+      }),
+      /changed concurrently|replacement directory/i,
+    );
+    assert.deepEqual(
+      await Promise.all(['meta.json', 'graph.json', 'counters.json'].map(name => readFile(path.join(external, name), 'utf8'))),
+      externalBefore,
+    );
+  });
+
+  it('preserves an identical replacement Library directory at the final delete seam', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'sample');
+    const parked = path.join(root, 'parked-original-library');
+    await mkdir(dir, { recursive: true });
+    for (const [name, text] of [
+      ['meta.json', '{"title":"same"}\n'],
+      ['graph.json', '{"nodes":[],"relationships":[]}\n'],
+      ['counters.json', '{"counters":[]}\n'],
+    ] as const) await writeFile(path.join(dir, name), text);
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeEntityDelete: async () => {
+          await rename(dir, parked);
+          await mkdir(dir);
+          for (const name of ['meta.json', 'graph.json', 'counters.json'])
+            await cp(path.join(parked, name), path.join(dir, name));
+        },
+      }),
+      /was replaced while deletion was in flight/i,
+    );
+    assert.equal(await readFile(path.join(dir, 'meta.json'), 'utf8'), '{"title":"same"}\n');
+    assert.equal(await readFile(path.join(parked, 'meta.json'), 'utf8'), '{"title":"same"}\n');
+    assert.equal((await readdir(libraries)).some(name => name.startsWith('.sample.snl-entity-')), false);
+  });
+
+  it('restores a Library when documents appear at the final delete seam', async () => {
+    const root = await fixtureCopy();
+    const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeEntityDelete: async () => {
+          await mkdir(path.join(dir, 'documents'));
+          await writeFile(path.join(dir, 'documents', 'arrived.txt'), 'external');
+        },
+      }),
+      /changed while deletion was in flight.*restored/i,
+    );
+    assert.equal(await readFile(path.join(dir, 'documents', 'arrived.txt'), 'utf8'), 'external');
   });
 
   it('refuses to delete a Library that still contains documents or exports', async () => {

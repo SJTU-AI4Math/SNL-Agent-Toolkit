@@ -15490,12 +15490,15 @@ async function readRegularText(file) {
     await handle?.close();
   }
 }
-async function syncDirectory(directory) {
-  const handle = await fs2.open(directory, constants2.O_RDONLY);
+async function syncDirectory(directory, beforeSync) {
+  let handle;
   try {
+    await beforeSync?.();
+    handle = await fs2.open(directory, constants2.O_RDONLY);
     await handle.sync();
+  } catch {
   } finally {
-    await handle.close();
+    await handle?.close().catch(() => void 0);
   }
 }
 async function restoreCapturedPath(captured, target) {
@@ -15553,7 +15556,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     }
     await fs2.rm(captured);
     capturedPresent = false;
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -15603,7 +15606,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   }
   try {
     await fs2.rm(captured);
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
       await restoreCapturedPath(captured, file);

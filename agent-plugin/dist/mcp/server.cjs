@@ -15376,7 +15376,7 @@ function isLocalizedLabel(value, required) {
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertCurrentEntryPayload(value, label) {
-  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, true) || !isRecord2(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
+  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord2(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }
   if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
@@ -17830,12 +17830,15 @@ async function readRegularText(file) {
     await handle?.close();
   }
 }
-async function syncDirectory(directory) {
-  const handle = await import_node_fs4.promises.open(directory, import_node_fs4.constants.O_RDONLY);
+async function syncDirectory(directory, beforeSync) {
+  let handle;
   try {
+    await beforeSync?.();
+    handle = await import_node_fs4.promises.open(directory, import_node_fs4.constants.O_RDONLY);
     await handle.sync();
+  } catch {
   } finally {
-    await handle.close();
+    await handle?.close().catch(() => void 0);
   }
 }
 async function installNewJson(file, value) {
@@ -17913,7 +17916,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     }
     await import_node_fs4.promises.rm(captured);
     capturedPresent = false;
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -17963,7 +17966,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   }
   try {
     await import_node_fs4.promises.rm(captured);
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
       await restoreCapturedPath(captured, file);
@@ -18448,6 +18451,30 @@ function requireRecord(value, label) {
     throw new Error(`${label} must be a JSON object.`);
   return value;
 }
+async function readDirectoryIdentity(directory) {
+  const stat = await import_node_fs6.promises.lstat(directory);
+  if (stat.isSymbolicLink() || !stat.isDirectory())
+    throw new Error(`${directory} must be a regular, non-symlink directory.`);
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertDirectoryIdentity(directory, expected) {
+  const observed = await readDirectoryIdentity(directory);
+  if (observed.dev !== expected.dev || observed.ino !== expected.ino)
+    throw new Error(`${directory} changed concurrently; refusing to access a replacement directory.`);
+}
+async function restoreCapturedDirectory(captured, target) {
+  try {
+    await import_node_fs6.promises.mkdir(target);
+  } catch (error) {
+    throw new Error(`${target} could not be restored without overwriting a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+  }
+  try {
+    await import_node_fs6.promises.rename(captured, target);
+  } catch (error) {
+    await import_node_fs6.promises.rmdir(target).catch(() => void 0);
+    throw new Error(`${target} could not be restored; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+  }
+}
 function requireId(value, field = "id") {
   if (typeof value[field] !== "string" || !value[field])
     throw new Error(`${field} must be a non-empty string.`);
@@ -18735,6 +18762,7 @@ async function createDirect(root, type, input) {
       if (import_node_path2.default.basename(id) !== id || id === "." || id === "..")
         return invalid("Library slug must be one safe path segment.");
       await import_node_fs6.promises.mkdir(dir, { recursive: false });
+      const directoryIdentity = await readDirectoryIdentity(dir);
       const resources = [
         { file: import_node_path2.default.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
         { file: import_node_path2.default.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
@@ -18743,11 +18771,20 @@ async function createDirect(root, type, input) {
       const installed = [];
       try {
         for (const resource of resources) {
+          await assertDirectoryIdentity(dir, directoryIdentity);
           await installNewJson(resource.file, resource.value);
           installed.push(resource);
         }
       } catch (error) {
         const cleanupErrors = [];
+        try {
+          await assertDirectoryIdentity(dir, directoryIdentity);
+        } catch (identityError) {
+          throw new Error(
+            `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; cleanup refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
+            { cause: error }
+          );
+        }
         for (const resource of installed.reverse()) {
           try {
             await removeJsonIfUnchanged(resource.file, jsonText(resource.value));
@@ -18855,6 +18892,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         });
       } else if (type === "library") {
         const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
+        const directoryIdentity = await readDirectoryIdentity(dir);
         const resources = [
           { file: import_node_path2.default.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
           { file: import_node_path2.default.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
@@ -18872,13 +18910,23 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         const installed = [];
         try {
           await options.beforeEntityInstall?.();
+          await assertDirectoryIdentity(dir, directoryIdentity);
           for (const resource of originals) {
+            await assertDirectoryIdentity(dir, directoryIdentity);
             if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
             else await installNewJson(resource.file, resource.next);
             installed.push(resource);
           }
         } catch (error) {
           const rollbackErrors = [];
+          try {
+            await assertDirectoryIdentity(dir, directoryIdentity);
+          } catch (identityError) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; rollback refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
+              { cause: error }
+            );
+          }
           for (const resource of installed.reverse()) {
             try {
               if (resource.original) {
@@ -19086,6 +19134,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       });
     } else if (type === "library") {
       const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
+      const originalDirectoryIdentity = await readDirectoryIdentity(dir);
       const extras = await libraryExtraNames(dir);
       if (extras.length) {
         return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
@@ -19093,18 +19142,25 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       const tomb = import_node_path2.default.join(import_node_path2.default.dirname(dir), `.${id}.snl-entity-${(0, import_node_crypto5.randomUUID)()}.deleted`);
       await options.beforeEntityDelete?.();
       await import_node_fs6.promises.rename(dir, tomb);
+      const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
+      if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
+        await restoreCapturedDirectory(tomb, dir);
+        throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
+      }
       let captured;
       try {
         captured = await readLibraryDirectoryValue(tomb, id);
       } catch (error) {
+        await restoreCapturedDirectory(tomb, dir);
         throw new Error(
-          `${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}: ${error instanceof Error ? error.message : String(error)}`,
+          `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
           { cause: error }
         );
       }
       const capturedExtras = await libraryExtraNames(tomb);
       if (sha(captured) !== current.revision || capturedExtras.length) {
-        throw new Error(`${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}.`);
+        await restoreCapturedDirectory(tomb, dir);
+        throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
       }
       await import_node_fs6.promises.rm(tomb, { recursive: true });
     } else if (type === "entry-package" || type === "macro-package") {

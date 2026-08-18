@@ -43,6 +43,35 @@ async function jsonFiles(directory: string): Promise<string[]> { return (await f
 function managed(type: ManagedEntityType, id: string, value: RecordJson, revisionSource: unknown = value): ManagedEntity { return { type, id, revision: sha(revisionSource), value }; }
 function requireRecord(value: unknown, label: string): RecordJson { if (!isRecord(value))
     throw new Error(`${label} must be a JSON object.`); return value; }
+type DirectoryIdentity = { dev: number; ino: number };
+async function readDirectoryIdentity(directory: string): Promise<DirectoryIdentity> {
+    const stat = await fs.lstat(directory);
+    if (stat.isSymbolicLink() || !stat.isDirectory())
+        throw new Error(`${directory} must be a regular, non-symlink directory.`);
+    return { dev: stat.dev, ino: stat.ino };
+}
+async function assertDirectoryIdentity(directory: string, expected: DirectoryIdentity): Promise<void> {
+    const observed = await readDirectoryIdentity(directory);
+    if (observed.dev !== expected.dev || observed.ino !== expected.ino)
+        throw new Error(`${directory} changed concurrently; refusing to access a replacement directory.`);
+}
+async function restoreCapturedDirectory(captured: string, target: string): Promise<void> {
+    try {
+        // Reserve the absent canonical name without replacing anything a
+        // concurrent writer may have created there.
+        await fs.mkdir(target);
+    }
+    catch (error) {
+        throw new Error(`${target} could not be restored without overwriting a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+    }
+    try {
+        await fs.rename(captured, target);
+    }
+    catch (error) {
+        await fs.rmdir(target).catch(() => undefined);
+        throw new Error(`${target} could not be restored; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+    }
+}
 function requireId(value: RecordJson, field = "id"): string { if (typeof value[field] !== "string" || !value[field])
     throw new Error(`${field} must be a non-empty string.`); return value[field] as string; }
 async function packageRows(root: string, type: "entry-package" | "macro-package"): Promise<ManagedEntity[]> {
@@ -287,6 +316,7 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         if (path.basename(id) !== id || id === "." || id === "..")
             return invalid("Library slug must be one safe path segment.");
         await fs.mkdir(dir, { recursive: false });
+        const directoryIdentity = await readDirectoryIdentity(dir);
         const resources = [
             { file: path.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
             { file: path.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
@@ -295,12 +325,20 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         const installed: typeof resources = [];
         try {
             for (const resource of resources) {
+                await assertDirectoryIdentity(dir, directoryIdentity);
                 await installNewJson(resource.file, resource.value);
                 installed.push(resource);
             }
         }
         catch (error) {
             const cleanupErrors: string[] = [];
+            try { await assertDirectoryIdentity(dir, directoryIdentity); }
+            catch (identityError) {
+                throw new Error(
+                    `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; cleanup refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
+                    { cause: error },
+                );
+            }
             for (const resource of installed.reverse()) {
                 try { await removeJsonIfUnchanged(resource.file, jsonText(resource.value)); }
                 catch (cleanup) { cleanupErrors.push(`${resource.file}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`); }
@@ -395,6 +433,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         }
         else if (type === "library") {
             const dir = path.join(docRoot(root), "libraries", id);
+            const directoryIdentity = await readDirectoryIdentity(dir);
             const resources = [
                 { file: path.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
                 { file: path.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
@@ -411,7 +450,9 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             const installed: typeof originals = [];
             try {
                 await options.beforeEntityInstall?.();
+                await assertDirectoryIdentity(dir, directoryIdentity);
                 for (const resource of originals) {
+                    await assertDirectoryIdentity(dir, directoryIdentity);
                     if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
                     else await installNewJson(resource.file, resource.next);
                     installed.push(resource);
@@ -419,6 +460,13 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             }
             catch (error) {
                 const rollbackErrors: string[] = [];
+                try { await assertDirectoryIdentity(dir, directoryIdentity); }
+                catch (identityError) {
+                    throw new Error(
+                        `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; rollback refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
+                        { cause: error },
+                    );
+                }
                 for (const resource of installed.reverse()) {
                     try {
                         if (resource.original) {
@@ -631,6 +679,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
     }
     else if (type === "library") {
         const dir = path.join(docRoot(root), "libraries", id);
+        const originalDirectoryIdentity = await readDirectoryIdentity(dir);
         const extras = await libraryExtraNames(dir);
         if (extras.length) {
             return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
@@ -638,19 +687,26 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         const tomb = path.join(path.dirname(dir), `.${id}.snl-entity-${randomUUID()}.deleted`);
         await options.beforeEntityDelete?.();
         await fs.rename(dir, tomb);
+        const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
+        if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
+            await restoreCapturedDirectory(tomb, dir);
+            throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
+        }
         let captured: RecordJson;
         try {
             captured = await readLibraryDirectoryValue(tomb, id);
         }
         catch (error) {
+            await restoreCapturedDirectory(tomb, dir);
             throw new Error(
-                `${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}: ${error instanceof Error ? error.message : String(error)}`,
+                `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
                 { cause: error },
             );
         }
         const capturedExtras = await libraryExtraNames(tomb);
         if (sha(captured) !== current.revision || capturedExtras.length) {
-            throw new Error(`${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}.`);
+            await restoreCapturedDirectory(tomb, dir);
+            throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
         }
         await fs.rm(tomb, { recursive: true });
     }

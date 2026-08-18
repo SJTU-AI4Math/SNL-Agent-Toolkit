@@ -2031,7 +2031,7 @@ function isLocalizedLabel(value, required) {
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertCurrentEntryPayload(value, label) {
-  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, true) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
+  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }
   if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {

@@ -15391,7 +15391,7 @@ function isLocalizedLabel(value, required) {
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertCurrentEntryPayload(value, label) {
-  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, true) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
+  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }
   if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
@@ -15837,12 +15837,15 @@ async function readRegularText(file) {
     await handle?.close();
   }
 }
-async function syncDirectory(directory) {
-  const handle = await fs2.open(directory, constants2.O_RDONLY);
+async function syncDirectory(directory, beforeSync) {
+  let handle;
   try {
+    await beforeSync?.();
+    handle = await fs2.open(directory, constants2.O_RDONLY);
     await handle.sync();
+  } catch {
   } finally {
-    await handle.close();
+    await handle?.close().catch(() => void 0);
   }
 }
 async function restoreCapturedPath(captured, target) {
@@ -15900,7 +15903,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     }
     await fs2.rm(captured);
     capturedPresent = false;
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -15950,7 +15953,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   }
   try {
     await fs2.rm(captured);
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
       await restoreCapturedPath(captured, file);

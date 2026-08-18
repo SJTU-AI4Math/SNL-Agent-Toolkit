@@ -207,7 +207,7 @@ function isLocalizedLabel(value: unknown, required: boolean): boolean {
 
 function assertCurrentEntryPayload(value: Record<string, unknown>, label: string): void {
   if (typeof value.kind !== 'string' || !value.kind.trim() || value.kind !== value.kind.trim() ||
-      !isLocalizedLabel(value.title, true) || !isRecord(value.content) ||
+      !isLocalizedLabel(value.title, false) || !isRecord(value.content) ||
       !Object.hasOwn(value, 'contribution_info') || !Object.hasOwn(value, 'pointer')) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }

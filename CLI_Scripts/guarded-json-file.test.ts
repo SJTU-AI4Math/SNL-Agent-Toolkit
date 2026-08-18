@@ -46,6 +46,16 @@ describe('guarded JSON path capture', () => {
     assert.equal(await readFile(path.join(root, recovery), 'utf8'), original);
   });
 
+  it('does not report a false transaction failure after a committed replace when directory fsync fails', async () => {
+    const { file } = await scratch();
+    const original = '{"owner":"original"}\n';
+    await writeFile(file, original);
+    await replaceJsonIfUnchanged(file, original, { owner: 'mine' }, {
+      beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
+    });
+    assert.equal(await readFile(file, 'utf8'), '{\n  "owner": "mine"\n}\n');
+  });
+
   it('removes only the captured original while preserving a post-capture replacement', async () => {
     const { file } = await scratch();
     const original = '{"owner":"original"}\n';

@@ -18,12 +18,20 @@ export async function readRegularText(file: string): Promise<{ text: string; mod
   }
 }
 
-async function syncDirectory(directory: string): Promise<void> {
-  const handle = await fs.open(directory, constants.O_RDONLY);
+async function syncDirectory(directory: string, beforeSync?: () => void | Promise<void>): Promise<void> {
+  // Namespace mutation is already committed when this runs. Reporting an fsync
+  // error as an operation failure would make callers roll back an untracked
+  // committed step. Keep the file itself fsynced and treat directory fsync as
+  // best-effort durability across platforms/filesystems.
+  let handle;
   try {
+    await beforeSync?.();
+    handle = await fs.open(directory, constants.O_RDONLY);
     await handle.sync();
+  } catch {
+    // Logical commit succeeded; do not return a false transactional failure.
   } finally {
-    await handle.close();
+    await handle?.close().catch(() => undefined);
   }
 }
 
@@ -71,7 +79,7 @@ export async function replaceJsonIfUnchanged(
   file: string,
   expected: string,
   value: unknown,
-  hooks: { beforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void> } = {},
+  hooks: { beforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
@@ -118,7 +126,7 @@ export async function replaceJsonIfUnchanged(
 
     await fs.rm(captured);
     capturedPresent = false;
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -146,7 +154,7 @@ export async function replaceJsonIfUnchanged(
 export async function removeJsonIfUnchanged(
   file: string,
   expected: string,
-  hooks: { beforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void> } = {},
+  hooks: { beforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
@@ -178,7 +186,7 @@ export async function removeJsonIfUnchanged(
   }
   try {
     await fs.rm(captured);
-    await syncDirectory(directory);
+    await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
       await restoreCapturedPath(captured, file);
