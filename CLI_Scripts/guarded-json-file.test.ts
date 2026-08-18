@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -27,6 +27,29 @@ describe('guarded JSON path capture', () => {
       /changed.*refusing/i,
     );
     assert.equal(await readFile(file, 'utf8'), external);
+  });
+
+  it('rejects a parent directory replaced by an identical symlink target before capture', async () => {
+    const { root } = await scratch();
+    const live = path.join(root, 'live');
+    const parked = path.join(root, 'parked');
+    const external = path.join(root, 'external');
+    await mkdir(live);
+    await mkdir(external);
+    const file = path.join(live, 'entity.json');
+    const original = '{"owner":"same"}\n';
+    await writeFile(file, original);
+    await writeFile(path.join(external, 'entity.json'), original);
+    await assert.rejects(
+      () => replaceJsonIfUnchanged(file, original, { owner: 'mine' }, {
+        beforeCapture: async () => {
+          await rename(live, parked);
+          await symlink(external, live, 'dir');
+        },
+      }),
+      /canonical|symlink/i,
+    );
+    assert.equal(await readFile(path.join(external, 'entity.json'), 'utf8'), original);
   });
 
   it('never overwrites a new canonical file created after capture', async () => {

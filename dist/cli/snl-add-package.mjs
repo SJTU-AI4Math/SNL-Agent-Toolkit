@@ -15479,7 +15479,15 @@ function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
 `;
 }
+async function assertCanonicalDirectory(directory) {
+  const resolved = path4.resolve(directory);
+  const stat = await fs2.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await fs2.realpath(resolved) !== resolved) {
+    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
+  }
+}
 async function readRegularText(file) {
+  await assertCanonicalDirectory(path4.dirname(file));
   let handle;
   try {
     handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
@@ -15536,6 +15544,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     await handle.close();
     handle = void 0;
     await hooks.beforeCapture?.();
+    await assertCanonicalDirectory(directory);
     await fs2.rename(file, captured);
     capturedPresent = true;
     await hooks.afterCapture?.();
@@ -15607,6 +15616,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
     `.${path4.basename(file)}.snl-remove-${process.pid}-${randomUUID2()}.captured`
   );
   await hooks.beforeCapture?.();
+  await assertCanonicalDirectory(directory);
   await fs2.rename(file, captured);
   await hooks.afterCapture?.();
   let observed;

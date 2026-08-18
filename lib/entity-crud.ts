@@ -403,6 +403,7 @@ async function locateFile(root: string, type: ManagedEntityType, entity: Managed
     return path.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
 } throw new Error(`No entity file for ${type}.`); }
 type DirectMutationOptions = {
+    afterRevisionCheck?: () => void | Promise<void>;
     beforeConfigInstall?: () => void | Promise<void>;
     beforeEntityInstall?: () => void | Promise<void>;
     beforeEntityDelete?: () => void | Promise<void>;
@@ -411,7 +412,9 @@ type DirectMutationOptions = {
 async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entry-kind" | "macro-kind">, operation: "update" | "delete", id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> {
     return withWorkspaceDataLock(root, `${operation} ${type}`, async () => { const current = await getManagedEntity(root, type, id); if (!current)
         return { status: "not-found", code: "entity.not-found", message: `${type} ${JSON.stringify(id)} was not found.` }; if (current.revision !== ifMatch)
-        return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`); if (operation === "update") {
+        return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+    await options.afterRevisionCheck?.();
+    if (operation === "update") {
         const value = requireRecord(input, type);
         const problem = await validationMessage(root, type, value, id);
         if (problem)
@@ -425,6 +428,9 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             const values = data.relationships;
             if (!Array.isArray(values))
                 throw new Error("relationships.json#relationships must be an array.");
+            const lockedRelationship = values.find(row => isRecord(row) && row.id === id);
+            if (!isRecord(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
+                return conflict(`relationship ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
             await options.beforeEntityInstall?.();
             await replaceJsonIfUnchanged(file, original.text, {
                 ...data,
@@ -447,6 +453,14 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                     throw error;
                 }
             }));
+            const lockedLibrary = {
+                slug: id,
+                meta: JSON.parse(originals[0].original!.text),
+                graph: JSON.parse(originals[1].original!.text),
+                counters: originals[2].original ? JSON.parse(originals[2].original.text) : { counters: [] },
+            };
+            if (sha(lockedLibrary) !== ifMatch)
+                return conflict(`library ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
             const installed: typeof originals = [];
             try {
                 await options.beforeEntityInstall?.();
@@ -495,6 +509,12 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             const file = await locateFile(root, type, current);
             if (type === "entry-package" || type === "macro-package") {
                 const originalManifest = await readRegularText(file);
+                const lockedManifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
+                const lockedPackageValue = type === "macro-package"
+                    ? { ...lockedManifest, macros: (await readAllMacroPackages(root))[id]?.macros }
+                    : lockedManifest;
+                if (sha(lockedPackageValue) !== ifMatch)
+                    return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
                 const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
                 if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
                     return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
@@ -513,6 +533,8 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             }
             else if (type === "entry") {
                 const originalEntity = await readRegularText(file);
+                if (sha(JSON.parse(originalEntity.text)) !== ifMatch)
+                    return conflict(`entry ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
                 const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
                 const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
                 const nextEnvelope = {
@@ -603,6 +625,8 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                 const pkg = id.slice(0, split);
                 const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
                 const originalMacro = await readRegularText(file);
+                if (sha(JSON.parse(originalMacro.text)) !== ifMatch)
+                    return conflict(`macro ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
                 const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
                 const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
                 const nextEnvelope = {
@@ -628,6 +652,8 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             return { status: "conflict", code: "entity.referenced", message: `Entry ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
         const entityFile = await locateFile(root, type, current);
         const originalEntity = await readRegularText(entityFile);
+        if (sha(JSON.parse(originalEntity.text)) !== ifMatch)
+            return conflict(`entry ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
         if (!usesCurrentEntitySchemas(await readConfig(root))) {
             await removeJsonIfUnchanged(entityFile, originalEntity.text);
             return { status: "ok", operation, type, entity: current };
@@ -661,6 +687,8 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             return { status: "conflict", code: "entity.referenced", message: `Macro ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
         const file = await locateFile(root, type, current);
         const original = await readRegularText(file);
+        if (sha(JSON.parse(original.text)) !== ifMatch)
+            return conflict(`macro ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
         await options.beforeEntityDelete?.();
         await removeJsonIfUnchanged(file, original.text);
     }
@@ -671,6 +699,9 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         const values = data.relationships;
         if (!Array.isArray(values))
             throw new Error("relationships.json#relationships must be an array.");
+        const lockedRelationship = values.find(row => isRecord(row) && row.id === id);
+        if (!isRecord(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
+            return conflict(`relationship ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
         await options.beforeEntityDelete?.();
         await replaceJsonIfUnchanged(file, original.text, {
             ...data,
@@ -719,6 +750,12 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             return { status: "conflict", code: "package.not-empty", message: `Package ${JSON.stringify(id)} still contains entities.` };
         const file = await locateFile(root, type, current);
         const originalManifest = await readRegularText(file);
+        const lockedManifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
+        const lockedPackageValue = type === "macro-package"
+            ? { ...lockedManifest, macros: (await readAllMacroPackages(root))[id]?.macros }
+            : lockedManifest;
+        if (sha(lockedPackageValue) !== ifMatch)
+            return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
         const configFile = path.join(docRoot(root), "config.json");
         const originalConfig = await readRegularText(configFile);
         const config = requireRecord(JSON.parse(originalConfig.text), "config.json");

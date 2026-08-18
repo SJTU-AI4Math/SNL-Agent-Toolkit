@@ -138,6 +138,24 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.deepEqual(JSON.parse(await readFile(file, 'utf8')).concurrent_extension, { writer: 'external' });
   });
 
+  it('rejects a stale Entry revision when the file changes after the first revision check', async () => {
+    const root = await fixtureCopy();
+    const entry = await getManagedEntity(root, 'entry', 'entry.localized');
+    assert.ok(entry);
+    const file = path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', entry.id));
+    const result = await updateManagedEntity(root, 'entry', entry.id, {
+      ...entry.value,
+      title: 'mine',
+    }, entry.revision, {
+      afterRevisionCheck: async () => mutateJson(file, envelope => {
+        (envelope.entry as Record<string, unknown>).title = 'external';
+      }),
+    });
+    assert.equal(result.status, 'conflict');
+    const persisted = JSON.parse(await readFile(file, 'utf8'));
+    assert.equal(persisted.entry.title, 'external');
+  });
+
   it('validates Kind writes authoritatively and protects referenced Kinds', async () => {
     const root = await fixtureCopy();
     const kind = await getManagedEntity(root, 'entry-kind', 'definition');
