@@ -105,8 +105,16 @@ claude plugin install snl-agent-toolkit@snl-agent-toolkit
 codex plugin marketplace add SJTU-AI4Math/SNL-Agent-Toolkit
 codex plugin add snl-agent-toolkit@snl-agent-toolkit
 
-# Hermes portable Agent Plugin
-hermes plugins install SJTU-AI4Math/SNL-Agent-Toolkit/agent-plugin --enable
+# Hermes Agent: install the shared Skill and register the prebuilt stdio MCP
+# (Hermes native `plugins install` expects a Python plugin.yaml plugin, not a portable Agent Plugin.)
+git clone https://github.com/SJTU-AI4Math/SNL-Agent-Toolkit.git ~/.hermes/vendor/snl-agent-toolkit
+mkdir -p ~/.hermes/skills
+cp -R ~/.hermes/vendor/snl-agent-toolkit/skills/snl-agent-toolkit ~/.hermes/skills/
+hermes mcp add snl-agent-toolkit \
+  --command node \
+  --args ~/.hermes/vendor/snl-agent-toolkit/dist/mcp/server.cjs
+hermes mcp test snl-agent-toolkit
+# Start a new Hermes session so the Skill and four MCP tools enter its fixed tool/context set.
 
 # DeepSeek Harness profile bundle, from a checkout or packed npm artifact
 dsh plugin --profile default add .
