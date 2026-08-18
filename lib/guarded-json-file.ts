@@ -19,19 +19,21 @@ export async function readRegularText(file: string): Promise<{ text: string; mod
 }
 
 async function syncDirectory(directory: string, beforeSync?: () => void | Promise<void>): Promise<void> {
-  // Namespace mutation is already committed when this runs. Reporting an fsync
-  // error as an operation failure would make callers roll back an untracked
-  // committed step. Keep the file itself fsynced and treat directory fsync as
-  // best-effort durability across platforms/filesystems.
-  let handle;
+  await beforeSync?.();
+  const handle = await fs.open(directory, constants.O_RDONLY);
   try {
-    await beforeSync?.();
-    handle = await fs.open(directory, constants.O_RDONLY);
     await handle.sync();
-  } catch {
-    // Logical commit succeeded; do not return a false transactional failure.
   } finally {
-    await handle?.close().catch(() => undefined);
+    await handle.close();
+  }
+}
+
+async function sameInode(left: string, right: string): Promise<boolean> {
+  try {
+    const [a, b] = await Promise.all([fs.lstat(left), fs.lstat(right)]);
+    return a.dev === b.dev && a.ino === b.ino;
+  } catch {
+    return false;
   }
 }
 
@@ -42,6 +44,7 @@ export async function installNewJson(file: string, value: unknown): Promise<void
     `.${path.basename(file)}.snl-create-${process.pid}-${randomUUID()}.tmp`,
   );
   let handle;
+  let installed = false;
   try {
     handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, 0o644);
     await handle.writeFile(jsonText(value), 'utf8');
@@ -49,10 +52,22 @@ export async function installNewJson(file: string, value: unknown): Promise<void
     await handle.close();
     handle = undefined;
     await fs.link(temp, file);
-    await syncDirectory(directory);
+    installed = true;
+    try {
+      await syncDirectory(directory);
+    } catch (error) {
+      if (await sameInode(file, temp)) {
+        await fs.rm(file);
+        installed = false;
+      }
+      throw error;
+    }
   } finally {
     await handle?.close();
     await fs.rm(temp, { force: true });
+    if (installed) {
+      // The canonical hard link is the committed file; temp cleanup is private.
+    }
   }
 }
 
@@ -124,9 +139,29 @@ export async function replaceJsonIfUnchanged(
       throw error;
     }
 
-    await fs.rm(captured);
-    capturedPresent = false;
-    await syncDirectory(directory, hooks.beforeDirectorySync);
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync);
+    } catch (error) {
+      if (!await sameInode(file, temp)) {
+        throw new Error(
+          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
+          { cause: error },
+        );
+      }
+      await fs.rm(file);
+      installed = false;
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw error;
+    }
+    // The replacement is durably named. Failure to remove the private old hard
+    // link must not be reported as a failed logical mutation.
+    try {
+      await fs.rm(captured);
+      capturedPresent = false;
+    } catch {
+      // Leave a same-directory recovery link rather than report false failure.
+    }
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -185,7 +220,8 @@ export async function removeJsonIfUnchanged(
     throw new Error(`${file} changed concurrently; refusing to remove it.`);
   }
   try {
-    await fs.rm(captured);
+    // Persist the canonical-name removal while the captured hard link still
+    // exists, so an fsync failure can restore the original safely.
     await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
@@ -197,5 +233,11 @@ export async function removeJsonIfUnchanged(
       );
     }
     throw error;
+  }
+  try {
+    await fs.rm(captured);
+  } catch {
+    // Canonical deletion is committed; retain a private recovery link rather
+    // than report a false operation failure.
   }
 }

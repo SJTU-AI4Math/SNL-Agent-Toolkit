@@ -46,14 +46,32 @@ describe('guarded JSON path capture', () => {
     assert.equal(await readFile(path.join(root, recovery), 'utf8'), original);
   });
 
-  it('does not report a false transaction failure after a committed replace when directory fsync fails', async () => {
-    const { file } = await scratch();
+  it('rolls back a replacement when directory fsync fails before commit', async () => {
+    const { root, file } = await scratch();
     const original = '{"owner":"original"}\n';
     await writeFile(file, original);
-    await replaceJsonIfUnchanged(file, original, { owner: 'mine' }, {
-      beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
-    });
-    assert.equal(await readFile(file, 'utf8'), '{\n  "owner": "mine"\n}\n');
+    await assert.rejects(
+      () => replaceJsonIfUnchanged(file, original, { owner: 'mine' }, {
+        beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
+      }),
+      /injected directory fsync failure/,
+    );
+    assert.equal(await readFile(file, 'utf8'), original);
+    assert.deepEqual(await readdir(root), ['entity.json']);
+  });
+
+  it('restores a removed file when directory fsync fails before commit', async () => {
+    const { root, file } = await scratch();
+    const original = '{"owner":"original"}\n';
+    await writeFile(file, original);
+    await assert.rejects(
+      () => removeJsonIfUnchanged(file, original, {
+        beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
+      }),
+      /injected directory fsync failure/,
+    );
+    assert.equal(await readFile(file, 'utf8'), original);
+    assert.deepEqual(await readdir(root), ['entity.json']);
   });
 
   it('removes only the captured original while preserving a post-capture replacement', async () => {

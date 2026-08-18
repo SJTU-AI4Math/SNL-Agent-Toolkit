@@ -18603,14 +18603,20 @@ async function readRegularText(file) {
   }
 }
 async function syncDirectory(directory, beforeSync) {
-  let handle;
+  await beforeSync?.();
+  const handle = await fs3.open(directory, constants3.O_RDONLY);
   try {
-    await beforeSync?.();
-    handle = await fs3.open(directory, constants3.O_RDONLY);
     await handle.sync();
-  } catch {
   } finally {
-    await handle?.close().catch(() => void 0);
+    await handle.close();
+  }
+}
+async function sameInode(left, right) {
+  try {
+    const [a3, b2] = await Promise.all([fs3.lstat(left), fs3.lstat(right)]);
+    return a3.dev === b2.dev && a3.ino === b2.ino;
+  } catch {
+    return false;
   }
 }
 async function installNewJson(file, value) {
@@ -18620,6 +18626,7 @@ async function installNewJson(file, value) {
     `.${path5.basename(file)}.snl-create-${process.pid}-${randomUUID2()}.tmp`
   );
   let handle;
+  let installed = false;
   try {
     handle = await fs3.open(temp, constants3.O_CREAT | constants3.O_EXCL | constants3.O_WRONLY, 420);
     await handle.writeFile(jsonText(value), "utf8");
@@ -18627,10 +18634,21 @@ async function installNewJson(file, value) {
     await handle.close();
     handle = void 0;
     await fs3.link(temp, file);
-    await syncDirectory(directory);
+    installed = true;
+    try {
+      await syncDirectory(directory);
+    } catch (error) {
+      if (await sameInode(file, temp)) {
+        await fs3.rm(file);
+        installed = false;
+      }
+      throw error;
+    }
   } finally {
     await handle?.close();
     await fs3.rm(temp, { force: true });
+    if (installed) {
+    }
   }
 }
 async function restoreCapturedPath(captured, target) {
@@ -18686,9 +18704,26 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
       }
       throw error;
     }
-    await fs3.rm(captured);
-    capturedPresent = false;
-    await syncDirectory(directory, hooks.beforeDirectorySync);
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync);
+    } catch (error) {
+      if (!await sameInode(file, temp)) {
+        throw new Error(
+          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
+          { cause: error }
+        );
+      }
+      await fs3.rm(file);
+      installed = false;
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw error;
+    }
+    try {
+      await fs3.rm(captured);
+      capturedPresent = false;
+    } catch {
+    }
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -18737,7 +18772,6 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
     throw new Error(`${file} changed concurrently; refusing to remove it.`);
   }
   try {
-    await fs3.rm(captured);
     await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
@@ -18749,6 +18783,10 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
       );
     }
     throw error;
+  }
+  try {
+    await fs3.rm(captured);
+  } catch {
   }
 }
 

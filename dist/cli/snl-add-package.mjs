@@ -15491,14 +15491,20 @@ async function readRegularText(file) {
   }
 }
 async function syncDirectory(directory, beforeSync) {
-  let handle;
+  await beforeSync?.();
+  const handle = await fs2.open(directory, constants2.O_RDONLY);
   try {
-    await beforeSync?.();
-    handle = await fs2.open(directory, constants2.O_RDONLY);
     await handle.sync();
-  } catch {
   } finally {
-    await handle?.close().catch(() => void 0);
+    await handle.close();
+  }
+}
+async function sameInode(left, right) {
+  try {
+    const [a2, b2] = await Promise.all([fs2.lstat(left), fs2.lstat(right)]);
+    return a2.dev === b2.dev && a2.ino === b2.ino;
+  } catch {
+    return false;
   }
 }
 async function restoreCapturedPath(captured, target) {
@@ -15554,9 +15560,26 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
       }
       throw error;
     }
-    await fs2.rm(captured);
-    capturedPresent = false;
-    await syncDirectory(directory, hooks.beforeDirectorySync);
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync);
+    } catch (error) {
+      if (!await sameInode(file, temp)) {
+        throw new Error(
+          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
+          { cause: error }
+        );
+      }
+      await fs2.rm(file);
+      installed = false;
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw error;
+    }
+    try {
+      await fs2.rm(captured);
+      capturedPresent = false;
+    } catch {
+    }
   } catch (error) {
     if (capturedPresent && !installed) {
       try {
@@ -15605,7 +15628,6 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
     throw new Error(`${file} changed concurrently; refusing to remove it.`);
   }
   try {
-    await fs2.rm(captured);
     await syncDirectory(directory, hooks.beforeDirectorySync);
   } catch (error) {
     try {
@@ -15617,6 +15639,10 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
       );
     }
     throw error;
+  }
+  try {
+    await fs2.rm(captured);
+  } catch {
   }
 }
 
