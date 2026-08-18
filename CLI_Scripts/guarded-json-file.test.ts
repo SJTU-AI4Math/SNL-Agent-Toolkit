@@ -29,6 +29,42 @@ describe('guarded JSON path capture', () => {
     assert.equal(await readFile(file, 'utf8'), external);
   });
 
+  it('rejects an identical-byte inode replacement before replace capture', async () => {
+    const { root, file } = await scratch();
+    const parked = path.join(root, 'parked.json');
+    const original = '{"owner":"same"}\n';
+    await writeFile(file, original);
+    await assert.rejects(
+      () => replaceJsonIfUnchanged(file, original, { owner: 'mine' }, {
+        beforeCapture: async () => {
+          await rename(file, parked);
+          await writeFile(file, original);
+        },
+      }),
+      /changed.*refusing/i,
+    );
+    assert.equal(await readFile(file, 'utf8'), original);
+    assert.equal(await readFile(parked, 'utf8'), original);
+  });
+
+  it('rejects an identical-byte inode replacement before remove capture', async () => {
+    const { root, file } = await scratch();
+    const parked = path.join(root, 'parked.json');
+    const original = '{"owner":"same"}\n';
+    await writeFile(file, original);
+    await assert.rejects(
+      () => removeJsonIfUnchanged(file, original, {
+        beforeCapture: async () => {
+          await rename(file, parked);
+          await writeFile(file, original);
+        },
+      }),
+      /changed.*refusing/i,
+    );
+    assert.equal(await readFile(file, 'utf8'), original);
+    assert.equal(await readFile(parked, 'utf8'), original);
+  });
+
   it('rejects a parent directory replaced by an identical symlink target before capture', async () => {
     const { root } = await scratch();
     const live = path.join(root, 'live');

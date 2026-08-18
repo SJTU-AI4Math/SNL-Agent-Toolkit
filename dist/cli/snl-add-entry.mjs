@@ -15840,7 +15840,7 @@ async function readRegularText(file) {
     handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
+    return { text: await handle.readFile("utf8"), mode: stat.mode & 511, dev: stat.dev, ino: stat.ino };
   } finally {
     await handle?.close();
   }
@@ -15896,7 +15896,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     capturedPresent = true;
     await hooks.afterCapture?.();
     const observed = await readRegularText(captured);
-    if (observed.text !== expected) {
+    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
       await restoreCapturedPath(captured, file);
       capturedPresent = false;
       throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
@@ -15980,7 +15980,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
     }
     throw error;
   }
-  if (observed.text !== expected) {
+  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
     await restoreCapturedPath(captured, file);
     throw new Error(`${file} changed concurrently; refusing to remove it.`);
   }

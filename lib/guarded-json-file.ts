@@ -14,14 +14,14 @@ async function assertCanonicalDirectory(directory: string): Promise<void> {
   }
 }
 
-export async function readRegularText(file: string): Promise<{ text: string; mode: number }> {
+export async function readRegularText(file: string): Promise<{ text: string; mode: number; dev: number; ino: number }> {
   await assertCanonicalDirectory(path.dirname(file));
   let handle;
   try {
     handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile('utf8'), mode: stat.mode & 0o777 };
+    return { text: await handle.readFile('utf8'), mode: stat.mode & 0o777, dev: stat.dev, ino: stat.ino };
   } finally {
     await handle?.close();
   }
@@ -132,7 +132,7 @@ export async function replaceJsonIfUnchanged(
     capturedPresent = true;
     await hooks.afterCapture?.();
     const observed = await readRegularText(captured);
-    if (observed.text !== expected) {
+    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
       await restoreCapturedPath(captured, file);
       capturedPresent = false;
       throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
@@ -217,7 +217,7 @@ export async function removeJsonIfUnchanged(
   await assertCanonicalDirectory(directory);
   await fs.rename(file, captured);
   await hooks.afterCapture?.();
-  let observed: { text: string; mode: number };
+  let observed: { text: string; mode: number; dev: number; ino: number };
   try {
     observed = await readRegularText(captured);
   } catch (error) {
@@ -231,7 +231,7 @@ export async function removeJsonIfUnchanged(
     }
     throw error;
   }
-  if (observed.text !== expected) {
+  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
     await restoreCapturedPath(captured, file);
     throw new Error(`${file} changed concurrently; refusing to remove it.`);
   }
