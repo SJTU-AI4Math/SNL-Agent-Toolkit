@@ -112,6 +112,27 @@ describe('guarded JSON path capture', () => {
     assert.equal(await readFile(path.join(parked, 'entity.json'), 'utf8'), original);
   });
 
+  it('does not report create success when the canonical parent is replaced before directory sync', async () => {
+    const { root } = await scratch();
+    const live = path.join(root, 'create-live');
+    const parked = path.join(root, 'create-parked');
+    const external = path.join(root, 'create-external');
+    await mkdir(live);
+    await mkdir(external);
+    const file = path.join(live, 'entity.json');
+    await assert.rejects(
+      () => installNewJson(file, { owner: 'mine' }, {
+        beforeDirectorySync: async () => {
+          await rename(live, parked);
+          await rename(external, live);
+        },
+      }),
+      /canonical|replacement|changed concurrently/i,
+    );
+    await assert.rejects(() => readFile(path.join(live, 'entity.json'), 'utf8'), /ENOENT/);
+    assert.equal(JSON.parse(await readFile(path.join(parked, 'entity.json'), 'utf8')).owner, 'mine');
+  });
+
   it('never overwrites a new canonical file created after capture', async () => {
     const { root, file } = await scratch();
     const original = '{"owner":"original"}\n';

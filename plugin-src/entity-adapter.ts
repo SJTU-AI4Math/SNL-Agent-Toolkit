@@ -1,11 +1,11 @@
 import {
-  ENTITY_TYPES,
   createManagedEntity,
   deleteManagedEntity,
   getManagedEntity,
   isManagedEntityType,
   listManagedEntities,
   updateManagedEntity,
+  validateManagedWorkspace,
   type ManagedEntityType,
 } from '../lib/entity-crud.ts';
 import type {
@@ -64,9 +64,7 @@ export function createEntityAdapter(): EntityAdapter {
     },
 
     async validate({ root }: { root: string }) {
-      const counts: Record<string, number> = Object.create(null) as Record<string, number>;
-      for (const type of ENTITY_TYPES) counts[type] = (await listManagedEntities(root, type)).length;
-      return { valid: true, counts, issues: [] };
+      return validateManagedWorkspace(root);
     },
   };
 }

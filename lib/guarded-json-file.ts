@@ -48,11 +48,20 @@ export async function readRegularText(file: string): Promise<{ text: string; mod
   }
 }
 
-async function syncDirectory(directory: string, beforeSync?: () => void | Promise<void>): Promise<void> {
+async function syncDirectory(
+  directory: string,
+  beforeSync?: () => void | Promise<void>,
+  expected?: DirectoryIdentity,
+): Promise<void> {
   await beforeSync?.();
-  const handle = await fs.open(directory, constants.O_RDONLY);
+  await assertCanonicalDirectory(directory, expected);
+  const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
   try {
+    const stat = await handle.stat();
+    if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
+      throw new Error(`${directory} changed concurrently before directory sync.`);
     await handle.sync();
+    await assertCanonicalDirectory(directory, expected);
   } finally {
     await handle.close();
   }
@@ -90,7 +99,7 @@ export async function installNewJson(
     await fs.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory, hooks.beforeDirectorySync);
+      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
       if (await sameInode(file, temp)) {
         await fs.rm(file);
@@ -180,7 +189,7 @@ export async function replaceJsonIfUnchanged(
     }
 
     try {
-      await syncDirectory(directory, hooks.beforeDirectorySync);
+      await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
     } catch (error) {
       if (!await sameInode(file, temp)) {
         throw new Error(
@@ -268,7 +277,7 @@ export async function removeJsonIfUnchanged(
   try {
     // Persist the canonical-name removal while the captured hard link still
     // exists, so an fsync failure can restore the original safely.
-    await syncDirectory(directory, hooks.beforeDirectorySync);
+    await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
   } catch (error) {
     try {
       await restoreCapturedPath(captured, file);

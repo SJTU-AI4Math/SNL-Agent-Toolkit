@@ -3,7 +3,7 @@ import { cp, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile }
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
-import { createManagedEntity, deleteManagedEntity, getManagedEntity, listManagedEntities, updateManagedEntity } from '../lib/entity-crud.ts';
+import { createManagedEntity, deleteManagedEntity, getManagedEntity, listManagedEntities, updateManagedEntity, validateManagedWorkspace } from '../lib/entity-crud.ts';
 import { entryEntityPath, macroEntityPath, packageManifestPath } from '../lib/entity-storage.ts';
 
 const FIXTURE = path.join(import.meta.dirname, 'fixtures', 'workspace-v0.1.0');
@@ -123,6 +123,29 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.deepEqual(macroEnvelope.envelope_extension, { keep: 'macro-envelope' });
   });
 
+
+  it('never pairs stale Entry or Macro values with revisions from a later envelope', async () => {
+    const entryRoot = await fixtureCopy();
+    await assert.rejects(
+      () => listManagedEntities(entryRoot, 'entry', {
+        afterAuthoritativeRead: async () => mutateJson(
+          path.join(entryRoot, '.SNL_Doc', 'entries', '_unpackaged-dce4a52e97d0e7f1530a.json'),
+          (envelope) => { ((envelope.entry as Record<string, unknown>).content as Record<string, unknown>).snl = 'changed'; },
+        ),
+      }),
+      /changed concurrently while listing/,
+    );
+    const macroRoot = await fixtureCopy();
+    await assert.rejects(
+      () => listManagedEntities(macroRoot, 'macro', {
+        afterAuthoritativeRead: async () => mutateJson(
+          path.join(macroRoot, '.SNL_Doc', 'macros', 'Logic-5aabaa394067f99556fe.json'),
+          (envelope) => { (envelope.macro as Record<string, unknown>).description = 'changed'; },
+        ),
+      }),
+      /changed concurrently while listing/,
+    );
+  });
 
   it('binds Entry CAS revisions to unknown persisted envelope extensions', async () => {
     const root = await fixtureCopy();
@@ -267,6 +290,55 @@ describe('unified CRUD on workspace v0.1.0', () => {
   });
 
 
+  it('creates the first Library durably when the optional libraries directory is absent', async () => {
+    const root = await fixtureCopy();
+    await rm(path.join(root, '.SNL_Doc', 'libraries'), { recursive: true, force: true });
+    const result = await createManagedEntity(root, 'library', {
+      slug: 'first', meta: {}, graph: { nodes: [], relationships: [] }, counters: { counters: [] },
+    });
+    assert.equal(result.status, 'ok');
+    assert.ok(await getManagedEntity(root, 'library', 'first'));
+  });
+
+  it('rejects dangling Relationship endpoints and invalid Library graphs on mutation', async () => {
+    const root = await fixtureCopy();
+    const relationship = await createManagedEntity(root, 'relationship', {
+      id: 'dangling', from: 'missing.from', to: 'missing.to', label: 'uses_context',
+    });
+    assert.equal(relationship.status, 'invalid');
+    assert.match(relationship.message, /must resolve to existing Entries/i);
+    const library = await createManagedEntity(root, 'library', {
+      slug: 'broken', meta: {},
+      graph: {
+        nodes: [{ id: 'n', label: 'Entry', props: { entryId: 'missing.entry' } }],
+        relationships: [{ from: 'ghost', to: 'n', label: 'branch' }],
+      },
+      counters: { counters: [] },
+    });
+    assert.equal(library.status, 'invalid');
+    assert.match(library.message, /entry|node|branch/i);
+  });
+
+  it('reports cross-family and Library graph issues during workspace validation', async () => {
+    const root = await fixtureCopy();
+    await writeFile(path.join(root, '.SNL_Doc', 'relationships.json'), `${JSON.stringify({
+      version: 1,
+      relationships: [{ id: 'dangling', from: 'missing.from', to: 'missing.to', label: 'uses_context' }],
+    }, null, 2)}\n`);
+    const dir = path.join(root, '.SNL_Doc', 'libraries', 'broken');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), `${JSON.stringify({
+      nodes: [{ id: 'n', label: 'Entry', props: { entryId: 'missing.entry' } }],
+      relationships: [{ from: 'ghost', to: 'n', label: 'branch' }],
+    }, null, 2)}\n`);
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    const report = await validateManagedWorkspace(root);
+    assert.equal(report.valid, false);
+    assert.ok(report.issues.some(issue => issue.code === 'relationship.dangling-from'));
+    assert.ok(report.issues.some(issue => issue.path?.startsWith('library:broken/graph.json')));
+  });
+
   it('rejects symlinked Relationship and Library payload files', async () => {
     const relationshipRoot = await fixtureCopy();
     const externalRelationship = path.join(relationshipRoot, 'outside-relationships.json');
@@ -300,10 +372,10 @@ describe('unified CRUD on workspace v0.1.0', () => {
     const next = {
       ...library.value,
       meta: { title: 'mine' },
-      graph: { nodes: [{ id: 'mine' }], relationships: [] },
+      graph: { nodes: [], relationships: [] },
       counters: { counters: [{ name: 'mine' }] },
     };
-    const concurrentGraph = { nodes: [{ id: 'external' }], relationships: [] };
+    const concurrentGraph = { nodes: [], relationships: [], external: true };
     await assert.rejects(
       () => updateManagedEntity(root, 'library', 'sample', next, library.revision, {
         beforeEntityInstall: async () => writeFile(
@@ -380,7 +452,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     );
     assert.equal(await readFile(path.join(dir, 'meta.json'), 'utf8'), '{"title":"same"}\n');
     assert.equal(await readFile(path.join(parked, 'meta.json'), 'utf8'), '{"title":"same"}\n');
-    assert.equal((await readdir(libraries)).some(name => name.startsWith('.sample.snl-entity-')), false);
+    assert.equal((await readdir(libraries)).some(name => name.startsWith('.sample.snl-entity-')), true);
   });
 
   it('restores a Library when documents appear at the final delete seam', async () => {
@@ -470,6 +542,31 @@ describe('unified CRUD on workspace v0.1.0', () => {
     const recovery = (await readdir(libraries)).find(name => name.startsWith('.sample.snl-entity-'));
     assert.ok(recovery);
     assert.equal(await readFile(path.join(libraries, recovery, 'meta.json'), 'utf8'), '{}\n');
+  });
+
+  it('pins the restore reservation across the final check-to-copy seam', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'sample');
+    const displacedReservation = path.join(libraries, 'displaced-final-reservation');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeLibraryDeleteCommitSync: () => { throw new Error('force restoration'); },
+        afterLibraryRestoreReservationCheck: async () => {
+          await rename(dir, displacedReservation);
+          await mkdir(dir);
+        },
+      }),
+      /replacement directory|captured directory remains|recovery failed/i,
+    );
+    assert.deepEqual(await readdir(dir), []);
+    assert.equal(await readFile(path.join(displacedReservation, 'meta.json'), 'utf8'), '{}\n');
   });
 
   it('refuses to delete a Library that still contains documents or exports', async () => {

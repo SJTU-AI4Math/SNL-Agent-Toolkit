@@ -15321,11 +15321,16 @@ async function readRegularText(file) {
     await handle?.close();
   }
 }
-async function syncDirectory(directory, beforeSync) {
+async function syncDirectory(directory, beforeSync, expected) {
   await beforeSync?.();
-  const handle = await fs.open(directory, constants.O_RDONLY);
+  await assertCanonicalDirectory(directory, expected);
+  const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
   try {
+    const stat = await handle.stat();
+    if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
+      throw new Error(`${directory} changed concurrently before directory sync.`);
     await handle.sync();
+    await assertCanonicalDirectory(directory, expected);
   } finally {
     await handle.close();
   }
@@ -15357,7 +15362,7 @@ async function installNewJson(file, value, hooks = {}) {
     await fs.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory, hooks.beforeDirectorySync);
+      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
     } catch (error) {
       if (await sameInode(file, temp)) {
         await fs.rm(file);
@@ -15430,7 +15435,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
       throw error;
     }
     try {
-      await syncDirectory(directory, hooks.beforeDirectorySync);
+      await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
     } catch (error) {
       if (!await sameInode(file, temp)) {
         throw new Error(
@@ -15501,7 +15506,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
     throw new Error(`${file} changed concurrently; refusing to remove it.`);
   }
   try {
-    await syncDirectory(directory, hooks.beforeDirectorySync);
+    await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
   } catch (error) {
     try {
       await restoreCapturedPath(captured, file);
