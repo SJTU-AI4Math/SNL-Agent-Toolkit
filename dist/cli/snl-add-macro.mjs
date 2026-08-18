@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // bin/impl/add-macro.ts
-import * as path5 from "node:path";
+import * as path6 from "node:path";
 
 // lib/cli-args.ts
 function parseArgs(argv, specs) {
@@ -111,9 +111,8 @@ var HELP_FLAG = {
 };
 
 // lib/entity-writes.ts
-import { constants as constants2, promises as fs2 } from "node:fs";
-import * as path4 from "node:path";
-import { randomUUID as randomUUID2 } from "node:crypto";
+import { promises as fs3 } from "node:fs";
+import * as path5 from "node:path";
 
 // lib/entity-storage.ts
 import { createHash } from "node:crypto";
@@ -1131,27 +1130,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path6 = "";
+  var path7 = "";
   switch (size) {
     case "sqrtMain":
-      path6 = sqrtMain(extraVinculum, hLinePad);
+      path7 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path6 = sqrtSize1(extraVinculum, hLinePad);
+      path7 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path6 = sqrtSize2(extraVinculum, hLinePad);
+      path7 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path6 = sqrtSize3(extraVinculum, hLinePad);
+      path7 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path6 = sqrtSize4(extraVinculum, hLinePad);
+      path7 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path6 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path7 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path6;
+  return path7;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -5334,8 +5333,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path6 = new PathNode(pathName);
-  var svgNode = new SvgNode([path6], {
+  var path7 = new PathNode(pathName);
+  var svgNode = new SvgNode([path7], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -6504,8 +6503,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path6 = new PathNode(pathName);
-      var svgNode = new SvgNode([path6], {
+      var path7 = new PathNode(pathName);
+      var svgNode = new SvgNode([path7], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -7802,8 +7801,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path6 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path6], {
+  var path7 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path7], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -7972,10 +7971,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path6 = new PathNode(svgLabel, pathStr);
+    var path7 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path6], {
+    var svg = new SvgNode([path7], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -8016,8 +8015,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path6 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path6);
+  var path7 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path7);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -8524,8 +8523,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path6 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path6)], {
+    var path7 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path7)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -15343,12 +15342,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path6 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path7 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path6} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path6,
+              message: `${path7} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path7,
               position: result.position
             });
           }
@@ -15362,43 +15361,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path6 = `macros.${name}`;
+  const path7 = `macros.${name}`;
   if (!isRecord2(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path6}: macro entry must be an object.`, path: path6 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path7}: macro entry must be an object.`, path: path7 });
     return;
   }
   const macro = raw;
   if (typeof macro.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path6}.description must be a string (may be empty).`, path: `${path6}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path7}.description must be a string (may be empty).`, path: `${path7}.description` });
   }
   if (!isRecord2(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path6}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path6}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path7}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path7}.source` });
   }
   if (typeof macro.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path6}.dynamic_arity must be a boolean.`, path: `${path6}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path7}.dynamic_arity must be a boolean.`, path: `${path7}.dynamic_arity` });
   }
   if (macro.kind !== void 0 && typeof macro.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path6}.kind must be a string when present.`, path: `${path6}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path7}.kind must be a string when present.`, path: `${path7}.kind` });
   }
   if (!isStringArray2(macro.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path6}.tags must be a string array (may be empty).`, path: `${path6}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path7}.tags must be a string array (may be empty).`, path: `${path7}.tags` });
   } else if (macro.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path6}.tags must not contain backslashes.`, path: `${path6}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path7}.tags must not contain backslashes.`, path: `${path7}.tags` });
   }
   const defaultStyle = macro.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path6}.default_style must be a language \u2192 style-name object.`, path: `${path6}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path7}.default_style must be a language \u2192 style-name object.`, path: `${path7}.default_style` });
   } else if (!isRecord2(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path6}.default_style must map language keys to style-name strings.`, path: `${path6}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path7}.default_style must map language keys to style-name strings.`, path: `${path7}.default_style` });
   }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path6}.styles must be a non-empty array.`, path: `${path6}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path7}.styles must be a non-empty array.`, path: `${path7}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path6}.styles[${index}]`;
+    const stylePath = `${path7}.styles[${index}]`;
     if (!isRecord2(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -15462,12 +15461,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord2(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path6}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path6}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path7}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path7}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path6}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a2, b2) => a2 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path6}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path7}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a2, b2) => a2 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path7}.styles` });
   }
 }
 function scanTemplatePlaceholders(template) {
@@ -15517,33 +15516,108 @@ function describe(value) {
   return typeof value;
 }
 
-// lib/snl-doc.ts
+// lib/guarded-json-file.ts
 import { constants, promises as fs } from "node:fs";
-import * as path2 from "node:path";
+import path2 from "node:path";
+import { randomUUID } from "node:crypto";
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readCanonicalDirectoryIdentity(directory) {
+  const resolved = path2.resolve(directory);
+  const stat = await fs.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
+    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
+  }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${path2.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
+}
+async function syncDirectory(directory, beforeSync) {
+  await beforeSync?.();
+  const handle = await fs.open(directory, constants.O_RDONLY);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
+async function sameInode(left, right) {
+  try {
+    const [a2, b2] = await Promise.all([fs.lstat(left), fs.lstat(right)]);
+    return a2.dev === b2.dev && a2.ino === b2.ino;
+  } catch {
+    return false;
+  }
+}
+async function installNewJson(file, value, hooks = {}) {
+  const directory = path2.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const temp = path2.join(
+    directory,
+    `.${path2.basename(file)}.snl-create-${process.pid}-${randomUUID()}.tmp`
+  );
+  let handle;
+  let installed = false;
+  try {
+    handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, 420);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    await fs.link(temp, file);
+    installed = true;
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync);
+    } catch (error) {
+      if (await sameInode(file, temp)) {
+        await fs.rm(file);
+        installed = false;
+      }
+      throw error;
+    }
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await fs.rm(temp, { force: true }).catch(() => void 0);
+    if (installed) {
+    }
+  }
+}
+
+// lib/snl-doc.ts
+import { constants as constants2, promises as fs2 } from "node:fs";
+import * as path3 from "node:path";
 function snlDocRoot(workspaceRoot) {
-  return path2.resolve(workspaceRoot, ".SNL_Doc");
+  return path3.resolve(workspaceRoot, ".SNL_Doc");
 }
 function configPath(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "config.json");
+  return path3.join(snlDocRoot(workspaceRoot), "config.json");
 }
 function entriesPath(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "entries.json");
+  return path3.join(snlDocRoot(workspaceRoot), "entries.json");
 }
 function entryEntitiesDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "entries");
+  return path3.join(snlDocRoot(workspaceRoot), "entries");
 }
 function macroEntitiesDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "macros");
+  return path3.join(snlDocRoot(workspaceRoot), "macros");
 }
 function packageManifestsDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "packages");
+  return path3.join(snlDocRoot(workspaceRoot), "packages");
 }
 function termMacrosDir(workspaceRoot) {
-  return path2.join(snlDocRoot(workspaceRoot), "term_macros");
+  return path3.join(snlDocRoot(workspaceRoot), "term_macros");
 }
 async function pathExists(p3) {
   try {
-    await fs.lstat(p3);
+    await fs2.lstat(p3);
     return true;
   } catch (error) {
     if (error.code === "ENOENT") return false;
@@ -15553,7 +15627,7 @@ async function pathExists(p3) {
 async function readJson(p3) {
   let handle;
   try {
-    handle = await fs.open(p3, constants.O_RDONLY | constants.O_NOFOLLOW);
+    handle = await fs2.open(p3, constants2.O_RDONLY | constants2.O_NOFOLLOW);
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error(`${p3} must be a regular, non-symlink file.`);
     return JSON.parse(await handle.readFile("utf8"));
@@ -15570,7 +15644,7 @@ async function assertSnlDoc(workspaceRoot) {
   const dir = snlDocRoot(workspaceRoot);
   let stat;
   try {
-    stat = await fs.lstat(dir);
+    stat = await fs2.lstat(dir);
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
     throw new Error(
@@ -15676,7 +15750,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     ["macros", macroEntitiesDir(workspaceRoot)]
   ]) {
     try {
-      const stat = await fs.lstat(directory);
+      const stat = await fs2.lstat(directory);
       if (!stat.isDirectory() || stat.isSymbolicLink()) {
         throw new Error(`${directory} must be a regular, non-symlink directory.`);
       }
@@ -15704,7 +15778,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   const entriesFile = entriesPath(workspaceRoot);
   let legacyEntries = null;
   if (await pathExists(entriesFile)) {
-    const stat = await fs.lstat(entriesFile);
+    const stat = await fs2.lstat(entriesFile);
     if (!stat.isFile() || stat.isSymbolicLink()) {
       throw new Error(`${entriesFile} must be a regular, non-symlink legacy backup file.`);
     }
@@ -15712,7 +15786,7 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   }
   const legacyPackages = /* @__PURE__ */ new Map();
   for (const { relativePath, value } of await readJsonDirectory(termMacrosDir(workspaceRoot))) {
-    legacyPackages.set(path2.basename(relativePath), value);
+    legacyPackages.set(path3.basename(relativePath), value);
   }
   const actual = makeEntityStorageReceipt(
     legacyEntries,
@@ -15747,13 +15821,13 @@ async function readAllMacroPackages(workspaceRoot) {
   if (!await pathExists(dir)) {
     return {};
   }
-  const names = await fs.readdir(dir);
+  const names = await fs2.readdir(dir);
   const out = {};
   for (const name of names) {
     if (!name.endsWith(".json")) continue;
     const bare = name.replace(/\.json$/i, "");
     try {
-      defineIdentity(out, bare, await readJson(path2.join(dir, name)));
+      defineIdentity(out, bare, await readJson(path3.join(dir, name)));
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       throw new Error(`Failed to read macro package '${bare}': ${msg}`);
@@ -15850,15 +15924,15 @@ async function readJsonDirectory(directory, required = false) {
     if (required) throw new Error(`Required entity directory is missing: ${directory}.`);
     return [];
   }
-  const directoryStat = await fs.lstat(directory);
+  const directoryStat = await fs2.lstat(directory);
   if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
     throw new Error(`${directory} must be a real directory, not a symlink.`);
   }
-  const base = path2.basename(directory);
-  const names = (await fs.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
+  const base = path3.basename(directory);
+  const names = (await fs2.readdir(directory)).filter((name) => name.endsWith(".json")).sort();
   return Promise.all(names.map(async (name) => {
-    const absolute = path2.join(directory, name);
-    const stat = await fs.lstat(absolute);
+    const absolute = path3.join(directory, name);
+    const stat = await fs2.lstat(absolute);
     if (!stat.isFile() || stat.isSymbolicLink()) {
       throw new Error(`${absolute} must be a regular, non-symlink file.`);
     }
@@ -15878,10 +15952,10 @@ function isRecord3(value) {
 }
 
 // lib/workspace-data-lock.ts
-import { randomUUID } from "node:crypto";
+import { randomUUID as randomUUID2 } from "node:crypto";
 import { hostname } from "node:os";
 import { open as open2, readFile, unlink } from "node:fs/promises";
-import * as path3 from "node:path";
+import * as path4 from "node:path";
 var DATA_WRITE_LOCK_FILENAME = ".data-write.lock";
 function errorCode(error) {
   return error && typeof error === "object" && "code" in error ? String(error.code) : void 0;
@@ -15908,12 +15982,12 @@ async function readLock(lockPath) {
   }
 }
 async function acquireLock(workspaceRoot, purpose) {
-  const lockPath = path3.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
+  const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
   const record = {
     version: 1,
     pid: process.pid,
     hostname: hostname(),
-    token: randomUUID(),
+    token: randomUUID2(),
     purpose,
     createdAt: (/* @__PURE__ */ new Date()).toISOString()
   };
@@ -15959,12 +16033,6 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   }
 }
 
-// lib/guarded-json-file.ts
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-
 // lib/entity-writes.ts
 function isRecord4(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -15985,24 +16053,24 @@ function effectiveActivePackageIds(config, packages) {
   return new Set(Array.isArray(configured) ? configured.filter((id) => typeof id === "string") : Object.keys(packages).filter((id) => id !== UNPACKAGED_PACKAGE_ID));
 }
 async function canonicalWriteWorkspaceRoot(workspaceRoot) {
-  const resolved = path4.resolve(workspaceRoot);
-  const real = await fs2.realpath(resolved);
-  const stat = await fs2.lstat(resolved);
+  const resolved = path5.resolve(workspaceRoot);
+  const real = await fs3.realpath(resolved);
+  const stat = await fs3.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved) {
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
   }
-  const doc = path4.join(resolved, ".SNL_Doc");
+  const doc = path5.join(resolved, ".SNL_Doc");
   let docStat;
   try {
-    docStat = await fs2.lstat(doc);
+    docStat = await fs3.lstat(doc);
   } catch {
     throw new Error(`Workspace must contain an existing .SNL_Doc directory: ${doc}.`);
   }
   if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
     throw new Error(`${doc} must be a real directory, not a symlink.`);
   }
-  const realDoc = await fs2.realpath(doc);
-  if (realDoc !== path4.join(real, ".SNL_Doc")) {
+  const realDoc = await fs3.realpath(doc);
+  if (realDoc !== path5.join(real, ".SNL_Doc")) {
     throw new Error(`${doc} escapes the canonical workspace boundary.`);
   }
   return resolved;
@@ -16047,26 +16115,8 @@ function macroV11TemplateUsesVariadic(value) {
   }
   return templateUsesVariadic(value.body);
 }
-async function installNewJson(docRoot, relativePath, value) {
-  const target = path4.join(docRoot, relativePath);
-  const directory = path4.dirname(target);
-  const dirStat = await fs2.lstat(directory);
-  if (!dirStat.isDirectory() || dirStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a regular, non-symlink directory.`);
-  }
-  const temp = path4.join(directory, `.${path4.basename(target)}.snl-add-${process.pid}-${randomUUID2()}.tmp`);
-  let handle;
-  try {
-    handle = await fs2.open(temp, constants2.O_CREAT | constants2.O_EXCL | constants2.O_WRONLY, 420);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await fs2.link(temp, target);
-  } finally {
-    await handle?.close();
-    await fs2.rm(temp, { force: true });
-  }
+async function installNewJson2(docRoot, relativePath, value) {
+  await installNewJson(path5.join(docRoot, relativePath), value);
 }
 async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
@@ -16139,7 +16189,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
       macro
     };
     try {
-      await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
     } catch (error) {
       if (error.code === "EEXIST") {
         return {
@@ -16163,7 +16213,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
 }
 
 // bin/impl/add-cli-common.ts
-import { promises as fs3 } from "node:fs";
+import { promises as fs4 } from "node:fs";
 var DraftReadError = class extends Error {
   constructor(message, options) {
     super(message, options);
@@ -16179,7 +16229,7 @@ var DraftJsonError = class extends Error {
 async function readDraftJson(file) {
   let text2;
   try {
-    text2 = await fs3.readFile(file, "utf8");
+    text2 = await fs4.readFile(file, "utf8");
   } catch (error) {
     throw new DraftReadError(
       `Could not read draft ${file}: ${error instanceof Error ? error.message : String(error)}`,
@@ -16264,9 +16314,9 @@ async function main2() {
   }
   const asJson = parsed.flags.json === true;
   try {
-    const raw = await readDraftJson(path5.resolve(parsed.positional[0]));
+    const raw = await readDraftJson(path6.resolve(parsed.positional[0]));
     const result = await addMacroEntity(
-      path5.resolve(String(parsed.flags.root)),
+      path6.resolve(String(parsed.flags.root)),
       parsed.flags.package,
       raw,
       { checkKatex: parsed.flags["no-katex"] !== true }

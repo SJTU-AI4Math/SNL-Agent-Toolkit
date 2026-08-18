@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { promises as fs } from "node:fs";
+import { constants, promises as fs } from "node:fs";
 import path from "node:path";
 import { CURRENT_ENTRY_SCHEMA_VERSION, CURRENT_MACRO_SCHEMA_VERSION, CURRENT_PACKAGE_SCHEMA_VERSION, ENTRY_STORAGE_VERSION, MACRO_STORAGE_VERSION, PACKAGE_STORAGE_VERSION, packageManifestPath, entryEntityPath, macroEntityPath } from "./entity-storage.ts";
 import { assertCurrentKindCatalogs, readActiveMacros, readAllMacroPackages, readConfig, readEntries, readEntryKinds, usesCurrentEntitySchemas, usesEntityStorage } from "./snl-doc.ts";
@@ -55,7 +55,14 @@ async function assertDirectoryIdentity(directory: string, expected: DirectoryIde
     if (observed.dev !== expected.dev || observed.ino !== expected.ino)
         throw new Error(`${directory} changed concurrently; refusing to access a replacement directory.`);
 }
-async function restoreCapturedDirectory(captured: string, target: string): Promise<void> {
+async function syncDirectoryDurably(directory: string, beforeSync?: () => void | Promise<void>): Promise<void> {
+    await beforeSync?.();
+    const handle = await fs.open(directory, constants.O_RDONLY);
+    try { await handle.sync(); }
+    finally { await handle.close(); }
+}
+
+async function restoreCapturedDirectory(captured: string, target: string, beforeSync?: () => void | Promise<void>): Promise<void> {
     try {
         // Reserve the absent canonical name without replacing anything a
         // concurrent writer may have created there.
@@ -64,12 +71,21 @@ async function restoreCapturedDirectory(captured: string, target: string): Promi
     catch (error) {
         throw new Error(`${target} could not be restored without overwriting a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
-    try {
-        await fs.rename(captured, target);
-    }
+    try { await fs.rename(captured, target); }
     catch (error) {
         await fs.rmdir(target).catch(() => undefined);
         throw new Error(`${target} could not be restored; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+    }
+    try { await syncDirectoryDurably(path.dirname(target), beforeSync); }
+    catch (error) {
+        try {
+            await fs.rename(target, captured);
+            await syncDirectoryDurably(path.dirname(target));
+        }
+        catch (rollbackError) {
+            throw new Error(`${target} was restored but its directory sync failed, and rollback to ${captured} also failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`, { cause: error });
+        }
+        throw new Error(`${target} restoration could not be committed durably; captured directory remains at ${captured}.`, { cause: error });
     }
 }
 function requireId(value: RecordJson, field = "id"): string { if (typeof value[field] !== "string" || !value[field])
@@ -409,6 +425,8 @@ type DirectMutationOptions = {
     beforeEntityDelete?: () => void | Promise<void>;
     beforeManifestDelete?: () => void | Promise<void>;
     beforeLibraryDirectoryRemove?: (capturedDirectory: string) => void | Promise<void>;
+    beforeLibraryCaptureSync?: () => void | Promise<void>;
+    beforeLibraryDeleteCommitSync?: () => void | Promise<void>;
 };
 async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entry-kind" | "macro-kind">, operation: "update" | "delete", id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> {
     return withWorkspaceDataLock(root, `${operation} ${type}`, async () => { const current = await getManagedEntity(root, type, id); if (!current)
@@ -719,6 +737,14 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         const tomb = path.join(path.dirname(dir), `.${id}.snl-entity-${randomUUID()}.deleted`);
         await options.beforeEntityDelete?.();
         await fs.rename(dir, tomb);
+        try { await syncDirectoryDurably(path.dirname(dir), options.beforeLibraryCaptureSync); }
+        catch (error) {
+            try { await restoreCapturedDirectory(tomb, dir); }
+            catch (restoreError) {
+                throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
+            }
+            throw error;
+        }
         const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
         if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
             await restoreCapturedDirectory(tomb, dir);
@@ -764,9 +790,15 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             // Never recurse: an unmanaged file arriving after the earlier check
             // makes rmdir fail and is restored with the Library instead of lost.
             await fs.rmdir(tomb);
+            await syncDirectoryDurably(path.dirname(tomb), options.beforeLibraryDeleteCommitSync);
         }
         catch (error) {
             const recoveryErrors: string[] = [];
+            try { await fs.mkdir(tomb); }
+            catch (mkdirError) {
+                if ((mkdirError as NodeJS.ErrnoException).code !== "EEXIST")
+                    recoveryErrors.push(`recreate tomb: ${mkdirError instanceof Error ? mkdirError.message : String(mkdirError)}`);
+            }
             for (const item of fileCaptures.reverse()) {
                 try { await fs.rename(item.captured, path.join(tomb, item.name)); }
                 catch (restoreError) { recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }

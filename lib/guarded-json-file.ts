@@ -95,8 +95,8 @@ export async function installNewJson(
       throw error;
     }
   } finally {
-    await handle?.close();
-    await fs.rm(temp, { force: true });
+    await handle?.close().catch(() => undefined);
+    await fs.rm(temp, { force: true }).catch(() => undefined);
     if (installed) {
       // The canonical hard link is the committed file; temp cleanup is private.
     }
@@ -212,8 +212,10 @@ export async function replaceJsonIfUnchanged(
     }
     throw error;
   } finally {
-    await handle?.close();
-    await fs.rm(temp, { force: true });
+    await handle?.close().catch(() => undefined);
+    // A private temp cleanup failure cannot reverse or invalidate the
+    // already-decided canonical transaction outcome.
+    await fs.rm(temp, { force: true }).catch(() => undefined);
   }
 }
 

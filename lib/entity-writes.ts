@@ -19,6 +19,7 @@ import {
 } from './entity-storage.ts';
 import { lintEntry } from './lint-entry.ts';
 import { lintPackage } from './lint-package.ts';
+import { installNewJson as installNewJsonFile } from './guarded-json-file.ts';
 import type { LintIssue } from './lint-report.ts';
 import {
   readActiveMacros,
@@ -192,25 +193,7 @@ function macroV11TemplateUsesVariadic(value: unknown): boolean {
 }
 
 async function installNewJson(docRoot: string, relativePath: string, value: unknown): Promise<void> {
-  const target = path.join(docRoot, relativePath);
-  const directory = path.dirname(target);
-  const dirStat = await fs.lstat(directory);
-  if (!dirStat.isDirectory() || dirStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a regular, non-symlink directory.`);
-  }
-  const temp = path.join(directory, `.${path.basename(target)}.snl-add-${process.pid}-${randomUUID()}.tmp`);
-  let handle;
-  try {
-    handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, 0o644);
-    await handle.writeFile(jsonText(value), 'utf8');
-    await handle.sync();
-    await handle.close();
-    handle = undefined;
-    await fs.link(temp, target);
-  } finally {
-    await handle?.close();
-    await fs.rm(temp, { force: true });
-  }
+  await installNewJsonFile(path.join(docRoot, relativePath), value);
 }
 
 export async function addEntryEntity(

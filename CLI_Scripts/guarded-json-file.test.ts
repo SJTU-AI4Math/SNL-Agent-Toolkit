@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -138,6 +138,20 @@ describe('guarded JSON path capture', () => {
       /injected directory fsync failure/,
     );
     assert.deepEqual(await readdir(root), []);
+  });
+
+  it('does not report private temp cleanup failure after create commits', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'snl-guarded-cleanup-'));
+    roots.push(root);
+    const file = path.join(root, 'created.json');
+    try {
+      await installNewJson(file, { owner: 'committed' }, {
+        beforeDirectorySync: async () => { await chmod(root, 0o555); },
+      });
+    } finally {
+      await chmod(root, 0o755);
+    }
+    assert.deepEqual(JSON.parse(await readFile(file, 'utf8')), { owner: 'committed' });
   });
 
   it('rolls back a replacement when directory fsync fails before commit', async () => {

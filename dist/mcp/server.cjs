@@ -149,7 +149,7 @@ function createToolkitTools(adapter) {
 }
 
 // lib/entity-crud.ts
-var import_node_crypto5 = require("node:crypto");
+var import_node_crypto4 = require("node:crypto");
 var import_node_fs6 = require("node:fs");
 var import_node_path2 = __toESM(require("node:path"), 1);
 
@@ -17809,7 +17809,6 @@ function compareOccurrence(a3, b2) {
 // lib/entity-writes.ts
 var import_node_fs5 = require("node:fs");
 var path6 = __toESM(require("node:path"), 1);
-var import_node_crypto4 = require("node:crypto");
 
 // lib/guarded-json-file.ts
 var import_node_fs4 = require("node:fs");
@@ -17900,8 +17899,8 @@ async function installNewJson(file, value, hooks = {}) {
       throw error;
     }
   } finally {
-    await handle?.close();
-    await import_node_fs4.promises.rm(temp, { force: true });
+    await handle?.close().catch(() => void 0);
+    await import_node_fs4.promises.rm(temp, { force: true }).catch(() => void 0);
     if (installed) {
     }
   }
@@ -17997,8 +17996,8 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     }
     throw error;
   } finally {
-    await handle?.close();
-    await import_node_fs4.promises.rm(temp, { force: true });
+    await handle?.close().catch(() => void 0);
+    await import_node_fs4.promises.rm(temp, { force: true }).catch(() => void 0);
   }
 }
 async function removeJsonIfUnchanged(file, expected, hooks = {}) {
@@ -18151,25 +18150,7 @@ function macroV11TemplateUsesVariadic(value) {
   return templateUsesVariadic(value.body);
 }
 async function installNewJson2(docRoot2, relativePath, value) {
-  const target = path6.join(docRoot2, relativePath);
-  const directory = path6.dirname(target);
-  const dirStat = await import_node_fs5.promises.lstat(directory);
-  if (!dirStat.isDirectory() || dirStat.isSymbolicLink()) {
-    throw new Error(`${directory} must be a regular, non-symlink directory.`);
-  }
-  const temp = path6.join(directory, `.${path6.basename(target)}.snl-add-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.tmp`);
-  let handle;
-  try {
-    handle = await import_node_fs5.promises.open(temp, import_node_fs5.constants.O_CREAT | import_node_fs5.constants.O_EXCL | import_node_fs5.constants.O_WRONLY, 420);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await import_node_fs5.promises.link(temp, target);
-  } finally {
-    await handle?.close();
-    await import_node_fs5.promises.rm(temp, { force: true });
-  }
+  await installNewJson(path6.join(docRoot2, relativePath), value);
 }
 async function addEntryEntity(workspaceRoot, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
@@ -18488,7 +18469,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
 // lib/entity-crud.ts
 var ENTITY_TYPES2 = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
 var isRecord6 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
-var sha = (value) => (0, import_node_crypto5.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
+var sha = (value) => (0, import_node_crypto4.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
 var compare = (a3, b2) => a3.id.localeCompare(b2.id);
 function docRoot(root) {
   return import_node_path2.default.join(import_node_path2.default.resolve(root), ".SNL_Doc");
@@ -18535,7 +18516,16 @@ async function assertDirectoryIdentity(directory, expected) {
   if (observed.dev !== expected.dev || observed.ino !== expected.ino)
     throw new Error(`${directory} changed concurrently; refusing to access a replacement directory.`);
 }
-async function restoreCapturedDirectory(captured, target) {
+async function syncDirectoryDurably(directory, beforeSync) {
+  await beforeSync?.();
+  const handle = await import_node_fs6.promises.open(directory, import_node_fs6.constants.O_RDONLY);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
+async function restoreCapturedDirectory(captured, target, beforeSync) {
   try {
     await import_node_fs6.promises.mkdir(target);
   } catch (error) {
@@ -18546,6 +18536,17 @@ async function restoreCapturedDirectory(captured, target) {
   } catch (error) {
     await import_node_fs6.promises.rmdir(target).catch(() => void 0);
     throw new Error(`${target} could not be restored; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+  }
+  try {
+    await syncDirectoryDurably(import_node_path2.default.dirname(target), beforeSync);
+  } catch (error) {
+    try {
+      await import_node_fs6.promises.rename(target, captured);
+      await syncDirectoryDurably(import_node_path2.default.dirname(target));
+    } catch (rollbackError) {
+      throw new Error(`${target} was restored but its directory sync failed, and rollback to ${captured} also failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`, { cause: error });
+    }
+    throw new Error(`${target} restoration could not be committed durably; captured directory remains at ${captured}.`, { cause: error });
   }
 }
 function requireId(value, field = "id") {
@@ -19239,9 +19240,19 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (extras.length) {
         return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
       }
-      const tomb = import_node_path2.default.join(import_node_path2.default.dirname(dir), `.${id}.snl-entity-${(0, import_node_crypto5.randomUUID)()}.deleted`);
+      const tomb = import_node_path2.default.join(import_node_path2.default.dirname(dir), `.${id}.snl-entity-${(0, import_node_crypto4.randomUUID)()}.deleted`);
       await options.beforeEntityDelete?.();
       await import_node_fs6.promises.rename(dir, tomb);
+      try {
+        await syncDirectoryDurably(import_node_path2.default.dirname(dir), options.beforeLibraryCaptureSync);
+      } catch (error) {
+        try {
+          await restoreCapturedDirectory(tomb, dir);
+        } catch (restoreError) {
+          throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
+        }
+        throw error;
+      }
       const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
       if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
         await restoreCapturedDirectory(tomb, dir);
@@ -19275,7 +19286,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             if (name === "counters.json" && error.code === "ENOENT") continue;
             throw error;
           }
-          const capturedFile = import_node_path2.default.join(import_node_path2.default.dirname(tomb), `${import_node_path2.default.basename(tomb)}.${name}.${(0, import_node_crypto5.randomUUID)()}.captured`);
+          const capturedFile = import_node_path2.default.join(import_node_path2.default.dirname(tomb), `${import_node_path2.default.basename(tomb)}.${name}.${(0, import_node_crypto4.randomUUID)()}.captured`);
           await import_node_fs6.promises.rename(source, capturedFile);
           fileCaptures.push({ name, captured: capturedFile, identity });
           const observed = await readRegularText(capturedFile);
@@ -19283,8 +19294,15 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             throw new Error(`${source} changed while Library deletion was in flight.`);
         }
         await import_node_fs6.promises.rmdir(tomb);
+        await syncDirectoryDurably(import_node_path2.default.dirname(tomb), options.beforeLibraryDeleteCommitSync);
       } catch (error) {
         const recoveryErrors = [];
+        try {
+          await import_node_fs6.promises.mkdir(tomb);
+        } catch (mkdirError) {
+          if (mkdirError.code !== "EEXIST")
+            recoveryErrors.push(`recreate tomb: ${mkdirError instanceof Error ? mkdirError.message : String(mkdirError)}`);
+        }
         for (const item of fileCaptures.reverse()) {
           try {
             await import_node_fs6.promises.rename(item.captured, import_node_path2.default.join(tomb, item.name));
