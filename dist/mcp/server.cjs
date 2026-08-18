@@ -18816,6 +18816,72 @@ async function syncDirectoryDurably(directory, beforeSync, expected) {
     await handle.close();
   }
 }
+async function captureDirectorySnapshot(directory) {
+  if (process.platform !== "linux")
+    throw new Error("Safe descriptor-relative Library snapshot is unavailable on this platform.");
+  const items = [];
+  const root = await import_node_fs6.promises.open(directory, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
+  const walk = async (handle, relativeBase) => {
+    const pinned = `/proc/self/fd/${handle.fd}`;
+    const names = (await import_node_fs6.promises.readdir(pinned)).sort((a3, b2) => a3.localeCompare(b2));
+    for (const name of names) {
+      const relativePath = relativeBase ? import_node_path2.default.join(relativeBase, name) : name;
+      const source = import_node_path2.default.join(pinned, name);
+      const before = await import_node_fs6.promises.lstat(source);
+      if (before.isSymbolicLink()) throw new Error(`${relativePath} became a symlink during Library snapshot.`);
+      if (before.isDirectory()) {
+        const child = await import_node_fs6.promises.open(source, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
+        try {
+          const observed = await child.stat();
+          if (observed.dev !== before.dev || observed.ino !== before.ino)
+            throw new Error(`${relativePath} changed during Library snapshot.`);
+          items.push({ kind: "directory", relativePath, mode: observed.mode });
+          await walk(child, relativePath);
+        } finally {
+          await child.close();
+        }
+        continue;
+      }
+      if (!before.isFile()) throw new Error(`${relativePath} is not a regular file or directory.`);
+      const file = await import_node_fs6.promises.open(source, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW);
+      try {
+        const opened = await file.stat();
+        if (!opened.isFile() || opened.dev !== before.dev || opened.ino !== before.ino)
+          throw new Error(`${relativePath} changed during Library snapshot.`);
+        const bytes = await file.readFile();
+        const after = await file.stat();
+        if (after.dev !== opened.dev || after.ino !== opened.ino || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs)
+          throw new Error(`${relativePath} changed while its Library snapshot was read.`);
+        items.push({ kind: "file", relativePath, mode: opened.mode, bytes });
+      } finally {
+        await file.close();
+      }
+    }
+  };
+  try {
+    await walk(root, "");
+  } finally {
+    await root.close();
+  }
+  return items;
+}
+async function installDirectorySnapshot(targetHandle, snapshot) {
+  if (process.platform !== "linux")
+    throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
+  const pinned = `/proc/self/fd/${targetHandle.fd}`;
+  for (const item of snapshot.filter((item2) => item2.kind === "directory"))
+    await import_node_fs6.promises.mkdir(import_node_path2.default.join(pinned, item.relativePath), { mode: item.mode });
+  for (const item of snapshot.filter((item2) => item2.kind === "file")) {
+    const destination = import_node_path2.default.join(pinned, item.relativePath);
+    const file = await import_node_fs6.promises.open(destination, import_node_fs6.constants.O_WRONLY | import_node_fs6.constants.O_CREAT | import_node_fs6.constants.O_EXCL | import_node_fs6.constants.O_NOFOLLOW, item.mode);
+    try {
+      await file.writeFile(item.bytes);
+      await file.sync();
+    } finally {
+      await file.close();
+    }
+  }
+}
 async function restoreCapturedDirectory(captured, target, hooks = {}) {
   const parent = import_node_path2.default.dirname(target);
   const parentIdentity = await readDirectoryIdentity(parent);
@@ -18829,28 +18895,17 @@ async function restoreCapturedDirectory(captured, target, hooks = {}) {
   try {
     await assertDirectoryIdentity(parent, parentIdentity);
     await assertDirectoryIdentity(target, reservation);
-    const capturedIdentity = await readDirectoryIdentity(captured);
-    const [targetHandle, capturedHandle] = await Promise.all([
-      import_node_fs6.promises.open(target, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY),
-      import_node_fs6.promises.open(captured, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY)
-    ]);
+    const snapshot = await captureDirectorySnapshot(captured);
+    const targetHandle = await import_node_fs6.promises.open(target, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
     try {
-      const [targetStat, capturedStat] = await Promise.all([targetHandle.stat(), capturedHandle.stat()]);
+      const targetStat = await targetHandle.stat();
       if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
         throw new Error(`${target} changed concurrently before restoration copy.`);
-      if (capturedStat.dev !== capturedIdentity.dev || capturedStat.ino !== capturedIdentity.ino)
-        throw new Error(`${captured} changed concurrently before restoration copy.`);
-      if (process.platform !== "linux")
-        throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
-      const pinnedTarget = `/proc/self/fd/${targetHandle.fd}`;
-      const pinnedCaptured = `/proc/self/fd/${capturedHandle.fd}`;
       await hooks.afterReservationCheckBeforeCopy?.();
-      for (const name of await import_node_fs6.promises.readdir(pinnedCaptured)) {
-        await import_node_fs6.promises.cp(import_node_path2.default.join(pinnedCaptured, name), import_node_path2.default.join(pinnedTarget, name), { recursive: true, force: false, errorOnExist: true, preserveTimestamps: true, verbatimSymlinks: true });
-      }
+      await installDirectorySnapshot(targetHandle, snapshot);
       await targetHandle.sync();
     } finally {
-      await Promise.all([targetHandle.close(), capturedHandle.close()]);
+      await targetHandle.close();
     }
     await assertDirectoryIdentity(parent, parentIdentity);
     await assertDirectoryIdentity(target, reservation);
@@ -18929,6 +18984,8 @@ async function relationshipRows(root) {
     return data.relationships.map((v2) => {
       const value = requireRecord(v2, "Relationship");
       const id = requireId(value);
+      if (typeof value.from !== "string" || !value.from || typeof value.to !== "string" || !value.to || typeof value.label !== "string" || !value.label)
+        throw new Error(`Relationship ${JSON.stringify(id)} requires non-empty from/to/label strings.`);
       if (ids.has(id)) throw new Error(`relationships.json contains duplicate id ${JSON.stringify(id)}.`);
       ids.add(id);
       return managed("relationship", id, value);

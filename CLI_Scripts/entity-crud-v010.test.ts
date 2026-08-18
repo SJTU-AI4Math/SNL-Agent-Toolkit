@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, writeFile } from 'node:fs/promises';
+import { cp, lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -397,11 +397,15 @@ describe('unified CRUD on workspace v0.1.0', () => {
   it('reports malformed Relationship fields during workspace validation', async () => {
     const root = await fixtureCopy();
     await writeFile(path.join(root, '.SNL_Doc', 'relationships.json'), '{"version":1,"relationships":[{"id":"malformed"}]}\n');
+    await assert.rejects(
+      () => listManagedEntities(root, 'relationship'),
+      /requires non-empty from\/to\/label strings/i,
+    );
     const report = await validateManagedWorkspace(root);
     assert.equal(report.valid, false);
-    assert.ok(report.issues.some(issue => issue.code === 'relationship.invalid-from'));
-    assert.ok(report.issues.some(issue => issue.code === 'relationship.invalid-to'));
-    assert.ok(report.issues.some(issue => issue.code === 'relationship.invalid-label'));
+    assert.ok(report.issues.some(issue =>
+      issue.code === 'relationship.read-failed' && issue.message.includes('requires non-empty from/to/label strings'),
+    ));
   });
 
   it('rejects derived Macro Package contents instead of silently discarding them', async () => {
@@ -690,6 +694,37 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(dir, 'meta.json'), 'utf8'), '{"owner":"original"}\n');
     assert.equal(await readFile(path.join(parkedCapture, 'meta.json'), 'utf8'), '{"owner":"original"}\n');
     assert.equal(await readFile(path.join(replacementCapture, 'meta.json'), 'utf8'), '{"owner":"external"}\n');
+  });
+
+  it('restores the captured Library bytes when a captured child changes after snapshot', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'sample');
+    const outside = path.join(root, 'outside-meta.json');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{"owner":"original"}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    await writeFile(outside, '{"owner":"replacement"}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeLibraryDeleteCommitSync: () => { throw new Error('force restoration'); },
+        afterLibraryRestoreReservationCheck: async () => {
+          const name = (await readdir(libraries)).find(candidate => candidate.startsWith('.sample.snl-entity-') && candidate.endsWith('.deleted'));
+          assert.ok(name);
+          const capturedMeta = path.join(libraries, name, 'meta.json');
+          await rm(capturedMeta);
+          await symlink(outside, capturedMeta);
+        },
+      }),
+      /changed while deletion was in flight.*restored/i,
+    );
+    const restoredMeta = path.join(dir, 'meta.json');
+    assert.equal((await lstat(restoredMeta)).isFile(), true);
+    assert.equal(await readFile(restoredMeta, 'utf8'), '{"owner":"original"}\n');
+    assert.equal(await readFile(outside, 'utf8'), '{"owner":"replacement"}\n');
   });
 
   it('refuses to delete a Library that still contains documents or exports', async () => {
