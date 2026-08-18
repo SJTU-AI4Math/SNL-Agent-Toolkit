@@ -161,7 +161,7 @@ export async function readConfig(workspaceRoot: string): Promise<SnlConfig> {
   return config;
 }
 
-function assertCurrentKindCatalogs(config: SnlConfig): void {
+export function assertCurrentKindCatalogs(config: SnlConfig): void {
   for (const field of ['entry_kinds', 'macro_kinds'] as const) {
     const catalog = config[field];
     if (!Array.isArray(catalog)) throw new Error(`config.json#${field} must be an array.`);

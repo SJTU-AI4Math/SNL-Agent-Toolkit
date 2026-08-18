@@ -1,13 +1,15 @@
 import { createHash, randomUUID } from "node:crypto";
-import { constants, promises as fs } from "node:fs";
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import { CURRENT_ENTRY_SCHEMA_VERSION, CURRENT_MACRO_SCHEMA_VERSION, CURRENT_PACKAGE_SCHEMA_VERSION, ENTRY_STORAGE_VERSION, MACRO_STORAGE_VERSION, PACKAGE_STORAGE_VERSION, packageManifestPath, entryEntityPath, macroEntityPath } from "./entity-storage.ts";
-import { readActiveMacros, readAllMacroPackages, readConfig, readEntries, readEntryKinds, usesCurrentEntitySchemas, usesEntityStorage } from "./snl-doc.ts";
+import { assertCurrentKindCatalogs, readActiveMacros, readAllMacroPackages, readConfig, readEntries, readEntryKinds, usesCurrentEntitySchemas, usesEntityStorage } from "./snl-doc.ts";
+import type { SnlConfig } from "./snl-doc-schema.ts";
 import { lintEntry } from "./lint-entry.ts";
 import { lintPackage } from "./lint-package.ts";
 import { findEntityReferences } from "./entity-references.ts";
 import { withWorkspaceDataLock } from "./workspace-data-lock.ts";
 import { addEntryEntity, addMacroEntity, addPackageEntity } from "./entity-writes.ts";
+import { installNewJson, jsonText, readRegularText, removeJsonIfUnchanged, replaceJsonIfUnchanged } from "./guarded-json-file.ts";
 export const ENTITY_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"] as const;
 export type ManagedEntityType = typeof ENTITY_TYPES[number];
 export interface ManagedEntity {
@@ -87,17 +89,43 @@ async function macroRows(root: string): Promise<ManagedEntity[]> {
     return rows.sort(compare);
 }
 async function relationshipRows(root: string): Promise<ManagedEntity[]> { const file = path.join(docRoot(root), "relationships.json"); try {
-    const data = requireRecord(await readJson(file), "Relationships file");
+    const data = requireRecord(JSON.parse((await readRegularText(file)).text), "Relationships file");
     if (!Array.isArray(data.relationships))
         throw new Error("relationships.json#relationships must be an array.");
-    return data.relationships.map(v => { const value = requireRecord(v, "Relationship"); return managed("relationship", requireId(value), value); }).sort(compare);
+    const ids = new Set<string>();
+    return data.relationships.map(v => {
+        const value = requireRecord(v, "Relationship");
+        const id = requireId(value);
+        if (ids.has(id)) throw new Error(`relationships.json contains duplicate id ${JSON.stringify(id)}.`);
+        ids.add(id);
+        return managed("relationship", id, value);
+    }).sort(compare);
 }
 catch (e) {
     if ((e as NodeJS.ErrnoException).code === "ENOENT")
         return [];
     throw e;
 } }
+async function libraryExtraNames(dir: string): Promise<string[]> {
+    const owned = new Set(["meta.json", "graph.json", "counters.json"]);
+    return (await fs.readdir(dir)).filter(name => !owned.has(name)).sort((a, b) => a.localeCompare(b));
+}
+async function readLibraryDirectoryValue(dir: string, slug: string): Promise<RecordJson> {
+    const meta = requireRecord(JSON.parse((await readRegularText(path.join(dir, "meta.json"))).text), "Library meta");
+    const graph = requireRecord(JSON.parse((await readRegularText(path.join(dir, "graph.json"))).text), "Library graph");
+    let counters: RecordJson = { counters: [] };
+    try {
+        counters = requireRecord(JSON.parse((await readRegularText(path.join(dir, "counters.json"))).text), "Library counters");
+    }
+    catch (e) {
+        if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+    }
+    return { slug, meta, graph, counters };
+}
 async function libraryRows(root: string): Promise<ManagedEntity[]> { const base = path.join(docRoot(root), "libraries"); const rows: ManagedEntity[] = []; let entries; try {
+    const baseStat = await fs.lstat(base);
+    if (!baseStat.isDirectory() || baseStat.isSymbolicLink())
+        throw new Error(`${base} must be a regular, non-symlink Library directory.`);
     entries = await fs.readdir(base, { withFileTypes: true });
 }
 catch (e) {
@@ -105,20 +133,11 @@ catch (e) {
         return [];
     throw e;
 } for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
-    if (!entry.isDirectory())
-        continue;
+    if (entry.isFile() && entry.name === ".gitkeep") continue;
+    if (entry.isSymbolicLink() || !entry.isDirectory())
+        throw new Error(`${path.join(base, entry.name)} must be a regular, non-symlink Library directory.`);
     const dir = path.join(base, entry.name);
-    const meta = requireRecord(await readJson(path.join(dir, "meta.json")), "Library meta");
-    const graph = requireRecord(await readJson(path.join(dir, "graph.json")), "Library graph");
-    let counters: RecordJson = { counters: [] };
-    try {
-        counters = requireRecord(await readJson(path.join(dir, "counters.json")), "Library counters");
-    }
-    catch (e) {
-        if ((e as NodeJS.ErrnoException).code !== "ENOENT")
-            throw e;
-    }
-    rows.push(managed("library", entry.name, { slug: entry.name, meta, graph, counters }));
+    rows.push(managed("library", entry.name, await readLibraryDirectoryValue(dir, entry.name)));
 } return rows.sort(compare); }
 export function isManagedEntityType(value: string): value is ManagedEntityType { return (ENTITY_TYPES as readonly string[]).includes(value); }
 export async function listManagedEntities(root: string, type: ManagedEntityType): Promise<ManagedEntity[]> {
@@ -142,105 +161,15 @@ export async function listManagedEntities(root: string, type: ManagedEntityType)
     return libraryRows(root);
 }
 export async function getManagedEntity(root: string, type: ManagedEntityType, id: string): Promise<ManagedEntity | undefined> { return (await listManagedEntities(root, type)).find(item => item.id === id); }
-async function atomicWriteJson(file: string, value: unknown): Promise<void> {
-    const directory = path.dirname(file);
-    const temp = path.join(directory, `.${path.basename(file)}.snl-entity-${process.pid}-${randomUUID()}.tmp`);
-    let handle;
-    let mode = 0o644;
-    try {
-        mode = (await fs.stat(file)).mode & 0o777;
-    }
-    catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== "ENOENT")
-            throw error;
-    }
-    try {
-        handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, mode);
-        await handle.writeFile(`${JSON.stringify(value, null, 2)}\n`, "utf8");
-        await handle.sync();
-        await handle.close();
-        handle = undefined;
-        await fs.rename(temp, file);
-        const dir = await fs.open(directory, constants.O_RDONLY);
-        try {
-            await dir.sync();
-        }
-        finally {
-            await dir.close();
-        }
-    }
-    finally {
-        await handle?.close();
-        await fs.rm(temp, { force: true });
-    }
-}
-function jsonText(value: unknown): string { return `${JSON.stringify(value, null, 2)}\n`; }
-async function readRegularText(file: string): Promise<{ text: string; mode: number }> {
-    let handle;
-    try {
-        handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-        const stat = await handle.stat();
-        if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-        return { text: await handle.readFile("utf8"), mode: stat.mode & 0o777 };
-    }
-    finally { await handle?.close(); }
-}
-async function replaceJsonIfUnchanged(file: string, expected: string, value: unknown): Promise<void> {
-    const current = await readRegularText(file);
-    if (current.text !== expected) throw new Error(`${file} changed; refusing to overwrite it.`);
-    const directory = path.dirname(file);
-    const temp = path.join(directory, `.${path.basename(file)}.snl-entity-${process.pid}-${randomUUID()}.tmp`);
-    let handle;
-    try {
-        handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
-        await handle.writeFile(jsonText(value), "utf8");
-        await handle.sync();
-        await handle.close();
-        handle = undefined;
-        if ((await readRegularText(file)).text !== expected)
-            throw new Error(`${file} changed; refusing to overwrite it.`);
-        await fs.rename(temp, file);
-    }
-    finally {
-        await handle?.close();
-        await fs.rm(temp, { force: true });
-    }
-}
-async function installNewJson(file: string, value: unknown): Promise<void> {
-    const directory = path.dirname(file);
-    const temp = path.join(directory, `.${path.basename(file)}.snl-entity-${process.pid}-${randomUUID()}.tmp`);
-    let handle;
-    try {
-        handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, 0o644);
-        await handle.writeFile(jsonText(value), "utf8");
-        await handle.sync();
-        await handle.close();
-        handle = undefined;
-        await fs.link(temp, file);
-    }
-    finally {
-        await handle?.close();
-        await fs.rm(temp, { force: true });
-    }
-}
-async function removeJsonIfUnchanged(file: string, expected: string): Promise<void> {
-    let handle;
-    try {
-        handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-        const stat = await handle.stat();
-        if (!stat.isFile() || await handle.readFile("utf8") !== expected)
-            throw new Error(`${file} changed; refusing to remove it.`);
-        const current = await fs.lstat(file);
-        if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino)
-            throw new Error(`${file} path changed; refusing to remove it.`);
-        await fs.rm(file);
-    }
-    finally { await handle?.close(); }
-}
 function invalid(message: string): EntityMutationResult { return { status: "invalid", code: "entity.invalid", message }; }
 function conflict(message: string): EntityMutationResult { return { status: "conflict", code: "entity.revision-conflict", message }; }
+function currentKindCatalogProblem(config: RecordJson, next: RecordJson): string | undefined {
+    if (!usesCurrentEntitySchemas(config)) return undefined;
+    try { assertCurrentKindCatalogs(next as unknown as SnlConfig); return undefined; }
+    catch (error) { return error instanceof Error ? error.message : String(error); }
+}
 async function mutateConfigEntity(root: string, type: "entry-kind" | "macro-kind", operation: "create" | "update" | "delete", id: string | undefined, input: unknown, ifMatch?: string): Promise<EntityMutationResult> {
-    return withWorkspaceDataLock(root, `${operation} ${type}`, async () => { const file = path.join(docRoot(root), "config.json"); const config = requireRecord(await readJson(file), "config.json"); if (!usesEntityStorage(config))
+    return withWorkspaceDataLock(root, `${operation} ${type}`, async () => { const file = path.join(docRoot(root), "config.json"); const originalConfig = await readRegularText(file); const config = requireRecord(JSON.parse(originalConfig.text), "config.json"); if (!usesEntityStorage(config))
         throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage."); const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds"; const values = config[field]; if (!Array.isArray(values))
         throw new Error(`config.json#${field} must be an array.`); const index = values.findIndex(v => isRecord(v) && v.id === id); if (operation === "create") {
         const value = requireRecord(input, type);
@@ -251,22 +180,34 @@ async function mutateConfigEntity(root: string, type: "entry-kind" | "macro-kind
         if (values.some(v => isRecord(v) && v.id === newId))
             return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(newId)} already exists.` };
         const next = { ...config, [field]: [...values, value] };
-        await atomicWriteJson(file, next);
+        const catalogProblem = currentKindCatalogProblem(config, next);
+        if (catalogProblem) return invalid(catalogProblem);
+        await replaceJsonIfUnchanged(file, originalConfig.text, next);
         return { status: "ok", operation, type, entity: managed(type, newId, value) };
     } if (index < 0)
         return { status: "not-found", code: "entity.not-found", message: `${type} ${JSON.stringify(id)} was not found.` }; const current = requireRecord(values[index], type); const currentEntity = managed(type, id!, current); if (!ifMatch || ifMatch !== currentEntity.revision)
         return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`); if (operation === "delete") {
+        if (type === "entry-kind" && (await readEntries(root)).some(entry => entry.kind === id))
+            return { status: "conflict", code: "entity.referenced", message: `Entry Kind ${JSON.stringify(id)} is still used by Entries.` };
+        if (type === "macro-kind") {
+            const packages = await readAllMacroPackages(root);
+            if (Object.values(packages).some(pkg => Object.values(pkg.macros).some(macro => macro.kind === id)))
+                return { status: "conflict", code: "entity.referenced", message: `Macro Kind ${JSON.stringify(id)} is still used by Macros.` };
+        }
         const nextValues = values.filter((_, i) => i !== index);
-        await atomicWriteJson(file, { ...config, [field]: nextValues });
+        const next = { ...config, [field]: nextValues };
+        const catalogProblem = currentKindCatalogProblem(config, next);
+        if (catalogProblem) return invalid(catalogProblem);
+        await replaceJsonIfUnchanged(file, originalConfig.text, next);
         return { status: "ok", operation, type, entity: currentEntity };
     } const value = requireRecord(input, type); const problem = await validationMessage(root, type, value, id); if (problem)
         return invalid(problem); if (requireId(value) !== id)
-        return invalid(`${type} identity is immutable: payload id must equal ${JSON.stringify(id)}.`); const nextValues = [...values]; nextValues[index] = value; await atomicWriteJson(file, { ...config, [field]: nextValues }); return { status: "ok", operation, type, entity: managed(type, id!, value) }; });
+        return invalid(`${type} identity is immutable: payload id must equal ${JSON.stringify(id)}.`); const nextValues = [...values]; nextValues[index] = value; const next = { ...config, [field]: nextValues }; const catalogProblem = currentKindCatalogProblem(config, next); if (catalogProblem) return invalid(catalogProblem); await replaceJsonIfUnchanged(file, originalConfig.text, next); return { status: "ok", operation, type, entity: managed(type, id!, value) }; });
 }
 async function validationMessage(root: string, type: ManagedEntityType, value: RecordJson, currentId?: string): Promise<string | undefined> {
     const stringField = (field: string) => typeof value[field] === "string" && value[field] !== "";
     if (type === "entry-kind") {
-        if (!stringField("id") || !stringField("name") || !isRecord(value.coloring) || typeof value.style !== "string")
+        if (!stringField("id") || !(typeof value.name === "string" || isRecord(value.name)) || !isRecord(value.coloring) || typeof value.style !== "string")
             return "Entry Kind requires non-empty id/name, coloring object, and string style.";
     }
     else if (type === "macro-kind") {
@@ -326,8 +267,10 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(id)} already exists.` }; if (type === "relationship") {
         const file = path.join(docRoot(root), "relationships.json");
         let data: RecordJson = { version: 1, relationships: [] };
+        let original: { text: string; mode: number } | undefined;
         try {
-            data = requireRecord(await readJson(file), "relationships.json");
+            original = await readRegularText(file);
+            data = requireRecord(JSON.parse(original.text), "relationships.json");
         }
         catch (e) {
             if ((e as NodeJS.ErrnoException).code !== "ENOENT")
@@ -335,21 +278,42 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         }
         if (!Array.isArray(data.relationships))
             throw new Error("relationships.json#relationships must be an array.");
-        await atomicWriteJson(file, { ...data, relationships: [...data.relationships, value] });
+        const next = { ...data, relationships: [...data.relationships, value] };
+        if (original) await replaceJsonIfUnchanged(file, original.text, next);
+        else await installNewJson(file, next);
     }
     else {
         const dir = path.join(docRoot(root), "libraries", id);
         if (path.basename(id) !== id || id === "." || id === "..")
             return invalid("Library slug must be one safe path segment.");
         await fs.mkdir(dir, { recursive: false });
+        const resources = [
+            { file: path.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
+            { file: path.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
+            { file: path.join(dir, "counters.json"), value: requireRecord(value.counters, "Library counters") },
+        ];
+        const installed: typeof resources = [];
         try {
-            await atomicWriteJson(path.join(dir, "meta.json"), requireRecord(value.meta, "Library meta"));
-            await atomicWriteJson(path.join(dir, "graph.json"), requireRecord(value.graph, "Library graph"));
-            await atomicWriteJson(path.join(dir, "counters.json"), requireRecord(value.counters, "Library counters"));
+            for (const resource of resources) {
+                await installNewJson(resource.file, resource.value);
+                installed.push(resource);
+            }
         }
-        catch (e) {
-            await fs.rm(dir, { recursive: true, force: true });
-            throw e;
+        catch (error) {
+            const cleanupErrors: string[] = [];
+            for (const resource of installed.reverse()) {
+                try { await removeJsonIfUnchanged(resource.file, jsonText(resource.value)); }
+                catch (cleanup) { cleanupErrors.push(`${resource.file}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`); }
+            }
+            try { await fs.rmdir(dir); }
+            catch (cleanup) { cleanupErrors.push(`${dir}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`); }
+            if (cleanupErrors.length) {
+                throw new Error(
+                    `${error instanceof Error ? error.message : String(error)} Library creation cleanup preserved concurrent data: ${cleanupErrors.join("; ")}`,
+                    { cause: error },
+                );
+            }
+            throw error;
         }
     } const entity = await getManagedEntity(root, type, id); if (!entity)
         throw new Error(`Created ${type} could not be read back.`); return { status: "ok", operation: "create", type, entity }; });
@@ -403,6 +367,7 @@ async function locateFile(root: string, type: ManagedEntityType, entity: Managed
 type DirectMutationOptions = {
     beforeConfigInstall?: () => void | Promise<void>;
     beforeEntityInstall?: () => void | Promise<void>;
+    beforeEntityDelete?: () => void | Promise<void>;
     beforeManifestDelete?: () => void | Promise<void>;
 };
 async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entry-kind" | "macro-kind">, operation: "update" | "delete", id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> {
@@ -417,17 +382,66 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             return invalid(`${type} identity is immutable: payload identity must equal ${JSON.stringify(id)}.`);
         if (type === "relationship") {
             const file = path.join(docRoot(root), "relationships.json");
-            const data = requireRecord(await readJson(file), "relationships.json");
+            const original = await readRegularText(file);
+            const data = requireRecord(JSON.parse(original.text), "relationships.json");
             const values = data.relationships;
             if (!Array.isArray(values))
                 throw new Error("relationships.json#relationships must be an array.");
-            await atomicWriteJson(file, { ...data, relationships: values.map(row => isRecord(row) && row.id === id ? value : row) });
+            await options.beforeEntityInstall?.();
+            await replaceJsonIfUnchanged(file, original.text, {
+                ...data,
+                relationships: values.map(row => isRecord(row) && row.id === id ? value : row),
+            });
         }
         else if (type === "library") {
             const dir = path.join(docRoot(root), "libraries", id);
-            await atomicWriteJson(path.join(dir, "meta.json"), requireRecord(value.meta, "Library meta"));
-            await atomicWriteJson(path.join(dir, "graph.json"), requireRecord(value.graph, "Library graph"));
-            await atomicWriteJson(path.join(dir, "counters.json"), requireRecord(value.counters, "Library counters"));
+            const resources = [
+                { file: path.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
+                { file: path.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
+                { file: path.join(dir, "counters.json"), next: requireRecord(value.counters, "Library counters") },
+            ];
+            const originals = await Promise.all(resources.map(async resource => {
+                try { return { ...resource, original: await readRegularText(resource.file) }; }
+                catch (error) {
+                    if (path.basename(resource.file) === "counters.json" && (error as NodeJS.ErrnoException).code === "ENOENT")
+                        return { ...resource, original: undefined };
+                    throw error;
+                }
+            }));
+            const installed: typeof originals = [];
+            try {
+                await options.beforeEntityInstall?.();
+                for (const resource of originals) {
+                    if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
+                    else await installNewJson(resource.file, resource.next);
+                    installed.push(resource);
+                }
+            }
+            catch (error) {
+                const rollbackErrors: string[] = [];
+                for (const resource of installed.reverse()) {
+                    try {
+                        if (resource.original) {
+                            await replaceJsonIfUnchanged(
+                                resource.file,
+                                jsonText(resource.next),
+                                JSON.parse(resource.original.text),
+                            );
+                        }
+                        else await removeJsonIfUnchanged(resource.file, jsonText(resource.next));
+                    }
+                    catch (rollbackError) {
+                        rollbackErrors.push(`${resource.file}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`);
+                    }
+                }
+                if (rollbackErrors.length) {
+                    throw new Error(
+                        `${error instanceof Error ? error.message : String(error)} Library rollback failed without overwriting concurrent replacements: ${rollbackErrors.join("; ")}`,
+                        { cause: error },
+                    );
+                }
+                throw error;
+            }
         }
         else {
             const file = await locateFile(root, type, current);
@@ -597,20 +611,47 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         const references = (await findEntityReferences(root, "macro", name)).filter(occurrence => occurrence.role === "reference");
         if (references.length)
             return { status: "conflict", code: "entity.referenced", message: `Macro ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
-        await fs.unlink(await locateFile(root, type, current));
+        const file = await locateFile(root, type, current);
+        const original = await readRegularText(file);
+        await options.beforeEntityDelete?.();
+        await removeJsonIfUnchanged(file, original.text);
     }
     else if (type === "relationship") {
         const file = path.join(docRoot(root), "relationships.json");
-        const data = requireRecord(await readJson(file), "relationships.json");
+        const original = await readRegularText(file);
+        const data = requireRecord(JSON.parse(original.text), "relationships.json");
         const values = data.relationships;
         if (!Array.isArray(values))
             throw new Error("relationships.json#relationships must be an array.");
-        await atomicWriteJson(file, { ...data, relationships: values.filter(row => !(isRecord(row) && row.id === id)) });
+        await options.beforeEntityDelete?.();
+        await replaceJsonIfUnchanged(file, original.text, {
+            ...data,
+            relationships: values.filter(row => !(isRecord(row) && row.id === id)),
+        });
     }
     else if (type === "library") {
         const dir = path.join(docRoot(root), "libraries", id);
+        const extras = await libraryExtraNames(dir);
+        if (extras.length) {
+            return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
+        }
         const tomb = path.join(path.dirname(dir), `.${id}.snl-entity-${randomUUID()}.deleted`);
+        await options.beforeEntityDelete?.();
         await fs.rename(dir, tomb);
+        let captured: RecordJson;
+        try {
+            captured = await readLibraryDirectoryValue(tomb, id);
+        }
+        catch (error) {
+            throw new Error(
+                `${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}: ${error instanceof Error ? error.message : String(error)}`,
+                { cause: error },
+            );
+        }
+        const capturedExtras = await libraryExtraNames(tomb);
+        if (sha(captured) !== current.revision || capturedExtras.length) {
+            throw new Error(`${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}.`);
+        }
         await fs.rm(tomb, { recursive: true });
     }
     else if (type === "entry-package" || type === "macro-package") {

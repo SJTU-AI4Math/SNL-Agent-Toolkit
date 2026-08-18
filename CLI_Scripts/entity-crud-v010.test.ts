@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -122,6 +122,29 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.deepEqual(JSON.parse(await readFile(file, 'utf8')).concurrent_extension, { writer: 'external' });
   });
 
+  it('validates Kind writes authoritatively and protects referenced Kinds', async () => {
+    const root = await fixtureCopy();
+    const kind = await getManagedEntity(root, 'entry-kind', 'definition');
+    assert.ok(kind);
+    const localized = {
+      ...kind.value,
+      name: { type: 'i18n', default_language: 'en', values: { en: 'Definition', zh: '定义' } },
+    };
+    const updated = await updateManagedEntity(root, 'entry-kind', kind.id, localized, kind.revision);
+    assert.equal(updated.status, 'ok');
+    if (updated.status !== 'ok') return;
+    const invalid = {
+      ...updated.entity.value,
+      coloring: { stroke: '#000', background: '#fff' },
+    };
+    const rejected = await updateManagedEntity(root, 'entry-kind', kind.id, invalid, updated.entity.revision);
+    assert.equal(rejected.status, 'invalid');
+    const unchanged = await getManagedEntity(root, 'entry-kind', kind.id);
+    assert.equal(unchanged?.revision, updated.entity.revision);
+    const deletion = await deleteManagedEntity(root, 'entry-kind', kind.id, updated.entity.revision);
+    assert.equal(deletion.status, 'conflict');
+  });
+
   it('rejects Package updates that try to change derived Entry membership', async () => {
     const root = await fixtureCopy();
     const pkg = await getManagedEntity(root, 'entry-package', '_unpackaged');
@@ -209,6 +232,72 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal((await getManagedEntity(root, 'entry', entry.id))?.value.package, 'Logic');
   });
 
+
+  it('rejects symlinked Relationship and Library payload files', async () => {
+    const relationshipRoot = await fixtureCopy();
+    const externalRelationship = path.join(relationshipRoot, 'outside-relationships.json');
+    await writeFile(externalRelationship, '{"version":1,"relationships":[]}\n');
+    await symlink(externalRelationship, path.join(relationshipRoot, '.SNL_Doc', 'relationships.json'));
+    await assert.rejects(() => listManagedEntities(relationshipRoot, 'relationship'), /symlink|ELOOP|regular/i);
+
+    const libraryRoot = await fixtureCopy();
+    const libraryDir = path.join(libraryRoot, '.SNL_Doc', 'libraries', 'sample');
+    await mkdir(libraryDir, { recursive: true });
+    const externalMeta = path.join(libraryRoot, 'outside-meta.json');
+    await writeFile(externalMeta, '{"title":"outside"}\n');
+    await symlink(externalMeta, path.join(libraryDir, 'meta.json'));
+    await writeFile(path.join(libraryDir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(libraryDir, 'counters.json'), '{"counters":[]}\n');
+    await assert.rejects(() => listManagedEntities(libraryRoot, 'library'), /symlink|ELOOP|regular/i);
+  });
+
+  it('rolls back earlier Library files without overwriting a concurrent replacement', async () => {
+    const root = await fixtureCopy();
+    const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
+    await mkdir(dir, { recursive: true });
+    const originalMeta = { title: 'original' };
+    const originalGraph = { nodes: [], relationships: [] };
+    const originalCounters = { counters: [] };
+    await writeFile(path.join(dir, 'meta.json'), `${JSON.stringify(originalMeta, null, 2)}\n`);
+    await writeFile(path.join(dir, 'graph.json'), `${JSON.stringify(originalGraph, null, 2)}\n`);
+    await writeFile(path.join(dir, 'counters.json'), `${JSON.stringify(originalCounters, null, 2)}\n`);
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    const next = {
+      ...library.value,
+      meta: { title: 'mine' },
+      graph: { nodes: [{ id: 'mine' }], relationships: [] },
+      counters: { counters: [{ name: 'mine' }] },
+    };
+    const concurrentGraph = { nodes: [{ id: 'external' }], relationships: [] };
+    await assert.rejects(
+      () => updateManagedEntity(root, 'library', 'sample', next, library.revision, {
+        beforeEntityInstall: async () => writeFile(
+          path.join(dir, 'graph.json'),
+          `${JSON.stringify(concurrentGraph, null, 2)}\n`,
+        ),
+      }),
+      /changed.*refusing/i,
+    );
+    assert.deepEqual(JSON.parse(await readFile(path.join(dir, 'meta.json'), 'utf8')), originalMeta);
+    assert.deepEqual(JSON.parse(await readFile(path.join(dir, 'graph.json'), 'utf8')), concurrentGraph);
+    assert.deepEqual(JSON.parse(await readFile(path.join(dir, 'counters.json'), 'utf8')), originalCounters);
+  });
+
+  it('refuses to delete a Library that still contains documents or exports', async () => {
+    const root = await fixtureCopy();
+    const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
+    await mkdir(path.join(dir, 'documents'), { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    await writeFile(path.join(dir, 'documents', 'keep.txt'), 'keep');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    const result = await deleteManagedEntity(root, 'library', 'sample', library.revision);
+    assert.equal(result.status, 'conflict');
+    assert.equal(await readFile(path.join(dir, 'documents', 'keep.txt'), 'utf8'), 'keep');
+  });
 
   it('keeps a Package manifest when config deletion fails and permits a clean retry', async () => {
     const root = await fixtureCopy();

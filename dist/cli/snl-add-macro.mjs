@@ -15959,6 +15959,12 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   }
 }
 
+// lib/guarded-json-file.ts
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+
 // lib/entity-writes.ts
 function isRecord4(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -16061,10 +16067,6 @@ async function installNewJson(docRoot, relativePath, value) {
     await handle?.close();
     await fs2.rm(temp, { force: true });
   }
-}
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
 }
 async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);

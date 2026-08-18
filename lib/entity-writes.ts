@@ -32,6 +32,7 @@ import {
   usesEntityStorage,
 } from './snl-doc.ts';
 import { withWorkspaceDataLock } from './workspace-data-lock.ts';
+import { jsonText, readRegularText, removeJsonIfUnchanged, replaceJsonIfUnchanged } from './guarded-json-file.ts';
 
 export type AddEntryResult =
   | {
@@ -212,44 +213,6 @@ async function installNewJson(docRoot: string, relativePath: string, value: unkn
   }
 }
 
-function jsonText(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
-}
-
-async function readRegularText(file: string): Promise<{ text: string; mode: number }> {
-  let handle;
-  try {
-    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile('utf8'), mode: stat.mode & 0o777 };
-  } finally {
-    await handle?.close();
-  }
-}
-
-async function replaceJsonIfUnchanged(file: string, expected: string, value: unknown): Promise<void> {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-  const directory = path.dirname(file);
-  const temp = path.join(directory, `.${path.basename(file)}.snl-add-${process.pid}-${randomUUID()}.tmp`);
-  let handle;
-  try {
-    handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText(value), 'utf8');
-    await handle.sync();
-    await handle.close();
-    handle = undefined;
-    if ((await readRegularText(file)).text !== expected) {
-      throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-    }
-    await fs.rename(temp, file);
-  } finally {
-    await handle?.close();
-    await fs.rm(temp, { force: true });
-  }
-}
-
 export async function addEntryEntity(
   workspaceRoot: string,
   raw: unknown,
@@ -391,24 +354,6 @@ export async function addEntryEntity(
       package: entry.package, path: relativePath, issues,
     };
   });
-}
-
-async function removeJsonIfUnchanged(file: string, expected: string): Promise<void> {
-  let handle;
-  try {
-    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile() || await handle.readFile('utf8') !== expected) {
-      throw new Error('installed entity changed concurrently; refusing to remove it');
-    }
-    const current = await fs.lstat(file);
-    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino) {
-      throw new Error('installed entity path changed concurrently; refusing to remove it');
-    }
-    await fs.rm(file);
-  } finally {
-    await handle?.close();
-  }
 }
 
 export async function addMacroEntity(

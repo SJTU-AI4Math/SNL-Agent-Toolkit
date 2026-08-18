@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // bin/impl/add-entry.ts
-import * as path5 from "node:path";
+import * as path6 from "node:path";
 
 // lib/cli-args.ts
 function parseArgs(argv, specs) {
@@ -111,9 +111,9 @@ var HELP_FLAG = {
 };
 
 // lib/entity-writes.ts
-import { constants as constants2, promises as fs2 } from "node:fs";
-import * as path4 from "node:path";
-import { randomUUID as randomUUID2 } from "node:crypto";
+import { constants as constants3, promises as fs3 } from "node:fs";
+import * as path5 from "node:path";
+import { randomUUID as randomUUID3 } from "node:crypto";
 
 // lib/entity-storage.ts
 import { createHash } from "node:crypto";
@@ -1376,27 +1376,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path6 = "";
+  var path7 = "";
   switch (size) {
     case "sqrtMain":
-      path6 = sqrtMain(extraVinculum, hLinePad);
+      path7 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path6 = sqrtSize1(extraVinculum, hLinePad);
+      path7 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path6 = sqrtSize2(extraVinculum, hLinePad);
+      path7 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path6 = sqrtSize3(extraVinculum, hLinePad);
+      path7 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path6 = sqrtSize4(extraVinculum, hLinePad);
+      path7 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path6 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path7 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path6;
+  return path7;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -5576,8 +5576,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path6 = new PathNode(pathName);
-  var svgNode = new SvgNode([path6], {
+  var path7 = new PathNode(pathName);
+  var svgNode = new SvgNode([path7], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -6740,8 +6740,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path6 = new PathNode(pathName);
-      var svgNode = new SvgNode([path6], {
+      var path7 = new PathNode(pathName);
+      var svgNode = new SvgNode([path7], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -8038,8 +8038,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path6 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path6], {
+  var path7 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path7], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -8208,10 +8208,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path6 = new PathNode(svgLabel, pathStr);
+    var path7 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path6], {
+    var svg = new SvgNode([path7], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -8252,8 +8252,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path6 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path6);
+  var path7 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path7);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -8760,8 +8760,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path6 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path6)], {
+    var path7 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path7)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -15818,6 +15818,152 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   }
 }
 
+// lib/guarded-json-file.ts
+import { constants as constants2, promises as fs2 } from "node:fs";
+import path4 from "node:path";
+import { randomUUID as randomUUID2 } from "node:crypto";
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readRegularText(file) {
+  let handle;
+  try {
+    handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
+  } finally {
+    await handle?.close();
+  }
+}
+async function syncDirectory(directory) {
+  const handle = await fs2.open(directory, constants2.O_RDONLY);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
+async function restoreCapturedPath(captured, target) {
+  try {
+    await fs2.link(captured, target);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
+      { cause: error }
+    );
+  }
+  await fs2.rm(captured);
+}
+async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+  const directory = path4.dirname(file);
+  const nonce = `${process.pid}-${randomUUID2()}`;
+  const temp = path4.join(directory, `.${path4.basename(file)}.snl-write-${nonce}.tmp`);
+  const captured = path4.join(directory, `.${path4.basename(file)}.snl-write-${nonce}.captured`);
+  let handle;
+  let capturedPresent = false;
+  let installed = false;
+  try {
+    handle = await fs2.open(temp, constants2.O_CREAT | constants2.O_EXCL | constants2.O_WRONLY, current.mode);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await hooks.beforeCapture?.();
+    await fs2.rename(file, captured);
+    capturedPresent = true;
+    await hooks.afterCapture?.();
+    const observed = await readRegularText(captured);
+    if (observed.text !== expected) {
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+    }
+    try {
+      await fs2.link(temp, file);
+      installed = true;
+    } catch (error) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    await fs2.rm(captured);
+    capturedPresent = false;
+    await syncDirectory(directory);
+  } catch (error) {
+    if (capturedPresent && !installed) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+    }
+    throw error;
+  } finally {
+    await handle?.close();
+    await fs2.rm(temp, { force: true });
+  }
+}
+async function removeJsonIfUnchanged(file, expected, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  const directory = path4.dirname(file);
+  const captured = path4.join(
+    directory,
+    `.${path4.basename(file)}.snl-remove-${process.pid}-${randomUUID2()}.captured`
+  );
+  await hooks.beforeCapture?.();
+  await fs2.rename(file, captured);
+  await hooks.afterCapture?.();
+  let observed;
+  try {
+    observed = await readRegularText(captured);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  if (observed.text !== expected) {
+    await restoreCapturedPath(captured, file);
+    throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  }
+  try {
+    await fs2.rm(captured);
+    await syncDirectory(directory);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+}
+
 // lib/entity-writes.ts
 function isRecord2(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -15834,24 +15980,24 @@ function assertCurrentWriteConfig(config, cli) {
   }
 }
 async function canonicalWriteWorkspaceRoot(workspaceRoot) {
-  const resolved = path4.resolve(workspaceRoot);
-  const real = await fs2.realpath(resolved);
-  const stat = await fs2.lstat(resolved);
+  const resolved = path5.resolve(workspaceRoot);
+  const real = await fs3.realpath(resolved);
+  const stat = await fs3.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved) {
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
   }
-  const doc = path4.join(resolved, ".SNL_Doc");
+  const doc = path5.join(resolved, ".SNL_Doc");
   let docStat;
   try {
-    docStat = await fs2.lstat(doc);
+    docStat = await fs3.lstat(doc);
   } catch {
     throw new Error(`Workspace must contain an existing .SNL_Doc directory: ${doc}.`);
   }
   if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
     throw new Error(`${doc} must be a real directory, not a symlink.`);
   }
-  const realDoc = await fs2.realpath(doc);
-  if (realDoc !== path4.join(real, ".SNL_Doc")) {
+  const realDoc = await fs3.realpath(doc);
+  if (realDoc !== path5.join(real, ".SNL_Doc")) {
     throw new Error(`${doc} escapes the canonical workspace boundary.`);
   }
   return resolved;
@@ -15872,60 +16018,24 @@ function normalizeEntryDraft(raw, packageOverride) {
   };
 }
 async function installNewJson(docRoot, relativePath, value) {
-  const target = path4.join(docRoot, relativePath);
-  const directory = path4.dirname(target);
-  const dirStat = await fs2.lstat(directory);
+  const target = path5.join(docRoot, relativePath);
+  const directory = path5.dirname(target);
+  const dirStat = await fs3.lstat(directory);
   if (!dirStat.isDirectory() || dirStat.isSymbolicLink()) {
     throw new Error(`${directory} must be a regular, non-symlink directory.`);
   }
-  const temp = path4.join(directory, `.${path4.basename(target)}.snl-add-${process.pid}-${randomUUID2()}.tmp`);
+  const temp = path5.join(directory, `.${path5.basename(target)}.snl-add-${process.pid}-${randomUUID3()}.tmp`);
   let handle;
   try {
-    handle = await fs2.open(temp, constants2.O_CREAT | constants2.O_EXCL | constants2.O_WRONLY, 420);
+    handle = await fs3.open(temp, constants3.O_CREAT | constants3.O_EXCL | constants3.O_WRONLY, 420);
     await handle.writeFile(jsonText(value), "utf8");
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await fs2.link(temp, target);
+    await fs3.link(temp, target);
   } finally {
     await handle?.close();
-    await fs2.rm(temp, { force: true });
-  }
-}
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readRegularText(file) {
-  let handle;
-  try {
-    handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
-  } finally {
-    await handle?.close();
-  }
-}
-async function replaceJsonIfUnchanged(file, expected, value) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-  const directory = path4.dirname(file);
-  const temp = path4.join(directory, `.${path4.basename(file)}.snl-add-${process.pid}-${randomUUID2()}.tmp`);
-  let handle;
-  try {
-    handle = await fs2.open(temp, constants2.O_CREAT | constants2.O_EXCL | constants2.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    if ((await readRegularText(file)).text !== expected) {
-      throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-    }
-    await fs2.rename(temp, file);
-  } finally {
-    await handle?.close();
-    await fs2.rm(temp, { force: true });
+    await fs3.rm(temp, { force: true });
   }
 }
 async function addEntryEntity(workspaceRoot, raw, options = {}) {
@@ -16007,7 +16117,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       package: entry.package,
       entry
     };
-    const manifestFile = path4.join(
+    const manifestFile = path5.join(
       snlDocRoot(workspaceRoot),
       packageManifestPath(entry.package)
     );
@@ -16027,7 +16137,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
           await options.beforePackageManifestInstall?.();
           await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
         } catch (error) {
-          const entityFile = path4.join(snlDocRoot(workspaceRoot), relativePath);
+          const entityFile = path5.join(snlDocRoot(workspaceRoot), relativePath);
           try {
             await removeJsonIfUnchanged(entityFile, jsonText(envelope));
           } catch (rollbackError) {
@@ -16060,26 +16170,9 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     };
   });
 }
-async function removeJsonIfUnchanged(file, expected) {
-  let handle;
-  try {
-    handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile() || await handle.readFile("utf8") !== expected) {
-      throw new Error("installed entity changed concurrently; refusing to remove it");
-    }
-    const current = await fs2.lstat(file);
-    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino) {
-      throw new Error("installed entity path changed concurrently; refusing to remove it");
-    }
-    await fs2.rm(file);
-  } finally {
-    await handle?.close();
-  }
-}
 
 // bin/impl/add-cli-common.ts
-import { promises as fs3 } from "node:fs";
+import { promises as fs4 } from "node:fs";
 var DraftReadError = class extends Error {
   constructor(message, options) {
     super(message, options);
@@ -16095,7 +16188,7 @@ var DraftJsonError = class extends Error {
 async function readDraftJson(file) {
   let text2;
   try {
-    text2 = await fs3.readFile(file, "utf8");
+    text2 = await fs4.readFile(file, "utf8");
   } catch (error) {
     throw new DraftReadError(
       `Could not read draft ${file}: ${error instanceof Error ? error.message : String(error)}`,
@@ -16178,10 +16271,10 @@ async function main2() {
     );
     return 2;
   }
-  const root = path5.resolve(String(parsed.flags.root));
+  const root = path6.resolve(String(parsed.flags.root));
   const asJson = parsed.flags.json === true;
   try {
-    const draftPath = path5.resolve(parsed.positional[0]);
+    const draftPath = path6.resolve(parsed.positional[0]);
     const raw = await readDraftJson(draftPath);
     const result = await addEntryEntity(root, raw, {
       package: typeof parsed.flags.package === "string" ? parsed.flags.package : void 0,

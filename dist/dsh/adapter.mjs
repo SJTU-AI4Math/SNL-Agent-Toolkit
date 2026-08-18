@@ -141,22 +141,22 @@ function scalarMatches(type, value) {
   }
 }
 var ONE_OF_SIBLING_KEYWORDS = ["properties", "required", "additionalProperties", "items", "enum", "const"];
-function checkObjectSchemaTail(node, path7, properties, violations) {
+function checkObjectSchemaTail(node, path8, properties, violations) {
   const hasRequired = Object.hasOwn(node, "required");
   const required = hasRequired ? node.required : void 0;
   if (hasRequired) {
     if (!isPlainJsonArray(required) || required.some((entry) => typeof entry !== "string")) {
-      violations.push(`${path7}.required must be an array of strings`);
+      violations.push(`${path8}.required must be an array of strings`);
     } else {
       const declared = isJsonSchemaRecord(properties) ? properties : {};
       for (const key of required) {
         if (!Object.hasOwn(declared, key))
-          violations.push(`${path7}.required names "${key}" which is not in properties`);
+          violations.push(`${path8}.required names "${key}" which is not in properties`);
       }
     }
   }
   if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") {
-    violations.push(`${path7}.additionalProperties must be a boolean`);
+    violations.push(`${path8}.additionalProperties must be a boolean`);
   }
 }
 function checkSchemaNode(root, rootPath, violations, seen) {
@@ -177,13 +177,13 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       checkObjectSchemaTail(task.node, task.path, task.properties, violations);
       continue;
     }
-    const { node, path: path7 } = task;
+    const { node, path: path8 } = task;
     if (!isJsonSchemaRecord(node)) {
-      violations.push(`${path7} must be a schema object`);
+      violations.push(`${path8} must be a schema object`);
       continue;
     }
     if (seen.has(node)) {
-      violations.push(`${path7} is circular`);
+      violations.push(`${path8} is circular`);
       continue;
     }
     seen.add(node);
@@ -194,48 +194,48 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       if (ANNOTATION_KEYWORDS.has(key)) {
         try {
           if (!isJsonValue(node[key]))
-            violations.push(`${path7}.${key} annotation must be lossless JSON data`);
+            violations.push(`${path8}.${key} annotation must be lossless JSON data`);
         } catch {
-          violations.push(`${path7}.${key} annotation must be lossless JSON data`);
+          violations.push(`${path8}.${key} annotation must be lossless JSON data`);
         }
         continue;
       }
-      violations.push(`${path7}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
+      violations.push(`${path8}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
     }
     if (Object.hasOwn(node, "description") && typeof node.description !== "string") {
-      violations.push(`${path7}.description must be a string`);
+      violations.push(`${path8}.description must be a string`);
     }
     if (Object.hasOwn(node, "title") && typeof node.title !== "string") {
-      violations.push(`${path7}.title must be a string`);
+      violations.push(`${path8}.title must be a string`);
     }
     const hasType = Object.hasOwn(node, "type");
     const hasOneOf = Object.hasOwn(node, "oneOf");
     if (hasType && hasOneOf) {
-      violations.push(`${path7} cannot declare both type and oneOf`);
+      violations.push(`${path8} cannot declare both type and oneOf`);
       continue;
     }
     if (!hasType && !hasOneOf) {
       for (const key of ONE_OF_SIBLING_KEYWORDS) {
         if (Object.hasOwn(node, key))
-          violations.push(`${path7}.${key} requires type or oneOf`);
+          violations.push(`${path8}.${key} requires type or oneOf`);
       }
       continue;
     }
     if (hasOneOf) {
       const oneOf = node.oneOf;
-      tasks.push({ kind: "one-of-tail", node, path: path7 });
+      tasks.push({ kind: "one-of-tail", node, path: path8 });
       if (!isPlainJsonArray(oneOf) || oneOf.length < 2) {
-        violations.push(`${path7}.oneOf must be an array of at least two schemas`);
+        violations.push(`${path8}.oneOf must be an array of at least two schemas`);
       } else {
         for (let index = oneOf.length - 1; index >= 0; index--) {
-          tasks.push({ kind: "enter", node: oneOf[index], path: `${path7}.oneOf[${index}]` });
+          tasks.push({ kind: "enter", node: oneOf[index], path: `${path8}.oneOf[${index}]` });
         }
       }
       continue;
     }
     const type = node.type;
     if (typeof type !== "string" || !SCHEMA_TYPES.includes(type)) {
-      violations.push(Array.isArray(type) ? `${path7}.type must be a single type string (type arrays are not supported)` : `${path7}.type must be one of ${SCHEMA_TYPES.join("/")}`);
+      violations.push(Array.isArray(type) ? `${path8}.type must be a single type string (type arrays are not supported)` : `${path8}.type must be one of ${SCHEMA_TYPES.join("/")}`);
       continue;
     }
     const schemaType = type;
@@ -249,23 +249,23 @@ function checkSchemaNode(root, rootPath, violations, seen) {
     };
     for (const [key, types] of Object.entries(allowedFor)) {
       if (Object.hasOwn(node, key) && !types.includes(schemaType)) {
-        violations.push(`${path7}.${key} is not supported on type "${schemaType}"`);
+        violations.push(`${path8}.${key} is not supported on type "${schemaType}"`);
       }
     }
     switch (schemaType) {
       case "object": {
         const properties = Object.hasOwn(node, "properties") ? node.properties : void 0;
-        tasks.push({ kind: "object-tail", node, path: path7, properties });
+        tasks.push({ kind: "object-tail", node, path: path8, properties });
         if (Object.hasOwn(node, "properties")) {
           if (!isJsonSchemaRecord(properties)) {
-            violations.push(`${path7}.properties must be an object of schemas`);
+            violations.push(`${path8}.properties must be an object of schemas`);
           } else {
             const entries = Object.entries(properties);
             for (let index = entries.length - 1; index >= 0; index--) {
               const entry = entries[index];
               if (entry === void 0)
                 continue;
-              tasks.push({ kind: "enter", node: entry[1], path: `${path7}.properties.${entry[0]}` });
+              tasks.push({ kind: "enter", node: entry[1], path: `${path8}.properties.${entry[0]}` });
             }
           }
         }
@@ -273,7 +273,7 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       }
       case "array": {
         if (Object.hasOwn(node, "items"))
-          tasks.push({ kind: "enter", node: node.items, path: `${path7}.items` });
+          tasks.push({ kind: "enter", node: node.items, path: `${path8}.items` });
         break;
       }
       case "string":
@@ -285,16 +285,16 @@ function checkSchemaNode(root, rootPath, violations, seen) {
         const allowed = hasEnum ? node.enum : void 0;
         const enumValid = isPlainJsonArray(allowed) && allowed.length > 0 && allowed.every((entry) => scalarMatches(schemaType, entry));
         if (hasEnum && !enumValid) {
-          violations.push(`${path7}.enum must be a non-empty array of ${schemaType} values`);
+          violations.push(`${path8}.enum must be a non-empty array of ${schemaType} values`);
         }
         const hasConst = Object.hasOwn(node, "const");
         const declaredConst = hasConst ? node.const : void 0;
         const constValid = scalarMatches(schemaType, declaredConst);
         if (hasConst) {
           if (!constValid) {
-            violations.push(`${path7}.const must be a ${schemaType} value`);
+            violations.push(`${path8}.const must be a ${schemaType} value`);
           } else if (enumValid && !allowed.includes(declaredConst)) {
-            violations.push(`${path7}.const must be one of ${path7}.enum when both are declared`);
+            violations.push(`${path8}.const must be one of ${path8}.enum when both are declared`);
           }
         }
         break;
@@ -318,24 +318,24 @@ function safelyIsJsonValue(value) {
     return false;
   }
 }
-function diagnosticPath(path7) {
-  return path7 === "" ? "arguments" : path7;
+function diagnosticPath(path8) {
+  return path8 === "" ? "arguments" : path8;
 }
-function propertyPath(path7, key) {
-  return path7 === "" ? key : `${path7}.${key}`;
+function propertyPath(path8, key) {
+  return path8 === "" ? key : `${path8}.${key}`;
 }
-function losslessValueViolation(path7) {
-  return [`"${diagnosticPath(path7)}" must be a lossless JSON value`];
+function losslessValueViolation(path8) {
+  return [`"${diagnosticPath(path8)}" must be a lossless JSON value`];
 }
 function appendViolations(target, source) {
   for (const violation of source)
     target.push(violation);
 }
-function valueFrame(node, value, path7) {
+function valueFrame(node, value, path8) {
   return {
     node,
     value,
-    path: path7,
+    path: path8,
     catches: false,
     phase: "start",
     children: [],
@@ -345,18 +345,18 @@ function valueFrame(node, value, path7) {
     matches: 0
   };
 }
-function checkScalarValue(node, value, path7) {
+function checkScalarValue(node, value, path8) {
   const allowed = Object.hasOwn(node, "enum") ? node.enum : void 0;
   if (allowed !== void 0 && !allowed.includes(value)) {
-    return [`"${diagnosticPath(path7)}" must be one of ${JSON.stringify(allowed)}`];
+    return [`"${diagnosticPath(path8)}" must be one of ${JSON.stringify(allowed)}`];
   }
   if (Object.hasOwn(node, "const") && value !== node.const) {
-    return [`"${diagnosticPath(path7)}" must be ${JSON.stringify(node.const)}`];
+    return [`"${diagnosticPath(path8)}" must be ${JSON.stringify(node.const)}`];
   }
   return [];
 }
-function checkValue(schema, value, path7) {
-  const frames = [valueFrame(schema, value, path7)];
+function checkValue(schema, value, path8) {
+  const frames = [valueFrame(schema, value, path8)];
   let rootResult;
   const receive = (result) => {
     const parent = frames.at(-1);
@@ -495,10 +495,10 @@ function checkValue(schema, value, path7) {
       receive(losslessValueViolation(failed.path));
     }
   }
-  return rootResult ?? losslessValueViolation(path7);
+  return rootResult ?? losslessValueViolation(path8);
 }
-function validateJsonSchemaValue(schema, value, path7 = "value") {
-  return checkValue(schema, value, path7);
+function validateJsonSchemaValue(schema, value, path8 = "value") {
+  return checkValue(schema, value, path8);
 }
 
 // node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js
@@ -516,10 +516,10 @@ function copyAnnotations(source, target) {
   if (Object.hasOwn(source, "examples"))
     target.examples = source.examples;
 }
-function assertAuthorKeys(source, path7, allowed) {
+function assertAuthorKeys(source, path8, allowed) {
   for (const key of Object.keys(source)) {
     if (!allowed.includes(key))
-      authorError(`${path7}.${key} is not supported by the value schema DSL`);
+      authorError(`${path8}.${key} is not supported by the value schema DSL`);
   }
 }
 function assignCompiledNode(destination, node) {
@@ -610,22 +610,22 @@ function runSchemaCompiler(initial) {
       }
       continue;
     }
-    const { input, path: path7 } = task;
+    const { input, path: path8 } = task;
     if (!isJsonSchemaRecord(input))
-      authorError(`${path7} must be a value schema object`);
+      authorError(`${path8} must be a value schema object`);
     if (seen.has(input))
-      authorError(`${path7} is circular`);
+      authorError(`${path8} is circular`);
     seen.add(input);
     const authorKeys = [...ANNOTATION_KEYS, ...task.allowRequired ? ["required"] : []];
     const node = {};
     assignCompiledNode(task.destination, node);
     tasks.push({ kind: "leave", input });
     if (Object.hasOwn(input, "oneOf")) {
-      assertAuthorKeys(input, path7, [...authorKeys, "oneOf", "type"]);
+      assertAuthorKeys(input, path8, [...authorKeys, "oneOf", "type"]);
       if (Object.hasOwn(input, "type"))
-        authorError(`${path7} cannot declare both type and oneOf`);
+        authorError(`${path8} cannot declare both type and oneOf`);
       if (!isPlainJsonArray(input.oneOf))
-        authorError(`${path7}.oneOf must be an array of at least two value schemas`);
+        authorError(`${path8}.oneOf must be an array of at least two value schemas`);
       const branches = [];
       node.oneOf = branches;
       copyAnnotations(input, node);
@@ -633,7 +633,7 @@ function runSchemaCompiler(initial) {
         tasks.push({
           kind: "value",
           input: input.oneOf[index],
-          path: `${path7}.oneOf[${index}]`,
+          path: `${path8}.oneOf[${index}]`,
           allowRequired: false,
           destination: { kind: "one-of", target: branches, index }
         });
@@ -643,13 +643,13 @@ function runSchemaCompiler(initial) {
     const inputType = Object.hasOwn(input, "type") ? input.type : void 0;
     switch (inputType) {
       case "json":
-        assertAuthorKeys(input, path7, [...authorKeys, "type"]);
+        assertAuthorKeys(input, path8, [...authorKeys, "type"]);
         copyAnnotations(input, node);
         break;
       case "object":
-        assertAuthorKeys(input, path7, [...authorKeys, "type", "properties", "additionalProperties"]);
+        assertAuthorKeys(input, path8, [...authorKeys, "type", "properties", "additionalProperties"]);
         if (!Object.hasOwn(input, "additionalProperties") || typeof input.additionalProperties !== "boolean") {
-          authorError(`${path7}.additionalProperties must be explicitly true or false`);
+          authorError(`${path8}.additionalProperties must be explicitly true or false`);
         }
         node.type = "object";
         copyAnnotations(input, node);
@@ -658,20 +658,20 @@ function runSchemaCompiler(initial) {
           tasks.push({
             kind: "property-map",
             input: input.properties,
-            path: `${path7}.properties`,
+            path: `${path8}.properties`,
             destination: { kind: "object", target: node }
           });
         }
         break;
       case "array":
-        assertAuthorKeys(input, path7, [...authorKeys, "type", "items"]);
+        assertAuthorKeys(input, path8, [...authorKeys, "type", "items"]);
         node.type = "array";
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "items")) {
           tasks.push({
             kind: "value",
             input: input.items,
-            path: `${path7}.items`,
+            path: `${path8}.items`,
             allowRequired: false,
             destination: { kind: "item", target: node }
           });
@@ -682,31 +682,31 @@ function runSchemaCompiler(initial) {
       case "integer":
       case "boolean":
       case "null":
-        assertAuthorKeys(input, path7, [...authorKeys, "type", "enum", "const"]);
+        assertAuthorKeys(input, path8, [...authorKeys, "type", "enum", "const"]);
         node.type = inputType;
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "enum")) {
           if (!isPlainJsonArray(input.enum))
-            authorError(`${path7}.enum must be a non-empty array of scalar values`);
+            authorError(`${path8}.enum must be a non-empty array of scalar values`);
           node.enum = Array.from(input.enum, (entry) => entry);
         }
         if (Object.hasOwn(input, "const"))
           node.const = input.const;
         break;
       default:
-        authorError(`${path7}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
+        authorError(`${path8}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
     }
   }
 }
-function compilePropertyMap(input, path7) {
+function compilePropertyMap(input, path8) {
   const holder = {};
-  runSchemaCompiler({ kind: "property-map", input, path: path7, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path7} did not compile`);
+  runSchemaCompiler({ kind: "property-map", input, path: path8, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path8} did not compile`);
 }
-function compileValueSchema(input, path7) {
+function compileValueSchema(input, path8) {
   const holder = {};
-  runSchemaCompiler({ kind: "value", input, path: path7, allowRequired: false, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path7} did not compile`);
+  runSchemaCompiler({ kind: "value", input, path: path8, allowRequired: false, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path8} did not compile`);
 }
 function valueSchemaSpecToJsonSchema(spec) {
   const schema = compileValueSchema(spec, "schema");
@@ -921,9 +921,9 @@ import { pathToFileURL } from "node:url";
 import { resolve as resolve4 } from "node:path";
 
 // lib/entity-crud.ts
-import { createHash as createHash2, randomUUID as randomUUID3 } from "node:crypto";
-import { constants as constants4, promises as fs4 } from "node:fs";
-import path6 from "node:path";
+import { createHash as createHash2, randomUUID as randomUUID4 } from "node:crypto";
+import { promises as fs5 } from "node:fs";
+import path7 from "node:path";
 
 // lib/entity-storage.ts
 import { createHash } from "node:crypto";
@@ -1952,27 +1952,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path7 = "";
+  var path8 = "";
   switch (size) {
     case "sqrtMain":
-      path7 = sqrtMain(extraVinculum, hLinePad);
+      path8 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path7 = sqrtSize1(extraVinculum, hLinePad);
+      path8 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path7 = sqrtSize2(extraVinculum, hLinePad);
+      path8 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path7 = sqrtSize3(extraVinculum, hLinePad);
+      path8 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path7 = sqrtSize4(extraVinculum, hLinePad);
+      path8 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path7 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path8 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path7;
+  return path8;
 };
 var innerPath = function innerPath2(name2, height) {
   switch (name2) {
@@ -6155,8 +6155,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path7 = new PathNode(pathName);
-  var svgNode = new SvgNode([path7], {
+  var path8 = new PathNode(pathName);
+  var svgNode = new SvgNode([path8], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -7325,8 +7325,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path7 = new PathNode(pathName);
-      var svgNode = new SvgNode([path7], {
+      var path8 = new PathNode(pathName);
+      var svgNode = new SvgNode([path8], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -8623,8 +8623,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path7 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path7], {
+  var path8 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path8], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -8793,10 +8793,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path7 = new PathNode(svgLabel, pathStr);
+    var path8 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path7], {
+    var svg = new SvgNode([path8], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -8837,8 +8837,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path7 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path7);
+  var path8 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path8);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -9345,8 +9345,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path7 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path7)], {
+    var path8 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path8)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -16862,12 +16862,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path7 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
+            const path8 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path7} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path7,
+              message: `${path8} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path8,
               position: result.position
             });
           }
@@ -16881,43 +16881,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
-  const path7 = `macros.${name2}`;
+  const path8 = `macros.${name2}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path7}: macro entry must be an object.`, path: path7 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path8}: macro entry must be an object.`, path: path8 });
     return;
   }
   const macro = raw;
   if (typeof macro.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path7}.description must be a string (may be empty).`, path: `${path7}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path8}.description must be a string (may be empty).`, path: `${path8}.description` });
   }
   if (!isRecord3(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path7}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path7}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path8}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path8}.source` });
   }
   if (typeof macro.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path7}.dynamic_arity must be a boolean.`, path: `${path7}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path8}.dynamic_arity must be a boolean.`, path: `${path8}.dynamic_arity` });
   }
   if (macro.kind !== void 0 && typeof macro.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path7}.kind must be a string when present.`, path: `${path7}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path8}.kind must be a string when present.`, path: `${path8}.kind` });
   }
   if (!isStringArray2(macro.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path7}.tags must be a string array (may be empty).`, path: `${path7}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path8}.tags must be a string array (may be empty).`, path: `${path8}.tags` });
   } else if (macro.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path7}.tags must not contain backslashes.`, path: `${path7}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path8}.tags must not contain backslashes.`, path: `${path8}.tags` });
   }
   const defaultStyle = macro.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path7}.default_style must be a language \u2192 style-name object.`, path: `${path7}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path8}.default_style must be a language \u2192 style-name object.`, path: `${path8}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path7}.default_style must map language keys to style-name strings.`, path: `${path7}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path8}.default_style must map language keys to style-name strings.`, path: `${path8}.default_style` });
   }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path7}.styles must be a non-empty array.`, path: `${path7}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path8}.styles must be a non-empty array.`, path: `${path8}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path7}.styles[${index}]`;
+    const stylePath = `${path8}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -16981,12 +16981,12 @@ function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path7}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path7}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path8}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path8}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path7}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a3, b2) => a3 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path7}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path8}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a3, b2) => a3 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path8}.styles` });
   }
 }
 function scanTemplatePlaceholders(template) {
@@ -18579,9 +18579,177 @@ function compareOccurrence(a3, b2) {
 }
 
 // lib/entity-writes.ts
+import { constants as constants4, promises as fs4 } from "node:fs";
+import * as path6 from "node:path";
+import { randomUUID as randomUUID3 } from "node:crypto";
+
+// lib/guarded-json-file.ts
 import { constants as constants3, promises as fs3 } from "node:fs";
-import * as path5 from "node:path";
+import path5 from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readRegularText(file) {
+  let handle;
+  try {
+    handle = await fs3.open(file, constants3.O_RDONLY | constants3.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
+  } finally {
+    await handle?.close();
+  }
+}
+async function syncDirectory(directory) {
+  const handle = await fs3.open(directory, constants3.O_RDONLY);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
+async function installNewJson(file, value) {
+  const directory = path5.dirname(file);
+  const temp = path5.join(
+    directory,
+    `.${path5.basename(file)}.snl-create-${process.pid}-${randomUUID2()}.tmp`
+  );
+  let handle;
+  try {
+    handle = await fs3.open(temp, constants3.O_CREAT | constants3.O_EXCL | constants3.O_WRONLY, 420);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await fs3.link(temp, file);
+    await syncDirectory(directory);
+  } finally {
+    await handle?.close();
+    await fs3.rm(temp, { force: true });
+  }
+}
+async function restoreCapturedPath(captured, target) {
+  try {
+    await fs3.link(captured, target);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
+      { cause: error }
+    );
+  }
+  await fs3.rm(captured);
+}
+async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+  const directory = path5.dirname(file);
+  const nonce = `${process.pid}-${randomUUID2()}`;
+  const temp = path5.join(directory, `.${path5.basename(file)}.snl-write-${nonce}.tmp`);
+  const captured = path5.join(directory, `.${path5.basename(file)}.snl-write-${nonce}.captured`);
+  let handle;
+  let capturedPresent = false;
+  let installed = false;
+  try {
+    handle = await fs3.open(temp, constants3.O_CREAT | constants3.O_EXCL | constants3.O_WRONLY, current.mode);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await hooks.beforeCapture?.();
+    await fs3.rename(file, captured);
+    capturedPresent = true;
+    await hooks.afterCapture?.();
+    const observed = await readRegularText(captured);
+    if (observed.text !== expected) {
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+    }
+    try {
+      await fs3.link(temp, file);
+      installed = true;
+    } catch (error) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    await fs3.rm(captured);
+    capturedPresent = false;
+    await syncDirectory(directory);
+  } catch (error) {
+    if (capturedPresent && !installed) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+    }
+    throw error;
+  } finally {
+    await handle?.close();
+    await fs3.rm(temp, { force: true });
+  }
+}
+async function removeJsonIfUnchanged(file, expected, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  const directory = path5.dirname(file);
+  const captured = path5.join(
+    directory,
+    `.${path5.basename(file)}.snl-remove-${process.pid}-${randomUUID2()}.captured`
+  );
+  await hooks.beforeCapture?.();
+  await fs3.rename(file, captured);
+  await hooks.afterCapture?.();
+  let observed;
+  try {
+    observed = await readRegularText(captured);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  if (observed.text !== expected) {
+    await restoreCapturedPath(captured, file);
+    throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  }
+  try {
+    await fs3.rm(captured);
+    await syncDirectory(directory);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+}
+
+// lib/entity-writes.ts
 function isRecord5(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
@@ -18601,24 +18769,24 @@ function effectiveActivePackageIds(config, packages) {
   return new Set(Array.isArray(configured) ? configured.filter((id) => typeof id === "string") : Object.keys(packages).filter((id) => id !== UNPACKAGED_PACKAGE_ID));
 }
 async function canonicalWriteWorkspaceRoot(workspaceRoot) {
-  const resolved = path5.resolve(workspaceRoot);
-  const real = await fs3.realpath(resolved);
-  const stat = await fs3.lstat(resolved);
+  const resolved = path6.resolve(workspaceRoot);
+  const real = await fs4.realpath(resolved);
+  const stat = await fs4.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved) {
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
   }
-  const doc = path5.join(resolved, ".SNL_Doc");
+  const doc = path6.join(resolved, ".SNL_Doc");
   let docStat;
   try {
-    docStat = await fs3.lstat(doc);
+    docStat = await fs4.lstat(doc);
   } catch {
     throw new Error(`Workspace must contain an existing .SNL_Doc directory: ${doc}.`);
   }
   if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
     throw new Error(`${doc} must be a real directory, not a symlink.`);
   }
-  const realDoc = await fs3.realpath(doc);
-  if (realDoc !== path5.join(real, ".SNL_Doc")) {
+  const realDoc = await fs4.realpath(doc);
+  if (realDoc !== path6.join(real, ".SNL_Doc")) {
     throw new Error(`${doc} escapes the canonical workspace boundary.`);
   }
   return resolved;
@@ -18678,61 +18846,25 @@ function macroV11TemplateUsesVariadic(value) {
   }
   return templateUsesVariadic(value.body);
 }
-async function installNewJson(docRoot2, relativePath, value) {
-  const target = path5.join(docRoot2, relativePath);
-  const directory = path5.dirname(target);
-  const dirStat = await fs3.lstat(directory);
+async function installNewJson2(docRoot2, relativePath, value) {
+  const target = path6.join(docRoot2, relativePath);
+  const directory = path6.dirname(target);
+  const dirStat = await fs4.lstat(directory);
   if (!dirStat.isDirectory() || dirStat.isSymbolicLink()) {
     throw new Error(`${directory} must be a regular, non-symlink directory.`);
   }
-  const temp = path5.join(directory, `.${path5.basename(target)}.snl-add-${process.pid}-${randomUUID2()}.tmp`);
+  const temp = path6.join(directory, `.${path6.basename(target)}.snl-add-${process.pid}-${randomUUID3()}.tmp`);
   let handle;
   try {
-    handle = await fs3.open(temp, constants3.O_CREAT | constants3.O_EXCL | constants3.O_WRONLY, 420);
+    handle = await fs4.open(temp, constants4.O_CREAT | constants4.O_EXCL | constants4.O_WRONLY, 420);
     await handle.writeFile(jsonText(value), "utf8");
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await fs3.link(temp, target);
+    await fs4.link(temp, target);
   } finally {
     await handle?.close();
-    await fs3.rm(temp, { force: true });
-  }
-}
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readRegularText(file) {
-  let handle;
-  try {
-    handle = await fs3.open(file, constants3.O_RDONLY | constants3.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
-  } finally {
-    await handle?.close();
-  }
-}
-async function replaceJsonIfUnchanged(file, expected, value) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-  const directory = path5.dirname(file);
-  const temp = path5.join(directory, `.${path5.basename(file)}.snl-add-${process.pid}-${randomUUID2()}.tmp`);
-  let handle;
-  try {
-    handle = await fs3.open(temp, constants3.O_CREAT | constants3.O_EXCL | constants3.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    if ((await readRegularText(file)).text !== expected) {
-      throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-    }
-    await fs3.rename(temp, file);
-  } finally {
-    await handle?.close();
-    await fs3.rm(temp, { force: true });
+    await fs4.rm(temp, { force: true });
   }
 }
 async function addEntryEntity(workspaceRoot, raw, options = {}) {
@@ -18814,7 +18946,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       package: entry.package,
       entry
     };
-    const manifestFile = path5.join(
+    const manifestFile = path6.join(
       snlDocRoot(workspaceRoot),
       packageManifestPath(entry.package)
     );
@@ -18828,13 +18960,13 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       };
     })() : null;
     try {
-      await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
       if (originalManifest && nextManifest) {
         try {
           await options.beforePackageManifestInstall?.();
           await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
         } catch (error) {
-          const entityFile = path5.join(snlDocRoot(workspaceRoot), relativePath);
+          const entityFile = path6.join(snlDocRoot(workspaceRoot), relativePath);
           try {
             await removeJsonIfUnchanged(entityFile, jsonText(envelope));
           } catch (rollbackError) {
@@ -18866,23 +18998,6 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       issues
     };
   });
-}
-async function removeJsonIfUnchanged(file, expected) {
-  let handle;
-  try {
-    handle = await fs3.open(file, constants3.O_RDONLY | constants3.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile() || await handle.readFile("utf8") !== expected) {
-      throw new Error("installed entity changed concurrently; refusing to remove it");
-    }
-    const current = await fs3.lstat(file);
-    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino) {
-      throw new Error("installed entity path changed concurrently; refusing to remove it");
-    }
-    await fs3.rm(file);
-  } finally {
-    await handle?.close();
-  }
 }
 async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
@@ -18955,7 +19070,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
       macro
     };
     try {
-      await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
     } catch (error) {
       if (error.code === "EEXIST") {
         return {
@@ -19040,7 +19155,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       description
     };
     const relativePath = packageManifestPath(id);
-    await installNewJson(snlDocRoot(workspaceRoot), relativePath, manifest);
+    await installNewJson2(snlDocRoot(workspaceRoot), relativePath, manifest);
     const configRecord = config;
     const currentActive = effectiveActivePackageIds(configRecord, packages);
     const nextConfig = {
@@ -19051,7 +19166,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       if (options.beforeConfigInstall) await options.beforeConfigInstall();
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
     } catch (error) {
-      const manifestFile = path5.join(snlDocRoot(workspaceRoot), relativePath);
+      const manifestFile = path6.join(snlDocRoot(workspaceRoot), relativePath);
       try {
         await removeJsonIfUnchanged(manifestFile, jsonText(manifest));
       } catch (rollbackError) {
@@ -19072,7 +19187,7 @@ var isRecord6 = (value) => !!value && typeof value === "object" && !Array.isArra
 var sha = (value) => createHash2("sha256").update(JSON.stringify(value)).digest("hex");
 var compare = (a3, b2) => a3.id.localeCompare(b2.id);
 function docRoot(root) {
-  return path6.join(path6.resolve(root), ".SNL_Doc");
+  return path7.join(path7.resolve(root), ".SNL_Doc");
 }
 async function assertWorkspace(root) {
   const config = await readConfig(root);
@@ -19080,22 +19195,22 @@ async function assertWorkspace(root) {
     throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
 }
 async function canonicalWriteWorkspace(root) {
-  const resolved = path6.resolve(root);
-  const real = await fs4.realpath(resolved);
-  const stat = await fs4.lstat(resolved);
+  const resolved = path7.resolve(root);
+  const real = await fs5.realpath(resolved);
+  const stat = await fs5.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved)
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
-  const doc = path6.join(resolved, ".SNL_Doc");
-  const docStat = await fs4.lstat(doc);
-  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await fs4.realpath(doc) !== path6.join(real, ".SNL_Doc"))
+  const doc = path7.join(resolved, ".SNL_Doc");
+  const docStat = await fs5.lstat(doc);
+  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await fs5.realpath(doc) !== path7.join(real, ".SNL_Doc"))
     throw new Error(`${doc} must be a canonical, non-symlink directory.`);
   return resolved;
 }
 async function readJson2(file) {
-  return JSON.parse(await fs4.readFile(file, "utf8"));
+  return JSON.parse(await fs5.readFile(file, "utf8"));
 }
 async function jsonFiles(directory) {
-  return (await fs4.readdir(directory, { withFileTypes: true })).filter((e) => e.isFile() && e.name.endsWith(".json")).map((e) => path6.join(directory, e.name)).sort();
+  return (await fs5.readdir(directory, { withFileTypes: true })).filter((e) => e.isFile() && e.name.endsWith(".json")).map((e) => path7.join(directory, e.name)).sort();
 }
 function managed(type, id, value, revisionSource = value) {
   return { type, id, revision: sha(revisionSource), value };
@@ -19115,10 +19230,10 @@ async function packageRows(root, type) {
   const macroPackages = type === "macro-package" ? await readAllMacroPackages(root) : void 0;
   const rows = [];
   const doc = docRoot(root);
-  for (const file of await jsonFiles(path6.join(doc, "packages"))) {
+  for (const file of await jsonFiles(path7.join(doc, "packages"))) {
     const manifest = requireRecord(await readJson2(file), "Package manifest");
     const id = requireId(manifest);
-    if (path6.relative(doc, file) !== packageManifestPath(id))
+    if (path7.relative(doc, file) !== packageManifestPath(id))
       throw new Error(`${file} does not match Package identity ${id}.`);
     if (type === "entry-package")
       rows.push(managed(type, id, manifest));
@@ -19135,7 +19250,7 @@ async function entryRows(root) {
   const rows = [];
   const doc = docRoot(root);
   for (const value of await readEntries(root)) {
-    const envelope = requireRecord(await readJson2(path6.join(doc, entryEntityPath(value.package ?? "", value.id))), "Entry envelope");
+    const envelope = requireRecord(await readJson2(path7.join(doc, entryEntityPath(value.package ?? "", value.id))), "Entry envelope");
     rows.push(managed("entry", value.id, value, envelope));
   }
   return rows.sort(compare);
@@ -19145,21 +19260,25 @@ async function macroRows(root) {
   const doc = docRoot(root);
   for (const [pkg, macroPackage] of Object.entries(await readAllMacroPackages(root))) {
     for (const [name2, body] of Object.entries(macroPackage.macros)) {
-      const envelope = requireRecord(await readJson2(path6.join(doc, macroEntityPath(pkg, name2))), "Macro envelope");
+      const envelope = requireRecord(await readJson2(path7.join(doc, macroEntityPath(pkg, name2))), "Macro envelope");
       rows.push(managed("macro", `${pkg}::${name2}`, { package: pkg, name: name2, ...body }, envelope));
     }
   }
   return rows.sort(compare);
 }
 async function relationshipRows(root) {
-  const file = path6.join(docRoot(root), "relationships.json");
+  const file = path7.join(docRoot(root), "relationships.json");
   try {
-    const data = requireRecord(await readJson2(file), "Relationships file");
+    const data = requireRecord(JSON.parse((await readRegularText(file)).text), "Relationships file");
     if (!Array.isArray(data.relationships))
       throw new Error("relationships.json#relationships must be an array.");
+    const ids = /* @__PURE__ */ new Set();
     return data.relationships.map((v2) => {
       const value = requireRecord(v2, "Relationship");
-      return managed("relationship", requireId(value), value);
+      const id = requireId(value);
+      if (ids.has(id)) throw new Error(`relationships.json contains duplicate id ${JSON.stringify(id)}.`);
+      ids.add(id);
+      return managed("relationship", id, value);
     }).sort(compare);
   } catch (e) {
     if (e.code === "ENOENT")
@@ -19167,31 +19286,41 @@ async function relationshipRows(root) {
     throw e;
   }
 }
+async function libraryExtraNames(dir) {
+  const owned = /* @__PURE__ */ new Set(["meta.json", "graph.json", "counters.json"]);
+  return (await fs5.readdir(dir)).filter((name2) => !owned.has(name2)).sort((a3, b2) => a3.localeCompare(b2));
+}
+async function readLibraryDirectoryValue(dir, slug) {
+  const meta = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "meta.json"))).text), "Library meta");
+  const graph = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "graph.json"))).text), "Library graph");
+  let counters = { counters: [] };
+  try {
+    counters = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "counters.json"))).text), "Library counters");
+  } catch (e) {
+    if (e.code !== "ENOENT") throw e;
+  }
+  return { slug, meta, graph, counters };
+}
 async function libraryRows(root) {
-  const base = path6.join(docRoot(root), "libraries");
+  const base = path7.join(docRoot(root), "libraries");
   const rows = [];
   let entries;
   try {
-    entries = await fs4.readdir(base, { withFileTypes: true });
+    const baseStat = await fs5.lstat(base);
+    if (!baseStat.isDirectory() || baseStat.isSymbolicLink())
+      throw new Error(`${base} must be a regular, non-symlink Library directory.`);
+    entries = await fs5.readdir(base, { withFileTypes: true });
   } catch (e) {
     if (e.code === "ENOENT")
       return [];
     throw e;
   }
   for (const entry of entries.sort((a3, b2) => a3.name.localeCompare(b2.name))) {
-    if (!entry.isDirectory())
-      continue;
-    const dir = path6.join(base, entry.name);
-    const meta = requireRecord(await readJson2(path6.join(dir, "meta.json")), "Library meta");
-    const graph = requireRecord(await readJson2(path6.join(dir, "graph.json")), "Library graph");
-    let counters = { counters: [] };
-    try {
-      counters = requireRecord(await readJson2(path6.join(dir, "counters.json")), "Library counters");
-    } catch (e) {
-      if (e.code !== "ENOENT")
-        throw e;
-    }
-    rows.push(managed("library", entry.name, { slug: entry.name, meta, graph, counters }));
+    if (entry.isFile() && entry.name === ".gitkeep") continue;
+    if (entry.isSymbolicLink() || !entry.isDirectory())
+      throw new Error(`${path7.join(base, entry.name)} must be a regular, non-symlink Library directory.`);
+    const dir = path7.join(base, entry.name);
+    rows.push(managed("library", entry.name, await readLibraryDirectoryValue(dir, entry.name)));
   }
   return rows.sort(compare);
 }
@@ -19224,112 +19353,26 @@ async function listManagedEntities(root, type) {
 async function getManagedEntity(root, type, id) {
   return (await listManagedEntities(root, type)).find((item) => item.id === id);
 }
-async function atomicWriteJson(file, value) {
-  const directory = path6.dirname(file);
-  const temp = path6.join(directory, `.${path6.basename(file)}.snl-entity-${process.pid}-${randomUUID3()}.tmp`);
-  let handle;
-  let mode = 420;
-  try {
-    mode = (await fs4.stat(file)).mode & 511;
-  } catch (error) {
-    if (error.code !== "ENOENT")
-      throw error;
-  }
-  try {
-    handle = await fs4.open(temp, constants4.O_CREAT | constants4.O_EXCL | constants4.O_WRONLY, mode);
-    await handle.writeFile(`${JSON.stringify(value, null, 2)}
-`, "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await fs4.rename(temp, file);
-    const dir = await fs4.open(directory, constants4.O_RDONLY);
-    try {
-      await dir.sync();
-    } finally {
-      await dir.close();
-    }
-  } finally {
-    await handle?.close();
-    await fs4.rm(temp, { force: true });
-  }
-}
-function jsonText2(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readRegularText2(file) {
-  let handle;
-  try {
-    handle = await fs4.open(file, constants4.O_RDONLY | constants4.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
-  } finally {
-    await handle?.close();
-  }
-}
-async function replaceJsonIfUnchanged2(file, expected, value) {
-  const current = await readRegularText2(file);
-  if (current.text !== expected) throw new Error(`${file} changed; refusing to overwrite it.`);
-  const directory = path6.dirname(file);
-  const temp = path6.join(directory, `.${path6.basename(file)}.snl-entity-${process.pid}-${randomUUID3()}.tmp`);
-  let handle;
-  try {
-    handle = await fs4.open(temp, constants4.O_CREAT | constants4.O_EXCL | constants4.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText2(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    if ((await readRegularText2(file)).text !== expected)
-      throw new Error(`${file} changed; refusing to overwrite it.`);
-    await fs4.rename(temp, file);
-  } finally {
-    await handle?.close();
-    await fs4.rm(temp, { force: true });
-  }
-}
-async function installNewJson2(file, value) {
-  const directory = path6.dirname(file);
-  const temp = path6.join(directory, `.${path6.basename(file)}.snl-entity-${process.pid}-${randomUUID3()}.tmp`);
-  let handle;
-  try {
-    handle = await fs4.open(temp, constants4.O_CREAT | constants4.O_EXCL | constants4.O_WRONLY, 420);
-    await handle.writeFile(jsonText2(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await fs4.link(temp, file);
-  } finally {
-    await handle?.close();
-    await fs4.rm(temp, { force: true });
-  }
-}
-async function removeJsonIfUnchanged2(file, expected) {
-  let handle;
-  try {
-    handle = await fs4.open(file, constants4.O_RDONLY | constants4.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile() || await handle.readFile("utf8") !== expected)
-      throw new Error(`${file} changed; refusing to remove it.`);
-    const current = await fs4.lstat(file);
-    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino)
-      throw new Error(`${file} path changed; refusing to remove it.`);
-    await fs4.rm(file);
-  } finally {
-    await handle?.close();
-  }
-}
 function invalid(message) {
   return { status: "invalid", code: "entity.invalid", message };
 }
 function conflict(message) {
   return { status: "conflict", code: "entity.revision-conflict", message };
 }
+function currentKindCatalogProblem(config, next) {
+  if (!usesCurrentEntitySchemas(config)) return void 0;
+  try {
+    assertCurrentKindCatalogs(next);
+    return void 0;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+}
 async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
   return withWorkspaceDataLock(root, `${operation} ${type}`, async () => {
-    const file = path6.join(docRoot(root), "config.json");
-    const config = requireRecord(await readJson2(file), "config.json");
+    const file = path7.join(docRoot(root), "config.json");
+    const originalConfig = await readRegularText(file);
+    const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
     if (!usesEntityStorage(config))
       throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
     const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
@@ -19345,8 +19388,10 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
       const newId = requireId(value2);
       if (values.some((v2) => isRecord6(v2) && v2.id === newId))
         return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(newId)} already exists.` };
-      const next = { ...config, [field]: [...values, value2] };
-      await atomicWriteJson(file, next);
+      const next2 = { ...config, [field]: [...values, value2] };
+      const catalogProblem2 = currentKindCatalogProblem(config, next2);
+      if (catalogProblem2) return invalid(catalogProblem2);
+      await replaceJsonIfUnchanged(file, originalConfig.text, next2);
       return { status: "ok", operation, type, entity: managed(type, newId, value2) };
     }
     if (index < 0)
@@ -19356,8 +19401,18 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
     if (!ifMatch || ifMatch !== currentEntity.revision)
       return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
     if (operation === "delete") {
+      if (type === "entry-kind" && (await readEntries(root)).some((entry) => entry.kind === id))
+        return { status: "conflict", code: "entity.referenced", message: `Entry Kind ${JSON.stringify(id)} is still used by Entries.` };
+      if (type === "macro-kind") {
+        const packages = await readAllMacroPackages(root);
+        if (Object.values(packages).some((pkg) => Object.values(pkg.macros).some((macro) => macro.kind === id)))
+          return { status: "conflict", code: "entity.referenced", message: `Macro Kind ${JSON.stringify(id)} is still used by Macros.` };
+      }
       const nextValues2 = values.filter((_2, i4) => i4 !== index);
-      await atomicWriteJson(file, { ...config, [field]: nextValues2 });
+      const next2 = { ...config, [field]: nextValues2 };
+      const catalogProblem2 = currentKindCatalogProblem(config, next2);
+      if (catalogProblem2) return invalid(catalogProblem2);
+      await replaceJsonIfUnchanged(file, originalConfig.text, next2);
       return { status: "ok", operation, type, entity: currentEntity };
     }
     const value = requireRecord(input, type);
@@ -19368,14 +19423,17 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
       return invalid(`${type} identity is immutable: payload id must equal ${JSON.stringify(id)}.`);
     const nextValues = [...values];
     nextValues[index] = value;
-    await atomicWriteJson(file, { ...config, [field]: nextValues });
+    const next = { ...config, [field]: nextValues };
+    const catalogProblem = currentKindCatalogProblem(config, next);
+    if (catalogProblem) return invalid(catalogProblem);
+    await replaceJsonIfUnchanged(file, originalConfig.text, next);
     return { status: "ok", operation, type, entity: managed(type, id, value) };
   });
 }
 async function validationMessage(root, type, value, currentId) {
   const stringField = (field) => typeof value[field] === "string" && value[field] !== "";
   if (type === "entry-kind") {
-    if (!stringField("id") || !stringField("name") || !isRecord6(value.coloring) || typeof value.style !== "string")
+    if (!stringField("id") || !(typeof value.name === "string" || isRecord6(value.name)) || !isRecord6(value.coloring) || typeof value.style !== "string")
       return "Entry Kind requires non-empty id/name, coloring object, and string style.";
   } else if (type === "macro-kind") {
     if (!stringField("id") || !stringField("name") || typeof value.description !== "string" || !isRecord6(value.coloring))
@@ -19429,29 +19487,58 @@ async function createDirect(root, type, input) {
     if (await getManagedEntity(root, type, id))
       return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(id)} already exists.` };
     if (type === "relationship") {
-      const file = path6.join(docRoot(root), "relationships.json");
+      const file = path7.join(docRoot(root), "relationships.json");
       let data = { version: 1, relationships: [] };
+      let original;
       try {
-        data = requireRecord(await readJson2(file), "relationships.json");
+        original = await readRegularText(file);
+        data = requireRecord(JSON.parse(original.text), "relationships.json");
       } catch (e) {
         if (e.code !== "ENOENT")
           throw e;
       }
       if (!Array.isArray(data.relationships))
         throw new Error("relationships.json#relationships must be an array.");
-      await atomicWriteJson(file, { ...data, relationships: [...data.relationships, value] });
+      const next = { ...data, relationships: [...data.relationships, value] };
+      if (original) await replaceJsonIfUnchanged(file, original.text, next);
+      else await installNewJson(file, next);
     } else {
-      const dir = path6.join(docRoot(root), "libraries", id);
-      if (path6.basename(id) !== id || id === "." || id === "..")
+      const dir = path7.join(docRoot(root), "libraries", id);
+      if (path7.basename(id) !== id || id === "." || id === "..")
         return invalid("Library slug must be one safe path segment.");
-      await fs4.mkdir(dir, { recursive: false });
+      await fs5.mkdir(dir, { recursive: false });
+      const resources = [
+        { file: path7.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
+        { file: path7.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
+        { file: path7.join(dir, "counters.json"), value: requireRecord(value.counters, "Library counters") }
+      ];
+      const installed = [];
       try {
-        await atomicWriteJson(path6.join(dir, "meta.json"), requireRecord(value.meta, "Library meta"));
-        await atomicWriteJson(path6.join(dir, "graph.json"), requireRecord(value.graph, "Library graph"));
-        await atomicWriteJson(path6.join(dir, "counters.json"), requireRecord(value.counters, "Library counters"));
-      } catch (e) {
-        await fs4.rm(dir, { recursive: true, force: true });
-        throw e;
+        for (const resource of resources) {
+          await installNewJson(resource.file, resource.value);
+          installed.push(resource);
+        }
+      } catch (error) {
+        const cleanupErrors = [];
+        for (const resource of installed.reverse()) {
+          try {
+            await removeJsonIfUnchanged(resource.file, jsonText(resource.value));
+          } catch (cleanup) {
+            cleanupErrors.push(`${resource.file}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
+          }
+        }
+        try {
+          await fs5.rmdir(dir);
+        } catch (cleanup) {
+          cleanupErrors.push(`${dir}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
+        }
+        if (cleanupErrors.length) {
+          throw new Error(
+            `${error instanceof Error ? error.message : String(error)} Library creation cleanup preserved concurrent data: ${cleanupErrors.join("; ")}`,
+            { cause: error }
+          );
+        }
+        throw error;
       }
     }
     const entity = await getManagedEntity(root, type, id);
@@ -19501,14 +19588,14 @@ async function createManagedEntity(root, type, input) {
 async function locateFile(root, type, entity) {
   const doc = docRoot(root);
   if (type === "entry-package" || type === "macro-package")
-    return path6.join(doc, packageManifestPath(entity.id));
+    return path7.join(doc, packageManifestPath(entity.id));
   if (type === "entry") {
     const pkg = typeof entity.value.package === "string" ? entity.value.package : "";
-    return path6.join(doc, entryEntityPath(pkg, entity.id));
+    return path7.join(doc, entryEntityPath(pkg, entity.id));
   }
   if (type === "macro") {
     const split = entity.id.indexOf("::");
-    return path6.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
+    return path7.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
   }
   throw new Error(`No entity file for ${type}.`);
 }
@@ -19527,21 +19614,68 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (identityFor(type, value) !== id)
         return invalid(`${type} identity is immutable: payload identity must equal ${JSON.stringify(id)}.`);
       if (type === "relationship") {
-        const file = path6.join(docRoot(root), "relationships.json");
-        const data = requireRecord(await readJson2(file), "relationships.json");
+        const file = path7.join(docRoot(root), "relationships.json");
+        const original = await readRegularText(file);
+        const data = requireRecord(JSON.parse(original.text), "relationships.json");
         const values = data.relationships;
         if (!Array.isArray(values))
           throw new Error("relationships.json#relationships must be an array.");
-        await atomicWriteJson(file, { ...data, relationships: values.map((row) => isRecord6(row) && row.id === id ? value : row) });
+        await options.beforeEntityInstall?.();
+        await replaceJsonIfUnchanged(file, original.text, {
+          ...data,
+          relationships: values.map((row) => isRecord6(row) && row.id === id ? value : row)
+        });
       } else if (type === "library") {
-        const dir = path6.join(docRoot(root), "libraries", id);
-        await atomicWriteJson(path6.join(dir, "meta.json"), requireRecord(value.meta, "Library meta"));
-        await atomicWriteJson(path6.join(dir, "graph.json"), requireRecord(value.graph, "Library graph"));
-        await atomicWriteJson(path6.join(dir, "counters.json"), requireRecord(value.counters, "Library counters"));
+        const dir = path7.join(docRoot(root), "libraries", id);
+        const resources = [
+          { file: path7.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
+          { file: path7.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
+          { file: path7.join(dir, "counters.json"), next: requireRecord(value.counters, "Library counters") }
+        ];
+        const originals = await Promise.all(resources.map(async (resource) => {
+          try {
+            return { ...resource, original: await readRegularText(resource.file) };
+          } catch (error) {
+            if (path7.basename(resource.file) === "counters.json" && error.code === "ENOENT")
+              return { ...resource, original: void 0 };
+            throw error;
+          }
+        }));
+        const installed = [];
+        try {
+          await options.beforeEntityInstall?.();
+          for (const resource of originals) {
+            if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
+            else await installNewJson(resource.file, resource.next);
+            installed.push(resource);
+          }
+        } catch (error) {
+          const rollbackErrors = [];
+          for (const resource of installed.reverse()) {
+            try {
+              if (resource.original) {
+                await replaceJsonIfUnchanged(
+                  resource.file,
+                  jsonText(resource.next),
+                  JSON.parse(resource.original.text)
+                );
+              } else await removeJsonIfUnchanged(resource.file, jsonText(resource.next));
+            } catch (rollbackError) {
+              rollbackErrors.push(`${resource.file}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`);
+            }
+          }
+          if (rollbackErrors.length) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} Library rollback failed without overwriting concurrent replacements: ${rollbackErrors.join("; ")}`,
+              { cause: error }
+            );
+          }
+          throw error;
+        }
       } else {
         const file = await locateFile(root, type, current);
         if (type === "entry-package" || type === "macro-package") {
-          const originalManifest = await readRegularText2(file);
+          const originalManifest = await readRegularText(file);
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
             return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
@@ -19556,9 +19690,9 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           };
           delete manifest.macros;
           await options.beforeEntityInstall?.();
-          await replaceJsonIfUnchanged2(file, originalManifest.text, manifest);
+          await replaceJsonIfUnchanged(file, originalManifest.text, manifest);
         } else if (type === "entry") {
-          const originalEntity = await readRegularText2(file);
+          const originalEntity = await readRegularText(file);
           const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           const nextEnvelope = {
@@ -19573,19 +19707,19 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const newPackage = typeof value.package === "string" ? value.package : "";
           if (oldPackage === newPackage) {
             await options.beforeEntityInstall?.();
-            await replaceJsonIfUnchanged2(file, originalEntity.text, nextEnvelope);
+            await replaceJsonIfUnchanged(file, originalEntity.text, nextEnvelope);
           } else {
-            const destinationFile = path6.join(docRoot(root), entryEntityPath(newPackage, id));
+            const destinationFile = path7.join(docRoot(root), entryEntityPath(newPackage, id));
             if (!currentSchema) {
               let installed = false;
               try {
-                await installNewJson2(destinationFile, nextEnvelope);
+                await installNewJson(destinationFile, nextEnvelope);
                 installed = true;
-                await removeJsonIfUnchanged2(file, originalEntity.text);
+                await removeJsonIfUnchanged(file, originalEntity.text);
               } catch (error) {
                 if (installed) {
                   try {
-                    await removeJsonIfUnchanged2(destinationFile, jsonText2(nextEnvelope));
+                    await removeJsonIfUnchanged(destinationFile, jsonText(nextEnvelope));
                   } catch (rollback) {
                     throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of legacy destination Entry failed: ${rollback instanceof Error ? rollback.message : String(rollback)}.`, { cause: error });
                   }
@@ -19593,10 +19727,10 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
                 throw error;
               }
             } else {
-              const sourceManifestFile = path6.join(docRoot(root), packageManifestPath(oldPackage));
-              const destinationManifestFile = path6.join(docRoot(root), packageManifestPath(newPackage));
-              const sourceOriginal = await readRegularText2(sourceManifestFile);
-              const destinationOriginal = await readRegularText2(destinationManifestFile);
+              const sourceManifestFile = path7.join(docRoot(root), packageManifestPath(oldPackage));
+              const destinationManifestFile = path7.join(docRoot(root), packageManifestPath(newPackage));
+              const sourceOriginal = await readRegularText(sourceManifestFile);
+              const destinationOriginal = await readRegularText(destinationManifestFile);
               const sourceManifest = requireRecord(JSON.parse(sourceOriginal.text), "Source Package manifest");
               const destinationManifest = requireRecord(JSON.parse(destinationOriginal.text), "Destination Package manifest");
               if (!Array.isArray(sourceManifest.entry_ids) || sourceManifest.entry_ids.filter((v2) => v2 === id).length !== 1)
@@ -19612,32 +19746,32 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
               let destinationUpdated = false;
               let sourceUpdated = false;
               try {
-                await installNewJson2(destinationFile, nextEnvelope);
+                await installNewJson(destinationFile, nextEnvelope);
                 installed = true;
-                await replaceJsonIfUnchanged2(destinationManifestFile, destinationOriginal.text, destinationNext);
+                await replaceJsonIfUnchanged(destinationManifestFile, destinationOriginal.text, destinationNext);
                 destinationUpdated = true;
-                await replaceJsonIfUnchanged2(sourceManifestFile, sourceOriginal.text, sourceNext);
+                await replaceJsonIfUnchanged(sourceManifestFile, sourceOriginal.text, sourceNext);
                 sourceUpdated = true;
-                await removeJsonIfUnchanged2(file, originalEntity.text);
+                await removeJsonIfUnchanged(file, originalEntity.text);
               } catch (error) {
                 const rollbackErrors = [];
                 if (sourceUpdated) {
                   try {
-                    await replaceJsonIfUnchanged2(sourceManifestFile, jsonText2(sourceNext), sourceManifest);
+                    await replaceJsonIfUnchanged(sourceManifestFile, jsonText(sourceNext), sourceManifest);
                   } catch (rollback) {
                     rollbackErrors.push(`source membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
                   }
                 }
                 if (destinationUpdated) {
                   try {
-                    await replaceJsonIfUnchanged2(destinationManifestFile, jsonText2(destinationNext), destinationManifest);
+                    await replaceJsonIfUnchanged(destinationManifestFile, jsonText(destinationNext), destinationManifest);
                   } catch (rollback) {
                     rollbackErrors.push(`destination membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
                   }
                 }
                 if (installed) {
                   try {
-                    await removeJsonIfUnchanged2(destinationFile, jsonText2(nextEnvelope));
+                    await removeJsonIfUnchanged(destinationFile, jsonText(nextEnvelope));
                   } catch (rollback) {
                     rollbackErrors.push(`destination Entry: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
                   }
@@ -19652,7 +19786,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const split = id.indexOf("::");
           const pkg = id.slice(0, split);
           const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
-          const originalMacro = await readRegularText2(file);
+          const originalMacro = await readRegularText(file);
           const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           const nextEnvelope = {
@@ -19664,7 +19798,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             macro
           };
           await options.beforeEntityInstall?.();
-          await replaceJsonIfUnchanged2(file, originalMacro.text, nextEnvelope);
+          await replaceJsonIfUnchanged(file, originalMacro.text, nextEnvelope);
         }
       }
       const entity = await getManagedEntity(root, type, id);
@@ -19677,25 +19811,25 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (references.length)
         return { status: "conflict", code: "entity.referenced", message: `Entry ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
       const entityFile = await locateFile(root, type, current);
-      const originalEntity = await readRegularText2(entityFile);
+      const originalEntity = await readRegularText(entityFile);
       if (!usesCurrentEntitySchemas(await readConfig(root))) {
-        await removeJsonIfUnchanged2(entityFile, originalEntity.text);
+        await removeJsonIfUnchanged(entityFile, originalEntity.text);
         return { status: "ok", operation, type, entity: current };
       }
       const packageId = typeof current.value.package === "string" ? current.value.package : "";
-      const manifestFile = path6.join(docRoot(root), packageManifestPath(packageId));
-      const originalManifest = await readRegularText2(manifestFile);
+      const manifestFile = path7.join(docRoot(root), packageManifestPath(packageId));
+      const originalManifest = await readRegularText(manifestFile);
       const manifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
       const entryIds = manifest.entry_ids;
       if (!Array.isArray(entryIds) || entryIds.filter((value) => value === id).length !== 1)
         throw new Error(`Package ${JSON.stringify(packageId)} does not contain Entry ${JSON.stringify(id)} exactly once.`);
       const nextManifest = { ...manifest, entry_ids: entryIds.filter((value) => value !== id) };
-      await replaceJsonIfUnchanged2(manifestFile, originalManifest.text, nextManifest);
+      await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
       try {
-        await removeJsonIfUnchanged2(entityFile, originalEntity.text);
+        await removeJsonIfUnchanged(entityFile, originalEntity.text);
       } catch (error) {
         try {
-          await replaceJsonIfUnchanged2(manifestFile, jsonText2(nextManifest), manifest);
+          await replaceJsonIfUnchanged(manifestFile, jsonText(nextManifest), manifest);
         } catch (rollbackError) {
           throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of Package membership failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
         }
@@ -19706,19 +19840,45 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       const references = (await findEntityReferences(root, "macro", name2)).filter((occurrence2) => occurrence2.role === "reference");
       if (references.length)
         return { status: "conflict", code: "entity.referenced", message: `Macro ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
-      await fs4.unlink(await locateFile(root, type, current));
+      const file = await locateFile(root, type, current);
+      const original = await readRegularText(file);
+      await options.beforeEntityDelete?.();
+      await removeJsonIfUnchanged(file, original.text);
     } else if (type === "relationship") {
-      const file = path6.join(docRoot(root), "relationships.json");
-      const data = requireRecord(await readJson2(file), "relationships.json");
+      const file = path7.join(docRoot(root), "relationships.json");
+      const original = await readRegularText(file);
+      const data = requireRecord(JSON.parse(original.text), "relationships.json");
       const values = data.relationships;
       if (!Array.isArray(values))
         throw new Error("relationships.json#relationships must be an array.");
-      await atomicWriteJson(file, { ...data, relationships: values.filter((row) => !(isRecord6(row) && row.id === id)) });
+      await options.beforeEntityDelete?.();
+      await replaceJsonIfUnchanged(file, original.text, {
+        ...data,
+        relationships: values.filter((row) => !(isRecord6(row) && row.id === id))
+      });
     } else if (type === "library") {
-      const dir = path6.join(docRoot(root), "libraries", id);
-      const tomb = path6.join(path6.dirname(dir), `.${id}.snl-entity-${randomUUID3()}.deleted`);
-      await fs4.rename(dir, tomb);
-      await fs4.rm(tomb, { recursive: true });
+      const dir = path7.join(docRoot(root), "libraries", id);
+      const extras = await libraryExtraNames(dir);
+      if (extras.length) {
+        return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
+      }
+      const tomb = path7.join(path7.dirname(dir), `.${id}.snl-entity-${randomUUID4()}.deleted`);
+      await options.beforeEntityDelete?.();
+      await fs5.rename(dir, tomb);
+      let captured;
+      try {
+        captured = await readLibraryDirectoryValue(tomb, id);
+      } catch (error) {
+        throw new Error(
+          `${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}: ${error instanceof Error ? error.message : String(error)}`,
+          { cause: error }
+        );
+      }
+      const capturedExtras = await libraryExtraNames(tomb);
+      if (sha(captured) !== current.revision || capturedExtras.length) {
+        throw new Error(`${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}.`);
+      }
+      await fs5.rm(tomb, { recursive: true });
     } else if (type === "entry-package" || type === "macro-package") {
       if (id === "_unpackaged")
         return invalid("The system _unpackaged Package cannot be deleted.");
@@ -19727,9 +19887,9 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (entries.some((e) => e.value.package === id) || macros2.some((m3) => m3.value.package === id))
         return { status: "conflict", code: "package.not-empty", message: `Package ${JSON.stringify(id)} still contains entities.` };
       const file = await locateFile(root, type, current);
-      const originalManifest = await readRegularText2(file);
-      const configFile = path6.join(docRoot(root), "config.json");
-      const originalConfig = await readRegularText2(configFile);
+      const originalManifest = await readRegularText(file);
+      const configFile = path7.join(docRoot(root), "config.json");
+      const originalConfig = await readRegularText(configFile);
       const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
       const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId) => packageId !== "_unpackaged");
       const nextConfig = {
@@ -19737,20 +19897,20 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         active_macro_packages: [...new Set(active.filter((value) => value !== id))].sort((left, right) => left.localeCompare(right))
       };
       await options.beforeConfigInstall?.();
-      await replaceJsonIfUnchanged2(configFile, originalConfig.text, nextConfig);
+      await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
       try {
         await options.beforeManifestDelete?.();
-        await removeJsonIfUnchanged2(file, originalManifest.text);
+        await removeJsonIfUnchanged(file, originalManifest.text);
       } catch (error) {
         try {
-          await replaceJsonIfUnchanged2(configFile, jsonText2(nextConfig), config);
+          await replaceJsonIfUnchanged(configFile, jsonText(nextConfig), config);
         } catch (rollbackError) {
           throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of config failed without overwriting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
         }
         throw error;
       }
     } else
-      await fs4.unlink(await locateFile(root, type, current));
+      await fs5.unlink(await locateFile(root, type, current));
     return { status: "ok", operation, type, entity: current };
   });
 }

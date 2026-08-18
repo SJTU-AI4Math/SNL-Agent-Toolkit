@@ -26,7 +26,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 // plugin-src/mcp-server.ts
 var import_node_readline = require("node:readline");
 var import_node_url = require("node:url");
-var import_node_path2 = require("node:path");
+var import_node_path3 = require("node:path");
 
 // plugin-src/toolkit-tools.ts
 var ENTITY_TYPES = [
@@ -149,9 +149,9 @@ function createToolkitTools(adapter) {
 }
 
 // lib/entity-crud.ts
-var import_node_crypto4 = require("node:crypto");
-var import_node_fs5 = require("node:fs");
-var import_node_path = __toESM(require("node:path"), 1);
+var import_node_crypto5 = require("node:crypto");
+var import_node_fs6 = require("node:fs");
+var import_node_path2 = __toESM(require("node:path"), 1);
 
 // lib/entity-storage.ts
 var import_node_crypto = require("node:crypto");
@@ -1180,27 +1180,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path7 = "";
+  var path8 = "";
   switch (size) {
     case "sqrtMain":
-      path7 = sqrtMain(extraVinculum, hLinePad);
+      path8 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path7 = sqrtSize1(extraVinculum, hLinePad);
+      path8 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path7 = sqrtSize2(extraVinculum, hLinePad);
+      path8 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path7 = sqrtSize3(extraVinculum, hLinePad);
+      path8 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path7 = sqrtSize4(extraVinculum, hLinePad);
+      path8 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path7 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path8 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path7;
+  return path8;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -5383,8 +5383,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path7 = new PathNode(pathName);
-  var svgNode = new SvgNode([path7], {
+  var path8 = new PathNode(pathName);
+  var svgNode = new SvgNode([path8], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -6553,8 +6553,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path7 = new PathNode(pathName);
-      var svgNode = new SvgNode([path7], {
+      var path8 = new PathNode(pathName);
+      var svgNode = new SvgNode([path8], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -7851,8 +7851,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path7 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path7], {
+  var path8 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path8], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -8021,10 +8021,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path7 = new PathNode(svgLabel, pathStr);
+    var path8 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path7], {
+    var svg = new SvgNode([path8], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -8065,8 +8065,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path7 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path7);
+  var path8 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path8);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -8573,8 +8573,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path7 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path7)], {
+    var path8 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path8)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -16090,12 +16090,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path7 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path8 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path7} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path7,
+              message: `${path8} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path8,
               position: result.position
             });
           }
@@ -16109,43 +16109,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path7 = `macros.${name}`;
+  const path8 = `macros.${name}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path7}: macro entry must be an object.`, path: path7 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path8}: macro entry must be an object.`, path: path8 });
     return;
   }
   const macro = raw;
   if (typeof macro.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path7}.description must be a string (may be empty).`, path: `${path7}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path8}.description must be a string (may be empty).`, path: `${path8}.description` });
   }
   if (!isRecord3(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path7}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path7}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path8}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path8}.source` });
   }
   if (typeof macro.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path7}.dynamic_arity must be a boolean.`, path: `${path7}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path8}.dynamic_arity must be a boolean.`, path: `${path8}.dynamic_arity` });
   }
   if (macro.kind !== void 0 && typeof macro.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path7}.kind must be a string when present.`, path: `${path7}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path8}.kind must be a string when present.`, path: `${path8}.kind` });
   }
   if (!isStringArray2(macro.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path7}.tags must be a string array (may be empty).`, path: `${path7}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path8}.tags must be a string array (may be empty).`, path: `${path8}.tags` });
   } else if (macro.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path7}.tags must not contain backslashes.`, path: `${path7}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path8}.tags must not contain backslashes.`, path: `${path8}.tags` });
   }
   const defaultStyle = macro.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path7}.default_style must be a language \u2192 style-name object.`, path: `${path7}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path8}.default_style must be a language \u2192 style-name object.`, path: `${path8}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path7}.default_style must map language keys to style-name strings.`, path: `${path7}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path8}.default_style must map language keys to style-name strings.`, path: `${path8}.default_style` });
   }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path7}.styles must be a non-empty array.`, path: `${path7}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path8}.styles must be a non-empty array.`, path: `${path8}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path7}.styles[${index}]`;
+    const stylePath = `${path8}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -16209,12 +16209,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path7}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path7}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path8}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path8}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path7}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a3, b2) => a3 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path7}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path8}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a3, b2) => a3 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path8}.styles` });
   }
 }
 function scanTemplatePlaceholders(template) {
@@ -17807,9 +17807,177 @@ function compareOccurrence(a3, b2) {
 }
 
 // lib/entity-writes.ts
+var import_node_fs5 = require("node:fs");
+var path6 = __toESM(require("node:path"), 1);
+var import_node_crypto4 = require("node:crypto");
+
+// lib/guarded-json-file.ts
 var import_node_fs4 = require("node:fs");
-var path5 = __toESM(require("node:path"), 1);
+var import_node_path = __toESM(require("node:path"), 1);
 var import_node_crypto3 = require("node:crypto");
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readRegularText(file) {
+  let handle;
+  try {
+    handle = await import_node_fs4.promises.open(file, import_node_fs4.constants.O_RDONLY | import_node_fs4.constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
+  } finally {
+    await handle?.close();
+  }
+}
+async function syncDirectory(directory) {
+  const handle = await import_node_fs4.promises.open(directory, import_node_fs4.constants.O_RDONLY);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
+async function installNewJson(file, value) {
+  const directory = import_node_path.default.dirname(file);
+  const temp = import_node_path.default.join(
+    directory,
+    `.${import_node_path.default.basename(file)}.snl-create-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.tmp`
+  );
+  let handle;
+  try {
+    handle = await import_node_fs4.promises.open(temp, import_node_fs4.constants.O_CREAT | import_node_fs4.constants.O_EXCL | import_node_fs4.constants.O_WRONLY, 420);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await import_node_fs4.promises.link(temp, file);
+    await syncDirectory(directory);
+  } finally {
+    await handle?.close();
+    await import_node_fs4.promises.rm(temp, { force: true });
+  }
+}
+async function restoreCapturedPath(captured, target) {
+  try {
+    await import_node_fs4.promises.link(captured, target);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
+      { cause: error }
+    );
+  }
+  await import_node_fs4.promises.rm(captured);
+}
+async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+  const directory = import_node_path.default.dirname(file);
+  const nonce = `${process.pid}-${(0, import_node_crypto3.randomUUID)()}`;
+  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.tmp`);
+  const captured = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.captured`);
+  let handle;
+  let capturedPresent = false;
+  let installed = false;
+  try {
+    handle = await import_node_fs4.promises.open(temp, import_node_fs4.constants.O_CREAT | import_node_fs4.constants.O_EXCL | import_node_fs4.constants.O_WRONLY, current.mode);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await hooks.beforeCapture?.();
+    await import_node_fs4.promises.rename(file, captured);
+    capturedPresent = true;
+    await hooks.afterCapture?.();
+    const observed = await readRegularText(captured);
+    if (observed.text !== expected) {
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+    }
+    try {
+      await import_node_fs4.promises.link(temp, file);
+      installed = true;
+    } catch (error) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    await import_node_fs4.promises.rm(captured);
+    capturedPresent = false;
+    await syncDirectory(directory);
+  } catch (error) {
+    if (capturedPresent && !installed) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+    }
+    throw error;
+  } finally {
+    await handle?.close();
+    await import_node_fs4.promises.rm(temp, { force: true });
+  }
+}
+async function removeJsonIfUnchanged(file, expected, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  const directory = import_node_path.default.dirname(file);
+  const captured = import_node_path.default.join(
+    directory,
+    `.${import_node_path.default.basename(file)}.snl-remove-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.captured`
+  );
+  await hooks.beforeCapture?.();
+  await import_node_fs4.promises.rename(file, captured);
+  await hooks.afterCapture?.();
+  let observed;
+  try {
+    observed = await readRegularText(captured);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  if (observed.text !== expected) {
+    await restoreCapturedPath(captured, file);
+    throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  }
+  try {
+    await import_node_fs4.promises.rm(captured);
+    await syncDirectory(directory);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+}
+
+// lib/entity-writes.ts
 function isRecord5(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
@@ -17829,24 +17997,24 @@ function effectiveActivePackageIds(config, packages) {
   return new Set(Array.isArray(configured) ? configured.filter((id) => typeof id === "string") : Object.keys(packages).filter((id) => id !== UNPACKAGED_PACKAGE_ID));
 }
 async function canonicalWriteWorkspaceRoot(workspaceRoot) {
-  const resolved = path5.resolve(workspaceRoot);
-  const real = await import_node_fs4.promises.realpath(resolved);
-  const stat = await import_node_fs4.promises.lstat(resolved);
+  const resolved = path6.resolve(workspaceRoot);
+  const real = await import_node_fs5.promises.realpath(resolved);
+  const stat = await import_node_fs5.promises.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved) {
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
   }
-  const doc = path5.join(resolved, ".SNL_Doc");
+  const doc = path6.join(resolved, ".SNL_Doc");
   let docStat;
   try {
-    docStat = await import_node_fs4.promises.lstat(doc);
+    docStat = await import_node_fs5.promises.lstat(doc);
   } catch {
     throw new Error(`Workspace must contain an existing .SNL_Doc directory: ${doc}.`);
   }
   if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
     throw new Error(`${doc} must be a real directory, not a symlink.`);
   }
-  const realDoc = await import_node_fs4.promises.realpath(doc);
-  if (realDoc !== path5.join(real, ".SNL_Doc")) {
+  const realDoc = await import_node_fs5.promises.realpath(doc);
+  if (realDoc !== path6.join(real, ".SNL_Doc")) {
     throw new Error(`${doc} escapes the canonical workspace boundary.`);
   }
   return resolved;
@@ -17906,61 +18074,25 @@ function macroV11TemplateUsesVariadic(value) {
   }
   return templateUsesVariadic(value.body);
 }
-async function installNewJson(docRoot2, relativePath, value) {
-  const target = path5.join(docRoot2, relativePath);
-  const directory = path5.dirname(target);
-  const dirStat = await import_node_fs4.promises.lstat(directory);
+async function installNewJson2(docRoot2, relativePath, value) {
+  const target = path6.join(docRoot2, relativePath);
+  const directory = path6.dirname(target);
+  const dirStat = await import_node_fs5.promises.lstat(directory);
   if (!dirStat.isDirectory() || dirStat.isSymbolicLink()) {
     throw new Error(`${directory} must be a regular, non-symlink directory.`);
   }
-  const temp = path5.join(directory, `.${path5.basename(target)}.snl-add-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.tmp`);
+  const temp = path6.join(directory, `.${path6.basename(target)}.snl-add-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.tmp`);
   let handle;
   try {
-    handle = await import_node_fs4.promises.open(temp, import_node_fs4.constants.O_CREAT | import_node_fs4.constants.O_EXCL | import_node_fs4.constants.O_WRONLY, 420);
+    handle = await import_node_fs5.promises.open(temp, import_node_fs5.constants.O_CREAT | import_node_fs5.constants.O_EXCL | import_node_fs5.constants.O_WRONLY, 420);
     await handle.writeFile(jsonText(value), "utf8");
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await import_node_fs4.promises.link(temp, target);
+    await import_node_fs5.promises.link(temp, target);
   } finally {
     await handle?.close();
-    await import_node_fs4.promises.rm(temp, { force: true });
-  }
-}
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readRegularText(file) {
-  let handle;
-  try {
-    handle = await import_node_fs4.promises.open(file, import_node_fs4.constants.O_RDONLY | import_node_fs4.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
-  } finally {
-    await handle?.close();
-  }
-}
-async function replaceJsonIfUnchanged(file, expected, value) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-  const directory = path5.dirname(file);
-  const temp = path5.join(directory, `.${path5.basename(file)}.snl-add-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.tmp`);
-  let handle;
-  try {
-    handle = await import_node_fs4.promises.open(temp, import_node_fs4.constants.O_CREAT | import_node_fs4.constants.O_EXCL | import_node_fs4.constants.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    if ((await readRegularText(file)).text !== expected) {
-      throw new Error(`${file} changed during Package creation; refusing to overwrite it.`);
-    }
-    await import_node_fs4.promises.rename(temp, file);
-  } finally {
-    await handle?.close();
-    await import_node_fs4.promises.rm(temp, { force: true });
+    await import_node_fs5.promises.rm(temp, { force: true });
   }
 }
 async function addEntryEntity(workspaceRoot, raw, options = {}) {
@@ -18042,7 +18174,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       package: entry.package,
       entry
     };
-    const manifestFile = path5.join(
+    const manifestFile = path6.join(
       snlDocRoot(workspaceRoot),
       packageManifestPath(entry.package)
     );
@@ -18056,13 +18188,13 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       };
     })() : null;
     try {
-      await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
       if (originalManifest && nextManifest) {
         try {
           await options.beforePackageManifestInstall?.();
           await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
         } catch (error) {
-          const entityFile = path5.join(snlDocRoot(workspaceRoot), relativePath);
+          const entityFile = path6.join(snlDocRoot(workspaceRoot), relativePath);
           try {
             await removeJsonIfUnchanged(entityFile, jsonText(envelope));
           } catch (rollbackError) {
@@ -18094,23 +18226,6 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       issues
     };
   });
-}
-async function removeJsonIfUnchanged(file, expected) {
-  let handle;
-  try {
-    handle = await import_node_fs4.promises.open(file, import_node_fs4.constants.O_RDONLY | import_node_fs4.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile() || await handle.readFile("utf8") !== expected) {
-      throw new Error("installed entity changed concurrently; refusing to remove it");
-    }
-    const current = await import_node_fs4.promises.lstat(file);
-    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino) {
-      throw new Error("installed entity path changed concurrently; refusing to remove it");
-    }
-    await import_node_fs4.promises.rm(file);
-  } finally {
-    await handle?.close();
-  }
 }
 async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
@@ -18183,7 +18298,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
       macro
     };
     try {
-      await installNewJson(snlDocRoot(workspaceRoot), relativePath, envelope);
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
     } catch (error) {
       if (error.code === "EEXIST") {
         return {
@@ -18268,7 +18383,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       description
     };
     const relativePath = packageManifestPath(id);
-    await installNewJson(snlDocRoot(workspaceRoot), relativePath, manifest);
+    await installNewJson2(snlDocRoot(workspaceRoot), relativePath, manifest);
     const configRecord = config;
     const currentActive = effectiveActivePackageIds(configRecord, packages);
     const nextConfig = {
@@ -18279,7 +18394,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
       if (options.beforeConfigInstall) await options.beforeConfigInstall();
       await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
     } catch (error) {
-      const manifestFile = path5.join(snlDocRoot(workspaceRoot), relativePath);
+      const manifestFile = path6.join(snlDocRoot(workspaceRoot), relativePath);
       try {
         await removeJsonIfUnchanged(manifestFile, jsonText(manifest));
       } catch (rollbackError) {
@@ -18297,10 +18412,10 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
 // lib/entity-crud.ts
 var ENTITY_TYPES2 = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
 var isRecord6 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
-var sha = (value) => (0, import_node_crypto4.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
+var sha = (value) => (0, import_node_crypto5.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
 var compare = (a3, b2) => a3.id.localeCompare(b2.id);
 function docRoot(root) {
-  return import_node_path.default.join(import_node_path.default.resolve(root), ".SNL_Doc");
+  return import_node_path2.default.join(import_node_path2.default.resolve(root), ".SNL_Doc");
 }
 async function assertWorkspace(root) {
   const config = await readConfig(root);
@@ -18308,22 +18423,22 @@ async function assertWorkspace(root) {
     throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
 }
 async function canonicalWriteWorkspace(root) {
-  const resolved = import_node_path.default.resolve(root);
-  const real = await import_node_fs5.promises.realpath(resolved);
-  const stat = await import_node_fs5.promises.lstat(resolved);
+  const resolved = import_node_path2.default.resolve(root);
+  const real = await import_node_fs6.promises.realpath(resolved);
+  const stat = await import_node_fs6.promises.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved)
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
-  const doc = import_node_path.default.join(resolved, ".SNL_Doc");
-  const docStat = await import_node_fs5.promises.lstat(doc);
-  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await import_node_fs5.promises.realpath(doc) !== import_node_path.default.join(real, ".SNL_Doc"))
+  const doc = import_node_path2.default.join(resolved, ".SNL_Doc");
+  const docStat = await import_node_fs6.promises.lstat(doc);
+  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await import_node_fs6.promises.realpath(doc) !== import_node_path2.default.join(real, ".SNL_Doc"))
     throw new Error(`${doc} must be a canonical, non-symlink directory.`);
   return resolved;
 }
 async function readJson2(file) {
-  return JSON.parse(await import_node_fs5.promises.readFile(file, "utf8"));
+  return JSON.parse(await import_node_fs6.promises.readFile(file, "utf8"));
 }
 async function jsonFiles(directory) {
-  return (await import_node_fs5.promises.readdir(directory, { withFileTypes: true })).filter((e) => e.isFile() && e.name.endsWith(".json")).map((e) => import_node_path.default.join(directory, e.name)).sort();
+  return (await import_node_fs6.promises.readdir(directory, { withFileTypes: true })).filter((e) => e.isFile() && e.name.endsWith(".json")).map((e) => import_node_path2.default.join(directory, e.name)).sort();
 }
 function managed(type, id, value, revisionSource = value) {
   return { type, id, revision: sha(revisionSource), value };
@@ -18343,10 +18458,10 @@ async function packageRows(root, type) {
   const macroPackages = type === "macro-package" ? await readAllMacroPackages(root) : void 0;
   const rows = [];
   const doc = docRoot(root);
-  for (const file of await jsonFiles(import_node_path.default.join(doc, "packages"))) {
+  for (const file of await jsonFiles(import_node_path2.default.join(doc, "packages"))) {
     const manifest = requireRecord(await readJson2(file), "Package manifest");
     const id = requireId(manifest);
-    if (import_node_path.default.relative(doc, file) !== packageManifestPath(id))
+    if (import_node_path2.default.relative(doc, file) !== packageManifestPath(id))
       throw new Error(`${file} does not match Package identity ${id}.`);
     if (type === "entry-package")
       rows.push(managed(type, id, manifest));
@@ -18363,7 +18478,7 @@ async function entryRows(root) {
   const rows = [];
   const doc = docRoot(root);
   for (const value of await readEntries(root)) {
-    const envelope = requireRecord(await readJson2(import_node_path.default.join(doc, entryEntityPath(value.package ?? "", value.id))), "Entry envelope");
+    const envelope = requireRecord(await readJson2(import_node_path2.default.join(doc, entryEntityPath(value.package ?? "", value.id))), "Entry envelope");
     rows.push(managed("entry", value.id, value, envelope));
   }
   return rows.sort(compare);
@@ -18373,21 +18488,25 @@ async function macroRows(root) {
   const doc = docRoot(root);
   for (const [pkg, macroPackage] of Object.entries(await readAllMacroPackages(root))) {
     for (const [name, body] of Object.entries(macroPackage.macros)) {
-      const envelope = requireRecord(await readJson2(import_node_path.default.join(doc, macroEntityPath(pkg, name))), "Macro envelope");
+      const envelope = requireRecord(await readJson2(import_node_path2.default.join(doc, macroEntityPath(pkg, name))), "Macro envelope");
       rows.push(managed("macro", `${pkg}::${name}`, { package: pkg, name, ...body }, envelope));
     }
   }
   return rows.sort(compare);
 }
 async function relationshipRows(root) {
-  const file = import_node_path.default.join(docRoot(root), "relationships.json");
+  const file = import_node_path2.default.join(docRoot(root), "relationships.json");
   try {
-    const data = requireRecord(await readJson2(file), "Relationships file");
+    const data = requireRecord(JSON.parse((await readRegularText(file)).text), "Relationships file");
     if (!Array.isArray(data.relationships))
       throw new Error("relationships.json#relationships must be an array.");
+    const ids = /* @__PURE__ */ new Set();
     return data.relationships.map((v2) => {
       const value = requireRecord(v2, "Relationship");
-      return managed("relationship", requireId(value), value);
+      const id = requireId(value);
+      if (ids.has(id)) throw new Error(`relationships.json contains duplicate id ${JSON.stringify(id)}.`);
+      ids.add(id);
+      return managed("relationship", id, value);
     }).sort(compare);
   } catch (e) {
     if (e.code === "ENOENT")
@@ -18395,31 +18514,41 @@ async function relationshipRows(root) {
     throw e;
   }
 }
+async function libraryExtraNames(dir) {
+  const owned = /* @__PURE__ */ new Set(["meta.json", "graph.json", "counters.json"]);
+  return (await import_node_fs6.promises.readdir(dir)).filter((name) => !owned.has(name)).sort((a3, b2) => a3.localeCompare(b2));
+}
+async function readLibraryDirectoryValue(dir, slug) {
+  const meta = requireRecord(JSON.parse((await readRegularText(import_node_path2.default.join(dir, "meta.json"))).text), "Library meta");
+  const graph = requireRecord(JSON.parse((await readRegularText(import_node_path2.default.join(dir, "graph.json"))).text), "Library graph");
+  let counters = { counters: [] };
+  try {
+    counters = requireRecord(JSON.parse((await readRegularText(import_node_path2.default.join(dir, "counters.json"))).text), "Library counters");
+  } catch (e) {
+    if (e.code !== "ENOENT") throw e;
+  }
+  return { slug, meta, graph, counters };
+}
 async function libraryRows(root) {
-  const base = import_node_path.default.join(docRoot(root), "libraries");
+  const base = import_node_path2.default.join(docRoot(root), "libraries");
   const rows = [];
   let entries;
   try {
-    entries = await import_node_fs5.promises.readdir(base, { withFileTypes: true });
+    const baseStat = await import_node_fs6.promises.lstat(base);
+    if (!baseStat.isDirectory() || baseStat.isSymbolicLink())
+      throw new Error(`${base} must be a regular, non-symlink Library directory.`);
+    entries = await import_node_fs6.promises.readdir(base, { withFileTypes: true });
   } catch (e) {
     if (e.code === "ENOENT")
       return [];
     throw e;
   }
   for (const entry of entries.sort((a3, b2) => a3.name.localeCompare(b2.name))) {
-    if (!entry.isDirectory())
-      continue;
-    const dir = import_node_path.default.join(base, entry.name);
-    const meta = requireRecord(await readJson2(import_node_path.default.join(dir, "meta.json")), "Library meta");
-    const graph = requireRecord(await readJson2(import_node_path.default.join(dir, "graph.json")), "Library graph");
-    let counters = { counters: [] };
-    try {
-      counters = requireRecord(await readJson2(import_node_path.default.join(dir, "counters.json")), "Library counters");
-    } catch (e) {
-      if (e.code !== "ENOENT")
-        throw e;
-    }
-    rows.push(managed("library", entry.name, { slug: entry.name, meta, graph, counters }));
+    if (entry.isFile() && entry.name === ".gitkeep") continue;
+    if (entry.isSymbolicLink() || !entry.isDirectory())
+      throw new Error(`${import_node_path2.default.join(base, entry.name)} must be a regular, non-symlink Library directory.`);
+    const dir = import_node_path2.default.join(base, entry.name);
+    rows.push(managed("library", entry.name, await readLibraryDirectoryValue(dir, entry.name)));
   }
   return rows.sort(compare);
 }
@@ -18452,112 +18581,26 @@ async function listManagedEntities(root, type) {
 async function getManagedEntity(root, type, id) {
   return (await listManagedEntities(root, type)).find((item) => item.id === id);
 }
-async function atomicWriteJson(file, value) {
-  const directory = import_node_path.default.dirname(file);
-  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-entity-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.tmp`);
-  let handle;
-  let mode = 420;
-  try {
-    mode = (await import_node_fs5.promises.stat(file)).mode & 511;
-  } catch (error) {
-    if (error.code !== "ENOENT")
-      throw error;
-  }
-  try {
-    handle = await import_node_fs5.promises.open(temp, import_node_fs5.constants.O_CREAT | import_node_fs5.constants.O_EXCL | import_node_fs5.constants.O_WRONLY, mode);
-    await handle.writeFile(`${JSON.stringify(value, null, 2)}
-`, "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await import_node_fs5.promises.rename(temp, file);
-    const dir = await import_node_fs5.promises.open(directory, import_node_fs5.constants.O_RDONLY);
-    try {
-      await dir.sync();
-    } finally {
-      await dir.close();
-    }
-  } finally {
-    await handle?.close();
-    await import_node_fs5.promises.rm(temp, { force: true });
-  }
-}
-function jsonText2(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readRegularText2(file) {
-  let handle;
-  try {
-    handle = await import_node_fs5.promises.open(file, import_node_fs5.constants.O_RDONLY | import_node_fs5.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511 };
-  } finally {
-    await handle?.close();
-  }
-}
-async function replaceJsonIfUnchanged2(file, expected, value) {
-  const current = await readRegularText2(file);
-  if (current.text !== expected) throw new Error(`${file} changed; refusing to overwrite it.`);
-  const directory = import_node_path.default.dirname(file);
-  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-entity-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.tmp`);
-  let handle;
-  try {
-    handle = await import_node_fs5.promises.open(temp, import_node_fs5.constants.O_CREAT | import_node_fs5.constants.O_EXCL | import_node_fs5.constants.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText2(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    if ((await readRegularText2(file)).text !== expected)
-      throw new Error(`${file} changed; refusing to overwrite it.`);
-    await import_node_fs5.promises.rename(temp, file);
-  } finally {
-    await handle?.close();
-    await import_node_fs5.promises.rm(temp, { force: true });
-  }
-}
-async function installNewJson2(file, value) {
-  const directory = import_node_path.default.dirname(file);
-  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-entity-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.tmp`);
-  let handle;
-  try {
-    handle = await import_node_fs5.promises.open(temp, import_node_fs5.constants.O_CREAT | import_node_fs5.constants.O_EXCL | import_node_fs5.constants.O_WRONLY, 420);
-    await handle.writeFile(jsonText2(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await import_node_fs5.promises.link(temp, file);
-  } finally {
-    await handle?.close();
-    await import_node_fs5.promises.rm(temp, { force: true });
-  }
-}
-async function removeJsonIfUnchanged2(file, expected) {
-  let handle;
-  try {
-    handle = await import_node_fs5.promises.open(file, import_node_fs5.constants.O_RDONLY | import_node_fs5.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile() || await handle.readFile("utf8") !== expected)
-      throw new Error(`${file} changed; refusing to remove it.`);
-    const current = await import_node_fs5.promises.lstat(file);
-    if (current.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino)
-      throw new Error(`${file} path changed; refusing to remove it.`);
-    await import_node_fs5.promises.rm(file);
-  } finally {
-    await handle?.close();
-  }
-}
 function invalid(message) {
   return { status: "invalid", code: "entity.invalid", message };
 }
 function conflict(message) {
   return { status: "conflict", code: "entity.revision-conflict", message };
 }
+function currentKindCatalogProblem(config, next) {
+  if (!usesCurrentEntitySchemas(config)) return void 0;
+  try {
+    assertCurrentKindCatalogs(next);
+    return void 0;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+}
 async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
   return withWorkspaceDataLock(root, `${operation} ${type}`, async () => {
-    const file = import_node_path.default.join(docRoot(root), "config.json");
-    const config = requireRecord(await readJson2(file), "config.json");
+    const file = import_node_path2.default.join(docRoot(root), "config.json");
+    const originalConfig = await readRegularText(file);
+    const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
     if (!usesEntityStorage(config))
       throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
     const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
@@ -18573,8 +18616,10 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
       const newId = requireId(value2);
       if (values.some((v2) => isRecord6(v2) && v2.id === newId))
         return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(newId)} already exists.` };
-      const next = { ...config, [field]: [...values, value2] };
-      await atomicWriteJson(file, next);
+      const next2 = { ...config, [field]: [...values, value2] };
+      const catalogProblem2 = currentKindCatalogProblem(config, next2);
+      if (catalogProblem2) return invalid(catalogProblem2);
+      await replaceJsonIfUnchanged(file, originalConfig.text, next2);
       return { status: "ok", operation, type, entity: managed(type, newId, value2) };
     }
     if (index < 0)
@@ -18584,8 +18629,18 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
     if (!ifMatch || ifMatch !== currentEntity.revision)
       return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
     if (operation === "delete") {
+      if (type === "entry-kind" && (await readEntries(root)).some((entry) => entry.kind === id))
+        return { status: "conflict", code: "entity.referenced", message: `Entry Kind ${JSON.stringify(id)} is still used by Entries.` };
+      if (type === "macro-kind") {
+        const packages = await readAllMacroPackages(root);
+        if (Object.values(packages).some((pkg) => Object.values(pkg.macros).some((macro) => macro.kind === id)))
+          return { status: "conflict", code: "entity.referenced", message: `Macro Kind ${JSON.stringify(id)} is still used by Macros.` };
+      }
       const nextValues2 = values.filter((_2, i4) => i4 !== index);
-      await atomicWriteJson(file, { ...config, [field]: nextValues2 });
+      const next2 = { ...config, [field]: nextValues2 };
+      const catalogProblem2 = currentKindCatalogProblem(config, next2);
+      if (catalogProblem2) return invalid(catalogProblem2);
+      await replaceJsonIfUnchanged(file, originalConfig.text, next2);
       return { status: "ok", operation, type, entity: currentEntity };
     }
     const value = requireRecord(input, type);
@@ -18596,14 +18651,17 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
       return invalid(`${type} identity is immutable: payload id must equal ${JSON.stringify(id)}.`);
     const nextValues = [...values];
     nextValues[index] = value;
-    await atomicWriteJson(file, { ...config, [field]: nextValues });
+    const next = { ...config, [field]: nextValues };
+    const catalogProblem = currentKindCatalogProblem(config, next);
+    if (catalogProblem) return invalid(catalogProblem);
+    await replaceJsonIfUnchanged(file, originalConfig.text, next);
     return { status: "ok", operation, type, entity: managed(type, id, value) };
   });
 }
 async function validationMessage(root, type, value, currentId) {
   const stringField = (field) => typeof value[field] === "string" && value[field] !== "";
   if (type === "entry-kind") {
-    if (!stringField("id") || !stringField("name") || !isRecord6(value.coloring) || typeof value.style !== "string")
+    if (!stringField("id") || !(typeof value.name === "string" || isRecord6(value.name)) || !isRecord6(value.coloring) || typeof value.style !== "string")
       return "Entry Kind requires non-empty id/name, coloring object, and string style.";
   } else if (type === "macro-kind") {
     if (!stringField("id") || !stringField("name") || typeof value.description !== "string" || !isRecord6(value.coloring))
@@ -18657,29 +18715,58 @@ async function createDirect(root, type, input) {
     if (await getManagedEntity(root, type, id))
       return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(id)} already exists.` };
     if (type === "relationship") {
-      const file = import_node_path.default.join(docRoot(root), "relationships.json");
+      const file = import_node_path2.default.join(docRoot(root), "relationships.json");
       let data = { version: 1, relationships: [] };
+      let original;
       try {
-        data = requireRecord(await readJson2(file), "relationships.json");
+        original = await readRegularText(file);
+        data = requireRecord(JSON.parse(original.text), "relationships.json");
       } catch (e) {
         if (e.code !== "ENOENT")
           throw e;
       }
       if (!Array.isArray(data.relationships))
         throw new Error("relationships.json#relationships must be an array.");
-      await atomicWriteJson(file, { ...data, relationships: [...data.relationships, value] });
+      const next = { ...data, relationships: [...data.relationships, value] };
+      if (original) await replaceJsonIfUnchanged(file, original.text, next);
+      else await installNewJson(file, next);
     } else {
-      const dir = import_node_path.default.join(docRoot(root), "libraries", id);
-      if (import_node_path.default.basename(id) !== id || id === "." || id === "..")
+      const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
+      if (import_node_path2.default.basename(id) !== id || id === "." || id === "..")
         return invalid("Library slug must be one safe path segment.");
-      await import_node_fs5.promises.mkdir(dir, { recursive: false });
+      await import_node_fs6.promises.mkdir(dir, { recursive: false });
+      const resources = [
+        { file: import_node_path2.default.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
+        { file: import_node_path2.default.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
+        { file: import_node_path2.default.join(dir, "counters.json"), value: requireRecord(value.counters, "Library counters") }
+      ];
+      const installed = [];
       try {
-        await atomicWriteJson(import_node_path.default.join(dir, "meta.json"), requireRecord(value.meta, "Library meta"));
-        await atomicWriteJson(import_node_path.default.join(dir, "graph.json"), requireRecord(value.graph, "Library graph"));
-        await atomicWriteJson(import_node_path.default.join(dir, "counters.json"), requireRecord(value.counters, "Library counters"));
-      } catch (e) {
-        await import_node_fs5.promises.rm(dir, { recursive: true, force: true });
-        throw e;
+        for (const resource of resources) {
+          await installNewJson(resource.file, resource.value);
+          installed.push(resource);
+        }
+      } catch (error) {
+        const cleanupErrors = [];
+        for (const resource of installed.reverse()) {
+          try {
+            await removeJsonIfUnchanged(resource.file, jsonText(resource.value));
+          } catch (cleanup) {
+            cleanupErrors.push(`${resource.file}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
+          }
+        }
+        try {
+          await import_node_fs6.promises.rmdir(dir);
+        } catch (cleanup) {
+          cleanupErrors.push(`${dir}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
+        }
+        if (cleanupErrors.length) {
+          throw new Error(
+            `${error instanceof Error ? error.message : String(error)} Library creation cleanup preserved concurrent data: ${cleanupErrors.join("; ")}`,
+            { cause: error }
+          );
+        }
+        throw error;
       }
     }
     const entity = await getManagedEntity(root, type, id);
@@ -18729,14 +18816,14 @@ async function createManagedEntity(root, type, input) {
 async function locateFile(root, type, entity) {
   const doc = docRoot(root);
   if (type === "entry-package" || type === "macro-package")
-    return import_node_path.default.join(doc, packageManifestPath(entity.id));
+    return import_node_path2.default.join(doc, packageManifestPath(entity.id));
   if (type === "entry") {
     const pkg = typeof entity.value.package === "string" ? entity.value.package : "";
-    return import_node_path.default.join(doc, entryEntityPath(pkg, entity.id));
+    return import_node_path2.default.join(doc, entryEntityPath(pkg, entity.id));
   }
   if (type === "macro") {
     const split = entity.id.indexOf("::");
-    return import_node_path.default.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
+    return import_node_path2.default.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
   }
   throw new Error(`No entity file for ${type}.`);
 }
@@ -18755,21 +18842,68 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (identityFor(type, value) !== id)
         return invalid(`${type} identity is immutable: payload identity must equal ${JSON.stringify(id)}.`);
       if (type === "relationship") {
-        const file = import_node_path.default.join(docRoot(root), "relationships.json");
-        const data = requireRecord(await readJson2(file), "relationships.json");
+        const file = import_node_path2.default.join(docRoot(root), "relationships.json");
+        const original = await readRegularText(file);
+        const data = requireRecord(JSON.parse(original.text), "relationships.json");
         const values = data.relationships;
         if (!Array.isArray(values))
           throw new Error("relationships.json#relationships must be an array.");
-        await atomicWriteJson(file, { ...data, relationships: values.map((row) => isRecord6(row) && row.id === id ? value : row) });
+        await options.beforeEntityInstall?.();
+        await replaceJsonIfUnchanged(file, original.text, {
+          ...data,
+          relationships: values.map((row) => isRecord6(row) && row.id === id ? value : row)
+        });
       } else if (type === "library") {
-        const dir = import_node_path.default.join(docRoot(root), "libraries", id);
-        await atomicWriteJson(import_node_path.default.join(dir, "meta.json"), requireRecord(value.meta, "Library meta"));
-        await atomicWriteJson(import_node_path.default.join(dir, "graph.json"), requireRecord(value.graph, "Library graph"));
-        await atomicWriteJson(import_node_path.default.join(dir, "counters.json"), requireRecord(value.counters, "Library counters"));
+        const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
+        const resources = [
+          { file: import_node_path2.default.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
+          { file: import_node_path2.default.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
+          { file: import_node_path2.default.join(dir, "counters.json"), next: requireRecord(value.counters, "Library counters") }
+        ];
+        const originals = await Promise.all(resources.map(async (resource) => {
+          try {
+            return { ...resource, original: await readRegularText(resource.file) };
+          } catch (error) {
+            if (import_node_path2.default.basename(resource.file) === "counters.json" && error.code === "ENOENT")
+              return { ...resource, original: void 0 };
+            throw error;
+          }
+        }));
+        const installed = [];
+        try {
+          await options.beforeEntityInstall?.();
+          for (const resource of originals) {
+            if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
+            else await installNewJson(resource.file, resource.next);
+            installed.push(resource);
+          }
+        } catch (error) {
+          const rollbackErrors = [];
+          for (const resource of installed.reverse()) {
+            try {
+              if (resource.original) {
+                await replaceJsonIfUnchanged(
+                  resource.file,
+                  jsonText(resource.next),
+                  JSON.parse(resource.original.text)
+                );
+              } else await removeJsonIfUnchanged(resource.file, jsonText(resource.next));
+            } catch (rollbackError) {
+              rollbackErrors.push(`${resource.file}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`);
+            }
+          }
+          if (rollbackErrors.length) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} Library rollback failed without overwriting concurrent replacements: ${rollbackErrors.join("; ")}`,
+              { cause: error }
+            );
+          }
+          throw error;
+        }
       } else {
         const file = await locateFile(root, type, current);
         if (type === "entry-package" || type === "macro-package") {
-          const originalManifest = await readRegularText2(file);
+          const originalManifest = await readRegularText(file);
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
             return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
@@ -18784,9 +18918,9 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           };
           delete manifest.macros;
           await options.beforeEntityInstall?.();
-          await replaceJsonIfUnchanged2(file, originalManifest.text, manifest);
+          await replaceJsonIfUnchanged(file, originalManifest.text, manifest);
         } else if (type === "entry") {
-          const originalEntity = await readRegularText2(file);
+          const originalEntity = await readRegularText(file);
           const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           const nextEnvelope = {
@@ -18801,19 +18935,19 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const newPackage = typeof value.package === "string" ? value.package : "";
           if (oldPackage === newPackage) {
             await options.beforeEntityInstall?.();
-            await replaceJsonIfUnchanged2(file, originalEntity.text, nextEnvelope);
+            await replaceJsonIfUnchanged(file, originalEntity.text, nextEnvelope);
           } else {
-            const destinationFile = import_node_path.default.join(docRoot(root), entryEntityPath(newPackage, id));
+            const destinationFile = import_node_path2.default.join(docRoot(root), entryEntityPath(newPackage, id));
             if (!currentSchema) {
               let installed = false;
               try {
-                await installNewJson2(destinationFile, nextEnvelope);
+                await installNewJson(destinationFile, nextEnvelope);
                 installed = true;
-                await removeJsonIfUnchanged2(file, originalEntity.text);
+                await removeJsonIfUnchanged(file, originalEntity.text);
               } catch (error) {
                 if (installed) {
                   try {
-                    await removeJsonIfUnchanged2(destinationFile, jsonText2(nextEnvelope));
+                    await removeJsonIfUnchanged(destinationFile, jsonText(nextEnvelope));
                   } catch (rollback) {
                     throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of legacy destination Entry failed: ${rollback instanceof Error ? rollback.message : String(rollback)}.`, { cause: error });
                   }
@@ -18821,10 +18955,10 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
                 throw error;
               }
             } else {
-              const sourceManifestFile = import_node_path.default.join(docRoot(root), packageManifestPath(oldPackage));
-              const destinationManifestFile = import_node_path.default.join(docRoot(root), packageManifestPath(newPackage));
-              const sourceOriginal = await readRegularText2(sourceManifestFile);
-              const destinationOriginal = await readRegularText2(destinationManifestFile);
+              const sourceManifestFile = import_node_path2.default.join(docRoot(root), packageManifestPath(oldPackage));
+              const destinationManifestFile = import_node_path2.default.join(docRoot(root), packageManifestPath(newPackage));
+              const sourceOriginal = await readRegularText(sourceManifestFile);
+              const destinationOriginal = await readRegularText(destinationManifestFile);
               const sourceManifest = requireRecord(JSON.parse(sourceOriginal.text), "Source Package manifest");
               const destinationManifest = requireRecord(JSON.parse(destinationOriginal.text), "Destination Package manifest");
               if (!Array.isArray(sourceManifest.entry_ids) || sourceManifest.entry_ids.filter((v2) => v2 === id).length !== 1)
@@ -18840,32 +18974,32 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
               let destinationUpdated = false;
               let sourceUpdated = false;
               try {
-                await installNewJson2(destinationFile, nextEnvelope);
+                await installNewJson(destinationFile, nextEnvelope);
                 installed = true;
-                await replaceJsonIfUnchanged2(destinationManifestFile, destinationOriginal.text, destinationNext);
+                await replaceJsonIfUnchanged(destinationManifestFile, destinationOriginal.text, destinationNext);
                 destinationUpdated = true;
-                await replaceJsonIfUnchanged2(sourceManifestFile, sourceOriginal.text, sourceNext);
+                await replaceJsonIfUnchanged(sourceManifestFile, sourceOriginal.text, sourceNext);
                 sourceUpdated = true;
-                await removeJsonIfUnchanged2(file, originalEntity.text);
+                await removeJsonIfUnchanged(file, originalEntity.text);
               } catch (error) {
                 const rollbackErrors = [];
                 if (sourceUpdated) {
                   try {
-                    await replaceJsonIfUnchanged2(sourceManifestFile, jsonText2(sourceNext), sourceManifest);
+                    await replaceJsonIfUnchanged(sourceManifestFile, jsonText(sourceNext), sourceManifest);
                   } catch (rollback) {
                     rollbackErrors.push(`source membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
                   }
                 }
                 if (destinationUpdated) {
                   try {
-                    await replaceJsonIfUnchanged2(destinationManifestFile, jsonText2(destinationNext), destinationManifest);
+                    await replaceJsonIfUnchanged(destinationManifestFile, jsonText(destinationNext), destinationManifest);
                   } catch (rollback) {
                     rollbackErrors.push(`destination membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
                   }
                 }
                 if (installed) {
                   try {
-                    await removeJsonIfUnchanged2(destinationFile, jsonText2(nextEnvelope));
+                    await removeJsonIfUnchanged(destinationFile, jsonText(nextEnvelope));
                   } catch (rollback) {
                     rollbackErrors.push(`destination Entry: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
                   }
@@ -18880,7 +19014,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           const split = id.indexOf("::");
           const pkg = id.slice(0, split);
           const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
-          const originalMacro = await readRegularText2(file);
+          const originalMacro = await readRegularText(file);
           const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
           const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
           const nextEnvelope = {
@@ -18892,7 +19026,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             macro
           };
           await options.beforeEntityInstall?.();
-          await replaceJsonIfUnchanged2(file, originalMacro.text, nextEnvelope);
+          await replaceJsonIfUnchanged(file, originalMacro.text, nextEnvelope);
         }
       }
       const entity = await getManagedEntity(root, type, id);
@@ -18905,25 +19039,25 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (references.length)
         return { status: "conflict", code: "entity.referenced", message: `Entry ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
       const entityFile = await locateFile(root, type, current);
-      const originalEntity = await readRegularText2(entityFile);
+      const originalEntity = await readRegularText(entityFile);
       if (!usesCurrentEntitySchemas(await readConfig(root))) {
-        await removeJsonIfUnchanged2(entityFile, originalEntity.text);
+        await removeJsonIfUnchanged(entityFile, originalEntity.text);
         return { status: "ok", operation, type, entity: current };
       }
       const packageId = typeof current.value.package === "string" ? current.value.package : "";
-      const manifestFile = import_node_path.default.join(docRoot(root), packageManifestPath(packageId));
-      const originalManifest = await readRegularText2(manifestFile);
+      const manifestFile = import_node_path2.default.join(docRoot(root), packageManifestPath(packageId));
+      const originalManifest = await readRegularText(manifestFile);
       const manifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
       const entryIds = manifest.entry_ids;
       if (!Array.isArray(entryIds) || entryIds.filter((value) => value === id).length !== 1)
         throw new Error(`Package ${JSON.stringify(packageId)} does not contain Entry ${JSON.stringify(id)} exactly once.`);
       const nextManifest = { ...manifest, entry_ids: entryIds.filter((value) => value !== id) };
-      await replaceJsonIfUnchanged2(manifestFile, originalManifest.text, nextManifest);
+      await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
       try {
-        await removeJsonIfUnchanged2(entityFile, originalEntity.text);
+        await removeJsonIfUnchanged(entityFile, originalEntity.text);
       } catch (error) {
         try {
-          await replaceJsonIfUnchanged2(manifestFile, jsonText2(nextManifest), manifest);
+          await replaceJsonIfUnchanged(manifestFile, jsonText(nextManifest), manifest);
         } catch (rollbackError) {
           throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of Package membership failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
         }
@@ -18934,19 +19068,45 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       const references = (await findEntityReferences(root, "macro", name)).filter((occurrence2) => occurrence2.role === "reference");
       if (references.length)
         return { status: "conflict", code: "entity.referenced", message: `Macro ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
-      await import_node_fs5.promises.unlink(await locateFile(root, type, current));
+      const file = await locateFile(root, type, current);
+      const original = await readRegularText(file);
+      await options.beforeEntityDelete?.();
+      await removeJsonIfUnchanged(file, original.text);
     } else if (type === "relationship") {
-      const file = import_node_path.default.join(docRoot(root), "relationships.json");
-      const data = requireRecord(await readJson2(file), "relationships.json");
+      const file = import_node_path2.default.join(docRoot(root), "relationships.json");
+      const original = await readRegularText(file);
+      const data = requireRecord(JSON.parse(original.text), "relationships.json");
       const values = data.relationships;
       if (!Array.isArray(values))
         throw new Error("relationships.json#relationships must be an array.");
-      await atomicWriteJson(file, { ...data, relationships: values.filter((row) => !(isRecord6(row) && row.id === id)) });
+      await options.beforeEntityDelete?.();
+      await replaceJsonIfUnchanged(file, original.text, {
+        ...data,
+        relationships: values.filter((row) => !(isRecord6(row) && row.id === id))
+      });
     } else if (type === "library") {
-      const dir = import_node_path.default.join(docRoot(root), "libraries", id);
-      const tomb = import_node_path.default.join(import_node_path.default.dirname(dir), `.${id}.snl-entity-${(0, import_node_crypto4.randomUUID)()}.deleted`);
-      await import_node_fs5.promises.rename(dir, tomb);
-      await import_node_fs5.promises.rm(tomb, { recursive: true });
+      const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
+      const extras = await libraryExtraNames(dir);
+      if (extras.length) {
+        return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
+      }
+      const tomb = import_node_path2.default.join(import_node_path2.default.dirname(dir), `.${id}.snl-entity-${(0, import_node_crypto5.randomUUID)()}.deleted`);
+      await options.beforeEntityDelete?.();
+      await import_node_fs6.promises.rename(dir, tomb);
+      let captured;
+      try {
+        captured = await readLibraryDirectoryValue(tomb, id);
+      } catch (error) {
+        throw new Error(
+          `${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}: ${error instanceof Error ? error.message : String(error)}`,
+          { cause: error }
+        );
+      }
+      const capturedExtras = await libraryExtraNames(tomb);
+      if (sha(captured) !== current.revision || capturedExtras.length) {
+        throw new Error(`${dir} changed while deletion was in flight; its captured directory was preserved at ${tomb}.`);
+      }
+      await import_node_fs6.promises.rm(tomb, { recursive: true });
     } else if (type === "entry-package" || type === "macro-package") {
       if (id === "_unpackaged")
         return invalid("The system _unpackaged Package cannot be deleted.");
@@ -18955,9 +19115,9 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (entries.some((e) => e.value.package === id) || macros2.some((m3) => m3.value.package === id))
         return { status: "conflict", code: "package.not-empty", message: `Package ${JSON.stringify(id)} still contains entities.` };
       const file = await locateFile(root, type, current);
-      const originalManifest = await readRegularText2(file);
-      const configFile = import_node_path.default.join(docRoot(root), "config.json");
-      const originalConfig = await readRegularText2(configFile);
+      const originalManifest = await readRegularText(file);
+      const configFile = import_node_path2.default.join(docRoot(root), "config.json");
+      const originalConfig = await readRegularText(configFile);
       const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
       const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId) => packageId !== "_unpackaged");
       const nextConfig = {
@@ -18965,20 +19125,20 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         active_macro_packages: [...new Set(active.filter((value) => value !== id))].sort((left, right) => left.localeCompare(right))
       };
       await options.beforeConfigInstall?.();
-      await replaceJsonIfUnchanged2(configFile, originalConfig.text, nextConfig);
+      await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
       try {
         await options.beforeManifestDelete?.();
-        await removeJsonIfUnchanged2(file, originalManifest.text);
+        await removeJsonIfUnchanged(file, originalManifest.text);
       } catch (error) {
         try {
-          await replaceJsonIfUnchanged2(configFile, jsonText2(nextConfig), config);
+          await replaceJsonIfUnchanged(configFile, jsonText(nextConfig), config);
         } catch (rollbackError) {
           throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of config failed without overwriting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
         }
         throw error;
       }
     } else
-      await import_node_fs5.promises.unlink(await locateFile(root, type, current));
+      await import_node_fs6.promises.unlink(await locateFile(root, type, current));
     return { status: "ok", operation, type, entity: current };
   });
 }
@@ -19109,7 +19269,7 @@ function createMcpDispatcher(adapter) {
 }
 async function loadEntityAdapter(specifier = process.env.SNL_ENTITY_ADAPTER_MODULE) {
   if (!specifier) return createEntityAdapter();
-  const url = specifier.startsWith("file:") || specifier.startsWith("data:") || specifier.startsWith("node:") ? specifier : (0, import_node_url.pathToFileURL)((0, import_node_path2.resolve)(specifier)).href;
+  const url = specifier.startsWith("file:") || specifier.startsWith("data:") || specifier.startsWith("node:") ? specifier : (0, import_node_url.pathToFileURL)((0, import_node_path3.resolve)(specifier)).href;
   const loaded = await import(url);
   const candidate = loaded.createEntityAdapter ? await loaded.createEntityAdapter() : typeof loaded.default === "function" ? await loaded.default() : loaded.default;
   if (!candidate || !["list", "get", "apply", "validate"].every((name) => typeof candidate[name] === "function")) {
