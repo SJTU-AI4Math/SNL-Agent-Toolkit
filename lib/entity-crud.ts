@@ -408,6 +408,7 @@ type DirectMutationOptions = {
     beforeEntityInstall?: () => void | Promise<void>;
     beforeEntityDelete?: () => void | Promise<void>;
     beforeManifestDelete?: () => void | Promise<void>;
+    beforeLibraryDirectoryRemove?: (capturedDirectory: string) => void | Promise<void>;
 };
 async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entry-kind" | "macro-kind">, operation: "update" | "delete", id: string, input: unknown, ifMatch: string, options: DirectMutationOptions = {}): Promise<EntityMutationResult> {
     return withWorkspaceDataLock(root, `${operation} ${type}`, async () => { const current = await getManagedEntity(root, type, id); if (!current)
@@ -739,7 +740,44 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             await restoreCapturedDirectory(tomb, dir);
             throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
         }
-        await fs.rm(tomb, { recursive: true });
+        await options.beforeLibraryDirectoryRemove?.(tomb);
+        const fileCaptures: Array<{ name: string; captured: string; identity: { dev: number; ino: number } }> = [];
+        try {
+            for (const name of ["meta.json", "graph.json", "counters.json"]) {
+                const source = path.join(tomb, name);
+                let identity: { dev: number; ino: number };
+                try {
+                    const original = await readRegularText(source);
+                    identity = { dev: original.dev, ino: original.ino };
+                }
+                catch (error) {
+                    if (name === "counters.json" && (error as NodeJS.ErrnoException).code === "ENOENT") continue;
+                    throw error;
+                }
+                const capturedFile = path.join(path.dirname(tomb), `${path.basename(tomb)}.${name}.${randomUUID()}.captured`);
+                await fs.rename(source, capturedFile);
+                fileCaptures.push({ name, captured: capturedFile, identity });
+                const observed = await readRegularText(capturedFile);
+                if (observed.dev !== identity.dev || observed.ino !== identity.ino)
+                    throw new Error(`${source} changed while Library deletion was in flight.`);
+            }
+            // Never recurse: an unmanaged file arriving after the earlier check
+            // makes rmdir fail and is restored with the Library instead of lost.
+            await fs.rmdir(tomb);
+        }
+        catch (error) {
+            const recoveryErrors: string[] = [];
+            for (const item of fileCaptures.reverse()) {
+                try { await fs.rename(item.captured, path.join(tomb, item.name)); }
+                catch (restoreError) { recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
+            }
+            try { await restoreCapturedDirectory(tomb, dir); }
+            catch (restoreError) { recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
+            if (recoveryErrors.length)
+                throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });
+            throw new Error(`${dir} changed while deletion was in flight; its directory was restored.`, { cause: error });
+        }
+        for (const item of fileCaptures) await fs.rm(item.captured).catch(() => undefined);
     }
     else if (type === "entry-package" || type === "macro-package") {
         if (id === "_unpackaged")

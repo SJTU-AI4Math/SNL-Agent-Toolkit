@@ -88,6 +88,30 @@ describe('guarded JSON path capture', () => {
     assert.equal(await readFile(path.join(external, 'entity.json'), 'utf8'), original);
   });
 
+  it('restores an external file when the parent becomes a symlink after the final pre-capture check', async () => {
+    const { root } = await scratch();
+    const live = path.join(root, 'live-after-check');
+    const parked = path.join(root, 'parked-after-check');
+    const external = path.join(root, 'external-after-check');
+    await mkdir(live);
+    await mkdir(external);
+    const file = path.join(live, 'entity.json');
+    const original = '{"owner":"same"}\n';
+    await writeFile(file, original);
+    await writeFile(path.join(external, 'entity.json'), original);
+    await assert.rejects(
+      () => removeJsonIfUnchanged(file, original, {
+        afterParentCheckBeforeCapture: async () => {
+          await rename(live, parked);
+          await symlink(external, live, 'dir');
+        },
+      }),
+      /canonical|symlink|replacement directory/i,
+    );
+    assert.equal(await readFile(path.join(external, 'entity.json'), 'utf8'), original);
+    assert.equal(await readFile(path.join(parked, 'entity.json'), 'utf8'), original);
+  });
+
   it('never overwrites a new canonical file created after capture', async () => {
     const { root, file } = await scratch();
     const original = '{"owner":"original"}\n';

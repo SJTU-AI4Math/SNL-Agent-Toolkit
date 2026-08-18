@@ -6,22 +6,39 @@ export function jsonText(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
-async function assertCanonicalDirectory(directory: string): Promise<void> {
+type DirectoryIdentity = { dev: number; ino: number };
+
+async function readCanonicalDirectoryIdentity(directory: string): Promise<DirectoryIdentity> {
   const resolved = path.resolve(directory);
   const stat = await fs.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
+  return { dev: stat.dev, ino: stat.ino };
 }
 
-export async function readRegularText(file: string): Promise<{ text: string; mode: number; dev: number; ino: number }> {
-  await assertCanonicalDirectory(path.dirname(file));
+async function assertCanonicalDirectory(directory: string, expected?: DirectoryIdentity): Promise<DirectoryIdentity> {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${path.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
+}
+
+export async function readRegularText(file: string): Promise<{ text: string; mode: number; dev: number; ino: number; directoryDev: number; directoryIno: number }> {
+  const directory = path.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
   let handle;
   try {
     handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
     const stat = await handle.stat();
+    await assertCanonicalDirectory(directory, directoryIdentity);
     if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile('utf8'), mode: stat.mode & 0o777, dev: stat.dev, ino: stat.ino };
+    return {
+      text: await handle.readFile('utf8'), mode: stat.mode & 0o777,
+      dev: stat.dev, ino: stat.ino,
+      directoryDev: directoryIdentity.dev, directoryIno: directoryIdentity.ino,
+    };
   } finally {
     await handle?.close();
   }
@@ -52,6 +69,7 @@ export async function installNewJson(
   hooks: { beforeDirectorySync?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const directory = path.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
   const temp = path.join(
     directory,
     `.${path.basename(file)}.snl-create-${process.pid}-${randomUUID()}.tmp`,
@@ -64,7 +82,7 @@ export async function installNewJson(
     await handle.sync();
     await handle.close();
     handle = undefined;
-    await assertCanonicalDirectory(directory);
+    await assertCanonicalDirectory(directory, directoryIdentity);
     await fs.link(temp, file);
     installed = true;
     try {
@@ -108,11 +126,12 @@ export async function replaceJsonIfUnchanged(
   file: string,
   expected: string,
   value: unknown,
-  hooks: { beforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
+  hooks: { beforeCapture?: () => void | Promise<void>; afterParentCheckBeforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = path.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const nonce = `${process.pid}-${randomUUID()}`;
   const temp = path.join(directory, `.${path.basename(file)}.snl-write-${nonce}.tmp`);
   const captured = path.join(directory, `.${path.basename(file)}.snl-write-${nonce}.captured`);
@@ -127,9 +146,11 @@ export async function replaceJsonIfUnchanged(
     handle = undefined;
 
     await hooks.beforeCapture?.();
-    await assertCanonicalDirectory(directory);
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
     await fs.rename(file, captured);
     capturedPresent = true;
+    await assertCanonicalDirectory(directory, expectedDirectory);
     await hooks.afterCapture?.();
     const observed = await readRegularText(captured);
     if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
@@ -204,21 +225,24 @@ export async function replaceJsonIfUnchanged(
 export async function removeJsonIfUnchanged(
   file: string,
   expected: string,
-  hooks: { beforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
+  hooks: { beforeCapture?: () => void | Promise<void>; afterParentCheckBeforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
   const directory = path.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const captured = path.join(
     directory,
     `.${path.basename(file)}.snl-remove-${process.pid}-${randomUUID()}.captured`,
   );
   await hooks.beforeCapture?.();
-  await assertCanonicalDirectory(directory);
+  await assertCanonicalDirectory(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
   await fs.rename(file, captured);
-  await hooks.afterCapture?.();
-  let observed: { text: string; mode: number; dev: number; ino: number };
+  let observed: { text: string; mode: number; dev: number; ino: number; directoryDev: number; directoryIno: number };
   try {
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
     observed = await readRegularText(captured);
   } catch (error) {
     try {

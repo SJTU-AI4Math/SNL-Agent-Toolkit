@@ -15826,21 +15826,38 @@ function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
 `;
 }
-async function assertCanonicalDirectory(directory) {
+async function readCanonicalDirectoryIdentity(directory) {
   const resolved = path4.resolve(directory);
   const stat = await fs2.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || await fs2.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${path4.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
 }
 async function readRegularText(file) {
-  await assertCanonicalDirectory(path4.dirname(file));
+  const directory = path4.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
   let handle;
   try {
     handle = await fs2.open(file, constants2.O_RDONLY | constants2.O_NOFOLLOW);
     const stat = await handle.stat();
+    await assertCanonicalDirectory(directory, directoryIdentity);
     if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511, dev: stat.dev, ino: stat.ino };
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
   } finally {
     await handle?.close();
   }
@@ -15878,6 +15895,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = path4.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const nonce = `${process.pid}-${randomUUID2()}`;
   const temp = path4.join(directory, `.${path4.basename(file)}.snl-write-${nonce}.tmp`);
   const captured = path4.join(directory, `.${path4.basename(file)}.snl-write-${nonce}.captured`);
@@ -15891,9 +15909,11 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     await handle.close();
     handle = void 0;
     await hooks.beforeCapture?.();
-    await assertCanonicalDirectory(directory);
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
     await fs2.rename(file, captured);
     capturedPresent = true;
+    await assertCanonicalDirectory(directory, expectedDirectory);
     await hooks.afterCapture?.();
     const observed = await readRegularText(captured);
     if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
@@ -15958,16 +15978,19 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
   const directory = path4.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const captured = path4.join(
     directory,
     `.${path4.basename(file)}.snl-remove-${process.pid}-${randomUUID2()}.captured`
   );
   await hooks.beforeCapture?.();
-  await assertCanonicalDirectory(directory);
+  await assertCanonicalDirectory(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
   await fs2.rename(file, captured);
-  await hooks.afterCapture?.();
   let observed;
   try {
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
     observed = await readRegularText(captured);
   } catch (error) {
     try {

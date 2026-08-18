@@ -17782,21 +17782,38 @@ function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
 `;
 }
-async function assertCanonicalDirectory2(directory) {
+async function readCanonicalDirectoryIdentity(directory) {
   const resolved = path5.resolve(directory);
   const stat = await fs3.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || await fs3.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory2(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${path5.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
 }
 async function readRegularText(file) {
-  await assertCanonicalDirectory2(path5.dirname(file));
+  const directory = path5.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory2(directory);
   let handle;
   try {
     handle = await fs3.open(file, constants3.O_RDONLY | constants3.O_NOFOLLOW);
     const stat = await handle.stat();
+    await assertCanonicalDirectory2(directory, directoryIdentity);
     if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511, dev: stat.dev, ino: stat.ino };
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
   } finally {
     await handle?.close();
   }
@@ -17820,6 +17837,7 @@ async function sameInode(left, right) {
 }
 async function installNewJson(file, value, hooks = {}) {
   const directory = path5.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory2(directory);
   const temp = path5.join(
     directory,
     `.${path5.basename(file)}.snl-create-${process.pid}-${randomUUID2()}.tmp`
@@ -17832,7 +17850,7 @@ async function installNewJson(file, value, hooks = {}) {
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await assertCanonicalDirectory2(directory);
+    await assertCanonicalDirectory2(directory, directoryIdentity);
     await fs3.link(temp, file);
     installed = true;
     try {
@@ -17867,6 +17885,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = path5.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const nonce = `${process.pid}-${randomUUID2()}`;
   const temp = path5.join(directory, `.${path5.basename(file)}.snl-write-${nonce}.tmp`);
   const captured = path5.join(directory, `.${path5.basename(file)}.snl-write-${nonce}.captured`);
@@ -17880,9 +17899,11 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     await handle.close();
     handle = void 0;
     await hooks.beforeCapture?.();
-    await assertCanonicalDirectory2(directory);
+    await assertCanonicalDirectory2(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
     await fs3.rename(file, captured);
     capturedPresent = true;
+    await assertCanonicalDirectory2(directory, expectedDirectory);
     await hooks.afterCapture?.();
     const observed = await readRegularText(captured);
     if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
@@ -17947,16 +17968,19 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
   const directory = path5.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const captured = path5.join(
     directory,
     `.${path5.basename(file)}.snl-remove-${process.pid}-${randomUUID2()}.captured`
   );
   await hooks.beforeCapture?.();
-  await assertCanonicalDirectory2(directory);
+  await assertCanonicalDirectory2(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
   await fs3.rename(file, captured);
-  await hooks.afterCapture?.();
   let observed;
   try {
+    await assertCanonicalDirectory2(directory, expectedDirectory);
+    await hooks.afterCapture?.();
     observed = await readRegularText(captured);
   } catch (error) {
     try {
@@ -19201,7 +19225,46 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         await restoreCapturedDirectory(tomb, dir);
         throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
       }
-      await fs5.rm(tomb, { recursive: true });
+      await options.beforeLibraryDirectoryRemove?.(tomb);
+      const fileCaptures = [];
+      try {
+        for (const name of ["meta.json", "graph.json", "counters.json"]) {
+          const source = path7.join(tomb, name);
+          let identity;
+          try {
+            const original = await readRegularText(source);
+            identity = { dev: original.dev, ino: original.ino };
+          } catch (error) {
+            if (name === "counters.json" && error.code === "ENOENT") continue;
+            throw error;
+          }
+          const capturedFile = path7.join(path7.dirname(tomb), `${path7.basename(tomb)}.${name}.${randomUUID4()}.captured`);
+          await fs5.rename(source, capturedFile);
+          fileCaptures.push({ name, captured: capturedFile, identity });
+          const observed = await readRegularText(capturedFile);
+          if (observed.dev !== identity.dev || observed.ino !== identity.ino)
+            throw new Error(`${source} changed while Library deletion was in flight.`);
+        }
+        await fs5.rmdir(tomb);
+      } catch (error) {
+        const recoveryErrors = [];
+        for (const item of fileCaptures.reverse()) {
+          try {
+            await fs5.rename(item.captured, path7.join(tomb, item.name));
+          } catch (restoreError) {
+            recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+          }
+        }
+        try {
+          await restoreCapturedDirectory(tomb, dir);
+        } catch (restoreError) {
+          recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+        }
+        if (recoveryErrors.length)
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });
+        throw new Error(`${dir} changed while deletion was in flight; its directory was restored.`, { cause: error });
+      }
+      for (const item of fileCaptures) await fs5.rm(item.captured).catch(() => void 0);
     } else if (type === "entry-package" || type === "macro-package") {
       if (id === "_unpackaged")
         return invalid("The system _unpackaged Package cannot be deleted.");

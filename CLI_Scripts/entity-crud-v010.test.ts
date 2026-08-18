@@ -404,6 +404,28 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(dir, 'documents', 'arrived.txt'), 'utf8'), 'external');
   });
 
+  it('restores a Library when unmanaged data arrives after the final extras check', async () => {
+    const root = await fixtureCopy();
+    const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(dir, 'counters.json'), '{"counters":[]}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeLibraryDirectoryRemove: async captured => {
+          await mkdir(path.join(captured, 'documents'));
+          await writeFile(path.join(captured, 'documents', 'late.txt'), 'late');
+        },
+      }),
+      /changed while deletion was in flight.*restored/i,
+    );
+    assert.equal(await readFile(path.join(dir, 'documents', 'late.txt'), 'utf8'), 'late');
+    assert.equal(await readFile(path.join(dir, 'meta.json'), 'utf8'), '{}\n');
+  });
+
   it('refuses to delete a Library that still contains documents or exports', async () => {
     const root = await fixtureCopy();
     const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');

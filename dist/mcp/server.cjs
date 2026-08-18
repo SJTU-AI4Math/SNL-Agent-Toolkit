@@ -17819,21 +17819,38 @@ function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
 `;
 }
-async function assertCanonicalDirectory2(directory) {
+async function readCanonicalDirectoryIdentity(directory) {
   const resolved = import_node_path.default.resolve(directory);
   const stat = await import_node_fs4.promises.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || await import_node_fs4.promises.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory2(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${import_node_path.default.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
 }
 async function readRegularText(file) {
-  await assertCanonicalDirectory2(import_node_path.default.dirname(file));
+  const directory = import_node_path.default.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory2(directory);
   let handle;
   try {
     handle = await import_node_fs4.promises.open(file, import_node_fs4.constants.O_RDONLY | import_node_fs4.constants.O_NOFOLLOW);
     const stat = await handle.stat();
+    await assertCanonicalDirectory2(directory, directoryIdentity);
     if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return { text: await handle.readFile("utf8"), mode: stat.mode & 511, dev: stat.dev, ino: stat.ino };
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
   } finally {
     await handle?.close();
   }
@@ -17857,6 +17874,7 @@ async function sameInode(left, right) {
 }
 async function installNewJson(file, value, hooks = {}) {
   const directory = import_node_path.default.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory2(directory);
   const temp = import_node_path.default.join(
     directory,
     `.${import_node_path.default.basename(file)}.snl-create-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.tmp`
@@ -17869,7 +17887,7 @@ async function installNewJson(file, value, hooks = {}) {
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await assertCanonicalDirectory2(directory);
+    await assertCanonicalDirectory2(directory, directoryIdentity);
     await import_node_fs4.promises.link(temp, file);
     installed = true;
     try {
@@ -17904,6 +17922,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = import_node_path.default.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const nonce = `${process.pid}-${(0, import_node_crypto3.randomUUID)()}`;
   const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.tmp`);
   const captured = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.captured`);
@@ -17917,9 +17936,11 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
     await handle.close();
     handle = void 0;
     await hooks.beforeCapture?.();
-    await assertCanonicalDirectory2(directory);
+    await assertCanonicalDirectory2(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
     await import_node_fs4.promises.rename(file, captured);
     capturedPresent = true;
+    await assertCanonicalDirectory2(directory, expectedDirectory);
     await hooks.afterCapture?.();
     const observed = await readRegularText(captured);
     if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
@@ -17984,16 +18005,19 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
   const directory = import_node_path.default.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
   const captured = import_node_path.default.join(
     directory,
     `.${import_node_path.default.basename(file)}.snl-remove-${process.pid}-${(0, import_node_crypto3.randomUUID)()}.captured`
   );
   await hooks.beforeCapture?.();
-  await assertCanonicalDirectory2(directory);
+  await assertCanonicalDirectory2(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
   await import_node_fs4.promises.rename(file, captured);
-  await hooks.afterCapture?.();
   let observed;
   try {
+    await assertCanonicalDirectory2(directory, expectedDirectory);
+    await hooks.afterCapture?.();
     observed = await readRegularText(captured);
   } catch (error) {
     try {
@@ -19238,7 +19262,46 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         await restoreCapturedDirectory(tomb, dir);
         throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
       }
-      await import_node_fs6.promises.rm(tomb, { recursive: true });
+      await options.beforeLibraryDirectoryRemove?.(tomb);
+      const fileCaptures = [];
+      try {
+        for (const name of ["meta.json", "graph.json", "counters.json"]) {
+          const source = import_node_path2.default.join(tomb, name);
+          let identity;
+          try {
+            const original = await readRegularText(source);
+            identity = { dev: original.dev, ino: original.ino };
+          } catch (error) {
+            if (name === "counters.json" && error.code === "ENOENT") continue;
+            throw error;
+          }
+          const capturedFile = import_node_path2.default.join(import_node_path2.default.dirname(tomb), `${import_node_path2.default.basename(tomb)}.${name}.${(0, import_node_crypto5.randomUUID)()}.captured`);
+          await import_node_fs6.promises.rename(source, capturedFile);
+          fileCaptures.push({ name, captured: capturedFile, identity });
+          const observed = await readRegularText(capturedFile);
+          if (observed.dev !== identity.dev || observed.ino !== identity.ino)
+            throw new Error(`${source} changed while Library deletion was in flight.`);
+        }
+        await import_node_fs6.promises.rmdir(tomb);
+      } catch (error) {
+        const recoveryErrors = [];
+        for (const item of fileCaptures.reverse()) {
+          try {
+            await import_node_fs6.promises.rename(item.captured, import_node_path2.default.join(tomb, item.name));
+          } catch (restoreError) {
+            recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+          }
+        }
+        try {
+          await restoreCapturedDirectory(tomb, dir);
+        } catch (restoreError) {
+          recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+        }
+        if (recoveryErrors.length)
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });
+        throw new Error(`${dir} changed while deletion was in flight; its directory was restored.`, { cause: error });
+      }
+      for (const item of fileCaptures) await import_node_fs6.promises.rm(item.captured).catch(() => void 0);
     } else if (type === "entry-package" || type === "macro-package") {
       if (id === "_unpackaged")
         return invalid("The system _unpackaged Package cannot be deleted.");
