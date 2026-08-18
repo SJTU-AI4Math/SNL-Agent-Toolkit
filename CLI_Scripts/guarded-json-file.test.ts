@@ -3,7 +3,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
-import { removeJsonIfUnchanged, replaceJsonIfUnchanged } from '../lib/guarded-json-file.ts';
+import { installNewJson, removeJsonIfUnchanged, replaceJsonIfUnchanged } from '../lib/guarded-json-file.ts';
 
 const roots: string[] = [];
 afterEach(async () => Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true }))));
@@ -44,6 +44,17 @@ describe('guarded JSON path capture', () => {
     const recovery = (await readdir(root)).find((name) => name.endsWith('.captured'));
     assert.ok(recovery);
     assert.equal(await readFile(path.join(root, recovery), 'utf8'), original);
+  });
+
+  it('removes a newly linked file when directory fsync fails before create commit', async () => {
+    const { root, file } = await scratch();
+    await assert.rejects(
+      () => installNewJson(file, { owner: 'mine' }, {
+        beforeDirectorySync: async () => { throw new Error('injected directory fsync failure'); },
+      }),
+      /injected directory fsync failure/,
+    );
+    assert.deepEqual(await readdir(root), []);
   });
 
   it('rolls back a replacement when directory fsync fails before commit', async () => {

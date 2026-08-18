@@ -37,7 +37,11 @@ async function sameInode(left: string, right: string): Promise<boolean> {
   }
 }
 
-export async function installNewJson(file: string, value: unknown): Promise<void> {
+export async function installNewJson(
+  file: string,
+  value: unknown,
+  hooks: { beforeDirectorySync?: () => void | Promise<void> } = {},
+): Promise<void> {
   const directory = path.dirname(file);
   const temp = path.join(
     directory,
@@ -54,7 +58,7 @@ export async function installNewJson(file: string, value: unknown): Promise<void
     await fs.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory);
+      await syncDirectory(directory, hooks.beforeDirectorySync);
     } catch (error) {
       if (await sameInode(file, temp)) {
         await fs.rm(file);

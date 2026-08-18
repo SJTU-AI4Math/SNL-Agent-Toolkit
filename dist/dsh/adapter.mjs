@@ -18619,7 +18619,7 @@ async function sameInode(left, right) {
     return false;
   }
 }
-async function installNewJson(file, value) {
+async function installNewJson(file, value, hooks = {}) {
   const directory = path5.dirname(file);
   const temp = path5.join(
     directory,
@@ -18636,7 +18636,7 @@ async function installNewJson(file, value) {
     await fs3.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory);
+      await syncDirectory(directory, hooks.beforeDirectorySync);
     } catch (error) {
       if (await sameInode(file, temp)) {
         await fs3.rm(file);

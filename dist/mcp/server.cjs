@@ -17847,7 +17847,7 @@ async function sameInode(left, right) {
     return false;
   }
 }
-async function installNewJson(file, value) {
+async function installNewJson(file, value, hooks = {}) {
   const directory = import_node_path.default.dirname(file);
   const temp = import_node_path.default.join(
     directory,
@@ -17864,7 +17864,7 @@ async function installNewJson(file, value) {
     await import_node_fs4.promises.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory);
+      await syncDirectory(directory, hooks.beforeDirectorySync);
     } catch (error) {
       if (await sameInode(file, temp)) {
         await import_node_fs4.promises.rm(file);
