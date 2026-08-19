@@ -1520,6 +1520,12 @@ function renderNode(node, mode, macros, notes) {
   }
   const template = style.template;
   const renderedChildren = children.map((c3) => renderNode(c3, mode, macros, notes));
+  if (template.mode === "block") {
+    return {
+      output: `${name}(${renderedChildren.map((child) => child.output).join(", ")})`,
+      mode: "block"
+    };
+  }
   const wrappedChildren = mode === "latex" ? renderedChildren.map((child) => wrapForParent(child, template.mode)) : renderedChildren.map((child) => child.output);
   const values = {};
   wrappedChildren.forEach((v2, i3) => {
@@ -1553,17 +1559,25 @@ function dedupe(a3) {
 }
 
 // lib/entry-analysis.ts
+var EntryAnalysisError = class extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+    this.name = "EntryAnalysisError";
+  }
+  code;
+};
 async function loadEntry(root, id) {
   const [entries, macros] = await Promise.all([readEntries(root), readActiveMacros(root)]);
   const entry = entries.find((candidate) => candidate.id === id);
-  if (!entry) throw new Error(`Entry not found: ${id}`);
+  if (!entry) throw new EntryAnalysisError("entry.not-found", `Entry not found: ${id}`);
   return { entry, entries, macros };
 }
 function parseEntry(entry, macros) {
   const snl = entry.content?.snl;
-  if (typeof snl !== "string" || !snl.trim()) throw new Error(`Entry ${entry.id} has no SNL content.`);
+  if (typeof snl !== "string" || !snl.trim()) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} has no SNL content.`);
   const parsed = x(snl);
-  if (!parsed.ok) throw new Error(`Entry ${entry.id} SNL parse failed: ${parsed.error}`);
+  if (!parsed.ok) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} SNL parse failed: ${parsed.error}`);
   return O(
     parsed.tree,
     macros
@@ -1571,7 +1585,22 @@ function parseEntry(entry, macros) {
 }
 async function computeEntryBareLatex(root, id) {
   const { entry, macros } = await loadEntry(root, id);
-  return renderTreeAsLatex(parseEntry(entry, macros), macros);
+  try {
+    const rendered = renderTreeAsLatex(parseEntry(entry, macros), macros);
+    if (rendered.output.includes("\\htmlData")) {
+      throw new EntryAnalysisError(
+        "entry.invalid",
+        `Entry ${entry.id} bare LaTeX synthesis produced forbidden \\htmlData.`
+      );
+    }
+    return rendered;
+  } catch (error) {
+    if (error instanceof EntryAnalysisError) throw error;
+    throw new EntryAnalysisError(
+      "entry.invalid",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
 }
 
 // lib/cli-args.ts
@@ -1714,7 +1743,6 @@ ${usage()}
   try {
     const entryId = parsed.positional[0];
     const rendered = await computeEntryBareLatex(path3.resolve(String(parsed.flags.root)), entryId);
-    if (rendered.output.includes("\\htmlData")) throw new Error("Internal error: bare LaTeX output contains \\htmlData.");
     const result = { status: "ok", entryId, latex: rendered.output, notes: rendered.notes };
     process.stdout.write(parsed.flags.json === true ? JSON.stringify(result, null, 2) + "\n" : rendered.output + "\n");
     return 0;

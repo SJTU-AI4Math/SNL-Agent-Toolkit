@@ -120,4 +120,74 @@ describe('single Entry analysis CLIs', () => {
     assert.deepEqual(body, { status: 'ok', entryId: 'target', latex: 'A = 0', notes: [] });
     assert.equal(body.latex.includes('\\htmlData'), false);
   });
+
+  it('replaces block macros with macro-name(rendered subtrees) instead of compiling their block body', async () => {
+    const root = await workspace();
+    const doc = path.join(root, '.SNL_Doc');
+    const entry = {
+      id: 'blocked', package: '_unpackaged', kind: 'definition', title: '',
+      content: { snl: 'Layout.block(Logic.eq(A,Logic.zero))' }, contribution_info: null, pointer: null,
+    };
+    await json(path.join(doc, entryEntityPath(entry.package, entry.id)), {
+      format: 'snl-entry', version: 1, package: entry.package, entry,
+    });
+    const macro = {
+      name: 'Layout.block', description: '', source: { entries: [], urls: [] },
+      dynamic_arity: false, default_style: { en: 'default' }, tags: [],
+      styles: [{
+        style_name: 'default', mode: 'block',
+        template: '\\htmlData{block=yes}{SHOULD_NOT_RENDER(#0)}', tags: [],
+      }],
+    };
+    await json(path.join(doc, macroEntityPath('Logic', macro.name)), {
+      format: 'snl-macro', version: 1, package: 'Logic', macro,
+    });
+
+    const result = run(root, 'snl-entry-latex', ['blocked']);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      status: 'ok', entryId: 'blocked', latex: 'Layout.block(A = 0)', notes: [],
+    });
+  });
+
+
+  it('uses explicit block styles and preserves placeholders when block macros are nested', async () => {
+    const root = await workspace();
+    const doc = path.join(root, '.SNL_Doc');
+    const entry = {
+      id: 'nested-block', package: '_unpackaged', kind: 'definition', title: '',
+      content: { snl: 'Outer.wrap(Layout.block[special](Logic.eq(A,Logic.zero)))' },
+      contribution_info: null, pointer: null,
+    };
+    await json(path.join(doc, entryEntityPath(entry.package, entry.id)), {
+      format: 'snl-entry', version: 1, package: entry.package, entry,
+    });
+    const macros = [
+      {
+        name: 'Layout.block', description: '', source: { entries: [], urls: [] },
+        dynamic_arity: false, default_style: { en: 'default' }, tags: [],
+        styles: [
+          { style_name: 'default', mode: 'formula_inline', template: 'WRONG(#0)', tags: [] },
+          { style_name: 'special', mode: 'block', template: '\\htmlData{block=yes}{WRONG_BLOCK(#0)}', tags: [] },
+        ],
+      },
+      {
+        name: 'Outer.wrap', description: '', source: { entries: [], urls: [] },
+        dynamic_arity: false, default_style: { en: 'default' }, tags: [],
+        styles: [{ style_name: 'default', mode: 'formula_inline', template: '\\langle #0 \\rangle', tags: [] }],
+      },
+    ];
+    for (const macro of macros) {
+      await json(path.join(doc, macroEntityPath('Logic', macro.name)), {
+        format: 'snl-macro', version: 1, package: 'Logic', macro,
+      });
+    }
+
+    const result = run(root, 'snl-entry-latex', ['nested-block']);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      status: 'ok', entryId: 'nested-block',
+      latex: '\\langle Layout.block(A = 0) \\rangle', notes: [],
+    });
+  });
 });

@@ -81,11 +81,11 @@ test('prebuilt DSH adapter bundles defineTool instead of importing a second Harn
   const registered: Array<Record<string, any>> = [];
   const noopAdapter = {
     async list() { return {}; }, async get() { return {}; },
-    async apply() { return {}; }, async validate() { return {}; },
+    async renderEntry() { return {}; }, async apply() { return {}; }, async validate() { return {}; },
   };
   await loaded.apply({ tools: { register(tool: Record<string, any>) { registered.push(tool); } } }, { adapter: noopAdapter });
   await assert.rejects(
-    registered[3].execute({ root: 42 }, { signal: new AbortController().signal }),
+    registered[4].execute({ root: 42 }, { signal: new AbortController().signal }),
     (error: unknown) => error instanceof Error
       && error.name === 'ToolArgsError'
       && (error as Error & { code?: string }).code === 'INVALID_ARGS',
@@ -126,7 +126,7 @@ test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', 
   });
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })}\n`);
   const response = JSON.parse((await output).trim()) as { result: { tools: unknown[] } };
-  assert.equal(response.result.tools.length, 4);
+  assert.equal(response.result.tools.length, 5);
   child.kill();
 });
 
@@ -154,5 +154,35 @@ test('prebuilt MCP artifact uses the bundled v0.1.0 entity adapter without host 
   const response = JSON.parse((await output).trim()) as { result: { structuredContent: { entity: { id: string }; revision: string } } };
   assert.equal(response.result.structuredContent.entity.id, 'Logic::FOL.implies');
   assert.match(response.result.structuredContent.revision, /^[0-9a-f]{64}$/);
+  child.kill();
+});
+
+
+test('prebuilt MCP artifact executes the first-class Entry LaTeX tool', async () => {
+  const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const output = new Promise<string>((resolveOutput, reject) => {
+    let text = '';
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (chunk: string) => { text += chunk; if (text.includes('\n')) resolveOutput(text); });
+    child.once('error', reject);
+    child.once('exit', (code) => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
+  });
+  child.stdin.write(`${JSON.stringify({
+    jsonrpc: '2.0', id: 3, method: 'tools/call',
+    params: {
+      name: 'snl_entry_latex',
+      arguments: {
+        root: resolve(root, 'CLI_Scripts/fixtures/workspace-v0.1.0'),
+        id: 'entry.localized',
+      },
+    },
+  })}\n`);
+  const response = JSON.parse((await output).trim()) as {
+    result: { structuredContent: { entryId: string; latex: string; notes: string[] }; isError?: boolean };
+  };
+  assert.equal(response.result.isError, undefined);
+  assert.deepEqual(response.result.structuredContent, {
+    entryId: 'entry.localized', latex: '#0 \\to #1', notes: [],
+  });
   child.kill();
 });

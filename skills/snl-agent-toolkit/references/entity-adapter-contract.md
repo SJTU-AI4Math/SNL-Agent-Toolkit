@@ -1,6 +1,6 @@
 # Entity adapter contract
 
-The shared Plugin surface delegates storage operations to one adapter. A host adapter must expose asynchronous `list`, `get`, `apply`, and `validate` methods.
+The shared Plugin surface delegates storage operations to one adapter. A host adapter must expose asynchronous `list`, `get`, `apply`, and `validate` methods. It may additionally expose `renderEntry`; adapters written against the earlier four-method contract remain loadable, and `snl_entry_latex` returns a structured `entry.render-unsupported` result when that optional projection is absent.
 
 ## Entity identities
 
@@ -24,3 +24,9 @@ Return JSON-serializable values only. Domain invalid/not-found/conflict outcomes
 ## Workspace validation
 
 `validate({root})` must inspect all eight entity families through their authoritative current readers. It must fail closed on unsupported versions, malformed payloads, inconsistent Package membership, dangling references, duplicate identities, or invalid Library topology. It must not write.
+
+## Entry reading projection
+
+When implemented, `renderEntry({ root, id })` returns directly assembled bare LaTeX and non-fatal notes for one canonical Entry id. It must parse `content.snl` against the active Macro catalog without emitting `\htmlData` wrappers. When the selected Macro style is `block`, it must emit `macro-name(rendered subtrees)` rather than compile the host-specific block template.
+
+Missing Entries and malformed Entry content return structured `not-found` or `invalid` domain results. Workspace, invocation, and internal failures may still throw.

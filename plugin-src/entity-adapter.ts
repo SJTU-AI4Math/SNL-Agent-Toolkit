@@ -1,3 +1,4 @@
+import { computeEntryBareLatex, EntryAnalysisError } from '../lib/entry-analysis.ts';
 import {
   createManagedEntity,
   deleteManagedEntity,
@@ -13,6 +14,7 @@ import type {
   EntityApplyRequest,
   EntityGetRequest,
   EntityListRequest,
+  EntryLatexRequest,
 } from './toolkit-tools.ts';
 
 function typeOf(value: string): ManagedEntityType {
@@ -46,6 +48,22 @@ export function createEntityAdapter(): EntityAdapter {
       const entity = await getManagedEntity(request.root, typeOf(request.entityType), request.id);
       if (!entity) return { status: 'not-found', code: 'entity.not-found', message: `${request.entityType} ${JSON.stringify(request.id)} does not exist.` };
       return { entity, revision: entity.revision };
+    },
+
+    async renderEntry(request: EntryLatexRequest) {
+      try {
+        const rendered = await computeEntryBareLatex(request.root, request.id);
+        return { entryId: request.id, latex: rendered.output, notes: rendered.notes };
+      } catch (error) {
+        if (error instanceof EntryAnalysisError) {
+          return {
+            status: error.code === 'entry.not-found' ? 'not-found' : 'invalid',
+            code: error.code,
+            message: error.message,
+          };
+        }
+        throw error;
+      }
     },
 
     async apply(request: EntityApplyRequest) {

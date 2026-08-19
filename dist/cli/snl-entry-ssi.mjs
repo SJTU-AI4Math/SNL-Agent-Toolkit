@@ -1203,6 +1203,14 @@ async function readActiveMacros(workspaceRoot) {
 }
 
 // lib/entry-analysis.ts
+var EntryAnalysisError = class extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+    this.name = "EntryAnalysisError";
+  }
+  code;
+};
 function metadata(node) {
   return node.mdata && typeof node.mdata === "object" ? node.mdata : {};
 }
@@ -1289,14 +1297,14 @@ function analyzeStructuralIndex(root, macros, entryIds) {
 async function loadEntry(root, id) {
   const [entries, macros] = await Promise.all([readEntries(root), readActiveMacros(root)]);
   const entry = entries.find((candidate) => candidate.id === id);
-  if (!entry) throw new Error(`Entry not found: ${id}`);
+  if (!entry) throw new EntryAnalysisError("entry.not-found", `Entry not found: ${id}`);
   return { entry, entries, macros };
 }
 function parseEntry(entry, macros) {
   const snl = entry.content?.snl;
-  if (typeof snl !== "string" || !snl.trim()) throw new Error(`Entry ${entry.id} has no SNL content.`);
+  if (typeof snl !== "string" || !snl.trim()) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} has no SNL content.`);
   const parsed = x(snl);
-  if (!parsed.ok) throw new Error(`Entry ${entry.id} SNL parse failed: ${parsed.error}`);
+  if (!parsed.ok) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} SNL parse failed: ${parsed.error}`);
   return O(
     parsed.tree,
     macros

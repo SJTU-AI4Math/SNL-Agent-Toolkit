@@ -102,6 +102,30 @@ function createToolkitTools(adapter) {
       }
     },
     {
+      name: "snl_entry_latex",
+      description: "Render one Entry as directly assembled bare LaTeX without htmlData wrappers; block macros become macro-name(rendered subtrees) placeholders.",
+      inputSchema: {
+        type: "object",
+        additionalProperties: false,
+        required: ["root", "id"],
+        properties: { root: baseProperties.root, id: { type: "string", description: "Canonical Entry id." } }
+      },
+      async execute(raw) {
+        const input = object(raw);
+        if (!adapter.renderEntry) {
+          return {
+            status: "unsupported",
+            code: "entry.render-unsupported",
+            message: "This SNL entity adapter does not implement Entry LaTeX rendering."
+          };
+        }
+        return adapter.renderEntry({
+          root: requiredString(input.root, "root"),
+          id: requiredString(input.id, "id")
+        });
+      }
+    },
+    {
       name: "snl_entity_apply",
       description: "Create, update, or delete one SNL entity through the authoritative entity adapter.",
       inputSchema: {
@@ -146,360 +170,6 @@ function createToolkitTools(adapter) {
       }
     }
   ];
-}
-
-// lib/entity-crud.ts
-var import_node_crypto4 = require("node:crypto");
-var import_node_fs6 = require("node:fs");
-var import_node_path2 = __toESM(require("node:path"), 1);
-
-// lib/entity-storage.ts
-var import_node_crypto = require("node:crypto");
-var PACKAGE_STORAGE_VERSION = 1;
-var ENTRY_STORAGE_VERSION = 1;
-var MACRO_STORAGE_VERSION = 1;
-var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
-var CURRENT_ENTRY_SCHEMA_VERSION = 1;
-var CURRENT_MACRO_SCHEMA_VERSION = 1;
-var UNPACKAGED_PACKAGE_ID = "_unpackaged";
-function semanticDigest(value) {
-  return (0, import_node_crypto.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
-}
-function makeEntityStorageReceipt(entries, macroPackages, legacyBackupPresent) {
-  const entryList = Array.isArray(entries) ? entries : [];
-  const packages = [...macroPackages].sort(([left], [right]) => left.localeCompare(right));
-  return {
-    legacy_backup_present: legacyBackupPresent,
-    legacy_entries_present: legacyBackupPresent && Array.isArray(entries),
-    entry_count: entryList.length,
-    macro_package_count: packages.length,
-    macro_count: packages.reduce((count, [, value]) => count + (value && typeof value === "object" && !Array.isArray(value) && value.macros && typeof value.macros === "object" && !Array.isArray(value.macros) ? Object.keys(value.macros).length : 0), 0),
-    entries_digest: semanticDigest(entryList),
-    macro_packages_digest: semanticDigest(packages)
-  };
-}
-var PACKAGE_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
-var WINDOWS_DEVICE_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i;
-function assertPackageId(packageId) {
-  if (packageId !== UNPACKAGED_PACKAGE_ID && (!PACKAGE_ID_RE.test(packageId) || packageId.toLowerCase().endsWith(".json"))) {
-    throw new Error(
-      `Package id ${JSON.stringify(packageId)} must be 1-64 ASCII letters, digits, dots, underscores, or hyphens, start with a letter or digit, and not end in .json.`
-    );
-  }
-  if (WINDOWS_DEVICE_RE.test(packageId)) {
-    throw new Error(`Package id ${JSON.stringify(packageId)} is a reserved Windows device name.`);
-  }
-}
-function entityIdentityHash(kind, ...segments) {
-  if (segments.some((segment) => segment.includes("\0"))) {
-    throw new Error("Entity identities may not contain NUL characters.");
-  }
-  return (0, import_node_crypto.createHash)("sha256").update(Buffer.from(`snl-doc/v1\0${kind}\0${segments.join("\0")}`, "utf8")).digest("hex").slice(0, 20);
-}
-function packageManifestPath(packageId) {
-  assertPackageId(packageId);
-  return `packages/${packageId}-${entityIdentityHash("package", packageId)}.json`;
-}
-function entryEntityPath(packageId, entryId) {
-  assertPackageId(packageId);
-  if (!entryId) throw new Error("Entry id must be non-empty.");
-  return `entries/${packageId}-${entityIdentityHash("entry", packageId, entryId)}.json`;
-}
-function macroEntityPath(packageId, macroName) {
-  assertPackageId(packageId);
-  if (!macroName) throw new Error("Macro name must be non-empty.");
-  return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
-}
-function assertCompatibleSchemaMarker(value, current, label, required = false) {
-  if (!Object.hasOwn(value, "schema_version")) {
-    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
-    return;
-  }
-  if (!Number.isInteger(value.schema_version) || value.schema_version < 1) {
-    throw new Error(`${label} schema_version must be a positive integer.`);
-  }
-  if (value.schema_version > current) {
-    throw new Error(
-      `${label} schema version ${String(value.schema_version)} is newer than this Toolkit supports (${current}).`
-    );
-  }
-  if (value.schema_version < current) {
-    throw new Error(
-      `${label} schema_version ${String(value.schema_version)} has no registered migration to ${current}.`
-    );
-  }
-}
-
-// lib/snl-doc.ts
-var import_node_fs2 = require("node:fs");
-var path3 = __toESM(require("node:path"), 1);
-
-// lib/guarded-json-file.ts
-var import_node_fs = require("node:fs");
-var import_node_path = __toESM(require("node:path"), 1);
-var import_node_crypto2 = require("node:crypto");
-function jsonText(value) {
-  return `${JSON.stringify(value, null, 2)}
-`;
-}
-async function readCanonicalDirectoryIdentity(directory) {
-  const resolved = import_node_path.default.resolve(directory);
-  const stat = await import_node_fs.promises.lstat(resolved);
-  if (!stat.isDirectory() || stat.isSymbolicLink() || await import_node_fs.promises.realpath(resolved) !== resolved) {
-    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
-  }
-  return { dev: stat.dev, ino: stat.ino };
-}
-async function assertCanonicalDirectory(directory, expected) {
-  const observed = await readCanonicalDirectoryIdentity(directory);
-  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
-    throw new Error(`${import_node_path.default.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
-  }
-  return observed;
-}
-async function readRegularText(file) {
-  const directory = import_node_path.default.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory(directory);
-  let handle;
-  try {
-    handle = await import_node_fs.promises.open(file, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
-    return {
-      text: await handle.readFile("utf8"),
-      mode: stat.mode & 511,
-      dev: stat.dev,
-      ino: stat.ino,
-      directoryDev: directoryIdentity.dev,
-      directoryIno: directoryIdentity.ino
-    };
-  } catch (error) {
-    if (error.code === "ELOOP")
-      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
-    throw error;
-  } finally {
-    await handle?.close();
-  }
-}
-async function syncDirectory(directory, beforeSync, expected) {
-  await beforeSync?.();
-  await assertCanonicalDirectory(directory, expected);
-  const handle = await import_node_fs.promises.open(directory, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW | import_node_fs.constants.O_DIRECTORY);
-  try {
-    const stat = await handle.stat();
-    if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
-      throw new Error(`${directory} changed concurrently before directory sync.`);
-    await handle.sync();
-    await assertCanonicalDirectory(directory, expected);
-  } finally {
-    await handle.close();
-  }
-}
-async function sameInode(left, right) {
-  try {
-    const [a3, b2] = await Promise.all([import_node_fs.promises.lstat(left), import_node_fs.promises.lstat(right)]);
-    return a3.dev === b2.dev && a3.ino === b2.ino;
-  } catch {
-    return false;
-  }
-}
-async function quarantineAndRemoveOwnedPath(file, ownedLink) {
-  const quarantine = import_node_path.default.join(import_node_path.default.dirname(file), `.${import_node_path.default.basename(file)}.snl-rollback-${process.pid}-${(0, import_node_crypto2.randomUUID)()}.captured`);
-  try {
-    await import_node_fs.promises.rename(file, quarantine);
-  } catch (error) {
-    if (error.code === "ENOENT") return false;
-    throw error;
-  }
-  if (await sameInode(quarantine, ownedLink)) {
-    await import_node_fs.promises.rm(quarantine);
-    return true;
-  }
-  try {
-    await import_node_fs.promises.link(quarantine, file);
-    if (await sameInode(quarantine, file)) await import_node_fs.promises.rm(quarantine);
-  } catch {
-  }
-  return false;
-}
-async function installNewJson(file, value, hooks = {}) {
-  const directory = import_node_path.default.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory(directory);
-  const temp = import_node_path.default.join(
-    directory,
-    `.${import_node_path.default.basename(file)}.snl-create-${process.pid}-${(0, import_node_crypto2.randomUUID)()}.tmp`
-  );
-  let handle;
-  let installed = false;
-  try {
-    handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, 420);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await assertCanonicalDirectory(directory, directoryIdentity);
-    await import_node_fs.promises.link(temp, file);
-    installed = true;
-    try {
-      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
-    } catch (error) {
-      await hooks.beforeRollbackQuarantine?.();
-      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
-      throw error;
-    }
-  } finally {
-    await handle?.close().catch(() => void 0);
-    await import_node_fs.promises.rm(temp, { force: true }).catch(() => void 0);
-    if (installed) {
-    }
-  }
-}
-async function restoreCapturedPath(captured, target) {
-  try {
-    await import_node_fs.promises.link(captured, target);
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    throw new Error(
-      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
-      { cause: error }
-    );
-  }
-  await import_node_fs.promises.rm(captured);
-}
-async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
-  const directory = import_node_path.default.dirname(file);
-  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
-  const nonce = `${process.pid}-${(0, import_node_crypto2.randomUUID)()}`;
-  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.tmp`);
-  const captured = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.captured`);
-  let handle;
-  let capturedPresent = false;
-  let installed = false;
-  try {
-    handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
-    await handle.sync();
-    await handle.close();
-    handle = void 0;
-    await hooks.beforeCapture?.();
-    await assertCanonicalDirectory(directory, expectedDirectory);
-    await hooks.afterParentCheckBeforeCapture?.();
-    await import_node_fs.promises.rename(file, captured);
-    capturedPresent = true;
-    await assertCanonicalDirectory(directory, expectedDirectory);
-    await hooks.afterCapture?.();
-    const observed = await readRegularText(captured);
-    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
-      await restoreCapturedPath(captured, file);
-      capturedPresent = false;
-      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
-    }
-    try {
-      await import_node_fs.promises.link(temp, file);
-      installed = true;
-    } catch (error) {
-      try {
-        await restoreCapturedPath(captured, file);
-        capturedPresent = false;
-      } catch (restoreError) {
-        throw new Error(
-          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-          { cause: error }
-        );
-      }
-      throw error;
-    }
-    try {
-      await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
-    } catch (error) {
-      await hooks.beforeRollbackQuarantine?.();
-      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
-        throw new Error(
-          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
-          { cause: error }
-        );
-      }
-      installed = false;
-      await restoreCapturedPath(captured, file);
-      capturedPresent = false;
-      throw error;
-    }
-    try {
-      await import_node_fs.promises.rm(captured);
-      capturedPresent = false;
-    } catch {
-    }
-  } catch (error) {
-    if (capturedPresent && !installed) {
-      try {
-        await restoreCapturedPath(captured, file);
-        capturedPresent = false;
-      } catch (restoreError) {
-        throw new Error(
-          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-          { cause: error }
-        );
-      }
-    }
-    throw error;
-  } finally {
-    await handle?.close().catch(() => void 0);
-    await import_node_fs.promises.rm(temp, { force: true }).catch(() => void 0);
-  }
-}
-async function removeJsonIfUnchanged(file, expected, hooks = {}) {
-  const current = await readRegularText(file);
-  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
-  const directory = import_node_path.default.dirname(file);
-  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
-  const captured = import_node_path.default.join(
-    directory,
-    `.${import_node_path.default.basename(file)}.snl-remove-${process.pid}-${(0, import_node_crypto2.randomUUID)()}.captured`
-  );
-  await hooks.beforeCapture?.();
-  await assertCanonicalDirectory(directory, expectedDirectory);
-  await hooks.afterParentCheckBeforeCapture?.();
-  await import_node_fs.promises.rename(file, captured);
-  let observed;
-  try {
-    await assertCanonicalDirectory(directory, expectedDirectory);
-    await hooks.afterCapture?.();
-    observed = await readRegularText(captured);
-  } catch (error) {
-    try {
-      await restoreCapturedPath(captured, file);
-    } catch (restoreError) {
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-        { cause: error }
-      );
-    }
-    throw error;
-  }
-  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
-    await restoreCapturedPath(captured, file);
-    throw new Error(`${file} changed concurrently; refusing to remove it.`);
-  }
-  try {
-    await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
-  } catch (error) {
-    try {
-      await restoreCapturedPath(captured, file);
-    } catch (restoreError) {
-      throw new Error(
-        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
-        { cause: error }
-      );
-    }
-    throw error;
-  }
-  try {
-    await import_node_fs.promises.rm(captured);
-  } catch {
-  }
 }
 
 // node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
@@ -792,6 +462,135 @@ function y(e, t3 = {}) {
 function b(e, t3 = []) {
   e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n3) => b(e2, [...t3, n3]));
 }
+function x(e) {
+  try {
+    return {
+      ok: true,
+      tree: y(e)
+    };
+  } catch (e2) {
+    return e2 instanceof h ? {
+      ok: false,
+      error: e2.message,
+      position: e2.position
+    } : {
+      ok: false,
+      error: e2 instanceof Error ? e2.message : String(e2)
+    };
+  }
+}
+function S(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return e;
+  let t3 = { ...e };
+  return delete t3.bindRef, Object.keys(t3).length > 0 ? t3 : null;
+}
+function C(e) {
+  return {
+    ...e,
+    mdata: S(e.mdata),
+    postfix: e.postfix?.type === "tree_path" ? {
+      type: "tree_path",
+      path: [...e.postfix.path]
+    } : e.postfix ? { ...e.postfix } : void 0,
+    source: void 0,
+    children: e.children.map(C)
+  };
+}
+function w(e, t3) {
+  return e.length === t3.length && e.every((e2, n3) => e2 === t3[n3]);
+}
+function T(e, t3) {
+  let n3 = 0;
+  for (; n3 < e.length && n3 < t3.length && e[n3] === t3[n3]; ) n3 += 1;
+  return n3;
+}
+function E(e, t3, n3) {
+  return e.filter((e2) => !n3 || e2.order < t3.order).sort((e2, n4) => T(n4.path, t3.path) - T(e2.path, t3.path) || n4.order - e2.order)[0];
+}
+function D(e) {
+  return e.temporary_source ?? e.macro_name;
+}
+function O(e, t3) {
+  let n3 = C(e), r3 = [], i4 = [], a3 = 0, o3 = (e2, n4) => {
+    i4.push({
+      node: e2,
+      path: n4,
+      order: a3++
+    }), e2.scope = void 0;
+    let s3 = e2.env_mode ? void 0 : t3[e2.macro_name], c3 = n4.length === 0 && e2.env_mode === "text", l3 = s3?.kind === "sub";
+    if (c3 || l3 || e2.kind === "sub") e2.kind = "sub", e2.binder_name = void 0, e2.source = void 0, (e2.postfix || e2.binder_explicit) && r3.push({
+      code: "SNL_SUB_IGNORES_BINDER_SUFFIX",
+      severity: "warning",
+      tree_path: [...n4],
+      message: "sub nodes ignore binder declarations and postfix sources"
+    });
+    else if (e2.binder_explicit) e2.kind = "binder", e2.binder_name ??= e2.macro_name;
+    else if (s3) {
+      if (e2.kind = s3.kind || "const", e2.style_name && !s3.styles.some((t4) => t4.style_name === e2.style_name) && (r3.push({
+        code: "SNL_STYLE_NOT_FOUND",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `style ${JSON.stringify(e2.style_name)} was not found; using the first style`
+      }), e2.style_name = void 0), e2.postfix?.type === "name" && (e2.binder_name = e2.postfix.name), e2.source = void 0, e2.mdata && typeof e2.mdata == "object") {
+        let t4 = { ...e2.mdata };
+        delete t4.src, e2.mdata = Object.keys(t4).length > 0 ? t4 : null;
+      }
+    } else e2.kind && e2.kind !== "bvar" && e2.kind !== "fvar" || (e2.kind = "", e2.binder_name = void 0);
+    e2.children.forEach((e3, t4) => o3(e3, [...n4, t4]));
+  };
+  o3(n3, []);
+  let s2 = i4.flatMap((e2) => {
+    let t4 = e2.node.binder_name;
+    return t4 && (e2.node.kind === "binder" || e2.node.kind !== "" && e2.node.source === void 0) ? [{
+      ...e2,
+      binderName: t4
+    }] : [];
+  });
+  for (let e2 of i4) {
+    let { node: t4, path: n4 } = e2;
+    if (t4.kind !== "") continue;
+    let a4;
+    if (t4.postfix?.type === "name") {
+      let e3 = t4.mdata && typeof t4.mdata == "object" ? t4.mdata.srcStatus : void 0;
+      e3 === "dangling" || e3 === "srcResolvedNoDecl" ? r3.push({
+        code: e3 === "dangling" ? "SNL_ENTRY_SOURCE_NOT_FOUND" : "SNL_ENTRY_SOURCE_NO_DECL",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `Entry source ${JSON.stringify(t4.postfix.name)} did not export this reference`
+      }) : a4 = {
+        type: "entry",
+        entry_id: t4.postfix.name
+      };
+    } else if (t4.postfix?.type === "tree_path") {
+      let e3 = i4.find((e4) => e4.node.kind !== "sub" && w(e4.path, t4.postfix.type === "tree_path" ? t4.postfix.path : []));
+      e3 ? a4 = {
+        type: "tree_path",
+        path: [...e3.path]
+      } : r3.push({
+        code: "SNL_DANGLING_TREE_SOURCE",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `tree source #${t4.postfix.path.join(".")} does not name a semantic node`
+      });
+    } else {
+      let i5 = t4.postfix?.type === "binder_name" ? t4.postfix.name : D(t4), o4 = E(s2.filter((e3) => e3.binderName === i5), e2, true);
+      o4 ? a4 = {
+        type: "tree_path",
+        path: [...o4.path]
+      } : t4.postfix?.type === "binder_name" && r3.push({
+        code: "SNL_BINDER_NAME_NOT_FOUND",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `binder source ${JSON.stringify(i5)} was not found in the current context`
+      });
+    }
+    a4 ? (t4.kind = "bvar", t4.source = a4) : (t4.kind = "fvar", t4.source = void 0);
+  }
+  return {
+    tree: n3,
+    diagnostics: r3
+  };
+}
 
 // node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
@@ -835,7 +634,7 @@ function f(e) {
   }
   return true;
 }
-function O(e) {
+function O2(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
   return "type" in t3 || ![
@@ -851,12 +650,12 @@ var k = /* @__PURE__ */ new Set([
   "values"
 ]);
 function A(e) {
-  if (O(e)) return [e];
+  if (O2(e)) return [e];
   if (!e || typeof e != "object" || Array.isArray(e)) return null;
   let t3 = e;
   if (t3.type !== "i18n" || typeof t3.default_language != "string" || Object.keys(t3).some((e2) => !k.has(e2)) || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return null;
   let n3 = t3.values;
-  return !Object.prototype.hasOwnProperty.call(n3, t3.default_language) || Object.keys(n3).length === 0 || !Object.values(n3).every(O) ? null : Object.values(n3);
+  return !Object.prototype.hasOwnProperty.call(n3, t3.default_language) || Object.keys(n3).length === 0 || !Object.values(n3).every(O2) ? null : Object.values(n3);
 }
 function j(t3) {
   let n3 = p(t3.body);
@@ -1319,25 +1118,25 @@ var Style = class {
     return this.size >= 2;
   }
 };
-var D = 0;
+var D2 = 0;
 var Dc = 1;
-var T = 2;
+var T2 = 2;
 var Tc = 3;
-var S = 4;
+var S2 = 4;
 var Sc = 5;
 var SS = 6;
 var SSc = 7;
-var styles = [new Style(D, 0, false), new Style(Dc, 0, true), new Style(T, 1, false), new Style(Tc, 1, true), new Style(S, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
-var sup = [S, Sc, S, Sc, SS, SSc, SS, SSc];
+var styles = [new Style(D2, 0, false), new Style(Dc, 0, true), new Style(T2, 1, false), new Style(Tc, 1, true), new Style(S2, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
+var sup = [S2, Sc, S2, Sc, SS, SSc, SS, SSc];
 var sub = [Sc, Sc, Sc, Sc, SSc, SSc, SSc, SSc];
-var fracNum = [T, Tc, S, Sc, SS, SSc, SS, SSc];
+var fracNum = [T2, Tc, S2, Sc, SS, SSc, SS, SSc];
 var fracDen = [Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc];
 var cramp = [Dc, Dc, Tc, Tc, Sc, Sc, SSc, SSc];
-var text$1 = [D, Dc, T, Tc, T, Tc, T, Tc];
+var text$1 = [D2, Dc, T2, Tc, T2, Tc, T2, Tc];
 var Style$1 = {
-  DISPLAY: styles[D],
-  TEXT: styles[T],
-  SCRIPT: styles[S],
+  DISPLAY: styles[D2],
+  TEXT: styles[T2],
+  SCRIPT: styles[S2],
   SCRIPTSCRIPT: styles[SS]
 };
 var scriptData = [{
@@ -1494,7 +1293,7 @@ var innerPath = function innerPath2(name, height) {
       return "";
   }
 };
-var path2 = {
+var path = {
   // The doubleleftarrow geometry is from glyph U+21D0 in the font KaTeX Main
   doubleleftarrow: "M262 157\nl10-10c34-36 62.7-77 86-123 3.3-8 5-13.3 5-16 0-5.3-6.7-8-20-8-7.3\n 0-12.2.5-14.5 1.5-2.3 1-4.8 4.5-7.5 10.5-49.3 97.3-121.7 169.3-217 216-28\n 14-57.3 25-88 33-6.7 2-11 3.8-13 5.5-2 1.7-3 4.2-3 7.5s1 5.8 3 7.5\nc2 1.7 6.3 3.5 13 5.5 68 17.3 128.2 47.8 180.5 91.5 52.3 43.7 93.8 96.2 124.5\n 157.5 9.3 8 15.3 12.3 18 13h6c12-.7 18-4 18-10 0-2-1.7-7-5-15-23.3-46-52-87\n-86-123l-10-10h399738v-40H218c328 0 0 0 0 0l-10-8c-26.7-20-65.7-43-117-69 2.7\n-2 6-3.7 10-5 36.7-16 72.3-37.3 107-64l10-8h399782v-40z\nm8 0v40h399730v-40zm0 194v40h399730v-40z",
   // doublerightarrow is from glyph U+21D2 in font KaTeX Main
@@ -2023,7 +1822,7 @@ var PathNode = class {
     if (this.alternate) {
       node.setAttribute("d", this.alternate);
     } else {
-      node.setAttribute("d", path2[this.pathName]);
+      node.setAttribute("d", path[this.pathName]);
     }
     return node;
   }
@@ -2031,7 +1830,7 @@ var PathNode = class {
     if (this.alternate) {
       return '<path d="' + escape(this.alternate) + '"/>';
     } else {
-      return '<path d="' + escape(path2[this.pathName]) + '"/>';
+      return '<path d="' + escape(path[this.pathName]) + '"/>';
     }
   }
 };
@@ -15459,6 +15258,298 @@ var katex = {
   __domTree
 };
 
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+function t2(t3) {
+  let n3 = /* @__PURE__ */ new Set();
+  if (!t3.trim()) return n3;
+  let r3;
+  try {
+    r3 = y(t3);
+  } catch {
+    return n3;
+  }
+  let i4 = (e) => {
+    if (e.kind === "binder") {
+      n3.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
+      return;
+    }
+    e.children.forEach(i4);
+  };
+  return i4(r3), n3;
+}
+
+// lib/snl-doc.ts
+var import_node_fs2 = require("node:fs");
+var path3 = __toESM(require("node:path"), 1);
+
+// lib/guarded-json-file.ts
+var import_node_fs = require("node:fs");
+var import_node_path = __toESM(require("node:path"), 1);
+var import_node_crypto = require("node:crypto");
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
+async function readCanonicalDirectoryIdentity(directory) {
+  const resolved = import_node_path.default.resolve(directory);
+  const stat = await import_node_fs.promises.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await import_node_fs.promises.realpath(resolved) !== resolved) {
+    throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
+  }
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertCanonicalDirectory(directory, expected) {
+  const observed = await readCanonicalDirectoryIdentity(directory);
+  if (expected && (observed.dev !== expected.dev || observed.ino !== expected.ino)) {
+    throw new Error(`${import_node_path.default.resolve(directory)} changed concurrently; refusing to use a replacement directory.`);
+  }
+  return observed;
+}
+async function readRegularText(file) {
+  const directory = import_node_path.default.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  let handle;
+  try {
+    handle = await import_node_fs.promises.open(file, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW);
+    const stat = await handle.stat();
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    return {
+      text: await handle.readFile("utf8"),
+      mode: stat.mode & 511,
+      dev: stat.dev,
+      ino: stat.ino,
+      directoryDev: directoryIdentity.dev,
+      directoryIno: directoryIdentity.ino
+    };
+  } catch (error) {
+    if (error.code === "ELOOP")
+      throw new Error(`${file} must be a regular, non-symlink file.`, { cause: error });
+    throw error;
+  } finally {
+    await handle?.close();
+  }
+}
+async function syncDirectory(directory, beforeSync, expected) {
+  await beforeSync?.();
+  await assertCanonicalDirectory(directory, expected);
+  const handle = await import_node_fs.promises.open(directory, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW | import_node_fs.constants.O_DIRECTORY);
+  try {
+    const stat = await handle.stat();
+    if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
+      throw new Error(`${directory} changed concurrently before directory sync.`);
+    await handle.sync();
+    await assertCanonicalDirectory(directory, expected);
+  } finally {
+    await handle.close();
+  }
+}
+async function sameInode(left, right) {
+  try {
+    const [a3, b2] = await Promise.all([import_node_fs.promises.lstat(left), import_node_fs.promises.lstat(right)]);
+    return a3.dev === b2.dev && a3.ino === b2.ino;
+  } catch {
+    return false;
+  }
+}
+async function quarantineAndRemoveOwnedPath(file, ownedLink) {
+  const quarantine = import_node_path.default.join(import_node_path.default.dirname(file), `.${import_node_path.default.basename(file)}.snl-rollback-${process.pid}-${(0, import_node_crypto.randomUUID)()}.captured`);
+  try {
+    await import_node_fs.promises.rename(file, quarantine);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await import_node_fs.promises.rm(quarantine);
+    return true;
+  }
+  try {
+    await import_node_fs.promises.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await import_node_fs.promises.rm(quarantine);
+  } catch {
+  }
+  return false;
+}
+async function installNewJson(file, value, hooks = {}) {
+  const directory = import_node_path.default.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const temp = import_node_path.default.join(
+    directory,
+    `.${import_node_path.default.basename(file)}.snl-create-${process.pid}-${(0, import_node_crypto.randomUUID)()}.tmp`
+  );
+  let handle;
+  let installed = false;
+  try {
+    handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, 420);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    await import_node_fs.promises.link(temp, file);
+    installed = true;
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
+    } catch (error) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
+      throw error;
+    }
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await import_node_fs.promises.rm(temp, { force: true }).catch(() => void 0);
+    if (installed) {
+    }
+  }
+}
+async function restoreCapturedPath(captured, target) {
+  try {
+    await import_node_fs.promises.link(captured, target);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
+      { cause: error }
+    );
+  }
+  await import_node_fs.promises.rm(captured);
+}
+async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+  const directory = import_node_path.default.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
+  const nonce = `${process.pid}-${(0, import_node_crypto.randomUUID)()}`;
+  const temp = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.tmp`);
+  const captured = import_node_path.default.join(directory, `.${import_node_path.default.basename(file)}.snl-write-${nonce}.captured`);
+  let handle;
+  let capturedPresent = false;
+  let installed = false;
+  try {
+    handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, current.mode);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await hooks.beforeCapture?.();
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
+    await import_node_fs.promises.rename(file, captured);
+    capturedPresent = true;
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
+    const observed = await readRegularText(captured);
+    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+    }
+    try {
+      await import_node_fs.promises.link(temp, file);
+      installed = true;
+    } catch (error) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
+    } catch (error) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
+        throw new Error(
+          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
+          { cause: error }
+        );
+      }
+      installed = false;
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw error;
+    }
+    try {
+      await import_node_fs.promises.rm(captured);
+      capturedPresent = false;
+    } catch {
+    }
+  } catch (error) {
+    if (capturedPresent && !installed) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+    }
+    throw error;
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await import_node_fs.promises.rm(temp, { force: true }).catch(() => void 0);
+  }
+}
+async function removeJsonIfUnchanged(file, expected, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  const directory = import_node_path.default.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
+  const captured = import_node_path.default.join(
+    directory,
+    `.${import_node_path.default.basename(file)}.snl-remove-${process.pid}-${(0, import_node_crypto.randomUUID)()}.captured`
+  );
+  await hooks.beforeCapture?.();
+  await assertCanonicalDirectory(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
+  await import_node_fs.promises.rename(file, captured);
+  let observed;
+  try {
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
+    observed = await readRegularText(captured);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
+    await restoreCapturedPath(captured, file);
+    throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  }
+  try {
+    await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  try {
+    await import_node_fs.promises.rm(captured);
+  } catch {
+  }
+}
+
 // lib/snl-doc-schema.ts
 function isMacroDocumentV11(value) {
   if (!isRecord(value)) return false;
@@ -15527,6 +15618,83 @@ function isRecord(value) {
 }
 function isStringArray(value) {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+// lib/entity-storage.ts
+var import_node_crypto2 = require("node:crypto");
+var PACKAGE_STORAGE_VERSION = 1;
+var ENTRY_STORAGE_VERSION = 1;
+var MACRO_STORAGE_VERSION = 1;
+var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
+var CURRENT_ENTRY_SCHEMA_VERSION = 1;
+var CURRENT_MACRO_SCHEMA_VERSION = 1;
+var UNPACKAGED_PACKAGE_ID = "_unpackaged";
+function semanticDigest(value) {
+  return (0, import_node_crypto2.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
+}
+function makeEntityStorageReceipt(entries, macroPackages, legacyBackupPresent) {
+  const entryList = Array.isArray(entries) ? entries : [];
+  const packages = [...macroPackages].sort(([left], [right]) => left.localeCompare(right));
+  return {
+    legacy_backup_present: legacyBackupPresent,
+    legacy_entries_present: legacyBackupPresent && Array.isArray(entries),
+    entry_count: entryList.length,
+    macro_package_count: packages.length,
+    macro_count: packages.reduce((count, [, value]) => count + (value && typeof value === "object" && !Array.isArray(value) && value.macros && typeof value.macros === "object" && !Array.isArray(value.macros) ? Object.keys(value.macros).length : 0), 0),
+    entries_digest: semanticDigest(entryList),
+    macro_packages_digest: semanticDigest(packages)
+  };
+}
+var PACKAGE_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+var WINDOWS_DEVICE_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i;
+function assertPackageId(packageId) {
+  if (packageId !== UNPACKAGED_PACKAGE_ID && (!PACKAGE_ID_RE.test(packageId) || packageId.toLowerCase().endsWith(".json"))) {
+    throw new Error(
+      `Package id ${JSON.stringify(packageId)} must be 1-64 ASCII letters, digits, dots, underscores, or hyphens, start with a letter or digit, and not end in .json.`
+    );
+  }
+  if (WINDOWS_DEVICE_RE.test(packageId)) {
+    throw new Error(`Package id ${JSON.stringify(packageId)} is a reserved Windows device name.`);
+  }
+}
+function entityIdentityHash(kind, ...segments) {
+  if (segments.some((segment) => segment.includes("\0"))) {
+    throw new Error("Entity identities may not contain NUL characters.");
+  }
+  return (0, import_node_crypto2.createHash)("sha256").update(Buffer.from(`snl-doc/v1\0${kind}\0${segments.join("\0")}`, "utf8")).digest("hex").slice(0, 20);
+}
+function packageManifestPath(packageId) {
+  assertPackageId(packageId);
+  return `packages/${packageId}-${entityIdentityHash("package", packageId)}.json`;
+}
+function entryEntityPath(packageId, entryId) {
+  assertPackageId(packageId);
+  if (!entryId) throw new Error("Entry id must be non-empty.");
+  return `entries/${packageId}-${entityIdentityHash("entry", packageId, entryId)}.json`;
+}
+function macroEntityPath(packageId, macroName) {
+  assertPackageId(packageId);
+  if (!macroName) throw new Error("Macro name must be non-empty.");
+  return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
+}
+function assertCompatibleSchemaMarker(value, current, label, required = false) {
+  if (!Object.hasOwn(value, "schema_version")) {
+    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
+    return;
+  }
+  if (!Number.isInteger(value.schema_version) || value.schema_version < 1) {
+    throw new Error(`${label} schema_version must be a positive integer.`);
+  }
+  if (value.schema_version > current) {
+    throw new Error(
+      `${label} schema version ${String(value.schema_version)} is newer than this Toolkit supports (${current}).`
+    );
+  }
+  if (value.schema_version < current) {
+    throw new Error(
+      `${label} schema_version ${String(value.schema_version)} has no registered migration to ${current}.`
+    );
+  }
 }
 
 // lib/snl-doc.ts
@@ -15999,25 +16167,431 @@ async function readEntryKinds(workspaceRoot) {
   return cfg.entry_kinds ?? [];
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
-function t2(t3) {
-  let n3 = /* @__PURE__ */ new Set();
-  if (!t3.trim()) return n3;
-  let r3;
-  try {
-    r3 = y(t3);
-  } catch {
-    return n3;
+// lib/snl-render.ts
+var LATEX_TO_TEXT_CHARS = {
+  // Set operations
+  "\\cup": "\u222A",
+  "\\cap": "\u2229",
+  "\\setminus": "\u2216",
+  "\\emptyset": "\u2205",
+  "\\subseteq": "\u2286",
+  "\\subset": "\u2282",
+  "\\supseteq": "\u2287",
+  "\\supset": "\u2283",
+  "\\in": "\u2208",
+  "\\notin": "\u2209",
+  "\\ni": "\u220B",
+  // Logic
+  "\\land": "\u2227",
+  "\\wedge": "\u2227",
+  "\\lor": "\u2228",
+  "\\vee": "\u2228",
+  "\\lnot": "\xAC",
+  "\\neg": "\xAC",
+  "\\implies": "\u21D2",
+  "\\Rightarrow": "\u21D2",
+  "\\Leftrightarrow": "\u21D4",
+  "\\iff": "\u21D4",
+  "\\forall": "\u2200",
+  "\\exists": "\u2203",
+  "\\top": "\u22A4",
+  "\\bot": "\u22A5",
+  // Relations
+  "\\leq": "\u2264",
+  "\\le": "\u2264",
+  "\\geq": "\u2265",
+  "\\ge": "\u2265",
+  "\\neq": "\u2260",
+  "\\ne": "\u2260",
+  "\\approx": "\u2248",
+  "\\equiv": "\u2261",
+  "\\sim": "\u223C",
+  "\\cong": "\u2245",
+  "\\mapsto": "\u21A6",
+  "\\to": "\u2192",
+  "\\rightarrow": "\u2192",
+  "\\leftarrow": "\u2190",
+  "\\leftrightarrow": "\u2194",
+  // Arithmetic / operators
+  "\\times": "\xD7",
+  "\\div": "\xF7",
+  "\\pm": "\xB1",
+  "\\mp": "\u2213",
+  "\\cdot": "\xB7",
+  "\\ast": "\u2217",
+  "\\star": "\u22C6",
+  "\\circ": "\u2218",
+  "\\bullet": "\u2022",
+  "\\oplus": "\u2295",
+  "\\otimes": "\u2297",
+  "\\odot": "\u2299",
+  "\\ominus": "\u2296",
+  // Big operators
+  "\\sum": "\u2211",
+  "\\prod": "\u220F",
+  "\\coprod": "\u2210",
+  "\\int": "\u222B",
+  "\\iint": "\u222C",
+  "\\iiint": "\u222D",
+  "\\oint": "\u222E",
+  "\\bigcup": "\u22C3",
+  "\\bigcap": "\u22C2",
+  "\\bigoplus": "\u2295",
+  "\\bigotimes": "\u2297",
+  // Common symbols
+  "\\infty": "\u221E",
+  "\\partial": "\u2202",
+  "\\nabla": "\u2207",
+  "\\hbar": "\u210F",
+  "\\ell": "\u2113",
+  "\\Re": "\u211C",
+  "\\Im": "\u2111",
+  "\\aleph": "\u2135",
+  "\\wp": "\u2118",
+  // Number sets
+  "\\mathbb{N}": "\u2115",
+  "\\mathbb{Z}": "\u2124",
+  "\\mathbb{Q}": "\u211A",
+  "\\mathbb{R}": "\u211D",
+  "\\mathbb{C}": "\u2102",
+  "\\mathbb{F}": "\u{1D53D}",
+  "\\mathbb{P}": "\u2119",
+  "\\mathbb{H}": "\u210D",
+  // Lowercase greek
+  "\\alpha": "\u03B1",
+  "\\beta": "\u03B2",
+  "\\gamma": "\u03B3",
+  "\\delta": "\u03B4",
+  "\\epsilon": "\u03B5",
+  "\\varepsilon": "\u03B5",
+  "\\zeta": "\u03B6",
+  "\\eta": "\u03B7",
+  "\\theta": "\u03B8",
+  "\\vartheta": "\u03D1",
+  "\\iota": "\u03B9",
+  "\\kappa": "\u03BA",
+  "\\lambda": "\u03BB",
+  "\\mu": "\u03BC",
+  "\\nu": "\u03BD",
+  "\\xi": "\u03BE",
+  "\\pi": "\u03C0",
+  "\\varpi": "\u03D6",
+  "\\rho": "\u03C1",
+  "\\varrho": "\u03F1",
+  "\\sigma": "\u03C3",
+  "\\varsigma": "\u03C2",
+  "\\tau": "\u03C4",
+  "\\upsilon": "\u03C5",
+  "\\phi": "\u03C6",
+  "\\varphi": "\u03D5",
+  "\\chi": "\u03C7",
+  "\\psi": "\u03C8",
+  "\\omega": "\u03C9",
+  // Uppercase greek (only the visually-distinct ones)
+  "\\Gamma": "\u0393",
+  "\\Delta": "\u0394",
+  "\\Theta": "\u0398",
+  "\\Lambda": "\u039B",
+  "\\Xi": "\u039E",
+  "\\Pi": "\u03A0",
+  "\\Sigma": "\u03A3",
+  "\\Upsilon": "\u03A5",
+  "\\Phi": "\u03A6",
+  "\\Psi": "\u03A8",
+  "\\Omega": "\u03A9",
+  // Spacing / whitespace
+  "\\,": " ",
+  "\\;": " ",
+  "\\!": "",
+  "\\ ": " ",
+  "\\quad": "  ",
+  "\\qquad": "    ",
+  // Ellipsis
+  "\\ldots": "\u2026",
+  "\\cdots": "\u22EF",
+  "\\dots": "\u2026",
+  "\\vdots": "\u22EE",
+  "\\ddots": "\u22F1",
+  // Delimiters (leave the char as-is; drop the \left/\right sizing)
+  "\\left": "",
+  "\\right": "",
+  "\\lVert": "\u2016",
+  "\\rVert": "\u2016",
+  "\\|": "\u2016",
+  "\\lvert": "|",
+  "\\rvert": "|",
+  "\\langle": "\u27E8",
+  "\\rangle": "\u27E9",
+  "\\lceil": "\u2308",
+  "\\rceil": "\u2309",
+  "\\lfloor": "\u230A",
+  "\\rfloor": "\u230B"
+};
+function latexToText(input, notes) {
+  let s2 = input;
+  const wrappers = [
+    "mathrm",
+    "mathbf",
+    "mathit",
+    "mathsf",
+    "mathtt",
+    "mathcal",
+    "mathscr",
+    "mathfrak",
+    "text",
+    "textrm",
+    "textbf",
+    "textit",
+    "textsf",
+    "texttt",
+    "operatorname",
+    "boldsymbol",
+    "bm"
+  ];
+  const wrapperRe = new RegExp(
+    `\\\\(?:${wrappers.join("|")})\\s*\\{([^{}]*)\\}`,
+    "g"
+  );
+  for (let i4 = 0; i4 < 5; i4++) {
+    const next = s2.replace(wrapperRe, (_2, inner2) => inner2);
+    if (next === s2) break;
+    s2 = next;
   }
-  let i4 = (e) => {
-    if (e.kind === "binder") {
-      n3.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
-      return;
-    }
-    e.children.forEach(i4);
-  };
-  return i4(r3), n3;
+  const fracRe = /\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g;
+  for (let i4 = 0; i4 < 5; i4++) {
+    const next = s2.replace(fracRe, (_2, a3, b2) => `(${a3})/(${b2})`);
+    if (next === s2) break;
+    s2 = next;
+  }
+  s2 = s2.replace(
+    /\\sqrt(?:\[([^\]]*)\])?\s*\{([^{}]*)\}/g,
+    (_2, n3, x3) => n3 ? `${n3}\u221A(${x3})` : `\u221A(${x3})`
+  );
+  const mapped = Object.entries(LATEX_TO_TEXT_CHARS).sort(
+    (a3, b2) => b2[0].length - a3[0].length
+  );
+  for (const [cmd, glyph] of mapped) {
+    if (!s2.includes(cmd)) continue;
+    const re = new RegExp(
+      cmd.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+      "g"
+    );
+    s2 = s2.replace(re, glyph);
+  }
+  const survivorRe = /\\[A-Za-z]+/g;
+  const survivors = /* @__PURE__ */ new Set();
+  let m3;
+  while ((m3 = survivorRe.exec(s2)) !== null) survivors.add(m3[0]);
+  for (const cmd of survivors) {
+    notes.push(
+      `Unmapped LaTeX command in text synth: \`${cmd}\` (survived as-is).`
+    );
+  }
+  s2 = s2.replace(/_\{([^{}]*)\}/g, "_$1").replace(/\^\{([^{}]*)\}/g, "^$1");
+  s2 = s2.replace(/[{}]/g, "");
+  return s2;
 }
+function joinVariadic(template, rendered) {
+  const defaultSep = template.mode === "text" ? "" : ", ";
+  return rendered.join(template.separator ?? defaultSep);
+}
+function fillTemplate(template, values) {
+  const ESCAPED = "HASH";
+  let out = template.replace(/\\#/g, ESCAPED);
+  out = out.replace(/#(\d{1,2})/g, (_2, d2) => {
+    const v2 = values[`child${Number(d2)}`];
+    return v2 === void 0 ? `#${d2}` : v2;
+  });
+  out = out.replace(/#\*/g, () => {
+    const j2 = values["children_joined"];
+    return j2 === void 0 ? "#*" : j2;
+  });
+  return out.split(ESCAPED).join("\\#");
+}
+function isRecord3(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function projectTemplate(value) {
+  let candidate = value;
+  if (isRecord3(candidate) && candidate.type === "i18n" && typeof candidate.default_language === "string" && isRecord3(candidate.values)) {
+    candidate = candidate.values[candidate.default_language] ?? candidate.values.en ?? Object.values(candidate.values)[0];
+  }
+  if (!isRecord3(candidate) || typeof candidate.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(candidate.mode) || typeof candidate.body !== "string") {
+    return void 0;
+  }
+  return candidate;
+}
+function normalizeStyle(value) {
+  if (!isRecord3(value) || typeof value.style_name !== "string") return void 0;
+  const current = projectTemplate(value.template);
+  if (current) return { style_name: value.style_name, template: current };
+  if (typeof value.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(value.mode) || typeof value.template !== "string") {
+    return void 0;
+  }
+  return {
+    style_name: value.style_name,
+    template: {
+      mode: value.mode,
+      body: value.template,
+      ...typeof value.separator === "string" ? { separator: value.separator } : {},
+      ...isRecord3(value.latex) ? { latex: value.latex } : {},
+      ...typeof value.text === "string" ? { text: value.text } : {}
+    }
+  };
+}
+function pickStyle(macro, node) {
+  if (macro.styles.length === 0) return void 0;
+  const requested = node.style_name;
+  const legacyDefault = macro.default_style;
+  const defaultName = typeof legacyDefault === "string" ? legacyDefault : legacyDefault?.en;
+  const selectedName = requested ?? defaultName;
+  const selected = selectedName ? macro.styles.find((style) => style.style_name === selectedName) : macro.styles[0];
+  if (!selected && requested) {
+    throw new Error(`Unknown style "${requested}" for macro "${macro.name}".`);
+  }
+  return normalizeStyle(selected);
+}
+function escapeTemporaryText(value) {
+  return value.replace(/([\\{}%$#&_])/g, "\\$1").replace(/~/g, "\\textasciitilde{}").replace(/\^/g, "\\textasciicircum{}");
+}
+function escapeIdent(name) {
+  return name.replace(/_/g, "\\_");
+}
+function ownMacro(macros2, name) {
+  return Object.hasOwn(macros2, name) ? macros2[name] : void 0;
+}
+function wrapForParent(child, parentMode) {
+  const childText = child.mode === "text";
+  const parentText = parentMode === "text";
+  if (!parentText && childText) return `\\text{${child.output}}`;
+  if (parentText && !childText && child.mode !== "block") return `$${child.output}$`;
+  return child.output;
+}
+function renderNode(node, mode, macros2, notes) {
+  const envMode = node.env_mode;
+  if (typeof envMode === "string" && envMode.length > 0) {
+    const raw = node.temporary_source ?? node.macro_name;
+    if (node.temporary_format === "texttt") {
+      return { output: mode === "latex" ? `\\texttt{${escapeTemporaryText(raw)}}` : raw, mode: "formula_inline" };
+    }
+    if (envMode === "text") {
+      return { output: mode === "latex" ? escapeTemporaryText(raw) : raw, mode: "text" };
+    }
+    if (mode === "latex") {
+      return { output: raw, mode: envMode };
+    }
+    return { output: `$${latexToText(raw, notes)}$`, mode: envMode };
+  }
+  const name = node.macro_name;
+  const children = Array.isArray(node.children) ? node.children : [];
+  const macro = ownMacro(macros2, name);
+  if (!macro && children.length === 0) {
+    return { output: mode === "latex" ? escapeIdent(name) : name, mode: "formula_inline" };
+  }
+  if (!macro) {
+    const renderedChildren2 = children.map((c3) => renderNode(c3, mode, macros2, notes));
+    notes.push(
+      `Unregistered macro '${name}' \u2014 emitted as \`${name}(...)\` fallback.`
+    );
+    return { output: `${name}(${renderedChildren2.map((child) => child.output).join(", ")})`, mode: "formula_inline" };
+  }
+  const style = pickStyle(macro, node);
+  if (!style) {
+    const renderedChildren2 = children.map((c3) => renderNode(c3, mode, macros2, notes));
+    notes.push(
+      `Macro '${name}' has no styles \u2014 emitted as \`${name}(...)\` fallback.`
+    );
+    return { output: `${name}(${renderedChildren2.map((child) => child.output).join(", ")})`, mode: "formula_inline" };
+  }
+  const template = style.template;
+  const renderedChildren = children.map((c3) => renderNode(c3, mode, macros2, notes));
+  if (template.mode === "block") {
+    return {
+      output: `${name}(${renderedChildren.map((child) => child.output).join(", ")})`,
+      mode: "block"
+    };
+  }
+  const wrappedChildren = mode === "latex" ? renderedChildren.map((child) => wrapForParent(child, template.mode)) : renderedChildren.map((child) => child.output);
+  const values = {};
+  wrappedChildren.forEach((v2, i4) => {
+    values[`child${i4}`] = v2;
+  });
+  if (macro.dynamic_arity) {
+    if (!template.body.includes("#*")) {
+      throw new Error(`Dynamic macro '${name}' style '${style.style_name}' requires #* in its template.`);
+    }
+    values["children_joined"] = joinVariadic(template, wrappedChildren);
+  }
+  if (mode === "latex") {
+    const explicit = template.latex?.synthesis?.macro;
+    const src = typeof explicit === "string" && explicit.length > 0 ? explicit : template.body;
+    return { output: fillTemplate(src, values), mode: template.mode };
+  }
+  const explicitText = template.text;
+  if (typeof explicitText === "string" && explicitText.length > 0) {
+    return { output: fillTemplate(explicitText, values), mode: template.mode };
+  }
+  const converted = latexToText(template.body, notes);
+  return { output: fillTemplate(converted, values), mode: template.mode };
+}
+function renderTreeAsLatex(tree, macros2) {
+  const notes = [];
+  const output = renderNode(tree, "latex", macros2, notes).output;
+  return { output, notes: dedupe(notes) };
+}
+function dedupe(a3) {
+  return [...new Set(a3)];
+}
+
+// lib/entry-analysis.ts
+var EntryAnalysisError = class extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+    this.name = "EntryAnalysisError";
+  }
+  code;
+};
+async function loadEntry(root, id) {
+  const [entries, macros2] = await Promise.all([readEntries(root), readActiveMacros(root)]);
+  const entry = entries.find((candidate) => candidate.id === id);
+  if (!entry) throw new EntryAnalysisError("entry.not-found", `Entry not found: ${id}`);
+  return { entry, entries, macros: macros2 };
+}
+function parseEntry(entry, macros2) {
+  const snl = entry.content?.snl;
+  if (typeof snl !== "string" || !snl.trim()) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} has no SNL content.`);
+  const parsed = x(snl);
+  if (!parsed.ok) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} SNL parse failed: ${parsed.error}`);
+  return O(
+    parsed.tree,
+    macros2
+  ).tree;
+}
+async function computeEntryBareLatex(root, id) {
+  const { entry, macros: macros2 } = await loadEntry(root, id);
+  try {
+    const rendered = renderTreeAsLatex(parseEntry(entry, macros2), macros2);
+    if (rendered.output.includes("\\htmlData")) {
+      throw new EntryAnalysisError(
+        "entry.invalid",
+        `Entry ${entry.id} bare LaTeX synthesis produced forbidden \\htmlData.`
+      );
+    }
+    return rendered;
+  } catch (error) {
+    if (error instanceof EntryAnalysisError) throw error;
+    throw new EntryAnalysisError(
+      "entry.invalid",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}
+
+// lib/entity-crud.ts
+var import_node_crypto4 = require("node:crypto");
+var import_node_fs6 = require("node:fs");
+var import_node_path2 = __toESM(require("node:path"), 1);
 
 // lib/snl-parser.ts
 function tryParseSnlSyntaxTree(input) {
@@ -16319,7 +16893,7 @@ var LEGACY_STYLE_FIELDS = [
 ];
 function lintPackage(raw, opts = {}) {
   const issues = [];
-  if (!isRecord3(raw)) {
+  if (!isRecord4(raw)) {
     issues.push({ severity: "error", code: "package.not-object", message: `Macro package must be a JSON object, got ${describe2(raw)}.` });
     return { issues };
   }
@@ -16333,14 +16907,14 @@ function lintPackage(raw, opts = {}) {
   if (pkg.description !== void 0 && typeof pkg.description !== "string") {
     issues.push({ severity: "error", code: "package.bad-description", message: "`description` must be a string when present.", path: "description" });
   }
-  if (!isRecord3(pkg.macros)) {
+  if (!isRecord4(pkg.macros)) {
     issues.push({ severity: "error", code: "package.missing-macros", message: "`macros` must be an object (name \u2192 macro).", path: "macros" });
     return { issues };
   }
   if (pkg.version === "11") {
     const document2 = Object.fromEntries(Object.entries(pkg.macros).map(([name, macro]) => [
       name,
-      isRecord3(macro) ? { name, ...macro } : macro
+      isRecord4(macro) ? { name, ...macro } : macro
     ]));
     if (!isMacroDocumentV11(document2)) {
       issues.push({
@@ -16355,9 +16929,9 @@ function lintPackage(raw, opts = {}) {
   }
   function lintMacroV11Katex(macros2, issues2) {
     for (const [name, rawMacro] of Object.entries(macros2)) {
-      if (!isRecord3(rawMacro) || rawMacro.kind === "sub" || !Array.isArray(rawMacro.styles)) continue;
+      if (!isRecord4(rawMacro) || rawMacro.kind === "sub" || !Array.isArray(rawMacro.styles)) continue;
       rawMacro.styles.forEach((rawStyle, styleIndex) => {
-        if (!isRecord3(rawStyle)) return;
+        if (!isRecord4(rawStyle)) return;
         const projections = macroV11TemplateProjections(rawStyle.template);
         if (!projections) return;
         projections.forEach((template, projectionIndex) => {
@@ -16388,7 +16962,7 @@ function lintPackage(raw, opts = {}) {
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   const path8 = `macros.${name}`;
-  if (!isRecord3(raw)) {
+  if (!isRecord4(raw)) {
     issues.push({ severity: "error", code: "macro.not-object", message: `${path8}: macro entry must be an object.`, path: path8 });
     return;
   }
@@ -16396,7 +16970,7 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (typeof macro.description !== "string") {
     issues.push({ severity: "error", code: "macro.missing-description", message: `${path8}.description must be a string (may be empty).`, path: `${path8}.description` });
   }
-  if (!isRecord3(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
+  if (!isRecord4(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
     issues.push({ severity: "error", code: "macro.bad-source", message: `${path8}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path8}.source` });
   }
   if (typeof macro.dynamic_arity !== "boolean") {
@@ -16413,7 +16987,7 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   const defaultStyle = macro.default_style;
   if (defaultStyle === void 0) {
     issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path8}.default_style must be a language \u2192 style-name object.`, path: `${path8}.default_style` });
-  } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
+  } else if (!isRecord4(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
     issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path8}.default_style must map language keys to style-name strings.`, path: `${path8}.default_style` });
   }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
@@ -16424,7 +16998,7 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   const maxIndexes = [];
   macro.styles.forEach((rawStyle, index) => {
     const stylePath = `${path8}.styles[${index}]`;
-    if (!isRecord3(rawStyle)) {
+    if (!isRecord4(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
     }
@@ -16484,7 +17058,7 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
       }
     }
   });
-  if (isRecord3(defaultStyle)) {
+  if (isRecord4(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
         issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path8}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path8}.default_style` });
@@ -16530,7 +17104,7 @@ function scanTemplatePlaceholders(template) {
   }
   return { maxIndex, hasVariadic, badTokens };
 }
-function isRecord3(value) {
+function isRecord4(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function isStringArray2(value) {
@@ -17828,7 +18402,7 @@ function macroIsActive(files, id) {
     const bare = path5.posix.basename(file.relPath, ".json");
     if (active && !active.has(bare)) return false;
     const macros2 = file.data?.macros;
-    return isRecord4(macros2) && Object.prototype.hasOwnProperty.call(macros2, id);
+    return isRecord5(macros2) && Object.prototype.hasOwnProperty.call(macros2, id);
   });
 }
 function collectOccurrences(files, entityType2, id, options = {}) {
@@ -18222,21 +18796,21 @@ function validateSchemaShape(absPath, relPath, data) {
     throw new Error(`${absPath}: ${message}`);
   };
   if (relPath === "config.json") {
-    if (!isRecord4(value)) fail("config.json must be an object.");
+    if (!isRecord5(value)) fail("config.json must be an object.");
     if (value.active_macro_packages !== void 0 && (!Array.isArray(value.active_macro_packages) || !value.active_macro_packages.every((item) => typeof item === "string"))) {
       fail("config.active_macro_packages must be a string array when present.");
     }
     return;
   }
   if (/^packages\/[^/]+\.json$/.test(relPath)) {
-    if (!isRecord4(value) || value.format !== "snl-package" || value.version !== 1 || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
+    if (!isRecord5(value) || value.format !== "snl-package" || value.version !== 1 || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
       fail("Package manifest must use the snl-package v1 envelope.");
     }
     if (relPath !== packageManifestPath(value.id)) fail("Package manifest path does not match its logical identity.");
     return;
   }
   if (/^entries\/[^/]+\.json$/.test(relPath)) {
-    if (!isRecord4(value) || value.format !== "snl-entry" || value.version !== 1 || typeof value.package !== "string" || !isRecord4(value.entry) || typeof value.entry.id !== "string" || !isRecord4(value.entry.content) || value.entry.package !== value.package) {
+    if (!isRecord5(value) || value.format !== "snl-entry" || value.version !== 1 || typeof value.package !== "string" || !isRecord5(value.entry) || typeof value.entry.id !== "string" || !isRecord5(value.entry.content) || value.entry.package !== value.package) {
       fail("Entry entity must use the snl-entry v1 envelope with matching Package identity.");
     }
     if (relPath !== entryEntityPath(value.package, value.entry.id)) fail("Entry entity path does not match its logical identity.");
@@ -18246,7 +18820,7 @@ function validateSchemaShape(absPath, relPath, data) {
     return;
   }
   if (/^macros\/[^/]+\.json$/.test(relPath)) {
-    if (!isRecord4(value) || value.format !== "snl-macro" || value.version !== 1 || typeof value.package !== "string" || !isRecord4(value.macro) || typeof value.macro.name !== "string" || !isRecord4(value.macro.source) || !Array.isArray(value.macro.source.entries) || !value.macro.source.entries.every((item) => typeof item === "string")) {
+    if (!isRecord5(value) || value.format !== "snl-macro" || value.version !== 1 || typeof value.package !== "string" || !isRecord5(value.macro) || typeof value.macro.name !== "string" || !isRecord5(value.macro.source) || !Array.isArray(value.macro.source.entries) || !value.macro.source.entries.every((item) => typeof item === "string")) {
       fail("Macro entity must use the snl-macro v1 envelope with source.entries[].");
     }
     if (relPath !== macroEntityPath(value.package, value.macro.name)) fail("Macro entity path does not match its logical identity.");
@@ -18255,7 +18829,7 @@ function validateSchemaShape(absPath, relPath, data) {
   if (relPath === "entries.json") {
     if (!Array.isArray(value)) fail("entries.json must be an array.");
     value.forEach((entry, index) => {
-      if (!isRecord4(entry) || typeof entry.id !== "string" || !isRecord4(entry.content)) {
+      if (!isRecord5(entry) || typeof entry.id !== "string" || !isRecord5(entry.content)) {
         fail(`entry ${index} must contain string id and object content.`);
       }
       if (entry.content.snl !== void 0 && typeof entry.content.snl !== "string") {
@@ -18265,9 +18839,9 @@ function validateSchemaShape(absPath, relPath, data) {
     return;
   }
   if (relPath.startsWith("term_macros/")) {
-    if (!isRecord4(value) || !isRecord4(value.macros)) fail("macro package must contain an object macros map.");
+    if (!isRecord5(value) || !isRecord5(value.macros)) fail("macro package must contain an object macros map.");
     for (const [name, macro] of Object.entries(value.macros)) {
-      if (!isRecord4(macro) || !isRecord4(macro.source) || !Array.isArray(macro.source.entries)) {
+      if (!isRecord5(macro) || !isRecord5(macro.source) || !Array.isArray(macro.source.entries)) {
         fail(`macro ${JSON.stringify(name)} must contain source.entries[].`);
       }
       if (!macro.source.entries.every((item) => typeof item === "string")) {
@@ -18277,11 +18851,11 @@ function validateSchemaShape(absPath, relPath, data) {
     return;
   }
   if (/^libraries\/[^/]+\/graph\.json$/.test(relPath)) {
-    if (!isRecord4(value) || !Array.isArray(value.nodes) || !Array.isArray(value.relationships)) {
+    if (!isRecord5(value) || !Array.isArray(value.nodes) || !Array.isArray(value.relationships)) {
       fail("Library graph must contain nodes[] and relationships[].");
     }
     value.nodes.forEach((node, index) => {
-      if (!isRecord4(node) || !isRecord4(node.props)) fail(`graph node ${index} must contain object props.`);
+      if (!isRecord5(node) || !isRecord5(node.props)) fail(`graph node ${index} must contain object props.`);
       if (node.props.entryId !== void 0 && typeof node.props.entryId !== "string") {
         fail(`graph node ${index} props.entryId must be a string when present.`);
       }
@@ -18289,17 +18863,17 @@ function validateSchemaShape(absPath, relPath, data) {
     return;
   }
   if (relPath === "relationships.json") {
-    if (!isRecord4(value) || !Array.isArray(value.relationships)) {
+    if (!isRecord5(value) || !Array.isArray(value.relationships)) {
       fail("relationships.json must contain relationships[].");
     }
     const ids = /* @__PURE__ */ new Set();
     value.relationships.forEach((rel2, index) => {
-      if (!isRecord4(rel2) || typeof rel2.id !== "string" || !rel2.id || typeof rel2.from !== "string" || !rel2.from || typeof rel2.to !== "string" || !rel2.to || typeof rel2.label !== "string" || !rel2.label) {
+      if (!isRecord5(rel2) || typeof rel2.id !== "string" || !rel2.id || typeof rel2.from !== "string" || !rel2.from || typeof rel2.to !== "string" || !rel2.to || typeof rel2.label !== "string" || !rel2.label) {
         fail(`relationship ${index} must contain non-empty string id/from/to/label.`);
       }
       if (ids.has(rel2.id)) fail(`relationship ${index} duplicates id ${JSON.stringify(rel2.id)}.`);
       ids.add(rel2.id);
-      if (isRecord4(rel2.metadata) && rel2.metadata.generator === "macro-source-scan") {
+      if (isRecord5(rel2.metadata) && rel2.metadata.generator === "macro-source-scan") {
         for (const field of ["macros", "postfixes"]) {
           const values = rel2.metadata[field];
           if (values !== void 0 && (!Array.isArray(values) || !values.every((v2) => typeof v2 === "string"))) {
@@ -18310,7 +18884,7 @@ function validateSchemaShape(absPath, relPath, data) {
     });
   }
 }
-function isRecord4(value) {
+function isRecord5(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function validateNonEmptyIdentity(id) {
@@ -18338,14 +18912,14 @@ function compareOccurrence(a3, b2) {
 // lib/entity-writes.ts
 var import_node_fs5 = require("node:fs");
 var path6 = __toESM(require("node:path"), 1);
-function isRecord5(value) {
+function isRecord6(value) {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 function assertCurrentWriteConfig(config, cli) {
   if (!usesEntityStorage(config)) {
     throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
   }
-  if (!isRecord5(config) || !Array.isArray(config.entry_kinds)) {
+  if (!isRecord6(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error("Current config.json entry_kinds must be an array.");
   }
   if (!Array.isArray(config.macro_kinds)) {
@@ -18380,7 +18954,7 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot) {
   return resolved;
 }
 function normalizeEntryDraft(raw, packageOverride) {
-  if (!isRecord5(raw)) return raw;
+  if (!isRecord6(raw)) return raw;
   const normalizedOverride = typeof packageOverride === "string" ? packageOverride.trim() : packageOverride;
   const packageId = normalizedOverride !== void 0 ? normalizedOverride : raw.package !== void 0 ? typeof raw.package === "string" ? raw.package.trim() : raw.package : UNPACKAGED_PACKAGE_ID;
   return {
@@ -18405,11 +18979,11 @@ function templateUsesVariadic(value) {
   return false;
 }
 function normalizeMacroDraft(raw, current = false) {
-  if (!isRecord5(raw)) return raw;
-  const styles2 = Array.isArray(raw.styles) ? raw.styles.map((style) => isRecord5(style) ? { ...style, tags: style.tags === void 0 ? [] : style.tags } : style) : raw.styles;
-  const firstStyle = Array.isArray(styles2) && isRecord5(styles2[0]) && typeof styles2[0].style_name === "string" ? styles2[0].style_name : void 0;
+  if (!isRecord6(raw)) return raw;
+  const styles2 = Array.isArray(raw.styles) ? raw.styles.map((style) => isRecord6(style) ? { ...style, tags: style.tags === void 0 ? [] : style.tags } : style) : raw.styles;
+  const firstStyle = Array.isArray(styles2) && isRecord6(styles2[0]) && typeof styles2[0].style_name === "string" ? styles2[0].style_name : void 0;
   const source = raw.source === void 0 ? {} : raw.source;
-  const normalizedSource = isRecord5(source) ? {
+  const normalizedSource = isRecord6(source) ? {
     ...source,
     entries: source.entries === void 0 ? [] : source.entries,
     urls: source.urls === void 0 ? [] : source.urls
@@ -18419,7 +18993,7 @@ function normalizeMacroDraft(raw, current = false) {
     description: raw.description === void 0 ? "" : raw.description,
     source: normalizedSource,
     kind: current && raw.kind === void 0 ? "const" : raw.kind,
-    dynamic_arity: raw.dynamic_arity === void 0 ? Array.isArray(styles2) && styles2.some((style) => isRecord5(style) && (current ? macroV11TemplateUsesVariadic(style.template) : templateUsesVariadic(style.template))) : raw.dynamic_arity,
+    dynamic_arity: raw.dynamic_arity === void 0 ? Array.isArray(styles2) && styles2.some((style) => isRecord6(style) && (current ? macroV11TemplateUsesVariadic(style.template) : templateUsesVariadic(style.template))) : raw.dynamic_arity,
     ...current ? {} : {
       default_style: raw.default_style === void 0 ? firstStyle ? { en: firstStyle } : void 0 : raw.default_style
     },
@@ -18428,8 +19002,8 @@ function normalizeMacroDraft(raw, current = false) {
   };
 }
 function macroV11TemplateUsesVariadic(value) {
-  if (!isRecord5(value)) return false;
-  if (value.type === "i18n" && isRecord5(value.values)) {
+  if (!isRecord6(value)) return false;
+  if (value.type === "i18n" && isRecord6(value.values)) {
     return Object.values(value.values).some(macroV11TemplateUsesVariadic);
   }
   return templateUsesVariadic(value.body);
@@ -18450,7 +19024,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     ]);
     const normalized = normalizeEntryDraft(raw, options.package);
     const issues = [];
-    if (isRecord5(raw) && options.package !== void 0 && Object.prototype.hasOwnProperty.call(raw, "package") && (typeof raw.package !== "string" || raw.package.trim() !== options.package.trim())) {
+    if (isRecord6(raw) && options.package !== void 0 && Object.prototype.hasOwnProperty.call(raw, "package") && (typeof raw.package !== "string" || raw.package.trim() !== options.package.trim())) {
       issues.push({
         severity: "error",
         code: "entry.package-mismatch",
@@ -18465,7 +19039,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       strictMacros: options.strictMacros
     });
     issues.push(...report.issues);
-    const packageValue = isRecord5(normalized) ? normalized.package : void 0;
+    const packageValue = isRecord6(normalized) ? normalized.package : void 0;
     let packageId = "";
     if (typeof packageValue !== "string" || packageValue.length === 0) {
       issues.push({
@@ -18496,7 +19070,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       });
     }
     if (issues.some((issue) => issue.code === "entry.duplicate-id")) {
-      const id = isRecord5(normalized) && typeof normalized.id === "string" ? normalized.id : "";
+      const id = isRecord6(normalized) && typeof normalized.id === "string" ? normalized.id : "";
       return {
         status: "conflict",
         entity: "entry",
@@ -18593,7 +19167,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
     }
     const current = usesCurrentEntitySchemas(config);
     const normalized = normalizeMacroDraft(raw, current);
-    const name = isRecord5(normalized) && typeof normalized.name === "string" ? normalized.name : "";
+    const name = isRecord6(normalized) && typeof normalized.name === "string" ? normalized.name : "";
     if (!name || /[@#$%\s()[\]{}]/u.test(name)) {
       issues.push({
         severity: "error",
@@ -18602,7 +19176,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
         path: "name"
       });
     }
-    const macroBody = isRecord5(normalized) ? Object.fromEntries(Object.entries(normalized).filter(([key]) => key !== "name")) : normalized;
+    const macroBody = isRecord6(normalized) ? Object.fromEntries(Object.entries(normalized).filter(([key]) => key !== "name")) : normalized;
     const packageExists = Object.prototype.hasOwnProperty.call(packages, packageId);
     const synthetic = {
       version: current ? "11" : "8",
@@ -18672,7 +19246,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
     await readEntries(workspaceRoot);
     const packages = await readAllMacroPackages(workspaceRoot);
     const issues = [];
-    if (!isRecord5(raw)) {
+    if (!isRecord6(raw)) {
       issues.push({ severity: "error", code: "package.not-object", message: "Package draft must be a JSON object." });
       return { status: "invalid", entity: "package", issues };
     }
@@ -18754,7 +19328,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
 
 // lib/entity-crud.ts
 var ENTITY_TYPES2 = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
-var isRecord6 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
+var isRecord7 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
 var sha = (value) => (0, import_node_crypto4.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
 var compare = (a3, b2) => a3.id.localeCompare(b2.id);
 function docRoot(root) {
@@ -18787,7 +19361,7 @@ function managed(type, id, value, revisionSource = value) {
   return { type, id, revision: sha(revisionSource), value };
 }
 function requireRecord(value, label) {
-  if (!isRecord6(value))
+  if (!isRecord7(value))
     throw new Error(`${label} must be a JSON object.`);
   return value;
 }
@@ -18950,7 +19524,7 @@ async function entryRows(root, options = {}) {
   for (const value of values) {
     const persisted = await readRegularText(import_node_path2.default.join(doc, entryEntityPath(value.package ?? "", value.id)));
     const envelope = requireRecord(JSON.parse(persisted.text), "Entry envelope");
-    if (!isRecord6(envelope.entry) || sha(envelope.entry) !== sha(value))
+    if (!isRecord7(envelope.entry) || sha(envelope.entry) !== sha(value))
       throw new Error(`Entry ${JSON.stringify(value.id)} changed concurrently while listing; retry.`);
     rows.push(managed("entry", value.id, value, envelope));
   }
@@ -18965,7 +19539,7 @@ async function macroRows(root, options = {}) {
     for (const [name, body] of Object.entries(macroPackage.macros)) {
       const persisted = await readRegularText(import_node_path2.default.join(doc, macroEntityPath(pkg, name)));
       const envelope = requireRecord(JSON.parse(persisted.text), "Macro envelope");
-      const persistedMacro = isRecord6(envelope.macro) ? envelope.macro : void 0;
+      const persistedMacro = isRecord7(envelope.macro) ? envelope.macro : void 0;
       const persistedBody = persistedMacro ? Object.fromEntries(Object.entries(persistedMacro).filter(([key]) => key !== "name")) : void 0;
       if (envelope.package !== pkg || !persistedMacro || !persistedBody || persistedMacro.name !== name || sha(persistedBody) !== sha(body))
         throw new Error(`Macro ${JSON.stringify(`${pkg}::${name}`)} changed concurrently while listing; retry.`);
@@ -19134,14 +19708,14 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
     const values = config[field];
     if (!Array.isArray(values))
       throw new Error(`config.json#${field} must be an array.`);
-    const index = values.findIndex((v2) => isRecord6(v2) && v2.id === id);
+    const index = values.findIndex((v2) => isRecord7(v2) && v2.id === id);
     if (operation === "create") {
       const value2 = requireRecord(input, type);
       const problem2 = await validationMessage(root, type, value2);
       if (problem2)
         return invalid(problem2);
       const newId = requireId(value2);
-      if (values.some((v2) => isRecord6(v2) && v2.id === newId))
+      if (values.some((v2) => isRecord7(v2) && v2.id === newId))
         return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(newId)} already exists.` };
       const next2 = { ...config, [field]: [...values, value2] };
       const catalogProblem2 = currentKindCatalogProblem(config, next2);
@@ -19188,10 +19762,10 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
 async function validationMessage(root, type, value, currentId) {
   const stringField = (field) => typeof value[field] === "string" && value[field] !== "";
   if (type === "entry-kind") {
-    if (!stringField("id") || !(typeof value.name === "string" || isRecord6(value.name)) || !isRecord6(value.coloring) || typeof value.style !== "string")
+    if (!stringField("id") || !(typeof value.name === "string" || isRecord7(value.name)) || !isRecord7(value.coloring) || typeof value.style !== "string")
       return "Entry Kind requires non-empty id/name, coloring object, and string style.";
   } else if (type === "macro-kind") {
-    if (!stringField("id") || !stringField("name") || typeof value.description !== "string" || !isRecord6(value.coloring))
+    if (!stringField("id") || !stringField("name") || typeof value.description !== "string" || !isRecord7(value.coloring))
       return "Macro Kind requires non-empty id/name, string description, and coloring object.";
   } else if (type === "entry-package" || type === "macro-package") {
     if (!stringField("id") || !stringField("name") || typeof value.description !== "string")
@@ -19221,7 +19795,7 @@ async function validationMessage(root, type, value, currentId) {
     if (!entryIds.has(value.from) || !entryIds.has(value.to))
       return `Relationship endpoints must resolve to existing Entries; got ${JSON.stringify(value.from)} -> ${JSON.stringify(value.to)}.`;
   } else if (type === "library") {
-    if (!stringField("slug") || !isRecord6(value.meta) || !isRecord6(value.graph) || !Array.isArray(value.graph.nodes) || !Array.isArray(value.graph.relationships) || !isRecord6(value.counters) || !Array.isArray(value.counters.counters))
+    if (!stringField("slug") || !isRecord7(value.meta) || !isRecord7(value.graph) || !Array.isArray(value.graph.nodes) || !Array.isArray(value.graph.relationships) || !isRecord7(value.counters) || !Array.isArray(value.counters.counters))
       return "Library requires slug, meta, graph nodes/relationships, and counters.";
     const errors = lintGraph(value.graph, { poolEntries: await readEntries(root) }).issues.filter((issue) => issue.severity === "error");
     if (errors.length) return errors.map((issue) => `${issue.code}: ${issue.message}`).join("; ");
@@ -19415,13 +19989,13 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         const values = data.relationships;
         if (!Array.isArray(values))
           throw new Error("relationships.json#relationships must be an array.");
-        const lockedRelationship = values.find((row) => isRecord6(row) && row.id === id);
-        if (!isRecord6(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
+        const lockedRelationship = values.find((row) => isRecord7(row) && row.id === id);
+        if (!isRecord7(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
           return conflict(`relationship ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
         await options.beforeEntityInstall?.();
         await replaceJsonIfUnchanged(file, original.text, {
           ...data,
-          relationships: values.map((row) => isRecord6(row) && row.id === id ? value : row)
+          relationships: values.map((row) => isRecord7(row) && row.id === id ? value : row)
         });
       } else if (type === "library") {
         const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
@@ -19682,13 +20256,13 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       const values = data.relationships;
       if (!Array.isArray(values))
         throw new Error("relationships.json#relationships must be an array.");
-      const lockedRelationship = values.find((row) => isRecord6(row) && row.id === id);
-      if (!isRecord6(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
+      const lockedRelationship = values.find((row) => isRecord7(row) && row.id === id);
+      if (!isRecord7(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
         return conflict(`relationship ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
       await options.beforeEntityDelete?.();
       await replaceJsonIfUnchanged(file, original.text, {
         ...data,
-        relationships: values.filter((row) => !(isRecord6(row) && row.id === id))
+        relationships: values.filter((row) => !(isRecord7(row) && row.id === id))
       });
     } else if (type === "library") {
       const dir = import_node_path2.default.join(docRoot(root), "libraries", id);
@@ -19861,6 +20435,21 @@ function createEntityAdapter() {
       const entity = await getManagedEntity(request.root, typeOf(request.entityType), request.id);
       if (!entity) return { status: "not-found", code: "entity.not-found", message: `${request.entityType} ${JSON.stringify(request.id)} does not exist.` };
       return { entity, revision: entity.revision };
+    },
+    async renderEntry(request) {
+      try {
+        const rendered = await computeEntryBareLatex(request.root, request.id);
+        return { entryId: request.id, latex: rendered.output, notes: rendered.notes };
+      } catch (error) {
+        if (error instanceof EntryAnalysisError) {
+          return {
+            status: error.code === "entry.not-found" ? "not-found" : "invalid",
+            code: error.code,
+            message: error.message
+          };
+        }
+        throw error;
+      }
     },
     async apply(request) {
       const type = typeOf(request.entityType);

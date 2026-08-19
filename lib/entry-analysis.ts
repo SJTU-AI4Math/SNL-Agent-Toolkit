@@ -4,6 +4,13 @@ import type { EntryData, MacroPackageEntry } from './snl-doc-schema.ts';
 import { readActiveMacros, readEntries } from './snl-doc.ts';
 import { renderTreeAsLatex, type SynthResult } from './snl-render.ts';
 
+export class EntryAnalysisError extends Error {
+  public constructor(public readonly code: 'entry.not-found' | 'entry.invalid', message: string) {
+    super(message);
+    this.name = 'EntryAnalysisError';
+  }
+}
+
 export interface SnlStructuralMetrics {
   weakSemanticFreedom: number;
   strongSemanticFreedom: number;
@@ -96,15 +103,15 @@ export function analyzeStructuralIndex(root: SnlSyntaxTree, macros: SnlMacroSour
 async function loadEntry(root: string, id: string): Promise<{ entry: EntryData; entries: EntryData[]; macros: Record<string, MacroPackageEntry> }> {
   const [entries, macros] = await Promise.all([readEntries(root), readActiveMacros(root)]);
   const entry = entries.find((candidate) => candidate.id === id);
-  if (!entry) throw new Error(`Entry not found: ${id}`);
+  if (!entry) throw new EntryAnalysisError('entry.not-found', `Entry not found: ${id}`);
   return { entry, entries, macros };
 }
 
 function parseEntry(entry: EntryData, macros: Record<string, MacroPackageEntry>): SnlSyntaxTree {
   const snl = entry.content?.snl;
-  if (typeof snl !== 'string' || !snl.trim()) throw new Error(`Entry ${entry.id} has no SNL content.`);
+  if (typeof snl !== 'string' || !snl.trim()) throw new EntryAnalysisError('entry.invalid', `Entry ${entry.id} has no SNL content.`);
   const parsed = tryParseSnlSyntaxTree(snl);
-  if (!parsed.ok) throw new Error(`Entry ${entry.id} SNL parse failed: ${parsed.error}`);
+  if (!parsed.ok) throw new EntryAnalysisError('entry.invalid', `Entry ${entry.id} SNL parse failed: ${parsed.error}`);
   return resolveSnlSemantics(
     parsed.tree,
     macros as unknown as Parameters<typeof resolveSnlSemantics>[1],
@@ -120,5 +127,20 @@ export async function computeEntrySsi(root: string, id: string): Promise<SnlStru
 
 export async function computeEntryBareLatex(root: string, id: string): Promise<SynthResult> {
   const { entry, macros } = await loadEntry(root, id);
-  return renderTreeAsLatex(parseEntry(entry, macros), macros);
+  try {
+    const rendered = renderTreeAsLatex(parseEntry(entry, macros), macros);
+    if (rendered.output.includes('\\htmlData')) {
+      throw new EntryAnalysisError(
+        'entry.invalid',
+        `Entry ${entry.id} bare LaTeX synthesis produced forbidden \\htmlData.`,
+      );
+    }
+    return rendered;
+  } catch (error) {
+    if (error instanceof EntryAnalysisError) throw error;
+    throw new EntryAnalysisError(
+      'entry.invalid',
+      error instanceof Error ? error.message : String(error),
+    );
+  }
 }

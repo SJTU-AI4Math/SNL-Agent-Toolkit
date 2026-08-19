@@ -19018,6 +19018,12 @@ function renderNode(node, mode, macros2, notes) {
   }
   const template = style.template;
   const renderedChildren = children.map((c3) => renderNode(c3, mode, macros2, notes));
+  if (template.mode === "block") {
+    return {
+      output: `${name}(${renderedChildren.map((child) => child.output).join(", ")})`,
+      mode: "block"
+    };
+  }
   const wrappedChildren = mode === "latex" ? renderedChildren.map((child) => wrapForParent(child, template.mode)) : renderedChildren.map((child) => child.output);
   const values = {};
   wrappedChildren.forEach((v3, i6) => {

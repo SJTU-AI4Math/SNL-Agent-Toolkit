@@ -38,9 +38,9 @@
  *     `(a)/(b)`. If an agent needs pixel-perfect preview it should hit
  *     KaTeX directly.
  *   - Block renderers (`block_template_name`). Those are the
- *     "built-in with indices" side cat mentioned; they're just emitted
- *     as `[list](…)` / `[table](…)` placeholders so the surrounding
- *     structure stays legible.
+ *     host-specific "built-in with indices" side; this synth emits
+ *     `macro-name(rendered subtrees)` placeholders so the surrounding
+ *     semantic structure stays legible without compiling the block body.
  */
 
 import type {
@@ -523,6 +523,12 @@ function renderNode(
 
   const template = style.template;
   const renderedChildren = children.map((c) => renderNode(c, mode, macros, notes));
+  if (template.mode === 'block') {
+    return {
+      output: `${name}(${renderedChildren.map((child) => child.output).join(', ')})`,
+      mode: 'block',
+    };
+  }
   const wrappedChildren = mode === 'latex'
     ? renderedChildren.map((child) => wrapForParent(child, template.mode))
     : renderedChildren.map((child) => child.output);

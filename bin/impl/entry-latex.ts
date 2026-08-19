@@ -24,7 +24,6 @@ async function main(): Promise<number> {
   try {
     const entryId = parsed.positional[0];
     const rendered = await computeEntryBareLatex(path.resolve(String(parsed.flags.root)), entryId);
-    if (rendered.output.includes('\\htmlData')) throw new Error('Internal error: bare LaTeX output contains \\htmlData.');
     const result = { status: 'ok', entryId, latex: rendered.output, notes: rendered.notes };
     process.stdout.write(parsed.flags.json === true ? JSON.stringify(result, null, 2) + '\n' : rendered.output + '\n');
     return 0;

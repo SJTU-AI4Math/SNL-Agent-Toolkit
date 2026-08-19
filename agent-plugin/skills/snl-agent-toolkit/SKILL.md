@@ -33,6 +33,10 @@ The tool surface covers exactly eight entity families:
 
 Entry Packages and Macro Packages are distinct management projections over the current shared Package manifest. Do not infer that they are separate persisted files.
 
+## Reading one Entry
+
+Call `snl_entry_latex` with the workspace root and canonical Entry id when the task is to understand authored Entry content. It parses `content.snl`, resolves the active Macro catalog, and directly assembles bare LaTeX without the indexed `\htmlData` rendering layer. A Macro whose selected style has `mode: block` is represented conservatively as `macro-name(rendered subtrees)` instead of compiling its host-specific block body.
+
 ## Workflow
 
 1. Run `snl_workspace_validate` before a write sequence. Stop on schema, topology, or reference errors.

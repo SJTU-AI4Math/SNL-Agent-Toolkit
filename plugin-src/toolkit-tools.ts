@@ -26,6 +26,11 @@ export interface EntityGetRequest {
   id: string;
 }
 
+export interface EntryLatexRequest {
+  root: string;
+  id: string;
+}
+
 export interface EntityApplyRequest {
   root: string;
   entityType: EntityType;
@@ -38,6 +43,7 @@ export interface EntityApplyRequest {
 export interface EntityAdapter {
   list(request: EntityListRequest): Promise<unknown>;
   get(request: EntityGetRequest): Promise<unknown>;
+  renderEntry?(request: EntryLatexRequest): Promise<unknown>;
   apply(request: EntityApplyRequest): Promise<unknown>;
   validate(request: { root: string }): Promise<unknown>;
 }
@@ -106,6 +112,26 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
         return adapter.get({
           root: requiredString(input.root, 'root'), entityType: entityType(input.entityType),
           id: requiredString(input.id, 'id'),
+        });
+      },
+    },
+    {
+      name: 'snl_entry_latex',
+      description: 'Render one Entry as directly assembled bare LaTeX without htmlData wrappers; block macros become macro-name(rendered subtrees) placeholders.',
+      inputSchema: {
+        type: 'object', additionalProperties: false, required: ['root', 'id'],
+        properties: { root: baseProperties.root, id: { type: 'string', description: 'Canonical Entry id.' } },
+      },
+      async execute(raw) {
+        const input = object(raw);
+        if (!adapter.renderEntry) {
+          return {
+            status: 'unsupported', code: 'entry.render-unsupported',
+            message: 'This SNL entity adapter does not implement Entry LaTeX rendering.',
+          };
+        }
+        return adapter.renderEntry({
+          root: requiredString(input.root, 'root'), id: requiredString(input.id, 'id'),
         });
       },
     },
