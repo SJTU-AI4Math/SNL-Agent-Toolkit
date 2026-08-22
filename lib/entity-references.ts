@@ -27,6 +27,7 @@ import {
   macroEntityPath,
   packageManifestPath,
 } from './entity-storage.ts';
+import { isSnlIdentifier } from '@sjtu-ai4math/snl-basics/core';
 import { parseSnlSyntaxTree } from './snl-parser.ts';
 import { withWorkspaceDataLock } from './workspace-data-lock.ts';
 
@@ -1185,13 +1186,31 @@ function isPostfixAt(previous: SnlToken | undefined): boolean {
   return previous !== undefined && ['ident', 'delimited', 'rparen', 'rbracket'].includes(previous.type);
 }
 
+function codePointAt(source: string, index: number): string {
+  const point = source.codePointAt(index);
+  if (point === undefined) return '';
+  return String.fromCodePoint(point);
+}
+
+function isIdentifierStart(character: string): boolean {
+  if (!character) return false;
+  if (character.codePointAt(0)! <= 0x7f) return /[A-Za-z0-9_\\]/.test(character);
+  return isSnlIdentifier(character);
+}
+
+function isIdentifierContinuation(character: string): boolean {
+  if (!character) return false;
+  if (character.codePointAt(0)! <= 0x7f) return /[A-Za-z0-9_.\-]/.test(character);
+  return isSnlIdentifier(character);
+}
+
 function tokenizeSnl(source: string): SnlToken[] {
   const tokens: SnlToken[] = [];
   let i = 0;
   while (i < source.length) {
-    const ch = source[i];
-    if (/\s/.test(ch)) {
-      i++;
+    const ch = codePointAt(source, i);
+    if (' \t\r\n\f\v'.includes(ch)) {
+      i += ch.length;
       continue;
     }
     if (ch === '$' || ch === '%' || ch === '`') {
@@ -1202,9 +1221,14 @@ function tokenizeSnl(source: string): SnlToken[] {
       i = close + delimiter.length;
       continue;
     }
-    if (/[A-Za-z0-9_\\]/.test(ch)) {
-      const start = i++;
-      while (i < source.length && /[A-Za-z0-9_.\-]/.test(source[i])) i++;
+    if (isIdentifierStart(ch)) {
+      const start = i;
+      i += ch.length;
+      while (i < source.length) {
+        const continuation = codePointAt(source, i);
+        if (!isIdentifierContinuation(continuation)) break;
+        i += continuation.length;
+      }
       tokens.push({ type: 'ident', value: source.slice(start, i), start, end: i });
       continue;
     }
@@ -1213,8 +1237,8 @@ function tokenizeSnl(source: string): SnlToken[] {
     };
     const type = punctuation[ch];
     if (!type) throw new Error(`Malformed SNL: unexpected character ${JSON.stringify(ch)} at offset ${i}.`);
-    tokens.push({ type, value: ch, start: i, end: i + 1 });
-    i++;
+    tokens.push({ type, value: ch, start: i, end: i + ch.length });
+    i += ch.length;
   }
   return tokens;
 }

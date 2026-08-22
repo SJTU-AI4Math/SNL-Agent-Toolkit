@@ -2909,13 +2909,28 @@ function applyTextEdits(raw, edits) {
 function isPostfixAt(previous) {
   return previous !== void 0 && ["ident", "delimited", "rparen", "rbracket"].includes(previous.type);
 }
+function codePointAt(source, index) {
+  const point = source.codePointAt(index);
+  if (point === void 0) return "";
+  return String.fromCodePoint(point);
+}
+function isIdentifierStart(character) {
+  if (!character) return false;
+  if (character.codePointAt(0) <= 127) return /[A-Za-z0-9_\\]/.test(character);
+  return d(character);
+}
+function isIdentifierContinuation(character) {
+  if (!character) return false;
+  if (character.codePointAt(0) <= 127) return /[A-Za-z0-9_.\-]/.test(character);
+  return d(character);
+}
 function tokenizeSnl(source) {
   const tokens = [];
   let i3 = 0;
   while (i3 < source.length) {
-    const ch = source[i3];
-    if (/\s/.test(ch)) {
-      i3++;
+    const ch = codePointAt(source, i3);
+    if (" 	\r\n\f\v".includes(ch)) {
+      i3 += ch.length;
       continue;
     }
     if (ch === "$" || ch === "%" || ch === "`") {
@@ -2926,9 +2941,14 @@ function tokenizeSnl(source) {
       i3 = close + delimiter.length;
       continue;
     }
-    if (/[A-Za-z0-9_\\]/.test(ch)) {
-      const start = i3++;
-      while (i3 < source.length && /[A-Za-z0-9_.\-]/.test(source[i3])) i3++;
+    if (isIdentifierStart(ch)) {
+      const start = i3;
+      i3 += ch.length;
+      while (i3 < source.length) {
+        const continuation = codePointAt(source, i3);
+        if (!isIdentifierContinuation(continuation)) break;
+        i3 += continuation.length;
+      }
       tokens.push({ type: "ident", value: source.slice(start, i3), start, end: i3 });
       continue;
     }
@@ -2944,8 +2964,8 @@ function tokenizeSnl(source) {
     };
     const type = punctuation[ch];
     if (!type) throw new Error(`Malformed SNL: unexpected character ${JSON.stringify(ch)} at offset ${i3}.`);
-    tokens.push({ type, value: ch, start: i3, end: i3 + 1 });
-    i3++;
+    tokens.push({ type, value: ch, start: i3, end: i3 + ch.length });
+    i3 += ch.length;
   }
   return tokens;
 }

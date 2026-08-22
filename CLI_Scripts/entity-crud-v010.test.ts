@@ -85,6 +85,34 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(readBack?.value.title, '');
   });
 
+  it('deletes an unreferenced Entry when another canonical Entry uses Unicode identifiers', async () => {
+    const root = await fixtureCopy();
+    await mutateJson(
+      path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized')),
+      (envelope) => {
+        const entry = envelope.entry as Record<string, unknown>;
+        entry.content = { snl: 'Topology.τ(Théorie.groupe(élément), emoji.猫🐈(鱼))' };
+      },
+    );
+    const created = await createManagedEntity(root, 'entry', {
+      id: 'entry.delete-me',
+      package: 'Logic',
+      kind: 'definition',
+      title: 'Delete me',
+      content: {},
+      contribution_info: null,
+      pointer: null,
+    });
+    assert.equal(created.status, 'ok');
+    if (created.status !== 'ok') return;
+
+    const deleted = await deleteManagedEntity(
+      root, 'entry', 'entry.delete-me', created.entity.revision,
+    );
+    assert.equal(deleted.status, 'ok');
+    assert.equal(await getManagedEntity(root, 'entry', 'entry.delete-me'), undefined);
+  });
+
   it('rejects every missing required Entry schema-1 payload field', async () => {
     for (const field of ['kind', 'title', 'content', 'contribution_info', 'pointer']) {
       const root = await fixtureCopy();

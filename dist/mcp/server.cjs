@@ -18663,13 +18663,28 @@ function scanSnlReferences(source, options = {}) {
 function isPostfixAt(previous) {
   return previous !== void 0 && ["ident", "delimited", "rparen", "rbracket"].includes(previous.type);
 }
+function codePointAt(source, index) {
+  const point = source.codePointAt(index);
+  if (point === void 0) return "";
+  return String.fromCodePoint(point);
+}
+function isIdentifierStart(character) {
+  if (!character) return false;
+  if (character.codePointAt(0) <= 127) return /[A-Za-z0-9_\\]/.test(character);
+  return d(character);
+}
+function isIdentifierContinuation(character) {
+  if (!character) return false;
+  if (character.codePointAt(0) <= 127) return /[A-Za-z0-9_.\-]/.test(character);
+  return d(character);
+}
 function tokenizeSnl(source) {
   const tokens = [];
   let i4 = 0;
   while (i4 < source.length) {
-    const ch2 = source[i4];
-    if (/\s/.test(ch2)) {
-      i4++;
+    const ch2 = codePointAt(source, i4);
+    if (" 	\r\n\f\v".includes(ch2)) {
+      i4 += ch2.length;
       continue;
     }
     if (ch2 === "$" || ch2 === "%" || ch2 === "`") {
@@ -18680,9 +18695,14 @@ function tokenizeSnl(source) {
       i4 = close2 + delimiter.length;
       continue;
     }
-    if (/[A-Za-z0-9_\\]/.test(ch2)) {
-      const start = i4++;
-      while (i4 < source.length && /[A-Za-z0-9_.\-]/.test(source[i4])) i4++;
+    if (isIdentifierStart(ch2)) {
+      const start = i4;
+      i4 += ch2.length;
+      while (i4 < source.length) {
+        const continuation = codePointAt(source, i4);
+        if (!isIdentifierContinuation(continuation)) break;
+        i4 += continuation.length;
+      }
       tokens.push({ type: "ident", value: source.slice(start, i4), start, end: i4 });
       continue;
     }
@@ -18698,8 +18718,8 @@ function tokenizeSnl(source) {
     };
     const type = punctuation[ch2];
     if (!type) throw new Error(`Malformed SNL: unexpected character ${JSON.stringify(ch2)} at offset ${i4}.`);
-    tokens.push({ type, value: ch2, start: i4, end: i4 + 1 });
-    i4++;
+    tokens.push({ type, value: ch2, start: i4, end: i4 + ch2.length });
+    i4 += ch2.length;
   }
   return tokens;
 }

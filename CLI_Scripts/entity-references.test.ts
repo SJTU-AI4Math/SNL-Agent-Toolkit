@@ -158,6 +158,17 @@ describe('SNL structured reference scanner', () => {
       ['macro', 'root'], ['macro', 'x'], ['macro', 'x'], ['macro', 'x'], ['entry', 'entry.old'],
     ]);
   });
+
+  it('scans the same Unicode identifiers accepted by the authority parser', () => {
+    const refs = scanSnlReferences('Topology.τ(Théorie.groupe(élément), emoji.猫🐈(鱼))');
+    assert.deepEqual(refs.map((r) => [r.entityType, r.id]), [
+      ['macro', 'Topology.τ'],
+      ['macro', 'Théorie.groupe'],
+      ['macro', 'élément'],
+      ['macro', 'emoji.猫🐈'],
+      ['macro', '鱼'],
+    ]);
+  });
 });
 
 describe('findEntityReferences', () => {
