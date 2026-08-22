@@ -283,6 +283,22 @@ async function readLibraryDirectoryValue(dir: string, slug: string): Promise<Rec
     }
     return { slug, meta, graph, counters };
 }
+async function readLibraryRow(root: string, slug: string): Promise<ManagedEntity | undefined> {
+    if (slug === "" || path.basename(slug) !== slug || slug === "." || slug === "..") return undefined;
+    const base = path.join(docRoot(root), "libraries");
+    try { await readDirectoryIdentity(base); }
+    catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+        throw error;
+    }
+    const dir = path.join(base, slug);
+    try { await readDirectoryIdentity(dir); }
+    catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+        throw error;
+    }
+    return managed("library", slug, await readLibraryDirectoryValue(dir, slug));
+}
 async function libraryRows(root: string): Promise<ManagedEntity[]> { const base = path.join(docRoot(root), "libraries"); const rows: ManagedEntity[] = []; let entries; try {
     const baseStat = await fs.lstat(base);
     if (!baseStat.isDirectory() || baseStat.isSymbolicLink())
@@ -371,30 +387,11 @@ export async function validateManagedWorkspace(root: string): Promise<{
     return { valid: !issues.some(issue => issue.severity === "error"), counts, issues };
 }
 
-async function getLibraryEntity(root: string, id: string): Promise<ManagedEntity | undefined> {
-    if (path.basename(id) !== id || id === "." || id === "..") throw new Error("Library slug must be one safe path segment.");
-    const base = path.join(docRoot(root), "libraries");
-    let baseStat;
-    try { baseStat = await fs.lstat(base); }
-    catch (error) {
-        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
-        throw error;
-    }
-    if (!baseStat.isDirectory() || baseStat.isSymbolicLink()) throw new Error(`${base} must be a regular, non-symlink Library directory.`);
-    const dir = path.join(base, id);
-    let stat;
-    try { stat = await fs.lstat(dir); }
-    catch (error) {
-        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
-        throw error;
-    }
-    if (!stat.isDirectory() || stat.isSymbolicLink()) throw new Error(`${dir} must be a regular, non-symlink Library directory.`);
-    return managed("library", id, await readLibraryDirectoryValue(dir, id));
-}
-
 export async function getManagedEntity(root: string, type: ManagedEntityType, id: string): Promise<ManagedEntity | undefined> {
-    await assertWorkspace(root);
-    if (type === "library") return getLibraryEntity(root, id);
+    if (type === "library") {
+        await assertWorkspace(root);
+        return readLibraryRow(root, id);
+    }
     return (await listManagedEntities(root, type)).find(item => item.id === id);
 }
 function invalid(message: string): EntityMutationResult { return { status: "invalid", code: "entity.invalid", message }; }

@@ -20466,6 +20466,24 @@ async function readLibraryDirectoryValue(dir, slug) {
   }
   return { slug, meta, graph, counters };
 }
+async function readLibraryRow(root, slug) {
+  if (slug === "" || path7.basename(slug) !== slug || slug === "." || slug === "..") return void 0;
+  const base = path7.join(docRoot(root), "libraries");
+  try {
+    await readDirectoryIdentity(base);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  const dir = path7.join(base, slug);
+  try {
+    await readDirectoryIdentity(dir);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  return managed("library", slug, await readLibraryDirectoryValue(dir, slug));
+}
 async function libraryRows(root) {
   const base = path7.join(docRoot(root), "libraries");
   const rows = [];
@@ -20560,31 +20578,11 @@ async function validateManagedWorkspace(root) {
   }
   return { valid: !issues.some((issue) => issue.severity === "error"), counts, issues };
 }
-async function getLibraryEntity(root, id) {
-  if (path7.basename(id) !== id || id === "." || id === "..") throw new Error("Library slug must be one safe path segment.");
-  const base = path7.join(docRoot(root), "libraries");
-  let baseStat;
-  try {
-    baseStat = await fs5.lstat(base);
-  } catch (error) {
-    if (error.code === "ENOENT") return void 0;
-    throw error;
-  }
-  if (!baseStat.isDirectory() || baseStat.isSymbolicLink()) throw new Error(`${base} must be a regular, non-symlink Library directory.`);
-  const dir = path7.join(base, id);
-  let stat;
-  try {
-    stat = await fs5.lstat(dir);
-  } catch (error) {
-    if (error.code === "ENOENT") return void 0;
-    throw error;
-  }
-  if (!stat.isDirectory() || stat.isSymbolicLink()) throw new Error(`${dir} must be a regular, non-symlink Library directory.`);
-  return managed("library", id, await readLibraryDirectoryValue(dir, id));
-}
 async function getManagedEntity(root, type, id) {
-  await assertWorkspace(root);
-  if (type === "library") return getLibraryEntity(root, id);
+  if (type === "library") {
+    await assertWorkspace(root);
+    return readLibraryRow(root, id);
+  }
   return (await listManagedEntities(root, type)).find((item) => item.id === id);
 }
 function invalid(message) {
