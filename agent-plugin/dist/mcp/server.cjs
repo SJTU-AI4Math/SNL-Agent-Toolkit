@@ -216,7 +216,7 @@ function createToolkitTools(adapter) {
   ];
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
   return {
     macro_name: e,
@@ -636,7 +636,7 @@ function O(e, t3) {
   };
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
@@ -804,7 +804,7 @@ ${" ".repeat(this.indentSpaces * t3)})`;
 };
 var J = new q(0, 2 ** 53 - 1);
 
-// node_modules/katex/dist/katex.mjs
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -15302,7 +15302,7 @@ var katex = {
   __domTree
 };
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t2(t3) {
   let n3 = /* @__PURE__ */ new Set();
   if (!t3.trim()) return n3;
@@ -17458,7 +17458,7 @@ var import_node_fs3 = require("node:fs");
 var import_node_fs4 = require("node:fs");
 var path5 = __toESM(require("node:path"), 1);
 
-// node_modules/jsonc-parser/lib/esm/impl/scanner.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text2, ignoreTrivia = false) {
   const len = text2.length;
   let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
@@ -17879,7 +17879,7 @@ var CharacterCodes;
   CharacterCodes2[CharacterCodes2["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
 
-// node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
   return " ".repeat(index);
 });
@@ -17909,7 +17909,7 @@ var cachedBreakLinesWithSpaces = {
   }
 };
 
-// node_modules/jsonc-parser/lib/esm/impl/parser.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
 (function(ParseOptions2) {
   ParseOptions2.DEFAULT = {
@@ -18300,7 +18300,7 @@ function getNodeType(value) {
   }
 }
 
-// node_modules/jsonc-parser/lib/esm/main.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError2) {
   ScanError2[ScanError2["None"] = 0] = "None";
@@ -19768,7 +19768,31 @@ async function validateManagedWorkspace(root) {
   }
   return { valid: !issues.some((issue) => issue.severity === "error"), counts, issues };
 }
+async function getLibraryEntity(root, id) {
+  if (import_node_path2.default.basename(id) !== id || id === "." || id === "..") throw new Error("Library slug must be one safe path segment.");
+  const base = import_node_path2.default.join(docRoot(root), "libraries");
+  let baseStat;
+  try {
+    baseStat = await import_node_fs6.promises.lstat(base);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  if (!baseStat.isDirectory() || baseStat.isSymbolicLink()) throw new Error(`${base} must be a regular, non-symlink Library directory.`);
+  const dir = import_node_path2.default.join(base, id);
+  let stat;
+  try {
+    stat = await import_node_fs6.promises.lstat(dir);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  if (!stat.isDirectory() || stat.isSymbolicLink()) throw new Error(`${dir} must be a regular, non-symlink Library directory.`);
+  return managed("library", id, await readLibraryDirectoryValue(dir, id));
+}
 async function getManagedEntity(root, type, id) {
+  await assertWorkspace(root);
+  if (type === "library") return getLibraryEntity(root, id);
   return (await listManagedEntities(root, type)).find((item) => item.id === id);
 }
 function invalid(message) {
