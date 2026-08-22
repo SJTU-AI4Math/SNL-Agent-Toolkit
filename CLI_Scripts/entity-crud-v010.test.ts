@@ -435,6 +435,33 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal((await readdir(path.join(root, '.SNL_Doc', 'packages'))).some(name => name.startsWith('NewPkg-')), false);
   });
 
+  it('targets one Library for get and update while list remains fail-closed on malformed siblings', async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const targetDir = path.join(libraries, 'target');
+    const malformedDir = path.join(libraries, 'malformed');
+    await mkdir(targetDir, { recursive: true });
+    await writeFile(path.join(targetDir, 'meta.json'), '{"title":"before"}\n');
+    await writeFile(path.join(targetDir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    await writeFile(path.join(targetDir, 'counters.json'), '{"counters":[]}\n');
+    await mkdir(malformedDir);
+    await writeFile(path.join(malformedDir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+
+    await assert.rejects(() => listManagedEntities(root, 'library'), /meta\.json|ENOENT/i);
+    await assert.rejects(() => getManagedEntity(root, 'library', 'malformed'), /meta\.json|ENOENT/i);
+    const target = await getManagedEntity(root, 'library', 'target');
+    assert.ok(target);
+    assert.equal((target.value.meta as Record<string, unknown>).title, 'before');
+
+    const result = await updateManagedEntity(root, 'library', 'target', {
+      ...target.value,
+      meta: { title: 'after' },
+    }, target.revision);
+    assert.equal(result.status, 'ok');
+    assert.equal((result.entity.value.meta as Record<string, unknown>).title, 'after');
+    assert.equal(JSON.parse(await readFile(path.join(targetDir, 'meta.json'), 'utf8')).title, 'after');
+  });
+
   it('rejects symlinked Relationship and Library payload files', async () => {
     const relationshipRoot = await fixtureCopy();
     const externalRelationship = path.join(relationshipRoot, 'outside-relationships.json');
@@ -451,6 +478,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     await writeFile(path.join(libraryDir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
     await writeFile(path.join(libraryDir, 'counters.json'), '{"counters":[]}\n');
     await assert.rejects(() => listManagedEntities(libraryRoot, 'library'), /symlink|ELOOP|regular/i);
+    await assert.rejects(() => getManagedEntity(libraryRoot, 'library', 'sample'), /symlink|ELOOP|regular/i);
   });
 
   it('rolls back earlier Library files without overwriting a concurrent replacement', async () => {

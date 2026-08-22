@@ -19674,6 +19674,24 @@ async function readLibraryDirectoryValue(dir, slug) {
   }
   return { slug, meta, graph, counters };
 }
+async function readLibraryRow(root, slug) {
+  if (import_node_path2.default.basename(slug) !== slug || slug === "." || slug === "..") return void 0;
+  const base = import_node_path2.default.join(docRoot(root), "libraries");
+  try {
+    await readDirectoryIdentity(base);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  const dir = import_node_path2.default.join(base, slug);
+  try {
+    await readDirectoryIdentity(dir);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  return managed("library", slug, await readLibraryDirectoryValue(dir, slug));
+}
 async function libraryRows(root) {
   const base = import_node_path2.default.join(docRoot(root), "libraries");
   const rows = [];
@@ -19769,6 +19787,10 @@ async function validateManagedWorkspace(root) {
   return { valid: !issues.some((issue) => issue.severity === "error"), counts, issues };
 }
 async function getManagedEntity(root, type, id) {
+  if (type === "library") {
+    await assertWorkspace(root);
+    return readLibraryRow(root, id);
+  }
   return (await listManagedEntities(root, type)).find((item) => item.id === id);
 }
 function invalid(message) {

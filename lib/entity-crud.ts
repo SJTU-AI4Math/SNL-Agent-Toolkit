@@ -283,6 +283,22 @@ async function readLibraryDirectoryValue(dir: string, slug: string): Promise<Rec
     }
     return { slug, meta, graph, counters };
 }
+async function readLibraryRow(root: string, slug: string): Promise<ManagedEntity | undefined> {
+    if (path.basename(slug) !== slug || slug === "." || slug === "..") return undefined;
+    const base = path.join(docRoot(root), "libraries");
+    try { await readDirectoryIdentity(base); }
+    catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+        throw error;
+    }
+    const dir = path.join(base, slug);
+    try { await readDirectoryIdentity(dir); }
+    catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+        throw error;
+    }
+    return managed("library", slug, await readLibraryDirectoryValue(dir, slug));
+}
 async function libraryRows(root: string): Promise<ManagedEntity[]> { const base = path.join(docRoot(root), "libraries"); const rows: ManagedEntity[] = []; let entries; try {
     const baseStat = await fs.lstat(base);
     if (!baseStat.isDirectory() || baseStat.isSymbolicLink())
@@ -371,7 +387,13 @@ export async function validateManagedWorkspace(root: string): Promise<{
     return { valid: !issues.some(issue => issue.severity === "error"), counts, issues };
 }
 
-export async function getManagedEntity(root: string, type: ManagedEntityType, id: string): Promise<ManagedEntity | undefined> { return (await listManagedEntities(root, type)).find(item => item.id === id); }
+export async function getManagedEntity(root: string, type: ManagedEntityType, id: string): Promise<ManagedEntity | undefined> {
+    if (type === "library") {
+        await assertWorkspace(root);
+        return readLibraryRow(root, id);
+    }
+    return (await listManagedEntities(root, type)).find(item => item.id === id);
+}
 function invalid(message: string): EntityMutationResult { return { status: "invalid", code: "entity.invalid", message }; }
 function conflict(message: string): EntityMutationResult { return { status: "conflict", code: "entity.revision-conflict", message }; }
 function currentKindCatalogProblem(config: RecordJson, next: RecordJson): string | undefined {
