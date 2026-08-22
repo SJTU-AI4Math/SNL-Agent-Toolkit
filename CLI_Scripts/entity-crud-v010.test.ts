@@ -373,6 +373,27 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.ok(await getManagedEntity(root, 'library', 'first'));
   });
 
+  it('gets and updates one Library without enumerating malformed sibling Libraries', async () => {
+    const root = await fixtureCopy();
+    const created = await createManagedEntity(root, 'library', {
+      slug: 'target', meta: { title: 'Target' },
+      graph: { nodes: [], relationships: [] }, counters: { counters: [] },
+    });
+    assert.equal(created.status, 'ok');
+
+    const broken = path.join(root, '.SNL_Doc', 'libraries', 'broken');
+    await mkdir(broken);
+    await writeFile(path.join(broken, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+
+    await assert.rejects(() => listManagedEntities(root, 'library'), /meta\.json/);
+    const target = await getManagedEntity(root, 'library', 'target');
+    assert.ok(target);
+    target.value.meta = { title: 'Updated' };
+    const updated = await updateManagedEntity(root, 'library', 'target', target.value, target.revision);
+    assert.equal(updated.status, 'ok');
+    assert.deepEqual((await getManagedEntity(root, 'library', 'target'))?.value.meta, { title: 'Updated' });
+  });
+
   it('rejects dangling Relationship endpoints and invalid Library graphs on mutation', async () => {
     const root = await fixtureCopy();
     const relationship = await createManagedEntity(root, 'relationship', {

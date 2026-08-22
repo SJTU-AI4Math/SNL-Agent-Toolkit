@@ -371,7 +371,32 @@ export async function validateManagedWorkspace(root: string): Promise<{
     return { valid: !issues.some(issue => issue.severity === "error"), counts, issues };
 }
 
-export async function getManagedEntity(root: string, type: ManagedEntityType, id: string): Promise<ManagedEntity | undefined> { return (await listManagedEntities(root, type)).find(item => item.id === id); }
+async function getLibraryEntity(root: string, id: string): Promise<ManagedEntity | undefined> {
+    if (path.basename(id) !== id || id === "." || id === "..") throw new Error("Library slug must be one safe path segment.");
+    const base = path.join(docRoot(root), "libraries");
+    let baseStat;
+    try { baseStat = await fs.lstat(base); }
+    catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+        throw error;
+    }
+    if (!baseStat.isDirectory() || baseStat.isSymbolicLink()) throw new Error(`${base} must be a regular, non-symlink Library directory.`);
+    const dir = path.join(base, id);
+    let stat;
+    try { stat = await fs.lstat(dir); }
+    catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") return undefined;
+        throw error;
+    }
+    if (!stat.isDirectory() || stat.isSymbolicLink()) throw new Error(`${dir} must be a regular, non-symlink Library directory.`);
+    return managed("library", id, await readLibraryDirectoryValue(dir, id));
+}
+
+export async function getManagedEntity(root: string, type: ManagedEntityType, id: string): Promise<ManagedEntity | undefined> {
+    await assertWorkspace(root);
+    if (type === "library") return getLibraryEntity(root, id);
+    return (await listManagedEntities(root, type)).find(item => item.id === id);
+}
 function invalid(message: string): EntityMutationResult { return { status: "invalid", code: "entity.invalid", message }; }
 function conflict(message: string): EntityMutationResult { return { status: "conflict", code: "entity.revision-conflict", message }; }
 function currentKindCatalogProblem(config: RecordJson, next: RecordJson): string | undefined {

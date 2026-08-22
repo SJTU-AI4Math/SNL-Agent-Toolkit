@@ -19788,7 +19788,31 @@ async function validateManagedWorkspace(root) {
   }
   return { valid: !issues.some((issue) => issue.severity === "error"), counts, issues };
 }
+async function getLibraryEntity(root, id) {
+  if (import_node_path2.default.basename(id) !== id || id === "." || id === "..") throw new Error("Library slug must be one safe path segment.");
+  const base = import_node_path2.default.join(docRoot(root), "libraries");
+  let baseStat;
+  try {
+    baseStat = await import_node_fs6.promises.lstat(base);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  if (!baseStat.isDirectory() || baseStat.isSymbolicLink()) throw new Error(`${base} must be a regular, non-symlink Library directory.`);
+  const dir = import_node_path2.default.join(base, id);
+  let stat;
+  try {
+    stat = await import_node_fs6.promises.lstat(dir);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  if (!stat.isDirectory() || stat.isSymbolicLink()) throw new Error(`${dir} must be a regular, non-symlink Library directory.`);
+  return managed("library", id, await readLibraryDirectoryValue(dir, id));
+}
 async function getManagedEntity(root, type, id) {
+  await assertWorkspace(root);
+  if (type === "library") return getLibraryEntity(root, id);
   return (await listManagedEntities(root, type)).find((item) => item.id === id);
 }
 function invalid(message) {
