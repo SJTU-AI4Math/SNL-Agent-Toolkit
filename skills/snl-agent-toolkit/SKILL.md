@@ -37,6 +37,10 @@ Entry Packages and Macro Packages are distinct management projections over the c
 
 Call `snl_entry_latex` with the workspace root and canonical Entry id when the task is to understand authored Entry content. It parses `content.snl`, resolves the active Macro catalog, and directly assembles bare LaTeX without the indexed `\htmlData` rendering layer. A Macro whose selected style has `mode: block` is represented conservatively as `macro-name(rendered subtrees)` instead of compiling its host-specific block body.
 
+## Reading one Library hierarchy
+
+Call `snl_library_entry_tree` with the workspace root and Library slug to obtain a folder-style multiline Entry tree. `language` selects localized Entry Kind names and titles. The independent boolean parameters `includeEntryKind`, `includeNumber`, `includeTitle`, `includeEntryId`, and `includeCounterId` default to true and control the corresponding line fields. Numbering follows the Library's branch reading order, per-occurrence `counterId`, Entry Kind fallback, and counter hierarchy.
+
 ## Workflow
 
 1. Run `snl_workspace_validate` before a write sequence. Stop on schema, topology, or reference errors.

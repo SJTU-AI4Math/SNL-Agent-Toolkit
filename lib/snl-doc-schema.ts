@@ -201,6 +201,18 @@ export interface LibraryGraph {
   relationships: GraphRelationship[];
 }
 
+/** One node in a Library-scoped counter hierarchy. */
+export interface CounterNode {
+  id: string;
+  name: string;
+  numbering: string;
+  children: CounterNode[];
+}
+
+export interface LibraryCountersFile {
+  counters: CounterNode[];
+}
+
 // ===========================================================================
 // macros/*.json — inner Macro payload and synthetic Package compatibility view
 // ===========================================================================

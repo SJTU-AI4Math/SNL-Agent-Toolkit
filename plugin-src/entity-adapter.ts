@@ -9,12 +9,14 @@ import {
   validateManagedWorkspace,
   type ManagedEntityType,
 } from '../lib/entity-crud.ts';
+import { renderLibraryEntryTree, LibraryEntryTreeError } from '../lib/library-entry-tree.ts';
 import type {
   EntityAdapter,
   EntityApplyRequest,
   EntityGetRequest,
   EntityListRequest,
   EntryLatexRequest,
+  LibraryEntryTreeRequest,
 } from './toolkit-tools.ts';
 
 function typeOf(value: string): ManagedEntityType {
@@ -58,6 +60,28 @@ export function createEntityAdapter(): EntityAdapter {
         if (error instanceof EntryAnalysisError) {
           return {
             status: error.code === 'entry.not-found' ? 'not-found' : 'invalid',
+            code: error.code,
+            message: error.message,
+          };
+        }
+        throw error;
+      }
+    },
+
+    async renderLibraryTree(request: LibraryEntryTreeRequest) {
+      try {
+        return await renderLibraryEntryTree(request.root, request.librarySlug, {
+          ...(request.language !== undefined ? { language: request.language } : {}),
+          ...(request.includeEntryKind !== undefined ? { includeEntryKind: request.includeEntryKind } : {}),
+          ...(request.includeNumber !== undefined ? { includeNumber: request.includeNumber } : {}),
+          ...(request.includeTitle !== undefined ? { includeTitle: request.includeTitle } : {}),
+          ...(request.includeEntryId !== undefined ? { includeEntryId: request.includeEntryId } : {}),
+          ...(request.includeCounterId !== undefined ? { includeCounterId: request.includeCounterId } : {}),
+        });
+      } catch (error) {
+        if (error instanceof LibraryEntryTreeError) {
+          return {
+            status: error.code === 'library.not-found' ? 'not-found' : 'invalid',
             code: error.code,
             message: error.message,
           };

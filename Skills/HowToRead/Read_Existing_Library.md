@@ -18,6 +18,10 @@ Read these files together:
 - `graph.json` — selected Entry occurrences and branch order;
 - `counters.json` — numbering hierarchy and counter names.
 
+## Agent-facing tree view
+
+Use `snl_library_entry_tree` for a compact folder-style rendering of the Library hierarchy. Pass `language` for localized Entry Kind names and titles, and independently toggle kind, number, title, Entry id, and Counter id fields. Use the lower-level steps below when auditing unresolved references or the exact graph/counter mechanics.
+
 ## 3. Reconstruct reading order
 
 From `graph.json`:

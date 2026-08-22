@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
-import { resolve } from 'node:path';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import test from 'node:test';
 
 import { generatedMetadata } from '../scripts/generate-plugin-metadata.mjs';
@@ -85,7 +86,7 @@ test('prebuilt DSH adapter bundles defineTool instead of importing a second Harn
   };
   await loaded.apply({ tools: { register(tool: Record<string, any>) { registered.push(tool); } } }, { adapter: noopAdapter });
   await assert.rejects(
-    registered[4].execute({ root: 42 }, { signal: new AbortController().signal }),
+    registered[5].execute({ root: 42 }, { signal: new AbortController().signal }),
     (error: unknown) => error instanceof Error
       && error.name === 'ToolArgsError'
       && (error as Error & { code?: string }).code === 'INVALID_ARGS',
@@ -126,7 +127,7 @@ test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', 
   });
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })}\n`);
   const response = JSON.parse((await output).trim()) as { result: { tools: unknown[] } };
-  assert.equal(response.result.tools.length, 5);
+  assert.equal(response.result.tools.length, 6);
   child.kill();
 });
 
@@ -185,4 +186,101 @@ test('prebuilt MCP artifact executes the first-class Entry LaTeX tool', async ()
     entryId: 'entry.localized', latex: '#0 \\to #1', notes: [],
   });
   child.kill();
+});
+
+
+test('prebuilt MCP artifact prints a real Library Entry tree', async () => {
+  const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const output = new Promise<string>((resolveOutput, reject) => {
+    let text = '';
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (chunk: string) => { text += chunk; if (text.includes('\n')) resolveOutput(text); });
+    child.once('error', reject);
+    child.once('exit', (code) => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
+  });
+  child.stdin.write(`${JSON.stringify({
+    jsonrpc: '2.0', id: 4, method: 'tools/call',
+    params: {
+      name: 'snl_library_entry_tree',
+      arguments: {
+        root,
+        librarySlug: 'commands',
+        language: 'en',
+        includeCounterId: false,
+      },
+    },
+  })}\n`);
+  try {
+    const response = JSON.parse((await output).trim()) as {
+      result: { structuredContent: { librarySlug: string; tree: string; lineCount: number }; isError?: boolean };
+    };
+    assert.equal(response.result.isError, undefined);
+    assert.equal(response.result.structuredContent.librarySlug, 'commands');
+    assert.ok(response.result.structuredContent.lineCount > 0);
+    assert.equal(
+      response.result.structuredContent.tree.split('\n').length,
+      response.result.structuredContent.lineCount,
+    );
+    assert.match(response.result.structuredContent.tree, /^[├└]── /);
+  } finally {
+    child.kill();
+  }
+});
+
+
+test('prebuilt MCP rejects unresolved explicit and ambiguous named Counters', async () => {
+  const parent = await mkdtemp(join(tmpdir(), 'snl-prebuilt-counter-errors-'));
+  const workspace = join(parent, 'workspace');
+  const invoke = async (): Promise<Record<string, unknown>> => {
+    const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+    const output = new Promise<string>((resolveOutput, reject) => {
+      let text = '';
+      child.stdout.setEncoding('utf8');
+      child.stdout.on('data', (chunk: string) => { text += chunk; if (text.includes('\n')) resolveOutput(text); });
+      child.once('error', reject);
+      child.once('exit', (code) => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
+    });
+    child.stdin.write(`${JSON.stringify({
+      jsonrpc: '2.0', id: 5, method: 'tools/call',
+      params: { name: 'snl_library_entry_tree', arguments: { root: workspace, librarySlug: 'demo' } },
+    })}\n`);
+    try {
+      const response = JSON.parse((await output).trim()) as { result: { structuredContent: Record<string, unknown> } };
+      return response.result.structuredContent;
+    } finally {
+      child.kill();
+    }
+  };
+  try {
+    await cp(resolve(root, 'CLI_Scripts/fixtures/workspace-v0.1.0'), workspace, { recursive: true });
+    const library = join(workspace, '.SNL_Doc', 'libraries', 'demo');
+    await mkdir(library, { recursive: true });
+    await writeFile(join(library, 'meta.json'), '{"title":"Demo"}');
+    await writeFile(join(library, 'graph.json'), JSON.stringify({
+      nodes: [{ id: 'node-1', label: 'Entry', props: { entryId: 'entry.localized', counterId: 'missing-explicit' } }],
+      relationships: [],
+    }));
+    await writeFile(join(library, 'counters.json'), JSON.stringify({
+      counters: [{ id: 'definition-counter', name: 'Definition', numbering: '1', children: [] }],
+    }));
+    const missing = await invoke();
+    assert.equal(missing.status, 'invalid');
+    assert.equal(missing.code, 'library.invalid');
+    assert.match(String(missing.message), /explicit counterId .*missing-explicit.* does not exist/);
+
+    await writeFile(join(library, 'graph.json'), JSON.stringify({
+      nodes: [{ id: 'node-1', label: 'Entry', props: { entryId: 'entry.localized' } }],
+      relationships: [],
+    }));
+    await writeFile(join(library, 'counters.json'), JSON.stringify({ counters: [
+      { id: 'first', name: 'Definition', numbering: '1', children: [] },
+      { id: 'second', name: 'Definition', numbering: 'A', children: [] },
+    ] }));
+    const ambiguous = await invoke();
+    assert.equal(ambiguous.status, 'invalid');
+    assert.equal(ambiguous.code, 'library.invalid');
+    assert.match(String(ambiguous.message), /Duplicate Counter name .*Definition.* ambiguous/);
+  } finally {
+    await rm(parent, { recursive: true, force: true });
+  }
 });

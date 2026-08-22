@@ -1,6 +1,6 @@
 # Entity adapter contract
 
-The shared Plugin surface delegates storage operations to one adapter. A host adapter must expose asynchronous `list`, `get`, `apply`, and `validate` methods. It may additionally expose `renderEntry`; adapters written against the earlier four-method contract remain loadable, and `snl_entry_latex` returns a structured `entry.render-unsupported` result when that optional projection is absent.
+The shared Plugin surface delegates storage operations to one adapter. A host adapter must expose asynchronous `list`, `get`, `apply`, and `validate` methods. It may additionally expose `renderEntry` and `renderLibraryTree`; adapters written against the earlier four-method contract remain loadable, and the corresponding projection tool returns a structured unsupported result when an optional method is absent.
 
 ## Entity identities
 
@@ -30,3 +30,7 @@ Return JSON-serializable values only. Domain invalid/not-found/conflict outcomes
 When implemented, `renderEntry({ root, id })` returns directly assembled bare LaTeX and non-fatal notes for one canonical Entry id. It must parse `content.snl` against the active Macro catalog without emitting `\htmlData` wrappers. When the selected Macro style is `block`, it must emit `macro-name(rendered subtrees)` rather than compile the host-specific block template.
 
 Missing Entries and malformed Entry content return structured `not-found` or `invalid` domain results. Workspace, invocation, and internal failures may still throw.
+
+## Library Entry tree projection
+
+When implemented, `renderLibraryTree(request)` returns one folder-style multiline string plus Library metadata. `request.language` selects localized Entry Kind names and titles. `includeEntryKind`, `includeNumber`, `includeTitle`, `includeEntryId`, and `includeCounterId` are independent optional booleans that default to true. Numbering must use branch reading order, explicit occurrence `counterId`, Entry Kind `defaultCounterName` fallback, and the Library counter hierarchy. An explicit `counterId` must resolve and duplicate Counter names are invalid because name fallback would be ambiguous. Placeholder nodes remain visible so they do not collapse the authored tree shape.

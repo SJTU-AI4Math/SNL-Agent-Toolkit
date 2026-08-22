@@ -75,11 +75,12 @@ MIT (TBD — will match SNL-Doc-Extension once that repository picks one).
 
 ## Agent Plugin
 
-The repository ships one prebuilt Node core, one shared Agent Skill, one stdio MCP server, and thin manifests for Claude Code, Codex, Hermes Agent, and DeepSeek Harness. The five MCP tools expose one Entry-reading projection plus all managed entity families through a stable surface:
+The repository ships one prebuilt Node core, one shared Agent Skill, one stdio MCP server, and thin manifests for Claude Code, Codex, Hermes Agent, and DeepSeek Harness. The six MCP tools expose Entry and Library reading projections plus all managed entity families through a stable surface:
 
 - `snl_entities_list`
 - `snl_entity_get`
 - `snl_entry_latex` — directly assembled bare LaTeX; block macros become `macro-name(rendered subtrees)` placeholders
+- `snl_library_entry_tree` — folder-style multiline Library hierarchy with field and language controls
 - `snl_entity_apply` (`create`, `update`, `delete` with revision CAS)
 - `snl_workspace_validate`
 
@@ -115,7 +116,7 @@ hermes mcp add snl-agent-toolkit \
   --command node \
   --args ~/.hermes/vendor/snl-agent-toolkit/dist/mcp/server.cjs
 hermes mcp test snl-agent-toolkit
-# Start a new Hermes session so the Skill and five MCP tools enter its fixed tool/context set.
+# Start a new Hermes session so the Skill and six MCP tools enter its fixed tool/context set.
 
 # DeepSeek Harness profile bundle, from a checkout or packed npm artifact
 dsh plugin --profile default add .

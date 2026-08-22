@@ -49,6 +49,11 @@ function requiredString(value, name) {
   if (typeof value !== "string" || value.trim() === "") throw new TypeError(`${name} must be a non-empty string`);
   return value;
 }
+function optionalBoolean(value, name) {
+  if (value === void 0) return void 0;
+  if (typeof value !== "boolean") throw new TypeError(`${name} must be a boolean`);
+  return value;
+}
 function entityType(value) {
   if (!ENTITY_TYPES.includes(value)) {
     throw new TypeError(`entityType must be one of: ${ENTITY_TYPES.join(", ")}`);
@@ -123,6 +128,45 @@ function createToolkitTools(adapter) {
           root: requiredString(input.root, "root"),
           id: requiredString(input.id, "id")
         });
+      }
+    },
+    {
+      name: "snl_library_entry_tree",
+      description: "Print one Library hierarchy as a folder-style multiline Entry tree with configurable fields and language.",
+      inputSchema: {
+        type: "object",
+        additionalProperties: false,
+        required: ["root", "librarySlug"],
+        properties: {
+          root: baseProperties.root,
+          librarySlug: { type: "string", description: "Canonical Library slug." },
+          language: { type: "string", description: "Preferred language tag for localized Entry Kind names and titles." },
+          includeEntryKind: { type: "boolean", description: "Include [Entry Kind]. Default true." },
+          includeNumber: { type: "boolean", description: "Include the resolved Library counter number. Default true." },
+          includeTitle: { type: "boolean", description: "Include the localized Entry title. Default true." },
+          includeEntryId: { type: "boolean", description: "Include <entry id>. Default true." },
+          includeCounterId: { type: "boolean", description: "Include (counter id: ...). Default true." }
+        }
+      },
+      async execute(raw) {
+        const input = object(raw);
+        if (!adapter.renderLibraryTree) {
+          return {
+            status: "unsupported",
+            code: "library.tree-unsupported",
+            message: "This SNL entity adapter does not implement Library Entry tree rendering."
+          };
+        }
+        const request = {
+          root: requiredString(input.root, "root"),
+          librarySlug: requiredString(input.librarySlug, "librarySlug"),
+          ...input.language !== void 0 ? { language: requiredString(input.language, "language") } : {}
+        };
+        for (const name of ["includeEntryKind", "includeNumber", "includeTitle", "includeEntryId", "includeCounterId"]) {
+          const value = optionalBoolean(input[name], name);
+          if (value !== void 0) request[name] = value;
+        }
+        return adapter.renderLibraryTree(request);
       }
     },
     {
@@ -15719,6 +15763,21 @@ function packageManifestsDir(workspaceRoot) {
 function termMacrosDir(workspaceRoot) {
   return path3.join(snlDocRoot(workspaceRoot), "term_macros");
 }
+function librariesDir(workspaceRoot) {
+  return path3.join(snlDocRoot(workspaceRoot), "libraries");
+}
+function libraryDir(workspaceRoot, slug) {
+  return path3.join(librariesDir(workspaceRoot), slug);
+}
+function libraryGraphPath(workspaceRoot, slug) {
+  return path3.join(libraryDir(workspaceRoot, slug), "graph.json");
+}
+function libraryMetaPath(workspaceRoot, slug) {
+  return path3.join(libraryDir(workspaceRoot, slug), "meta.json");
+}
+function libraryCountersPath(workspaceRoot, slug) {
+  return path3.join(libraryDir(workspaceRoot, slug), "counters.json");
+}
 async function pathExists(p3) {
   try {
     await import_node_fs2.promises.lstat(p3);
@@ -15743,6 +15802,9 @@ async function readJson(p3) {
   } finally {
     await handle?.close();
   }
+}
+async function readCanonicalLibraryJson(p3) {
+  return JSON.parse((await readRegularText(p3)).text);
 }
 async function assertSnlDoc(workspaceRoot) {
   const dir = snlDocRoot(workspaceRoot);
@@ -16161,6 +16223,33 @@ async function readActiveMacros(workspaceRoot) {
     }
   }
   return flat;
+}
+async function readLibraryMeta(workspaceRoot, slug) {
+  const p3 = libraryMetaPath(workspaceRoot, slug);
+  if (!await pathExists(p3)) return null;
+  const raw = await readCanonicalLibraryJson(p3);
+  if (!isRecord2(raw) || raw.title !== void 0 && typeof raw.title !== "string" || raw.description !== void 0 && typeof raw.description !== "string") {
+    throw new Error(`${p3} is not a valid Library metadata shape`);
+  }
+  return raw;
+}
+async function readLibraryCounters(workspaceRoot, slug) {
+  const p3 = libraryCountersPath(workspaceRoot, slug);
+  if (!await pathExists(p3)) return [];
+  const raw = await readCanonicalLibraryJson(p3);
+  if (!isRecord2(raw) || !Array.isArray(raw.counters)) {
+    throw new Error(`${p3} is not a valid Library counters shape`);
+  }
+  return raw.counters;
+}
+async function readLibraryGraph(workspaceRoot, slug) {
+  const p3 = libraryGraphPath(workspaceRoot, slug);
+  if (!await pathExists(p3)) return null;
+  const raw = await readCanonicalLibraryJson(p3);
+  if (typeof raw !== "object" || raw === null || !Array.isArray(raw.nodes) || !Array.isArray(raw.relationships)) {
+    throw new Error(`${p3} is not a valid LibraryGraph shape`);
+  }
+  return raw;
 }
 async function readEntryKinds(workspaceRoot) {
   const cfg = await readConfig(workspaceRoot);
@@ -19837,22 +19926,22 @@ async function createDirect(root, type, input, options = {}) {
       if (original) await replaceJsonIfUnchanged(file, original.text, next);
       else await installNewJson(file, next);
     } else {
-      const librariesDir = import_node_path2.default.join(docRoot(root), "libraries");
-      const dir = import_node_path2.default.join(librariesDir, id);
+      const librariesDir2 = import_node_path2.default.join(docRoot(root), "libraries");
+      const dir = import_node_path2.default.join(librariesDir2, id);
       if (import_node_path2.default.basename(id) !== id || id === "." || id === "..")
         return invalid("Library slug must be one safe path segment.");
       const docDirectoryIdentity = await readDirectoryIdentity(docRoot(root));
       let librariesDirectoryIdentity;
       try {
-        await import_node_fs6.promises.mkdir(librariesDir);
+        await import_node_fs6.promises.mkdir(librariesDir2);
         await syncDirectoryDurably(docRoot(root), options.beforeLibraryCreateParentSync, docDirectoryIdentity);
       } catch (error) {
         if (error.code !== "EEXIST") {
           throw error;
         }
-        await readDirectoryIdentity(librariesDir);
+        await readDirectoryIdentity(librariesDir2);
       }
-      librariesDirectoryIdentity = await readDirectoryIdentity(librariesDir);
+      librariesDirectoryIdentity = await readDirectoryIdentity(librariesDir2);
       await import_node_fs6.promises.mkdir(dir, { recursive: false });
       const directoryIdentity = await readDirectoryIdentity(dir);
       const resources = [
@@ -19868,7 +19957,7 @@ async function createDirect(root, type, input, options = {}) {
           await installNewJson(resource.file, resource.value);
           installed.push(resource);
         }
-        await syncDirectoryDurably(librariesDir, void 0, librariesDirectoryIdentity);
+        await syncDirectoryDurably(librariesDir2, void 0, librariesDirectoryIdentity);
       } catch (error) {
         const cleanupErrors = [];
         try {
@@ -19888,12 +19977,12 @@ async function createDirect(root, type, input, options = {}) {
         }
         try {
           await options.beforeLibraryCreateCleanupCapture?.();
-          const recovery = import_node_path2.default.join(librariesDir, `.${id}.snl-entity-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.create-failed`);
+          const recovery = import_node_path2.default.join(librariesDir2, `.${id}.snl-entity-${process.pid}-${(0, import_node_crypto4.randomUUID)()}.create-failed`);
           await import_node_fs6.promises.rename(dir, recovery);
           const capturedIdentity = await readDirectoryIdentity(recovery);
           if (capturedIdentity.dev === directoryIdentity.dev && capturedIdentity.ino === directoryIdentity.ino) {
             await import_node_fs6.promises.rmdir(recovery);
-            await syncDirectoryDurably(librariesDir, void 0, librariesDirectoryIdentity);
+            await syncDirectoryDurably(librariesDir2, void 0, librariesDirectoryIdentity);
           } else {
             cleanupErrors.push(`${dir} was replaced concurrently; the replacement is preserved at ${recovery}`);
           }
@@ -20406,6 +20495,311 @@ async function deleteManagedEntity(root, type, id, ifMatch, options = {}) {
   return mutateDirect(root, type, "delete", id, void 0, ifMatch, options);
 }
 
+// lib/library-entry-tree.ts
+var DEFAULT_OPTIONS = {
+  includeEntryKind: true,
+  includeNumber: true,
+  includeTitle: true,
+  includeEntryId: true,
+  includeCounterId: true
+};
+var SLOT_CHARS = /* @__PURE__ */ new Set(["1", "A", "a", "I", "i"]);
+var LibraryEntryTreeError = class extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+    this.name = "LibraryEntryTreeError";
+  }
+  code;
+};
+async function renderLibraryEntryTree(root, librarySlug, options) {
+  if (!librarySlug || librarySlug === "." || librarySlug === ".." || /[\\/]/.test(librarySlug)) {
+    throw new LibraryEntryTreeError("library.invalid", "Library slug must be one safe path segment.");
+  }
+  try {
+    const [graph, counters, entries, kinds, meta] = await Promise.all([
+      readLibraryGraph(root, librarySlug),
+      readLibraryCounters(root, librarySlug),
+      readEntries(root),
+      readEntryKinds(root),
+      readLibraryMeta(root, librarySlug)
+    ]);
+    if (!graph) {
+      throw new LibraryEntryTreeError("library.not-found", `Library not found: ${librarySlug}`);
+    }
+    const tree = formatLibraryEntryTree({ graph, entries, kinds, counters, options });
+    return {
+      librarySlug,
+      title: meta?.title ?? librarySlug,
+      tree,
+      lineCount: tree ? tree.split("\n").length : 0
+    };
+  } catch (error) {
+    if (error instanceof LibraryEntryTreeError) throw error;
+    throw new LibraryEntryTreeError(
+      "library.invalid",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}
+function formatLibraryEntryTree(input) {
+  const options = {
+    includeEntryKind: input.options?.includeEntryKind ?? DEFAULT_OPTIONS.includeEntryKind,
+    includeNumber: input.options?.includeNumber ?? DEFAULT_OPTIONS.includeNumber,
+    includeTitle: input.options?.includeTitle ?? DEFAULT_OPTIONS.includeTitle,
+    includeEntryId: input.options?.includeEntryId ?? DEFAULT_OPTIONS.includeEntryId,
+    includeCounterId: input.options?.includeCounterId ?? DEFAULT_OPTIONS.includeCounterId,
+    ...input.options?.language !== void 0 ? { language: input.options.language } : {}
+  };
+  const enabledFields = [
+    options.includeEntryKind,
+    options.includeNumber,
+    options.includeTitle,
+    options.includeEntryId,
+    options.includeCounterId
+  ];
+  if (!enabledFields.some(Boolean)) {
+    throw new Error("Enable at least one Library Entry tree field.");
+  }
+  if (options.language !== void 0 && !options.language.trim()) {
+    throw new Error("language must be a non-empty language tag when provided.");
+  }
+  const index = indexGraph(input.graph);
+  const entries = uniqueMap(input.entries, "Entry", (entry) => entry.id);
+  const kinds = uniqueMap(input.kinds, "Entry Kind", (kind) => kind.id);
+  const counterPaths = indexCounterPaths(input.counters);
+  const numbers = numberNodes(index, entries, kinds, input.counters, counterPaths);
+  const activeCounters = /* @__PURE__ */ new Map();
+  for (const nodeId of index.readingOrder) {
+    const node = index.nodesById.get(nodeId);
+    activeCounters.set(nodeId, resolveCounter(node, entries, kinds, input.counters));
+  }
+  const lines = [];
+  const render3 = (nodeId, prefix, last) => {
+    const node = index.nodesById.get(nodeId);
+    const entryId = typeof node.props.entryId === "string" ? node.props.entryId : "";
+    const entry = entryId ? entries.get(entryId) : void 0;
+    if (entryId && !entry) throw new Error(`Library graph node ${JSON.stringify(nodeId)} references missing Entry ${JSON.stringify(entryId)}.`);
+    const kind = entry ? kinds.get(entry.kind) : void 0;
+    const counter = activeCounters.get(nodeId) ?? null;
+    const fields = [];
+    if (options.includeEntryKind) {
+      fields.push(entry ? `[${kind ? localized(kind.name, options.language) : singleLine(entry.kind)}]` : "[Placeholder]");
+    }
+    const number = numbers.get(nodeId) ?? null;
+    if (options.includeNumber && number) {
+      const label = singleLine(number);
+      fields.push(label.endsWith(".") ? label : `${label}.`);
+    }
+    if (options.includeTitle) fields.push(entry ? localized(entry.title, options.language) || "<untitled>" : "<placeholder>");
+    if (options.includeEntryId) fields.push(entry ? `<${singleLine(entry.id)}>` : "<none>");
+    if (options.includeCounterId) fields.push(`(counter id: ${counter ? singleLine(counter.id) : "none"})`);
+    lines.push(`${prefix}${last ? "\u2514\u2500\u2500 " : "\u251C\u2500\u2500 "}${fields.join(" ")}`);
+    const children = index.childrenOf.get(nodeId) ?? [];
+    const childPrefix = `${prefix}${last ? "    " : "\u2502   "}`;
+    children.forEach((child, childIndex) => render3(child, childPrefix, childIndex === children.length - 1));
+  };
+  index.roots.forEach((root, rootIndex) => render3(root, "", rootIndex === index.roots.length - 1));
+  return lines.join("\n");
+}
+function uniqueMap(values, label, idOf) {
+  const out = /* @__PURE__ */ new Map();
+  for (const value of values) {
+    const id = idOf(value);
+    if (out.has(id)) throw new Error(`Duplicate ${label} id ${JSON.stringify(id)}.`);
+    out.set(id, value);
+  }
+  return out;
+}
+function indexGraph(graph) {
+  const nodesById = uniqueMap(graph.nodes, "Library graph node", (node) => node.id);
+  const childrenOf = /* @__PURE__ */ new Map();
+  const parentOf = /* @__PURE__ */ new Map();
+  for (const relationship of graph.relationships) {
+    if (relationship.label !== "branch") continue;
+    if (!nodesById.has(relationship.from) || !nodesById.has(relationship.to)) {
+      throw new Error(`Library branch ${JSON.stringify(relationship.from)} -> ${JSON.stringify(relationship.to)} has a missing endpoint.`);
+    }
+    if (parentOf.has(relationship.to)) {
+      throw new Error(`Library graph node ${JSON.stringify(relationship.to)} has multiple branch parents.`);
+    }
+    parentOf.set(relationship.to, relationship.from);
+    const children = childrenOf.get(relationship.from) ?? [];
+    children.push(relationship.to);
+    childrenOf.set(relationship.from, children);
+  }
+  const roots = graph.nodes.filter((node) => !parentOf.has(node.id)).map((node) => node.id);
+  const state = /* @__PURE__ */ new Map();
+  const readingOrder = [];
+  const visit2 = (nodeId) => {
+    if (state.get(nodeId) === "visiting") throw new Error(`Library graph contains a branch cycle at ${JSON.stringify(nodeId)}.`);
+    if (state.get(nodeId) === "done") return;
+    state.set(nodeId, "visiting");
+    readingOrder.push(nodeId);
+    for (const child of childrenOf.get(nodeId) ?? []) visit2(child);
+    state.set(nodeId, "done");
+  };
+  for (const root of roots) visit2(root);
+  for (const node of graph.nodes) {
+    if (!state.has(node.id)) visit2(node.id);
+  }
+  const completeRoots = [...roots, ...graph.nodes.map((node) => node.id).filter((id) => !roots.includes(id) && !parentOf.has(id))];
+  if (completeRoots.length === 0 && graph.nodes.length > 0) {
+    throw new Error("Library graph has no branch root.");
+  }
+  return { nodesById, childrenOf, roots: completeRoots, readingOrder };
+}
+function indexCounterPaths(counters) {
+  const paths = /* @__PURE__ */ new Map();
+  const ids = /* @__PURE__ */ new Set();
+  const names = /* @__PURE__ */ new Set();
+  const visiting = /* @__PURE__ */ new Set();
+  const visit2 = (counter, parents) => {
+    if (!counter.id || ids.has(counter.id)) throw new Error(`Duplicate or empty Counter id ${JSON.stringify(counter.id)}.`);
+    if (typeof counter.name !== "string" || !counter.name.trim()) {
+      throw new Error(`Counter ${JSON.stringify(counter.id)} has an empty or invalid name.`);
+    }
+    if (names.has(counter.name)) throw new Error(`Duplicate Counter name ${JSON.stringify(counter.name)} is ambiguous.`);
+    if (visiting.has(counter)) throw new Error(`Counter tree contains a cycle at ${JSON.stringify(counter.id)}.`);
+    ids.add(counter.id);
+    names.add(counter.name);
+    visiting.add(counter);
+    const path8 = [...parents, counter];
+    paths.set(counter, path8);
+    for (const child of counter.children) visit2(child, path8);
+    visiting.delete(counter);
+  };
+  for (const counter of counters) visit2(counter, []);
+  return paths;
+}
+function findCounterById(counters, id) {
+  for (const counter of counters) {
+    if (counter.id === id) return counter;
+    const nested = findCounterById(counter.children, id);
+    if (nested) return nested;
+  }
+  return null;
+}
+function findCounterByName(counters, name) {
+  for (const counter of counters) {
+    if (counter.name === name) return counter;
+    const nested = findCounterByName(counter.children, name);
+    if (nested) return nested;
+  }
+  return null;
+}
+function resolveCounter(node, entries, kinds, counters) {
+  const explicit = node.props.counterId;
+  if (explicit !== void 0) {
+    if (typeof explicit !== "string" || !explicit) {
+      throw new Error(`Library graph node ${JSON.stringify(node.id)} has an invalid explicit counterId.`);
+    }
+    const counter = findCounterById(counters, explicit);
+    if (!counter) {
+      throw new Error(
+        `Library graph node ${JSON.stringify(node.id)} explicit counterId ${JSON.stringify(explicit)} does not exist.`
+      );
+    }
+    return counter;
+  }
+  const entryId = typeof node.props.entryId === "string" ? node.props.entryId : "";
+  const entry = entries.get(entryId);
+  const name = entry ? kinds.get(entry.kind)?.defaultCounterName?.trim() : "";
+  return name ? findCounterByName(counters, name) : null;
+}
+function numberNodes(index, entries, kinds, counters, paths) {
+  const values = /* @__PURE__ */ new Map();
+  const numbers = /* @__PURE__ */ new Map();
+  const resetDescendants = (counter) => {
+    for (const child of counter.children) {
+      values.delete(child);
+      resetDescendants(child);
+    }
+  };
+  for (const nodeId of index.readingOrder) {
+    const node = index.nodesById.get(nodeId);
+    const counter = resolveCounter(node, entries, kinds, counters);
+    const path8 = counter ? paths.get(counter) : void 0;
+    if (!counter || !path8) {
+      numbers.set(nodeId, null);
+      continue;
+    }
+    values.set(counter, (values.get(counter) ?? 0) + 1);
+    resetDescendants(counter);
+    const segments = [];
+    for (const level of path8) {
+      const value = values.get(level);
+      if (value === void 0) {
+        segments.length = 0;
+        break;
+      }
+      segments.push(formatNumbering(level.numbering, value));
+    }
+    numbers.set(nodeId, segments.length ? segments.join("") : null);
+  }
+  return numbers;
+}
+function formatNumbering(template, ordinal) {
+  let index = -1;
+  for (let i4 = 0; i4 < template.length; i4 += 1) {
+    if (SLOT_CHARS.has(template[i4])) {
+      index = i4;
+      break;
+    }
+  }
+  if (index < 0) return template;
+  const slot = template[index];
+  return template.slice(0, index) + renderOrdinal(slot, ordinal) + template.slice(index + 1);
+}
+function renderOrdinal(slot, ordinal) {
+  if (slot === "1") return String(ordinal);
+  if (slot === "A" || slot === "a") {
+    let n3 = ordinal;
+    let out = "";
+    while (n3 > 0) {
+      n3 -= 1;
+      out = String.fromCharCode((slot === "A" ? 65 : 97) + n3 % 26) + out;
+      n3 = Math.floor(n3 / 26);
+    }
+    return out;
+  }
+  const roman = toRoman(ordinal);
+  return slot === "i" ? roman.toLowerCase() : roman;
+}
+function toRoman(value) {
+  const pairs = [
+    [1e3, "M"],
+    [900, "CM"],
+    [500, "D"],
+    [400, "CD"],
+    [100, "C"],
+    [90, "XC"],
+    [50, "L"],
+    [40, "XL"],
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"]
+  ];
+  let remaining = value;
+  let out = "";
+  for (const [amount, glyph] of pairs) {
+    while (remaining >= amount) {
+      out += glyph;
+      remaining -= amount;
+    }
+  }
+  return out;
+}
+function localized(value, language) {
+  const selected = typeof value === "string" ? value : (language ? value.values[language] : void 0) ?? value.values[value.default_language] ?? value.values.en ?? Object.values(value.values)[0] ?? "";
+  return singleLine(selected);
+}
+function singleLine(value) {
+  return value.replace(/\s+/gu, " ").trim();
+}
+
 // plugin-src/entity-adapter.ts
 function typeOf(value) {
   if (!isManagedEntityType(value)) throw new TypeError(`Unsupported SNL entity type: ${value}`);
@@ -20444,6 +20838,27 @@ function createEntityAdapter() {
         if (error instanceof EntryAnalysisError) {
           return {
             status: error.code === "entry.not-found" ? "not-found" : "invalid",
+            code: error.code,
+            message: error.message
+          };
+        }
+        throw error;
+      }
+    },
+    async renderLibraryTree(request) {
+      try {
+        return await renderLibraryEntryTree(request.root, request.librarySlug, {
+          ...request.language !== void 0 ? { language: request.language } : {},
+          ...request.includeEntryKind !== void 0 ? { includeEntryKind: request.includeEntryKind } : {},
+          ...request.includeNumber !== void 0 ? { includeNumber: request.includeNumber } : {},
+          ...request.includeTitle !== void 0 ? { includeTitle: request.includeTitle } : {},
+          ...request.includeEntryId !== void 0 ? { includeEntryId: request.includeEntryId } : {},
+          ...request.includeCounterId !== void 0 ? { includeCounterId: request.includeCounterId } : {}
+        });
+      } catch (error) {
+        if (error instanceof LibraryEntryTreeError) {
+          return {
+            status: error.code === "library.not-found" ? "not-found" : "invalid",
             code: error.code,
             message: error.message
           };

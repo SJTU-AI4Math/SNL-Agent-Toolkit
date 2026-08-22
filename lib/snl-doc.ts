@@ -12,6 +12,7 @@ import * as path from 'node:path';
 import { readRegularText } from './guarded-json-file.ts';
 import { isMacroDocumentV11 as isSnlBasicsMacroDocumentV11 } from '@sjtu-ai4math/snl-basics';
 import {
+  type CounterNode,
   type EntryData,
   type EntryKind,
   type LibraryGraph,
@@ -89,6 +90,10 @@ export function libraryMetaPath(workspaceRoot: string, slug: string): string {
   return path.join(libraryDir(workspaceRoot, slug), 'meta.json');
 }
 
+export function libraryCountersPath(workspaceRoot: string, slug: string): string {
+  return path.join(libraryDir(workspaceRoot, slug), 'counters.json');
+}
+
 // ---------------------------------------------------------------------------
 // Existence & read helpers
 // ---------------------------------------------------------------------------
@@ -118,6 +123,10 @@ async function readJson<T>(p: string): Promise<T> {
   } finally {
     await handle?.close();
   }
+}
+
+async function readCanonicalLibraryJson<T>(p: string): Promise<T> {
+  return JSON.parse((await readRegularText(p)).text) as T;
 }
 
 /**
@@ -653,7 +662,28 @@ export async function readLibraryMeta(
 ): Promise<LibraryMetaFile | null> {
   const p = libraryMetaPath(workspaceRoot, slug);
   if (!(await pathExists(p))) return null;
-  return readJson<LibraryMetaFile>(p);
+  const raw = await readCanonicalLibraryJson<unknown>(p);
+  if (
+    !isRecord(raw) ||
+    (raw.title !== undefined && typeof raw.title !== 'string') ||
+    (raw.description !== undefined && typeof raw.description !== 'string')
+  ) {
+    throw new Error(`${p} is not a valid Library metadata shape`);
+  }
+  return raw as LibraryMetaFile;
+}
+
+export async function readLibraryCounters(
+  workspaceRoot: string,
+  slug: string,
+): Promise<CounterNode[]> {
+  const p = libraryCountersPath(workspaceRoot, slug);
+  if (!(await pathExists(p))) return [];
+  const raw = await readCanonicalLibraryJson<unknown>(p);
+  if (!isRecord(raw) || !Array.isArray(raw.counters)) {
+    throw new Error(`${p} is not a valid Library counters shape`);
+  }
+  return raw.counters as CounterNode[];
 }
 
 export async function readLibraryGraph(
@@ -662,7 +692,7 @@ export async function readLibraryGraph(
 ): Promise<LibraryGraph | null> {
   const p = libraryGraphPath(workspaceRoot, slug);
   if (!(await pathExists(p))) return null;
-  const raw = await readJson<unknown>(p);
+  const raw = await readCanonicalLibraryJson<unknown>(p);
   if (
     typeof raw !== 'object' ||
     raw === null ||

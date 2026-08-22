@@ -31,6 +31,17 @@ export interface EntryLatexRequest {
   id: string;
 }
 
+export interface LibraryEntryTreeRequest {
+  root: string;
+  librarySlug: string;
+  language?: string;
+  includeEntryKind?: boolean;
+  includeNumber?: boolean;
+  includeTitle?: boolean;
+  includeEntryId?: boolean;
+  includeCounterId?: boolean;
+}
+
 export interface EntityApplyRequest {
   root: string;
   entityType: EntityType;
@@ -44,6 +55,7 @@ export interface EntityAdapter {
   list(request: EntityListRequest): Promise<unknown>;
   get(request: EntityGetRequest): Promise<unknown>;
   renderEntry?(request: EntryLatexRequest): Promise<unknown>;
+  renderLibraryTree?(request: LibraryEntryTreeRequest): Promise<unknown>;
   apply(request: EntityApplyRequest): Promise<unknown>;
   validate(request: { root: string }): Promise<unknown>;
 }
@@ -64,6 +76,12 @@ function object(input: unknown): JsonObject {
 
 function requiredString(value: unknown, name: string): string {
   if (typeof value !== 'string' || value.trim() === '') throw new TypeError(`${name} must be a non-empty string`);
+  return value;
+}
+
+function optionalBoolean(value: unknown, name: string): boolean | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'boolean') throw new TypeError(`${name} must be a boolean`);
   return value;
 }
 
@@ -133,6 +151,42 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
         return adapter.renderEntry({
           root: requiredString(input.root, 'root'), id: requiredString(input.id, 'id'),
         });
+      },
+    },
+    {
+      name: 'snl_library_entry_tree',
+      description: 'Print one Library hierarchy as a folder-style multiline Entry tree with configurable fields and language.',
+      inputSchema: {
+        type: 'object', additionalProperties: false, required: ['root', 'librarySlug'],
+        properties: {
+          root: baseProperties.root,
+          librarySlug: { type: 'string', description: 'Canonical Library slug.' },
+          language: { type: 'string', description: 'Preferred language tag for localized Entry Kind names and titles.' },
+          includeEntryKind: { type: 'boolean', description: 'Include [Entry Kind]. Default true.' },
+          includeNumber: { type: 'boolean', description: 'Include the resolved Library counter number. Default true.' },
+          includeTitle: { type: 'boolean', description: 'Include the localized Entry title. Default true.' },
+          includeEntryId: { type: 'boolean', description: 'Include <entry id>. Default true.' },
+          includeCounterId: { type: 'boolean', description: 'Include (counter id: ...). Default true.' },
+        },
+      },
+      async execute(raw) {
+        const input = object(raw);
+        if (!adapter.renderLibraryTree) {
+          return {
+            status: 'unsupported', code: 'library.tree-unsupported',
+            message: 'This SNL entity adapter does not implement Library Entry tree rendering.',
+          };
+        }
+        const request: LibraryEntryTreeRequest = {
+          root: requiredString(input.root, 'root'),
+          librarySlug: requiredString(input.librarySlug, 'librarySlug'),
+          ...(input.language !== undefined ? { language: requiredString(input.language, 'language') } : {}),
+        };
+        for (const name of ['includeEntryKind', 'includeNumber', 'includeTitle', 'includeEntryId', 'includeCounterId'] as const) {
+          const value = optionalBoolean(input[name], name);
+          if (value !== undefined) request[name] = value;
+        }
+        return adapter.renderLibraryTree(request);
       },
     },
     {
