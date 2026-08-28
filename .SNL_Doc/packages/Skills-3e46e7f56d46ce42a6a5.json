@@ -1,0 +1,21 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "schema_version": 2,
+  "id": "Skills",
+  "name": "Skills",
+  "description": "",
+  "entry_ids": [
+    "Skill.CLI",
+    "Skill.Init",
+    "Skill.Init.sec.EntryKindInit",
+    "Skill.Refinery",
+    "Skill.SKILL.md",
+    "Skill.SKILL.md-Init",
+    "Skill.SKILL.md-SNLeco",
+    "Skill.SNLeco",
+    "Skill.SNLeco.cpt.Entry",
+    "Skill.SNLeco.cpt.TermMacro",
+    "Skill.SNLeco.sec.Concepts"
+  ]
+}

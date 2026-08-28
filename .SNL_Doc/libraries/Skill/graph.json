@@ -1,0 +1,106 @@
+{
+  "nodes": [
+    {
+      "id": "n_3",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco"
+      }
+    },
+    {
+      "id": "n_1",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Init"
+      }
+    },
+    {
+      "id": "n_9",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.sec.Concepts"
+      }
+    },
+    {
+      "id": "n_2",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Init"
+      }
+    },
+    {
+      "id": "n_5",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-SNLeco"
+      }
+    },
+    {
+      "id": "n_6",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Init.sec.EntryKindInit"
+      }
+    },
+    {
+      "id": "n_4",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI"
+      }
+    },
+    {
+      "id": "n_8",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacro"
+      }
+    },
+    {
+      "id": "n_7",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery"
+      }
+    },
+    {
+      "id": "n_10",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Entry"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "from": "n_2",
+      "to": "n_1",
+      "label": "branch"
+    },
+    {
+      "from": "n_3",
+      "to": "n_5",
+      "label": "branch"
+    },
+    {
+      "from": "n_1",
+      "to": "n_6",
+      "label": "branch"
+    },
+    {
+      "from": "n_5",
+      "to": "n_9",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_10",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_8",
+      "label": "branch"
+    }
+  ]
+}

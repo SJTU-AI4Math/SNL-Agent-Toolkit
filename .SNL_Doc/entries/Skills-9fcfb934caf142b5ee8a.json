@@ -1,0 +1,15 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Refinery",
+    "package": "Skills",
+    "kind": "Skill",
+    "title": "NL $\\to$ SNL Refinery",
+    "content": {},
+    "contribution_info": null,
+    "pointer": null
+  }
+}

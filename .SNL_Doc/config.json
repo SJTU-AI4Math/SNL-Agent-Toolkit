@@ -20,14 +20,15 @@
     {
       "id": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
       "name": "Section",
+      "description": "",
       "coloring": {
         "light": {
           "stroke": "#546e7a",
           "background": "#eceff1"
         },
         "dark": {
-          "stroke": "#546e7a",
-          "background": "#eceff1"
+          "stroke": "#eceff1",
+          "background": "#1E1E1E"
         }
       },
       "defaultCounterName": "section",
@@ -90,12 +91,13 @@
           "background": "#f3e5f5"
         },
         "dark": {
-          "stroke": "#6a1b9a",
-          "background": "#f3e5f5"
+          "stroke": "#bd52ff",
+          "background": "#313131"
         }
       },
       "defaultCounterName": "",
-      "style": ""
+      "style": "",
+      "description": ""
     },
     {
       "id": "img",
@@ -111,6 +113,40 @@
         }
       },
       "defaultCounterName": "1",
+      "style": ""
+    },
+    {
+      "id": "file",
+      "name": "File",
+      "description": "",
+      "coloring": {
+        "light": {
+          "stroke": "#1E88E5",
+          "background": "#E3F2FD"
+        },
+        "dark": {
+          "stroke": "#86ccfe",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "",
+      "style": ""
+    },
+    {
+      "id": "Skill",
+      "name": "Skill",
+      "description": "",
+      "coloring": {
+        "light": {
+          "stroke": "#475569",
+          "background": "#F1F5F9"
+        },
+        "dark": {
+          "stroke": "#94A3B8",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "",
       "style": ""
     }
   ],
@@ -252,16 +288,17 @@
     }
   ],
   "active_macro_packages": [
-    "UIbasic",
     "commands",
     "computer-basics",
     "filesystem",
     "literals",
+    "Skills",
     "snl-concepts",
     "ui-buttons",
     "ui-inputs",
     "ui-panels",
-    "ui-sections"
+    "ui-sections",
+    "UIbasic"
   ],
   "entity_storage": {
     "version": 1,
