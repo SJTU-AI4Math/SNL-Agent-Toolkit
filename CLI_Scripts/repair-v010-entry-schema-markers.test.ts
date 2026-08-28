@@ -1,13 +1,9 @@
 import assert from 'node:assert/strict';
-import { execFile } from 'node:child_process';
-import { chmod, mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { chmod, mkdtemp, mkdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { promisify } from 'node:util';
 import test from 'node:test';
-
-const execFileAsync = promisify(execFile);
-const script = path.resolve('scripts/repair-v010-entry-schema-markers.mjs');
+import { repairV010EntrySchemaMarkers } from '../scripts/repair-v010-entry-schema-markers.ts';
 
 async function fixture(): Promise<string> {
   const root = await mkdtemp(path.join(tmpdir(), 'snl-entry-schema-repair-'));
@@ -20,26 +16,35 @@ async function fixture(): Promise<string> {
   return root;
 }
 
+function envelope(id: string, title: string, schemaVersion?: number): string {
+  return `${JSON.stringify({
+    format: 'snl-entry',
+    version: 1,
+    ...(schemaVersion === undefined ? {} : { schema_version: schemaVersion }),
+    package: 'P',
+    entry: { id, title },
+  }, null, 2)}\n`;
+}
+
 test('repairs only missing current Entry schema markers and is idempotent', async () => {
   const root = await fixture();
   try {
     const entries = path.join(root, '.SNL_Doc', 'entries');
-    const legacy = '{\n  "format": "snl-entry",\n  "version": 1,\n  "package": "P",\n  "entry": {"id":"P.x"}\n}\n';
-    const current = '{\n  "format": "snl-entry",\n  "version": 1,\n  "schema_version": 1,\n  "package": "P",\n  "entry": {"id":"P.y"}\n}\n';
-    await writeFile(path.join(entries, 'legacy.json'), legacy);
-    await chmod(path.join(entries, 'legacy.json'), 0o640);
-    await writeFile(path.join(entries, 'current.json'), current);
+    const legacyFile = path.join(entries, 'legacy.json');
+    const currentFile = path.join(entries, 'current.json');
+    const current = envelope('P.y', 'current', 1);
+    await writeFile(legacyFile, envelope('P.x', 'legacy'));
+    await chmod(legacyFile, 0o640);
+    await writeFile(currentFile, current);
 
-    const first = JSON.parse((await execFileAsync('node', [script, root])).stdout);
-    assert.deepEqual(first, { status: 'ok', scanned: 2, repaired: 1 });
-    assert.match(await readFile(path.join(entries, 'legacy.json'), 'utf8'), /"version": 1,\n  "schema_version": 1,/u);
-    assert.equal((await stat(path.join(entries, 'legacy.json'))).mode & 0o777, 0o640);
-    assert.equal(await readFile(path.join(entries, 'current.json'), 'utf8'), current);
+    assert.deepEqual(await repairV010EntrySchemaMarkers(root), { status: 'ok', scanned: 2, repaired: 1 });
+    assert.match(await readFile(legacyFile, 'utf8'), /"version": 1,\n  "schema_version": 1,/u);
+    assert.equal((await stat(legacyFile)).mode & 0o777, 0o640);
+    assert.equal(await readFile(currentFile, 'utf8'), current);
 
-    const repaired = await readFile(path.join(entries, 'legacy.json'), 'utf8');
-    const second = JSON.parse((await execFileAsync('node', [script, root])).stdout);
-    assert.deepEqual(second, { status: 'ok', scanned: 2, repaired: 0 });
-    assert.equal(await readFile(path.join(entries, 'legacy.json'), 'utf8'), repaired);
+    const repaired = await readFile(legacyFile, 'utf8');
+    assert.deepEqual(await repairV010EntrySchemaMarkers(root), { status: 'ok', scanned: 2, repaired: 0 });
+    assert.equal(await readFile(legacyFile, 'utf8'), repaired);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -49,10 +54,88 @@ test('rejects unsupported schema markers without changing the file', async () =>
   const root = await fixture();
   try {
     const file = path.join(root, '.SNL_Doc', 'entries', 'future.json');
-    const future = '{\n  "format": "snl-entry",\n  "version": 1,\n  "schema_version": 2,\n  "package": "P",\n  "entry": {"id":"P.future"}\n}\n';
+    const future = envelope('P.future', 'future', 2);
     await writeFile(file, future);
-    await assert.rejects(execFileAsync('node', [script, root]), /unsupported schema_version 2/u);
+    await assert.rejects(repairV010EntrySchemaMarkers(root), /unsupported schema_version 2/u);
     assert.equal(await readFile(file, 'utf8'), future);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('detects a non-cooperative concurrent replacement instead of losing it', async () => {
+  const root = await fixture();
+  try {
+    const file = path.join(root, '.SNL_Doc', 'entries', 'entry.json');
+    await writeFile(file, envelope('P.x', 'before'));
+    const concurrent = envelope('P.x', 'concurrent');
+    await assert.rejects(
+      repairV010EntrySchemaMarkers(root, {
+        beforeWrites: async () => { await writeFile(file, concurrent); },
+      }),
+      /changed concurrently; refusing to overwrite/u,
+    );
+    assert.equal(await readFile(file, 'utf8'), concurrent);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('rejects indirect Entry paths before writing any envelope', async () => {
+  const root = await fixture();
+  const external = path.join(await mkdtemp(path.join(tmpdir(), 'snl-entry-external-')), 'outside.json');
+  try {
+    const entries = path.join(root, '.SNL_Doc', 'entries');
+    const regular = path.join(entries, 'a.json');
+    await writeFile(regular, envelope('P.a', 'regular'));
+    await writeFile(external, envelope('P.z', 'external'));
+    await symlink(external, path.join(entries, 'z.json'));
+
+    await assert.rejects(repairV010EntrySchemaMarkers(root), /regular, non-symlink Entry envelope/u);
+    assert.equal(await readFile(regular, 'utf8'), envelope('P.a', 'regular'));
+    assert.equal(await readFile(external, 'utf8'), envelope('P.z', 'external'));
+  } finally {
+    await rm(root, { recursive: true, force: true });
+    await rm(path.dirname(external), { recursive: true, force: true });
+  }
+});
+
+test('rejects noncanonical JSON instead of changing bytes beyond the marker', async () => {
+  const root = await fixture();
+  try {
+    const file = path.join(root, '.SNL_Doc', 'entries', 'entry.json');
+    const noncanonical = '{"format":"snl-entry","version":1,"package":"P","entry":{"id":"P.x","title":"compact"}}\n';
+    await writeFile(file, noncanonical);
+    await assert.rejects(repairV010EntrySchemaMarkers(root), /canonical Toolkit JSON serialization/u);
+    assert.equal(await readFile(file, 'utf8'), noncanonical);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('rejects a symlinked .SNL_Doc before creating a lock in its target', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'snl-entry-schema-root-'));
+  const external = await mkdtemp(path.join(tmpdir(), 'snl-entry-schema-doc-'));
+  try {
+    await mkdir(path.join(external, 'entries'));
+    await writeFile(path.join(external, 'config.json'), `${JSON.stringify({ version: '0.1.0', entity_storage: { version: 1 } }, null, 2)}\n`);
+    await symlink(external, path.join(root, '.SNL_Doc'));
+    await assert.rejects(repairV010EntrySchemaMarkers(root), /canonical, non-symlink directory/u);
+    await assert.rejects(stat(path.join(external, '.data-write.lock')), /ENOENT/u);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+    await rm(external, { recursive: true, force: true });
+  }
+});
+
+test('honors the shared Toolkit workspace writer lock', async () => {
+  const root = await fixture();
+  try {
+    await writeFile(path.join(root, '.SNL_Doc', 'entries', 'entry.json'), envelope('P.x', 'legacy'));
+    const lock = path.join(root, '.SNL_Doc', '.data-write.lock');
+    await writeFile(lock, `${JSON.stringify({ version: 1, pid: process.pid, hostname: 'test', token: 'held', purpose: 'test writer', createdAt: new Date().toISOString() })}\n`);
+    await assert.rejects(repairV010EntrySchemaMarkers(root), /workspace data is locked/u);
+    assert.equal(await readFile(path.join(root, '.SNL_Doc', 'entries', 'entry.json'), 'utf8'), envelope('P.x', 'legacy'));
   } finally {
     await rm(root, { recursive: true, force: true });
   }
