@@ -170,6 +170,9 @@ export async function replaceJsonIfUnchanged(
   let installed = false;
   try {
     handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
+    // fs.open applies the process umask even when an exact existing mode is
+    // supplied. Restore the captured mode explicitly before publication.
+    await handle.chmod(current.mode);
     await handle.writeFile(jsonText(value), 'utf8');
     await handle.sync();
     await handle.close();

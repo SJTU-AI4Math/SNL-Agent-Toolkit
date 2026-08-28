@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { chmod, mkdir, mkdtemp, readFile, readdir, rename, rm, symlink, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
@@ -15,6 +15,20 @@ async function scratch(): Promise<{ root: string; file: string }> {
 }
 
 describe('guarded JSON path capture', () => {
+  it('preserves the exact existing mode regardless of process umask', async () => {
+    const { file } = await scratch();
+    const original = '{"owner":"original"}\n';
+    await writeFile(file, original);
+    await chmod(file, 0o666);
+    const originalUmask = process.umask(0o077);
+    try {
+      await replaceJsonIfUnchanged(file, original, { owner: 'replacement' });
+    } finally {
+      process.umask(originalUmask);
+    }
+    assert.equal((await stat(file)).mode & 0o777, 0o666);
+  });
+
   it('restores a replacement that lands at the last pre-capture seam', async () => {
     const { file } = await scratch();
     const original = '{"owner":"original"}\n';

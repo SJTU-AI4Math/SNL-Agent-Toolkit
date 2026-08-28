@@ -34,12 +34,17 @@ test('repairs only missing current Entry schema markers and is idempotent', asyn
     const currentFile = path.join(entries, 'current.json');
     const current = envelope('P.y', 'current', 1);
     await writeFile(legacyFile, envelope('P.x', 'legacy'));
-    await chmod(legacyFile, 0o640);
+    await chmod(legacyFile, 0o666);
     await writeFile(currentFile, current);
 
-    assert.deepEqual(await repairV010EntrySchemaMarkers(root), { status: 'ok', scanned: 2, repaired: 1 });
+    const originalUmask = process.umask(0o077);
+    try {
+      assert.deepEqual(await repairV010EntrySchemaMarkers(root), { status: 'ok', scanned: 2, repaired: 1 });
+    } finally {
+      process.umask(originalUmask);
+    }
     assert.match(await readFile(legacyFile, 'utf8'), /"version": 1,\n  "schema_version": 1,/u);
-    assert.equal((await stat(legacyFile)).mode & 0o777, 0o640);
+    assert.equal((await stat(legacyFile)).mode & 0o777, 0o666);
     assert.equal(await readFile(currentFile, 'utf8'), current);
 
     const repaired = await readFile(legacyFile, 'utf8');
