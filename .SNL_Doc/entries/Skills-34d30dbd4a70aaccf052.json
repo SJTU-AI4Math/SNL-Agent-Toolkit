@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.TermMacroTag",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Term Macro Tag",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Term Macro Tag",
+        "zh-CN": "术语宏标签"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

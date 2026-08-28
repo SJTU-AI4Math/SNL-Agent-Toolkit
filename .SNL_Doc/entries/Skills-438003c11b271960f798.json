@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.I18N",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "I18N",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "I18N",
+        "zh-CN": "I18N 国际化"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

@@ -8,27 +8,6 @@
       }
     },
     {
-      "id": "n_1",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.SKILL.md-Init"
-      }
-    },
-    {
-      "id": "n_9",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.SNLeco.sec.Concepts"
-      }
-    },
-    {
-      "id": "n_2",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.Init"
-      }
-    },
-    {
       "id": "n_5",
       "label": "Entry",
       "props": {
@@ -36,31 +15,10 @@
       }
     },
     {
-      "id": "n_6",
+      "id": "n_9",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Init.sec.EntryKindInit"
-      }
-    },
-    {
-      "id": "n_4",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.CLI"
-      }
-    },
-    {
-      "id": "n_8",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.SNLeco.cpt.TermMacro"
-      }
-    },
-    {
-      "id": "n_7",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.Refinery"
+        "entryId": "Skill.SNLeco.sec.Concepts"
       }
     },
     {
@@ -124,6 +82,13 @@
       "label": "Entry",
       "props": {
         "entryId": "Skill.SNLeco.cpt.Pointer"
+      }
+    },
+    {
+      "id": "n_8",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacro"
       }
     },
     {
@@ -337,13 +302,6 @@
       }
     },
     {
-      "id": "n_49",
-      "label": "Entry",
-      "props": {
-        "entryId": "Skill.SNLeco.cpt.Contributor"
-      }
-    },
-    {
       "id": "n_50",
       "label": "Entry",
       "props": {
@@ -362,6 +320,20 @@
       "label": "Entry",
       "props": {
         "entryId": "Skill.SNLeco.cpt.ContentLanguage"
+      }
+    },
+    {
+      "id": "n_57",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.sec.PragmaticConcepts"
+      }
+    },
+    {
+      "id": "n_49",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Contributor"
       }
     },
     {
@@ -391,22 +363,152 @@
       "props": {
         "entryId": "Skill.SNLeco.cpt.InfoView"
       }
+    },
+    {
+      "id": "n_58",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.sec.DataSchema"
+      }
+    },
+    {
+      "id": "n_2",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Init"
+      }
+    },
+    {
+      "id": "n_1",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Init"
+      }
+    },
+    {
+      "id": "n_59",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Init.sec.PrimaryInit"
+      }
+    },
+    {
+      "id": "n_6",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Init.sec.EntryKindInit"
+      }
+    },
+    {
+      "id": "n_60",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Init.sec.MacroKindInit"
+      }
+    },
+    {
+      "id": "n_61",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Plan"
+      }
+    },
+    {
+      "id": "n_62",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Plan"
+      }
+    },
+    {
+      "id": "n_63",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Create"
+      }
+    },
+    {
+      "id": "n_64",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Create"
+      }
+    },
+    {
+      "id": "n_7",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery"
+      }
+    },
+    {
+      "id": "n_65",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Refinery"
+      }
+    },
+    {
+      "id": "n_66",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Maintain"
+      }
+    },
+    {
+      "id": "n_67",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Maintain"
+      }
+    },
+    {
+      "id": "n_68",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Read"
+      }
+    },
+    {
+      "id": "n_69",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Read"
+      }
+    },
+    {
+      "id": "n_70",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.VerifyFix"
+      }
+    },
+    {
+      "id": "n_71",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-VerifyFix"
+      }
+    },
+    {
+      "id": "n_4",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI"
+      }
+    },
+    {
+      "id": "n_72",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-CLI"
+      }
     }
   ],
   "relationships": [
     {
-      "from": "n_2",
-      "to": "n_1",
-      "label": "branch"
-    },
-    {
       "from": "n_3",
       "to": "n_5",
-      "label": "branch"
-    },
-    {
-      "from": "n_1",
-      "to": "n_6",
       "label": "branch"
     },
     {
@@ -417,11 +519,6 @@
     {
       "from": "n_9",
       "to": "n_10",
-      "label": "branch"
-    },
-    {
-      "from": "n_9",
-      "to": "n_8",
       "label": "branch"
     },
     {
@@ -462,6 +559,11 @@
     {
       "from": "n_10",
       "to": "n_18",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_8",
       "label": "branch"
     },
     {
@@ -616,11 +718,6 @@
     },
     {
       "from": "n_9",
-      "to": "n_49",
-      "label": "branch"
-    },
-    {
-      "from": "n_9",
       "to": "n_50",
       "label": "branch"
     },
@@ -635,23 +732,93 @@
       "label": "branch"
     },
     {
-      "from": "n_9",
+      "from": "n_5",
+      "to": "n_57",
+      "label": "branch"
+    },
+    {
+      "from": "n_57",
+      "to": "n_49",
+      "label": "branch"
+    },
+    {
+      "from": "n_57",
       "to": "n_53",
       "label": "branch"
     },
     {
-      "from": "n_9",
+      "from": "n_57",
       "to": "n_54",
       "label": "branch"
     },
     {
-      "from": "n_9",
+      "from": "n_57",
       "to": "n_55",
       "label": "branch"
     },
     {
-      "from": "n_9",
+      "from": "n_57",
       "to": "n_56",
+      "label": "branch"
+    },
+    {
+      "from": "n_5",
+      "to": "n_58",
+      "label": "branch"
+    },
+    {
+      "from": "n_2",
+      "to": "n_1",
+      "label": "branch"
+    },
+    {
+      "from": "n_1",
+      "to": "n_59",
+      "label": "branch"
+    },
+    {
+      "from": "n_1",
+      "to": "n_6",
+      "label": "branch"
+    },
+    {
+      "from": "n_1",
+      "to": "n_60",
+      "label": "branch"
+    },
+    {
+      "from": "n_61",
+      "to": "n_62",
+      "label": "branch"
+    },
+    {
+      "from": "n_63",
+      "to": "n_64",
+      "label": "branch"
+    },
+    {
+      "from": "n_7",
+      "to": "n_65",
+      "label": "branch"
+    },
+    {
+      "from": "n_66",
+      "to": "n_67",
+      "label": "branch"
+    },
+    {
+      "from": "n_68",
+      "to": "n_69",
+      "label": "branch"
+    },
+    {
+      "from": "n_70",
+      "to": "n_71",
+      "label": "branch"
+    },
+    {
+      "from": "n_4",
+      "to": "n_72",
       "label": "branch"
     }
   ]

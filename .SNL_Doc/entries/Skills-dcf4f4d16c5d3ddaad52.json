@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.TermMacroUUID",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Term Macro UUID",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Term Macro UUID",
+        "zh-CN": "术语宏 UUID"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

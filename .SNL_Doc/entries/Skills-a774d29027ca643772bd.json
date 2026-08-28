@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.EntryTag",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Entry Tag",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Entry Tag",
+        "zh-CN": "条目标签"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

@@ -7,7 +7,14 @@
     "id": "Skill.Refinery",
     "package": "Skills",
     "kind": "Skill",
-    "title": "NL $\\to$ SNL Refinery",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Refine NL $\\to$ SNL",
+        "zh-CN": "精炼 NL $\\to$ SNL"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

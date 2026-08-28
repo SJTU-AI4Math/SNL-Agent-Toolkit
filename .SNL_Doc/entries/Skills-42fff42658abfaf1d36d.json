@@ -7,7 +7,14 @@
     "id": "Skill.SKILL.md",
     "package": "Skills",
     "kind": "file",
-    "title": "$\\texttt{SKILL.md}$",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "$\\texttt{SKILL.md}$",
+        "zh-CN": "$\\texttt{SKILL.md}$"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

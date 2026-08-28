@@ -4,15 +4,15 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.SNLeco.cpt.TermMacroStyleTag",
+    "id": "Skill.SKILL.md-VerifyFix",
     "package": "Skills",
-    "kind": "entry-kind.concept",
+    "kind": "file",
     "title": {
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "Term Macro Style Tag",
-        "zh-CN": "术语宏样式标签"
+        "en": "$\\texttt{SKILL.md}$ of Verify and Fix",
+        "zh-CN": "验证与修复的 $\\texttt{SKILL.md}$"
       }
     },
     "content": {},

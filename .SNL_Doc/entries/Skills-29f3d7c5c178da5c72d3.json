@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.FormulaModeTermMacro",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Formula Mode Term Macro",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Formula Mode Term Macro",
+        "zh-CN": "公式模式术语宏"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

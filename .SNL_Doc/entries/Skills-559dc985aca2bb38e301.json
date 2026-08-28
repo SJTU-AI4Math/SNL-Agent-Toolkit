@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.sec.Concepts",
     "package": "Skills",
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
-    "title": "Core Concepts of SNL",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Core Concepts of SNL",
+        "zh-CN": "SNL 核心概念"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

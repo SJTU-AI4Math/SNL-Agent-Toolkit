@@ -7,7 +7,14 @@
     "id": "Skill.Init",
     "package": "Skills",
     "kind": "Skill",
-    "title": "Initialize",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Initialize",
+        "zh-CN": "初始化"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

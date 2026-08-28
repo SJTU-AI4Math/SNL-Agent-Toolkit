@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.DataSchema",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Data Schema",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Data Schema",
+        "zh-CN": "数据模式"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

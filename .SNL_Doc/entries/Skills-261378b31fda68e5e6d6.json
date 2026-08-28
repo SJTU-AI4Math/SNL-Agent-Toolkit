@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.TermMacroStyle",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Term Macro Style",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Term Macro Style",
+        "zh-CN": "术语宏样式"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.ContentLanguage",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Content Language",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Content Language",
+        "zh-CN": "内容语言"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

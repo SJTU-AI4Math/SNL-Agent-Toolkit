@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.TermMacroNamespace",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Term Macro Namespace",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Term Macro Namespace",
+        "zh-CN": "术语宏命名空间"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

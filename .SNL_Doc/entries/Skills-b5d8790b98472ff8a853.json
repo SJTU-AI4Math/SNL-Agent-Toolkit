@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.BlockModeTermMacro",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Block Mode Term Macro",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Block Mode Term Macro",
+        "zh-CN": "块模式术语宏"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

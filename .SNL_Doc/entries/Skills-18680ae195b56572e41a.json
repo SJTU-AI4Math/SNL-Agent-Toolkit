@@ -7,7 +7,14 @@
     "id": "Skill.SKILL.md-SNLeco",
     "package": "Skills",
     "kind": "file",
-    "title": "$\\texttt{SKILL.md}$ of SNL Ecosystem",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "$\\texttt{SKILL.md}$ of SNL Ecosystem",
+        "zh-CN": "SNL 生态系统的 $\\texttt{SKILL.md}$"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

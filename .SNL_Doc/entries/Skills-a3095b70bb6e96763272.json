@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.HTMLExport",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "HTML Export",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "HTML Export",
+        "zh-CN": "HTML 导出"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

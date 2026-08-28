@@ -4,15 +4,15 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.SNLeco.cpt.TermMacroStyleTag",
+    "id": "Skill.SNLeco.sec.PragmaticConcepts",
     "package": "Skills",
-    "kind": "entry-kind.concept",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
     "title": {
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "Term Macro Style Tag",
-        "zh-CN": "术语宏样式标签"
+        "en": "Pragmatic Concepts of SNL",
+        "zh-CN": "SNL 实用概念"
       }
     },
     "content": {},

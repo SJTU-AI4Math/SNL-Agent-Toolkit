@@ -4,15 +4,15 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.SNLeco.cpt.TermMacroStyleTag",
+    "id": "Skill.Read",
     "package": "Skills",
-    "kind": "entry-kind.concept",
+    "kind": "Skill",
     "title": {
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "Term Macro Style Tag",
-        "zh-CN": "术语宏样式标签"
+        "en": "Read",
+        "zh-CN": "阅读"
       }
     },
     "content": {},

@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.TermMacroName",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Term Macro Name",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Term Macro Name",
+        "zh-CN": "术语宏名称"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.Dashboard",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Dashboard",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Dashboard",
+        "zh-CN": "仪表盘"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

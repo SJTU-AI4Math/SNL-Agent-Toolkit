@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.UILanguage",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "UI Language",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "UI Language",
+        "zh-CN": "UI 语言"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

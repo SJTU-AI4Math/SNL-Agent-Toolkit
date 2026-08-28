@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.TermMacroSource",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Term Macro Source",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Term Macro Source",
+        "zh-CN": "术语宏来源"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

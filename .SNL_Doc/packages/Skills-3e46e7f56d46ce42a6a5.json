@@ -7,12 +7,25 @@
   "description": "",
   "entry_ids": [
     "Skill.CLI",
+    "Skill.Create",
     "Skill.Init",
     "Skill.Init.sec.EntryKindInit",
+    "Skill.Init.sec.MacroKindInit",
+    "Skill.Init.sec.PrimaryInit",
+    "Skill.Maintain",
+    "Skill.Plan",
+    "Skill.Read",
     "Skill.Refinery",
     "Skill.SKILL.md",
+    "Skill.SKILL.md-CLI",
+    "Skill.SKILL.md-Create",
     "Skill.SKILL.md-Init",
+    "Skill.SKILL.md-Maintain",
+    "Skill.SKILL.md-Plan",
+    "Skill.SKILL.md-Read",
+    "Skill.SKILL.md-Refinery",
     "Skill.SKILL.md-SNLeco",
+    "Skill.SKILL.md-VerifyFix",
     "Skill.SNLeco",
     "Skill.SNLeco.cpt.BlockModeTermMacro",
     "Skill.SNLeco.cpt.ContentLanguage",
@@ -62,6 +75,9 @@
     "Skill.SNLeco.cpt.TermMacroUUID",
     "Skill.SNLeco.cpt.TextModeTermMacro",
     "Skill.SNLeco.cpt.UILanguage",
-    "Skill.SNLeco.sec.Concepts"
+    "Skill.SNLeco.sec.Concepts",
+    "Skill.SNLeco.sec.DataSchema",
+    "Skill.SNLeco.sec.PragmaticConcepts",
+    "Skill.VerifyFix"
   ]
 }

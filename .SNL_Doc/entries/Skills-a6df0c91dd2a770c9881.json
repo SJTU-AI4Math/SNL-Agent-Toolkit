@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.Library",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Library",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Library",
+        "zh-CN": "库"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

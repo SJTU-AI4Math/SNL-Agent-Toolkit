@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.MacroPackage",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Macro Package",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Macro Package",
+        "zh-CN": "宏包"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

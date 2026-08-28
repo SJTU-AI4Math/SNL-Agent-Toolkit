@@ -7,7 +7,14 @@
     "id": "Skill.CLI",
     "package": "Skills",
     "kind": "Skill",
-    "title": "CLI Tools",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "CLI Tools",
+        "zh-CN": "CLI 工具"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

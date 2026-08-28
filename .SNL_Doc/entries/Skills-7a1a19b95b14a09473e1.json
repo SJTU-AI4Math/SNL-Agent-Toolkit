@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco",
     "package": "Skills",
     "kind": "Skill",
-    "title": "SNL Ecosystem",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "SNL Ecosystem",
+        "zh-CN": "SNL 生态系统"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

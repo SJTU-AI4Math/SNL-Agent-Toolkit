@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.MacroKindColoring",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Macro Kind Coloring",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Macro Kind Coloring",
+        "zh-CN": "宏类型配色"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

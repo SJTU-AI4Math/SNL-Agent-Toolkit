@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.EntryIDNamespace",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Entry ID Namespace",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Entry ID Namespace",
+        "zh-CN": "条目 ID 命名空间"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

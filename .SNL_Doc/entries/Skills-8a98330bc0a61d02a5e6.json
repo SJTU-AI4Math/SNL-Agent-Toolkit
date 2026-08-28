@@ -7,7 +7,14 @@
     "id": "Skill.Init.sec.EntryKindInit",
     "package": "Skills",
     "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
-    "title": "Entry Kind Initialization",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Entry Kind Initialization",
+        "zh-CN": "条目类型初始化"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

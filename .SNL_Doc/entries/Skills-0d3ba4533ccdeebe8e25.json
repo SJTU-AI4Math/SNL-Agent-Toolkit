@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.Entry",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Entry",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Entry",
+        "zh-CN": "条目"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

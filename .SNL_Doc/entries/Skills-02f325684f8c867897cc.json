@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.InfoView",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Info View",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Info View",
+        "zh-CN": "信息视图"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null

@@ -7,7 +7,14 @@
     "id": "Skill.SNLeco.cpt.MacroKindDescription",
     "package": "Skills",
     "kind": "entry-kind.concept",
-    "title": "Macro Kind Description",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Macro Kind Description",
+        "zh-CN": "宏类型描述"
+      }
+    },
     "content": {},
     "contribution_info": null,
     "pointer": null
