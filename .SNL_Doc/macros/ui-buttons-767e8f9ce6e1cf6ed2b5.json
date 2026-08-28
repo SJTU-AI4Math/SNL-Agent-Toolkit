@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Generate UUID Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Generate UUID Button}"
+        }
       }
     ],
-    "name": "Generate_UUID_Button",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Generate_UUID_Button"
+  },
+  "schema_version": 1
 }

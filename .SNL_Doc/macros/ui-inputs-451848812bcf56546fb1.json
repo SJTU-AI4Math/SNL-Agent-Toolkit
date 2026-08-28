@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Library Title Input}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Library Title Input}"
+        }
       }
     ],
-    "name": "Entry.ui.input.library.create.title",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.library.create.title"
+  },
+  "schema_version": 1
 }

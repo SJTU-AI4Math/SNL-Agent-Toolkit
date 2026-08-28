@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Open Entry Infoview}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Open Entry Infoview}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.openEntryInfoview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.openEntryInfoview"
+  },
+  "schema_version": 1
 }

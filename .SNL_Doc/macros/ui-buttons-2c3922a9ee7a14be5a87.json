@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Entrance (List View)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Entrance (List View)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.entries.entrance-list",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.entries.entrance-list"
+  },
+  "schema_version": 1
 }

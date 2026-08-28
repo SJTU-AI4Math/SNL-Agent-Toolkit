@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Fulcrum's Math Notes}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Fulcrum's Math Notes}"
+        }
       }
     ],
-    "name": "Preset.Fulcrum_Math_Notes",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Preset.Fulcrum_Math_Notes"
+  },
+  "schema_version": 1
 }

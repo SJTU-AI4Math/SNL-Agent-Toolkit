@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Edit Macro}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Edit Macro}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.editMacro",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.editMacro"
+  },
+  "schema_version": 1
 }

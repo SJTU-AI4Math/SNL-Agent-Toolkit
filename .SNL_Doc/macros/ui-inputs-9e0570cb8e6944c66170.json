@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Kind Preset Selector}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Kind Preset Selector}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro-kind.initialize.preset",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro-kind.initialize.preset"
+  },
+  "schema_version": 1
 }

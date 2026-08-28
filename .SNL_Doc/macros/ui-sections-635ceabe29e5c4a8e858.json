@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{GUI Inductive Editor Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{GUI Inductive Editor Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.macro.edit.gui-inductive",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.macro.edit.gui-inductive"
+  },
+  "schema_version": 1
 }

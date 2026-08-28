@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{entry\\_kinds}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{entry\\_kinds}"
+        }
       }
     ],
-    "name": "JsonKey.entry_kinds",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "JsonKey.entry_kinds"
+  },
+  "schema_version": 1
 }

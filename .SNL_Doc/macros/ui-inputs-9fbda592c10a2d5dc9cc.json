@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Query Input}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Query Input}"
+        }
       }
     ],
-    "name": "Entry.ui.input.snoogl.query",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.snoogl.query"
+  },
+  "schema_version": 1
 }

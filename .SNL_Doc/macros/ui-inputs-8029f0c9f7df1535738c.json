@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Kind Description Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Kind Description Input (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro-kind.create.description",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro-kind.create.description"
+  },
+  "schema_version": 1
 }

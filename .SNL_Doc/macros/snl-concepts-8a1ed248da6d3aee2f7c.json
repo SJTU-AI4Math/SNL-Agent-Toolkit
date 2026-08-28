@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.metrics.semanticFreedomGreenBelow}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.metrics.semanticFreedomGreenBelow}"
+        }
       }
     ],
-    "name": "Setting.semanticFreedomGreenBelow",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Setting.semanticFreedomGreenBelow"
+  },
+  "schema_version": 1
 }

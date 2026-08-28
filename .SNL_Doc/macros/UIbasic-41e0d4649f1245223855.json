@@ -14,30 +14,30 @@
       {
         "style_name": "default",
         "tags": [],
-        "typst": {
-          "built_in": "",
-          "synthesis": {
-            "mode": "formula",
-            "macro": ""
-          }
-        },
-        "latex": {
-          "built_in": "",
-          "synthesis": {
-            "mode": "formula",
-            "macro": ""
-          }
-        },
-        "markdown": "",
-        "text": "",
-        "mode": "text",
-        "template": "Description: #0\nContents: #1\nCan be opened by: #2\nDemonstration image: #3"
+        "template": {
+          "mode": "text",
+          "body": "Description: #0\nContents: #1\nCan be opened by: #2\nDemonstration image: #3",
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": ""
+        }
       }
     ],
     "tags": [],
-    "name": "PanelDescription",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "PanelDescription"
+  },
+  "schema_version": 1
 }

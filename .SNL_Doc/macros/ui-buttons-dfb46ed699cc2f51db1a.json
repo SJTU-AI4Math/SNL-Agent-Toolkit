@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Add Child Row Toolbar Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Add Child Row Toolbar Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.tree.add-child",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.tree.add-child"
+  },
+  "schema_version": 1
 }

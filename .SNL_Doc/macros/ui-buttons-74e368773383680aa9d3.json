@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Delete macro}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Delete macro}"
+        }
       }
     ],
-    "name": "Delete_macro_row",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Delete_macro_row"
+  },
+  "schema_version": 1
 }

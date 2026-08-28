@@ -14,30 +14,30 @@
       {
         "style_name": "default",
         "tags": [],
-        "typst": {
-          "built_in": "",
-          "synthesis": {
-            "mode": "formula",
-            "macro": ""
-          }
-        },
-        "latex": {
-          "built_in": "",
-          "synthesis": {
-            "mode": "formula",
-            "macro": ""
-          }
-        },
-        "markdown": "",
-        "text": "",
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL (}#0\\texttt{ mode)}"
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL (}#0\\texttt{ mode)}",
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": ""
+        }
       }
     ],
     "tags": [],
-    "name": "SNoogL",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "SNoogL"
+  },
+  "schema_version": 1
 }

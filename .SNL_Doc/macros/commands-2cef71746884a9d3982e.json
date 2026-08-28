@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Delete Library}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Delete Library}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.deleteLibrary",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.deleteLibrary"
+  },
+  "schema_version": 1
 }

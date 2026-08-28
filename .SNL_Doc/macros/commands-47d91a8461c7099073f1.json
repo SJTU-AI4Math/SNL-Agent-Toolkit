@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Edit Macro Kind}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Edit Macro Kind}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.editMacroKind",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.editMacroKind"
+  },
+  "schema_version": 1
 }

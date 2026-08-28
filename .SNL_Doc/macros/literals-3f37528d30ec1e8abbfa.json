@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{\\#*}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{\\#*}"
+        }
       }
     ],
-    "name": "Literal.hash_star",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Literal.hash_star"
+  },
+  "schema_version": 1
 }

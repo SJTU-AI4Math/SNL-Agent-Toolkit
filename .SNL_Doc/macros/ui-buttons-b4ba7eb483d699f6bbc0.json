@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Open Entry Node Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Open Entry Node Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.relationship-graph.open-entry",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.relationship-graph.open-entry"
+  },
+  "schema_version": 1
 }

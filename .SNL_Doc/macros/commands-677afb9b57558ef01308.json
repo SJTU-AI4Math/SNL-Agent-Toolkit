@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.editRelationship}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.editRelationship}"
+        }
       }
     ],
-    "name": "snlDoc.editRelationship",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "snlDoc.editRelationship"
+  },
+  "schema_version": 1
 }

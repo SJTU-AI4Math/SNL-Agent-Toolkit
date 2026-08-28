@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Package Macros Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Package Macros Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.macro-package.macros",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.macro-package.macros"
+  },
+  "schema_version": 1
 }

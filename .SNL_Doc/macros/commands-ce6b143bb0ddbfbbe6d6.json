@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.init}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.init}"
+        }
       }
     ],
-    "name": "snlDoc.init",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "snlDoc.init"
+  },
+  "schema_version": 1
 }

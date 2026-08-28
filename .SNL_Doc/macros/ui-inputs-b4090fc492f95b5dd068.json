@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Counter Name Input}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Counter Name Input}"
+        }
       }
     ],
-    "name": "Entry.ui.input.counter.name",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.counter.name"
+  },
+  "schema_version": 1
 }

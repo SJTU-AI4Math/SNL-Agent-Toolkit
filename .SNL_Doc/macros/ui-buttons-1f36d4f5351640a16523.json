@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Macro Search Mode Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Macro Search Mode Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.snoogl.macro-mode",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.snoogl.macro-mode"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Relationship From Entry Input (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Relationship From Entry Input (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.relationship.edit.from",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.relationship.edit.from"
+  },
+  "schema_version": 1
 }

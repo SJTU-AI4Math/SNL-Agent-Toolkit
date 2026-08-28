@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{term\\_macros}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{term\\_macros}"
+        }
       }
     ],
-    "name": "Folder.term_macros",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Folder.term_macros"
+  },
+  "schema_version": 1
 }

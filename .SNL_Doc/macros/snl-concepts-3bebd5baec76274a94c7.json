@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Dependency Relationship}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Dependency Relationship}"
+        }
       }
     ],
-    "name": "Concept.concept.snl.dependency-relationship",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.snl.dependency-relationship"
+  },
+  "schema_version": 1
 }

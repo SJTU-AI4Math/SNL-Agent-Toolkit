@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Open Infoview Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Open Infoview Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.open-infoview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.open-infoview"
+  },
+  "schema_version": 1
 }

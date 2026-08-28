@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Back to Infoview Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Back to Infoview Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.panel-nav.back-infoview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.panel-nav.back-infoview"
+  },
+  "schema_version": 1
 }

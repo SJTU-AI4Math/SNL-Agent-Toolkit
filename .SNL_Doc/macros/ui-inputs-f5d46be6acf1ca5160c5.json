@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Package Description Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Package Description Input (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro-package.create.description",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro-package.create.description"
+  },
+  "schema_version": 1
 }

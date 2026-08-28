@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Create Entry Kind}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Create Entry Kind}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.createEntryKind",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.createEntryKind"
+  },
+  "schema_version": 1
 }

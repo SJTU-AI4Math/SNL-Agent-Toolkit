@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Macro Button (Package Panel)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Macro Button (Package Panel)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro-package.create-macro",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro-package.create-macro"
+  },
+  "schema_version": 1
 }

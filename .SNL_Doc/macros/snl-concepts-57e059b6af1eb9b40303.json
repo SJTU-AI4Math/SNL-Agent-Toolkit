@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{\\{ id, name, numbering DSL, children[] \\}}"
+        }
       }
     ],
-    "name": "id_name_numbering_DSL_children",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "id_name_numbering_DSL_children"
+  },
+  "schema_version": 1
 }

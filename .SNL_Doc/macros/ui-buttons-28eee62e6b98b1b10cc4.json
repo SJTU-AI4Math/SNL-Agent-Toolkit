@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Update Macro Kind Submit Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Update Macro Kind Submit Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro-kind.edit.submit",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro-kind.edit.submit"
+  },
+  "schema_version": 1
 }

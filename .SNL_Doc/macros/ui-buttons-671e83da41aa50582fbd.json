@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Toggle Macro Package Active Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Toggle Macro Package Active Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro-package.toggle-active",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro-package.toggle-active"
+  },
+  "schema_version": 1
 }

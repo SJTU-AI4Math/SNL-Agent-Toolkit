@@ -3,5 +3,7 @@
   "version": 1,
   "id": "literals",
   "name": "Technical Literals",
-  "description": "Literal symbols, examples, statuses, and residual technical prose terms."
+  "description": "Literal symbols, examples, statuses, and residual technical prose terms.",
+  "schema_version": 2,
+  "entry_ids": []
 }

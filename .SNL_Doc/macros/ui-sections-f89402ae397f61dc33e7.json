@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Infoview Libraries Layer}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Infoview Libraries Layer}"
+        }
       }
     ],
-    "name": "Entry.ui.section.infoview.libraries",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.infoview.libraries"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Mode Selector (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Mode Selector (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro.edit.mode",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro.edit.mode"
+  },
+  "schema_version": 1
 }

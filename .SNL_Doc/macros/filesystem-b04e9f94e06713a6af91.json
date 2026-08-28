@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{<slug>.json}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{<slug>.json}"
+        }
       }
     ],
-    "name": "File.slug_json",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "File.slug_json"
+  },
+  "schema_version": 1
 }

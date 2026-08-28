@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Edit Macro Package}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Edit Macro Package}"
+        }
       }
     ],
-    "name": "Entry.ui.panel.macro-package.edit",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.panel.macro-package.edit"
+  },
+  "schema_version": 1
 }

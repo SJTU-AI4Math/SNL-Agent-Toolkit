@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Initialize Entry Kinds}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Initialize Entry Kinds}"
+        }
       }
     ],
-    "name": "Initialize_Entry_Kinds",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Initialize_Entry_Kinds"
+  },
+  "schema_version": 1
 }

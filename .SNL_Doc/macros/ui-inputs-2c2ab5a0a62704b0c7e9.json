@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Dynamic Template Right Input (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Dynamic Template Right Input (Edit)}"
+        }
       }
     ],
-    "name": "macro_edit_template_right",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "macro_edit_template_right"
+  },
+  "schema_version": 1
 }

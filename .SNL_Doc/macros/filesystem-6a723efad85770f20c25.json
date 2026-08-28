@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{counters.json}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{counters.json}"
+        }
       }
     ],
-    "name": "File.counters_json",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "File.counters_json"
+  },
+  "schema_version": 1
 }

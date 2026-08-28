@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Macro Result Entrance}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Macro Result Entrance}"
+        }
       }
     ],
-    "name": "Entry.ui.button.snoogl.macro-result-entrance",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.snoogl.macro-result-entrance"
+  },
+  "schema_version": 1
 }

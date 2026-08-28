@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Edit Relationship Edge Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Edit Relationship Edge Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.relationship-graph.edit-edge",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.relationship-graph.edit-edge"
+  },
+  "schema_version": 1
 }

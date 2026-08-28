@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Styles Section (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Styles Section (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.section.macro.edit.styles",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.macro.edit.styles"
+  },
+  "schema_version": 1
 }

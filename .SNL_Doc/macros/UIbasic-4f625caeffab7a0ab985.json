@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "create #0"
+        "template": {
+          "mode": "text",
+          "body": "create #0"
+        }
       }
     ],
     "tags": [],
-    "name": "CreateEntity",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CreateEntity"
+  },
+  "schema_version": 1
 }

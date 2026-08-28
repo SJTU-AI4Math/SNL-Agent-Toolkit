@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{*.json}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{*.json}"
+        }
       }
     ],
-    "name": "File.wildcard_json",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "File.wildcard_json"
+  },
+  "schema_version": 1
 }

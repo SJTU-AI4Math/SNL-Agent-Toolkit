@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{formatNumbering(template, k)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{formatNumbering(template, k)}"
+        }
       }
     ],
-    "name": "formatNumbering_template_k",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "formatNumbering_template_k"
+  },
+  "schema_version": 1
 }

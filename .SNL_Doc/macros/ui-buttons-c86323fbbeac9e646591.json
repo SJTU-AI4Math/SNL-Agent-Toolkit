@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Add First Counter Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Add First Counter Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.counter.add-first",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.counter.add-first"
+  },
+  "schema_version": 1
 }

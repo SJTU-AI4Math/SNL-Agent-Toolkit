@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Kind Background Color Input (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Kind Background Color Input (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro-kind.edit.background",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro-kind.edit.background"
+  },
+  "schema_version": 1
 }

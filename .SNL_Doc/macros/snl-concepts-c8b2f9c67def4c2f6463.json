@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{defaultCounterName}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{defaultCounterName}"
+        }
       }
     ],
-    "name": "defaultCounterName",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "defaultCounterName"
+  },
+  "schema_version": 1
 }

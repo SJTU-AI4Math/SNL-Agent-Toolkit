@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Open Relationship Graph (Library)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Open Relationship Graph (Library)}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.openInfoviewGraphForLibrary",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.openInfoviewGraphForLibrary"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SnlInteractionDriver}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SnlInteractionDriver}"
+        }
       }
     ],
-    "name": "SnlInteractionDriver",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "SnlInteractionDriver"
+  },
+  "schema_version": 1
 }

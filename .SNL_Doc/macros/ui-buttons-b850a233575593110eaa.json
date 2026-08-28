@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Update Entry Submit Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Update Entry Submit Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry.edit.submit",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry.edit.submit"
+  },
+  "schema_version": 1
 }

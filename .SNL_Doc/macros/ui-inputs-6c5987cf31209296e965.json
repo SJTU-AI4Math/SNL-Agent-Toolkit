@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Kind Name Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Kind Name Input (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro-kind.create.name",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro-kind.create.name"
+  },
+  "schema_version": 1
 }

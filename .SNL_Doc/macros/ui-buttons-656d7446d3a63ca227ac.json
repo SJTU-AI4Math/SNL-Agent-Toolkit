@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Refresh Panel Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Refresh Panel Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.panel-nav.refresh",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.panel-nav.refresh"
+  },
+  "schema_version": 1
 }

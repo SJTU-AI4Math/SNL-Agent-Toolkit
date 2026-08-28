@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Remove Macro Style Button (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Remove Macro Style Button (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro.edit.style-remove",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro.edit.style-remove"
+  },
+  "schema_version": 1
 }

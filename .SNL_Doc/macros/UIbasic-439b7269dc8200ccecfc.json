@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "not documented"
+        "template": {
+          "mode": "text",
+          "body": "not documented"
+        }
       }
     ],
     "tags": [],
-    "name": "NotDocumented",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "NotDocumented"
+  },
+  "schema_version": 1
 }

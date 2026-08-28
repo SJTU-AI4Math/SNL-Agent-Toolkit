@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Package Panel}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Package Panel}"
+        }
       }
     ],
-    "name": "Package_Panel",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Package_Panel"
+  },
+  "schema_version": 1
 }

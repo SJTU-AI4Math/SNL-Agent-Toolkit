@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Typst Content Tab (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Typst Content Tab (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry.create.content.typst",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry.create.content.typst"
+  },
+  "schema_version": 1
 }

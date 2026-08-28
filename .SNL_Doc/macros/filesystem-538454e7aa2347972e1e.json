@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{.SNL\\_Doc}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{.SNL\\_Doc}"
+        }
       }
     ],
-    "name": "Folder.SNL_Doc",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Folder.SNL_Doc"
+  },
+  "schema_version": 1
 }

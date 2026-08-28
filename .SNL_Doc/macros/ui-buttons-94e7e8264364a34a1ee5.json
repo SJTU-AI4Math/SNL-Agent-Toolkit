@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Edit in Dashboard Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Edit in Dashboard Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.infoview.edit-dashboard",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.infoview.edit-dashboard"
+  },
+  "schema_version": 1
 }

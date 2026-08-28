@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Search}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Search}"
+        }
       }
     ],
-    "name": "SNoogL_Search",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "SNoogL_Search"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Entry Search Mode Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Entry Search Mode Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.snoogl.entry-mode",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.snoogl.entry-mode"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{macro migration boundary}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{macro migration boundary}"
+        }
       }
     ],
-    "name": "Macro_migration_boundary",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Macro_migration_boundary"
+  },
+  "schema_version": 1
 }

@@ -15,31 +15,31 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Relationship Graph (}#0\\texttt{)}",
         "style_name": "default",
         "tags": [],
-        "typst": {
-          "built_in": "",
-          "synthesis": {
-            "mode": "formula",
-            "macro": ""
-          }
-        },
-        "latex": {
-          "built_in": "",
-          "synthesis": {
-            "mode": "formula",
-            "macro": ""
-          }
-        },
-        "markdown": "",
-        "text": ""
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Relationship Graph (}#0\\texttt{)}",
+          "typst": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "latex": {
+            "built_in": "",
+            "synthesis": {
+              "mode": "formula",
+              "macro": ""
+            }
+          },
+          "markdown": "",
+          "text": ""
+        }
       }
     ],
-    "name": "Relationship_Graph",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Relationship_Graph"
+  },
+  "schema_version": 1
 }

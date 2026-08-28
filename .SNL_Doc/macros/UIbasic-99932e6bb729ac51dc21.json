@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "reset #0"
+        "template": {
+          "mode": "text",
+          "body": "reset #0"
+        }
       }
     ],
     "tags": [],
-    "name": "ResetItems",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "ResetItems"
+  },
+  "schema_version": 1
 }

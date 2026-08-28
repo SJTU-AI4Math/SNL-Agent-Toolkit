@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{GUI Macro Style Input (Edit Entry)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{GUI Macro Style Input (Edit Entry)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.entry.edit.gui-macro-style",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.entry.edit.gui-macro-style"
+  },
+  "schema_version": 1
 }

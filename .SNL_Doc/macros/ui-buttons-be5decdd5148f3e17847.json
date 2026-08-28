@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Library Entrance (Infoview)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Library Entrance (Infoview)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.infoview.library-entrance",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.infoview.library-entrance"
+  },
+  "schema_version": 1
 }

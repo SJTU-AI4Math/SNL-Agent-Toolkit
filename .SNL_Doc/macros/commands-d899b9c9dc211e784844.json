@@ -16,15 +16,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{openInfoviewGraph[ForLibrary]}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{openInfoviewGraph[ForLibrary]}"
+        }
       }
     ],
-    "name": "openInfoviewGraph_ForLibrary",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "openInfoviewGraph_ForLibrary"
+  },
+  "schema_version": 1
 }

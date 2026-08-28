@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.editMacroPackage}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.editMacroPackage}"
+        }
       }
     ],
-    "name": "snlDoc.editMacroPackage",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "snlDoc.editMacroPackage"
+  },
+  "schema_version": 1
 }

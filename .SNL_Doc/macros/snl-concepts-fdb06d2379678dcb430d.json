@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL Macros}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL Macros}"
+        }
       }
     ],
-    "name": "SNL_Macros",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "SNL_Macros"
+  },
+  "schema_version": 1
 }

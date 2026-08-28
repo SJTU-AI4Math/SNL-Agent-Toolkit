@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Dynamic Template Left Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Dynamic Template Left Input (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro.create.template-left",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro.create.template-left"
+  },
+  "schema_version": 1
 }

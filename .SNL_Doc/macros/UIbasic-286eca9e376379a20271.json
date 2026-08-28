@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "apply the selected #0 preset"
+        "template": {
+          "mode": "text",
+          "body": "apply the selected #0 preset"
+        }
       }
     ],
     "tags": [],
-    "name": "ApplySelectedPreset",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "ApplySelectedPreset"
+  },
+  "schema_version": 1
 }

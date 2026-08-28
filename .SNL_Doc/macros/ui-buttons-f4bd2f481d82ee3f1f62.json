@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL GUI Editor Button (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL GUI Editor Button (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry.create.snl-gui-editor",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry.create.snl-gui-editor"
+  },
+  "schema_version": 1
 }

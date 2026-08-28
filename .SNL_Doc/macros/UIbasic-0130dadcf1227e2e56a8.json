@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "move the current tree row #0"
+        "template": {
+          "mode": "text",
+          "body": "move the current tree row #0"
+        }
       }
     ],
     "tags": [],
-    "name": "MoveTreeRow",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "MoveTreeRow"
+  },
+  "schema_version": 1
 }

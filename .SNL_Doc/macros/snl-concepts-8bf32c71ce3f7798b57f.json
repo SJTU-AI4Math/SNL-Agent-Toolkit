@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Text Input}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Text Input}"
+        }
       }
     ],
-    "name": "Concept.concept.ui.text-input",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.ui.text-input"
+  },
+  "schema_version": 1
 }

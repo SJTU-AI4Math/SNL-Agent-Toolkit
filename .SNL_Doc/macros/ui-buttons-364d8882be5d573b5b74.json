@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{View Library in Infoview Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{View Library in Infoview Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.library.edit.view-infoview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.library.edit.view-infoview"
+  },
+  "schema_version": 1
 }

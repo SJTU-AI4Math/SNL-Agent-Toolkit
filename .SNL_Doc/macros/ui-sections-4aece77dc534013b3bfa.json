@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Macro Results Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Macro Results Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.snoogl.macro-results",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.snoogl.macro-results"
+  },
+  "schema_version": 1
 }

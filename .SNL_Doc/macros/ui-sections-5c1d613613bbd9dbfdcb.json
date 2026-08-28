@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Kind Color Preview (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Kind Color Preview (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.section.macro-kind.edit.preview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.macro-kind.edit.preview"
+  },
+  "schema_version": 1
 }

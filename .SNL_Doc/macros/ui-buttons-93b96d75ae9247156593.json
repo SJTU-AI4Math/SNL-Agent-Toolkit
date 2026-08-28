@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Regenerate UUID}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Regenerate UUID}"
+        }
       }
     ],
-    "name": "Regenerate_UUID",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Regenerate_UUID"
+  },
+  "schema_version": 1
 }

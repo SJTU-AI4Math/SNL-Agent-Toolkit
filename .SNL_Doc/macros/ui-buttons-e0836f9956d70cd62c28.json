@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Add Root Entry Reference Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Add Root Entry Reference Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.library.outline.add-root",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.library.outline.add-root"
+  },
+  "schema_version": 1
 }

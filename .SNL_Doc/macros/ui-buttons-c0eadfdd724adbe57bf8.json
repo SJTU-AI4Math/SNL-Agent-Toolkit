@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL Macro Kind Entrance (List View)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL Macro Kind Entrance (List View)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.macro-kinds.entrance",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.macro-kinds.entrance"
+  },
+  "schema_version": 1
 }

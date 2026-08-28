@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Operation Result Status}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Operation Result Status}"
+        }
       }
     ],
-    "name": "Concept.concept.extension.operation-status",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.extension.operation-status"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Delete Macro Row Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Delete Macro Row Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro-package.row-delete",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro-package.row-delete"
+  },
+  "schema_version": 1
 }

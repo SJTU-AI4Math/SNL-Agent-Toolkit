@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Macro Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Macro Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.snl-macros.create-header",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.snl-macros.create-header"
+  },
+  "schema_version": 1
 }

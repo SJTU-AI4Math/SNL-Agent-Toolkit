@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Outline Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Outline Section}"
+        }
       }
     ],
-    "name": "Outline_Section",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Outline_Section"
+  },
+  "schema_version": 1
 }

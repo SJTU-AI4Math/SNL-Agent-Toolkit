@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Relationship}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Relationship}"
+        }
       }
     ],
-    "name": "Create_Relationship",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Create_Relationship"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Synchronized Rename}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Synchronized Rename}"
+        }
       }
     ],
-    "name": "Entry.concept.snl.synchronized-rename",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.concept.snl.synchronized-rename"
+  },
+  "schema_version": 1
 }

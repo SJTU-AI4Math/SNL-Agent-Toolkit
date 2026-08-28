@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Counter Number Formatting}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Counter Number Formatting}"
+        }
       }
     ],
-    "name": "Concept.concept.snl.number-formatting",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.snl.number-formatting"
+  },
+  "schema_version": 1
 }

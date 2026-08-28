@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{\\%}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{\\%}"
+        }
       }
     ],
-    "name": "Literal.percent_sign",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Literal.percent_sign"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Remove Macro Style Button (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Remove Macro Style Button (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro.create.style-remove",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro.create.style-remove"
+  },
+  "schema_version": 1
 }

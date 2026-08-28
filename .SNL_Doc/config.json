@@ -1,12 +1,18 @@
 {
-  "version": "0.0.6",
+  "version": "0.1.0",
   "entry_kinds": [
     {
       "id": "36b37181-3689-483e-bf0e-f1e6d1e38e02",
       "name": "Panel",
       "coloring": {
-        "stroke": "#1e88e5",
-        "background": "#e3f2fd"
+        "light": {
+          "stroke": "#1e88e5",
+          "background": "#e3f2fd"
+        },
+        "dark": {
+          "stroke": "#1e88e5",
+          "background": "#e3f2fd"
+        }
       },
       "defaultCounterName": "Panel",
       "style": ""
@@ -15,8 +21,14 @@
       "id": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
       "name": "Section",
       "coloring": {
-        "stroke": "#546e7a",
-        "background": "#eceff1"
+        "light": {
+          "stroke": "#546e7a",
+          "background": "#eceff1"
+        },
+        "dark": {
+          "stroke": "#546e7a",
+          "background": "#eceff1"
+        }
       },
       "defaultCounterName": "section",
       "style": ""
@@ -25,8 +37,14 @@
       "id": "a7b50172-f82e-4adb-85cc-f085fda132ff",
       "name": "Button",
       "coloring": {
-        "stroke": "#43a047",
-        "background": "#e8f5e9"
+        "light": {
+          "stroke": "#43a047",
+          "background": "#e8f5e9"
+        },
+        "dark": {
+          "stroke": "#43a047",
+          "background": "#e8f5e9"
+        }
       },
       "defaultCounterName": "function",
       "style": ""
@@ -35,8 +53,14 @@
       "id": "38c7a8a6-79b9-480b-b042-58848d5b8e26",
       "name": "Text Input",
       "coloring": {
-        "stroke": "#8e24aa",
-        "background": "#f3e5f5"
+        "light": {
+          "stroke": "#8e24aa",
+          "background": "#f3e5f5"
+        },
+        "dark": {
+          "stroke": "#8e24aa",
+          "background": "#f3e5f5"
+        }
       },
       "defaultCounterName": "function",
       "style": ""
@@ -45,8 +69,14 @@
       "id": "406729f7-e18a-404d-90a3-679b9372edd1",
       "name": "Command",
       "coloring": {
-        "stroke": "#e64a19",
-        "background": "#fbe9e7"
+        "light": {
+          "stroke": "#e64a19",
+          "background": "#fbe9e7"
+        },
+        "dark": {
+          "stroke": "#e64a19",
+          "background": "#fbe9e7"
+        }
       },
       "defaultCounterName": "Command",
       "style": ""
@@ -55,8 +85,14 @@
       "id": "entry-kind.concept",
       "name": "Concept",
       "coloring": {
-        "stroke": "#6a1b9a",
-        "background": "#f3e5f5"
+        "light": {
+          "stroke": "#6a1b9a",
+          "background": "#f3e5f5"
+        },
+        "dark": {
+          "stroke": "#6a1b9a",
+          "background": "#f3e5f5"
+        }
       },
       "defaultCounterName": "",
       "style": ""
@@ -65,8 +101,14 @@
       "id": "img",
       "name": "Image",
       "coloring": {
-        "stroke": "#888888",
-        "background": "#eeeeee"
+        "light": {
+          "stroke": "#888888",
+          "background": "#eeeeee"
+        },
+        "dark": {
+          "stroke": "#888888",
+          "background": "#eeeeee"
+        }
       },
       "defaultCounterName": "1",
       "style": ""
@@ -78,8 +120,14 @@
       "name": "Panel",
       "description": "Macros denoting concrete Extension Panels.",
       "coloring": {
-        "stroke": "#1565c0",
-        "background": "#e3f2fd"
+        "light": {
+          "stroke": "#1565c0",
+          "background": "#e3f2fd"
+        },
+        "dark": {
+          "stroke": "#1565c0",
+          "background": "#e3f2fd"
+        }
       }
     },
     {
@@ -87,8 +135,14 @@
       "name": "Section",
       "description": "Macros denoting concrete UI Sections.",
       "coloring": {
-        "stroke": "#455a64",
-        "background": "#eceff1"
+        "light": {
+          "stroke": "#455a64",
+          "background": "#eceff1"
+        },
+        "dark": {
+          "stroke": "#455a64",
+          "background": "#eceff1"
+        }
       }
     },
     {
@@ -96,8 +150,14 @@
       "name": "Button",
       "description": "Macros denoting concrete UI Buttons and actions.",
       "coloring": {
-        "stroke": "#2e7d32",
-        "background": "#e8f5e9"
+        "light": {
+          "stroke": "#2e7d32",
+          "background": "#e8f5e9"
+        },
+        "dark": {
+          "stroke": "#2e7d32",
+          "background": "#e8f5e9"
+        }
       }
     },
     {
@@ -105,8 +165,14 @@
       "name": "Text Input",
       "description": "Macros denoting UI text/select inputs.",
       "coloring": {
-        "stroke": "#7b1fa2",
-        "background": "#f3e5f5"
+        "light": {
+          "stroke": "#7b1fa2",
+          "background": "#f3e5f5"
+        },
+        "dark": {
+          "stroke": "#7b1fa2",
+          "background": "#f3e5f5"
+        }
       }
     },
     {
@@ -114,8 +180,14 @@
       "name": "Command",
       "description": "Macros denoting registered VS Code commands.",
       "coloring": {
-        "stroke": "#d84315",
-        "background": "#fbe9e7"
+        "light": {
+          "stroke": "#d84315",
+          "background": "#fbe9e7"
+        },
+        "dark": {
+          "stroke": "#d84315",
+          "background": "#fbe9e7"
+        }
       }
     },
     {
@@ -123,8 +195,14 @@
       "name": "SNL Concept",
       "description": "SNL-Doc schema, renderer, and Extension concepts.",
       "coloring": {
-        "stroke": "#6a1b9a",
-        "background": "#f3e5f5"
+        "light": {
+          "stroke": "#6a1b9a",
+          "background": "#f3e5f5"
+        },
+        "dark": {
+          "stroke": "#6a1b9a",
+          "background": "#f3e5f5"
+        }
       }
     },
     {
@@ -132,8 +210,14 @@
       "name": "Filesystem",
       "description": "Path composition, Folder, File, and JSON-key terms.",
       "coloring": {
-        "stroke": "#00695c",
-        "background": "#e0f2f1"
+        "light": {
+          "stroke": "#00695c",
+          "background": "#e0f2f1"
+        },
+        "dark": {
+          "stroke": "#00695c",
+          "background": "#e0f2f1"
+        }
       }
     },
     {
@@ -141,8 +225,14 @@
       "name": "Computer Basics",
       "description": "Keyboard shortcuts and general programming/computer terms.",
       "coloring": {
-        "stroke": "#37474f",
-        "background": "#eceff1"
+        "light": {
+          "stroke": "#37474f",
+          "background": "#eceff1"
+        },
+        "dark": {
+          "stroke": "#37474f",
+          "background": "#eceff1"
+        }
       }
     },
     {
@@ -150,8 +240,14 @@
       "name": "Literal",
       "description": "Literal symbols, examples, statuses, and prose-only technical terms.",
       "coloring": {
-        "stroke": "#5d4037",
-        "background": "#efebe9"
+        "light": {
+          "stroke": "#5d4037",
+          "background": "#efebe9"
+        },
+        "dark": {
+          "stroke": "#5d4037",
+          "background": "#efebe9"
+        }
       }
     }
   ],

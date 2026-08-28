@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.deleteEntry}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.deleteEntry}"
+        }
       }
     ],
-    "name": "snlDoc.deleteEntry",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "snlDoc.deleteEntry"
+  },
+  "schema_version": 1
 }

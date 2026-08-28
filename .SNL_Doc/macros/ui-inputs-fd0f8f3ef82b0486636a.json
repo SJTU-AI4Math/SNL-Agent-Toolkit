@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Relationship ID Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Relationship ID Input (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.relationship.create.id",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.relationship.create.id"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Stable Entity Identity}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Stable Entity Identity}"
+        }
       }
     ],
-    "name": "Entry.concept.snl.stable-identity",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.concept.snl.stable-identity"
+  },
+  "schema_version": 1
 }

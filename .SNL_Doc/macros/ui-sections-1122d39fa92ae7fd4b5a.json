@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Infoview Dependencies Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Infoview Dependencies Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.entry-infoview.dependencies",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.entry-infoview.dependencies"
+  },
+  "schema_version": 1
 }

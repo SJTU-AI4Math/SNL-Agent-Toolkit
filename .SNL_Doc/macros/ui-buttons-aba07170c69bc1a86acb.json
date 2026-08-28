@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Macro Kind Button (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Macro Kind Button (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro.edit.create-kind",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro.edit.create-kind"
+  },
+  "schema_version": 1
 }

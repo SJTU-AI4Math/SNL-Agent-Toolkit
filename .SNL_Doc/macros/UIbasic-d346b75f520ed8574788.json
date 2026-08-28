@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "validate and create #0"
+        "template": {
+          "mode": "text",
+          "body": "validate and create #0"
+        }
       }
     ],
     "tags": [],
-    "name": "ValidateAndCreateEntity",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "ValidateAndCreateEntity"
+  },
+  "schema_version": 1
 }

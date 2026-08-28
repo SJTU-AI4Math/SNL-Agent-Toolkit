@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Related Entry Entrance}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Related Entry Entrance}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry-infoview.related-entry",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry-infoview.related-entry"
+  },
+  "schema_version": 1
 }

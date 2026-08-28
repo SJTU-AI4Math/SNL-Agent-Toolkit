@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Cancel Entry Reference Add Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Cancel Entry Reference Add Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.library.outline.cancel-add",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.library.outline.cancel-add"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{query-only macro rendering}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{query-only macro rendering}"
+        }
       }
     ],
-    "name": "Query_only_macro_rendering",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Query_only_macro_rendering"
+  },
+  "schema_version": 1
 }

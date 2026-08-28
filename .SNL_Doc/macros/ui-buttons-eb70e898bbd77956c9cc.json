@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Regenerate Dependencies Button (List View)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Regenerate Dependencies Button (List View)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.relationships.regenerate",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.relationships.regenerate"
+  },
+  "schema_version": 1
 }

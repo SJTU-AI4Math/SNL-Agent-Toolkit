@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Live Preview Section (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Live Preview Section (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.section.entry.edit.preview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.entry.edit.preview"
+  },
+  "schema_version": 1
 }

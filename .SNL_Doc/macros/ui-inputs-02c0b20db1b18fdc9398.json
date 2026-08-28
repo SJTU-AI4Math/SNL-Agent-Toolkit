@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Library Entry Reference ID Input}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Library Entry Reference ID Input}"
+        }
       }
     ],
-    "name": "Entry.ui.input.library.outline.entry-id",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.library.outline.entry-id"
+  },
+  "schema_version": 1
 }

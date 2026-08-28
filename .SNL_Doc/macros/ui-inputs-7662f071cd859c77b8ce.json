@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{GUI Macro Style Input (Create Entry)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{GUI Macro Style Input (Create Entry)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.entry.create.gui-macro-style",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.entry.create.gui-macro-style"
+  },
+  "schema_version": 1
 }

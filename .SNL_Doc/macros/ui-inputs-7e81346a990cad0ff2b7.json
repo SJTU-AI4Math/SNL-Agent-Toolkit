@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Library Entry Counter Selector}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Library Entry Counter Selector}"
+        }
       }
     ],
-    "name": "Entry.ui.input.library.outline.counter",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.library.outline.counter"
+  },
+  "schema_version": 1
 }

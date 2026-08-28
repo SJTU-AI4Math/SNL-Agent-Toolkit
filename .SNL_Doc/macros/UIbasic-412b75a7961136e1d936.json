@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "open #0"
+        "template": {
+          "mode": "text",
+          "body": "open #0"
+        }
       }
     ],
     "tags": [],
-    "name": "OpenUIElement",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "OpenUIElement"
+  },
+  "schema_version": 1
 }

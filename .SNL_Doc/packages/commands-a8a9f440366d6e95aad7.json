@@ -3,5 +3,7 @@
   "version": 1,
   "id": "commands",
   "name": "Extension Commands",
-  "description": "Registered command identifiers, titles, and aliases."
+  "description": "Registered command identifiers, titles, and aliases.",
+  "schema_version": 2,
+  "entry_ids": []
 }

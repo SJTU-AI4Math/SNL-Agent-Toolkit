@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Search Bar Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Search Bar Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.snoogl.search",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.snoogl.search"
+  },
+  "schema_version": 1
 }

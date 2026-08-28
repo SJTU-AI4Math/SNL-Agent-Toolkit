@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Relationships Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Relationships Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.dashboard.relationships",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.dashboard.relationships"
+  },
+  "schema_version": 1
 }

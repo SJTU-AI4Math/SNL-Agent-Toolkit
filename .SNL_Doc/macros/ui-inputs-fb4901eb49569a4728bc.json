@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Kind Stroke Color Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Kind Stroke Color Input (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.entry-kind.create.stroke",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.entry-kind.create.stroke"
+  },
+  "schema_version": 1
 }

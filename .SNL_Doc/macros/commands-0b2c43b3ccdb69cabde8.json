@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{regenerateDependencies}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{regenerateDependencies}"
+        }
       }
     ],
-    "name": "regenerateDependencies",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "regenerateDependencies"
+  },
+  "schema_version": 1
 }

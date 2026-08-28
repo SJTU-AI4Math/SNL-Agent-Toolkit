@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Delete Macros Batch Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Delete Macros Batch Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro-package.batch-delete",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro-package.batch-delete"
+  },
+  "schema_version": 1
 }

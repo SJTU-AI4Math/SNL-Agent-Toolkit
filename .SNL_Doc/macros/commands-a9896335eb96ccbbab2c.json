@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Command Palette Overview}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Command Palette Overview}"
+        }
       }
     ],
-    "name": "Command_Palette_Overview",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Command_Palette_Overview"
+  },
+  "schema_version": 1
 }

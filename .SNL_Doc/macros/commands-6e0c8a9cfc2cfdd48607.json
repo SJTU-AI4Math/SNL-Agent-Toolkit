@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Create Macro Package}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Create Macro Package}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.createMacroPackage",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.createMacroPackage"
+  },
+  "schema_version": 1
 }

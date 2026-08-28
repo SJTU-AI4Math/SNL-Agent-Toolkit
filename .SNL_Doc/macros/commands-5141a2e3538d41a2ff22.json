@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.createMacroKind}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.createMacroKind}"
+        }
       }
     ],
-    "name": "snlDoc.createMacroKind",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "snlDoc.createMacroKind"
+  },
+  "schema_version": 1
 }

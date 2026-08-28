@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL: Macro Search Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL: Macro Search Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.snl-macros.search",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.snl-macros.search"
+  },
+  "schema_version": 1
 }

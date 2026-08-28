@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Entry Kind Submit Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Entry Kind Submit Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry-kind.create.submit",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry-kind.create.submit"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Package Picker}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Package Picker}"
+        }
       }
     ],
-    "name": "Concept.concept.extension.package-picker",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.extension.package-picker"
+  },
+  "schema_version": 1
 }

@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "refresh the current panel context"
+        "template": {
+          "mode": "text",
+          "body": "refresh the current panel context"
+        }
       }
     ],
     "tags": [],
-    "name": "RefreshPanelContext",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "RefreshPanelContext"
+  },
+  "schema_version": 1
 }

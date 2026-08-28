@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Delete Row Toolbar Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Delete Row Toolbar Button}"
+        }
       }
     ],
-    "name": "Delete_Row_Toolbar_Button",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Delete_Row_Toolbar_Button"
+  },
+  "schema_version": 1
 }

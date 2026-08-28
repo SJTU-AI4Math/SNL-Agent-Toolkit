@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{View Library Graph Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{View Library Graph Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.infoview.library-graph",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.infoview.library-graph"
+  },
+  "schema_version": 1
 }

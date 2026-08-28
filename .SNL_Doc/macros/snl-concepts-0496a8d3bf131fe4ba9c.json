@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Syntax Tree v2}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Syntax Tree v2}"
+        }
       }
     ],
-    "name": "Syntax_Tree_v2",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Syntax_Tree_v2"
+  },
+  "schema_version": 1
 }

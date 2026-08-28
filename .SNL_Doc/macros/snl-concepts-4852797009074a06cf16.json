@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{recursive hover popovers}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{recursive hover popovers}"
+        }
       }
     ],
-    "name": "Recursive_hover_popovers",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Recursive_hover_popovers"
+  },
+  "schema_version": 1
 }

@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{edit*}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{edit*}"
+        }
       }
     ],
-    "name": "edit",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "edit"
+  },
+  "schema_version": 1
 }

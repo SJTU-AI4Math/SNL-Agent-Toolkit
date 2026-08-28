@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{initMacroKinds}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{initMacroKinds}"
+        }
       }
     ],
-    "name": "initMacroKinds",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "initMacroKinds"
+  },
+  "schema_version": 1
 }

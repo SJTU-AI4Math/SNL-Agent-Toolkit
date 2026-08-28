@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{packages}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{packages}"
+        }
       }
     ],
-    "name": "Folder.packages",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Folder.packages"
+  },
+  "schema_version": 1
 }

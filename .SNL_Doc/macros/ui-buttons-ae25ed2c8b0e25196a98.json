@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Copy / Move Batch Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Copy / Move Batch Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro-package.batch-transfer",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro-package.batch-transfer"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL Macro Kind}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL Macro Kind}"
+        }
       }
     ],
-    "name": "Concept.concept.snl.macro-kind",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.snl.macro-kind"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Content Section (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Content Section (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.section.entry.create.content",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.entry.create.content"
+  },
+  "schema_version": 1
 }

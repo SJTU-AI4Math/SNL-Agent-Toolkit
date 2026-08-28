@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Open Macro Package…}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Open Macro Package…}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.openMacroPackage",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.openMacroPackage"
+  },
+  "schema_version": 1
 }

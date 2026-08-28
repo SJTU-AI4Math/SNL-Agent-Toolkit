@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{webview message bridge}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{webview message bridge}"
+        }
       }
     ],
-    "name": "Webview_message_bridge",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Webview_message_bridge"
+  },
+  "schema_version": 1
 }

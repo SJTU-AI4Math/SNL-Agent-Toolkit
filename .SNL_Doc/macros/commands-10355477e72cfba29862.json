@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Reveal Entry Pointer}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Reveal Entry Pointer}"
+        }
       }
     ],
-    "name": "CommandTitle.snlDoc.revealEntryPointer",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "CommandTitle.snlDoc.revealEntryPointer"
+  },
+  "schema_version": 1
 }

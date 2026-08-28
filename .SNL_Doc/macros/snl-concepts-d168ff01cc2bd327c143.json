@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Title Format}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Title Format}"
+        }
       }
     ],
-    "name": "Concept.concept.extension.entry-title-format",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.extension.entry-title-format"
+  },
+  "schema_version": 1
 }

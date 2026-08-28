@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL Native Renderer}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL Native Renderer}"
+        }
       }
     ],
-    "name": "Concept.concept.snl.native-renderer",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.snl.native-renderer"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Dynamic Arity Toggle (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Dynamic Arity Toggle (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.input.macro.create.dynamic-arity",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.input.macro.create.dynamic-arity"
+  },
+  "schema_version": 1
 }

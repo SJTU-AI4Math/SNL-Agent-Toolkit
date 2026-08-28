@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "#0\nPressing it will #1."
+        "template": {
+          "mode": "text",
+          "body": "#0\nPressing it will #1."
+        }
       }
     ],
     "tags": [],
-    "name": "ButtonDescription",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "ButtonDescription"
+  },
+  "schema_version": 1
 }

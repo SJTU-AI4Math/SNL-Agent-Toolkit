@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "switch #0 to #1"
+        "template": {
+          "mode": "text",
+          "body": "switch #0 to #1"
+        }
       }
     ],
     "tags": [],
-    "name": "SetInterfaceMode",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "SetInterfaceMode"
+  },
+  "schema_version": 1
 }

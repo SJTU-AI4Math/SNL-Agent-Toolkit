@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Edit Macro}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Edit Macro}"
+        }
       }
     ],
-    "name": "Edit_Macro",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Edit_Macro"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Source Metrics (Library)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Source Metrics (Library)}"
+        }
       }
     ],
-    "name": "Entry.ui.section.library.entry-metrics",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.library.entry-metrics"
+  },
+  "schema_version": 1
 }

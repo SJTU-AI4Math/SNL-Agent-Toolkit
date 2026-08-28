@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{revealEntryPointer}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{revealEntryPointer}"
+        }
       }
     ],
-    "name": "revealEntryPointer",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "revealEntryPointer"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Kind}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Kind}"
+        }
       }
     ],
-    "name": "Concept.concept.snl.entry-kind",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Concept.concept.snl.entry-kind"
+  },
+  "schema_version": 1
 }

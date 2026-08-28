@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{snlDoc.createLibrary}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{snlDoc.createLibrary}"
+        }
       }
     ],
-    "name": "snlDoc.createLibrary",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "snlDoc.createLibrary"
+  },
+  "schema_version": 1
 }

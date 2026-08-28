@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Add Sibling Row Toolbar Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Add Sibling Row Toolbar Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.tree.add-sibling",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.tree.add-sibling"
+  },
+  "schema_version": 1
 }

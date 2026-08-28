@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{synchronized rename}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{synchronized rename}"
+        }
       }
     ],
-    "name": "synchronized_rename",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "synchronized_rename"
+  },
+  "schema_version": 1
 }

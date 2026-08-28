@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Add Preview Argument Button (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Add Preview Argument Button (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.macro.create.arg-add",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.macro.create.arg-add"
+  },
+  "schema_version": 1
 }

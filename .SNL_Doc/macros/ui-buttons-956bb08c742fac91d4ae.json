@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL Content Tab (Edit)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL Content Tab (Edit)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry.edit.content.snl",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry.edit.content.snl"
+  },
+  "schema_version": 1
 }

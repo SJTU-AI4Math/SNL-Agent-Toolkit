@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Kind Entrance (List View)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Kind Entrance (List View)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.entry-kinds.entrance",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.entry-kinds.entrance"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{source structure metrics}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{source structure metrics}"
+        }
       }
     ],
-    "name": "Source_structure_metrics",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Source_structure_metrics"
+  },
+  "schema_version": 1
 }

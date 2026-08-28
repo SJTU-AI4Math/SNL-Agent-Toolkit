@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{tree-view editor}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{tree-view editor}"
+        }
       }
     ],
-    "name": "tree-view_editor",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "tree-view_editor"
+  },
+  "schema_version": 1
 }

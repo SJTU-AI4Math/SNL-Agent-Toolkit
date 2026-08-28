@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{§I.}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{§I.}"
+        }
       }
     ],
-    "name": "Literal.section_I",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Literal.section_I"
+  },
+  "schema_version": 1
 }

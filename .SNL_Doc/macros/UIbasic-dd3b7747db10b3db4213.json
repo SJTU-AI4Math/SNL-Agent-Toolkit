@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "delete #0 after confirmation"
+        "template": {
+          "mode": "text",
+          "body": "delete #0 after confirmation"
+        }
       }
     ],
     "tags": [],
-    "name": "DeleteItemAfterConfirmation",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "DeleteItemAfterConfirmation"
+  },
+  "schema_version": 1
 }

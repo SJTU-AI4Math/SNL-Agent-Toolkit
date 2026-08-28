@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Macro Sources Section (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Macro Sources Section (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.section.macro.create.sources",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.macro.create.sources"
+  },
+  "schema_version": 1
 }

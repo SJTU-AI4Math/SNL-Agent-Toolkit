@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{when: false}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{when: false}"
+        }
       }
     ],
-    "name": "when_false",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "when_false"
+  },
+  "schema_version": 1
 }

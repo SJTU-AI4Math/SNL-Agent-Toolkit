@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Library Button (List View)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Library Button (List View)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.dashboard.libraries.create-list",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.dashboard.libraries.create-list"
+  },
+  "schema_version": 1
 }

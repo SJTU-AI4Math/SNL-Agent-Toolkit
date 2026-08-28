@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Move-Up Row Toolbar Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Move-Up Row Toolbar Button}"
+        }
       }
     ],
-    "name": "Move-Up_Row_Toolbar_Button",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Move-Up_Row_Toolbar_Button"
+  },
+  "schema_version": 1
 }

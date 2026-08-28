@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Entry Infoview Render Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Entry Infoview Render Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.entry-infoview.entry-render",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.entry-infoview.entry-render"
+  },
+  "schema_version": 1
 }

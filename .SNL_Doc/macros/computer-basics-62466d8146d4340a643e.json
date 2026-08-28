@@ -13,15 +13,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Ctrl+click}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Ctrl+click}"
+        }
       }
     ],
-    "name": "Shortcut_Ctrl_click",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Shortcut_Ctrl_click"
+  },
+  "schema_version": 1
 }

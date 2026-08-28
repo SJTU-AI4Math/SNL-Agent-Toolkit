@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNoogL Filters Section}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNoogL Filters Section}"
+        }
       }
     ],
-    "name": "Entry.ui.section.snoogl.filters",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.section.snoogl.filters"
+  },
+  "schema_version": 1
 }

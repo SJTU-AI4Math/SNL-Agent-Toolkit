@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Reference or Create Entry Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Reference or Create Entry Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.library.outline.reference-create",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.library.outline.reference-create"
+  },
+  "schema_version": 1
 }

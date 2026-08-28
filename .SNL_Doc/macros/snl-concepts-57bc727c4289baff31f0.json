@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{exists}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{exists}"
+        }
       }
     ],
-    "name": "exists",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "exists"
+  },
+  "schema_version": 1
 }

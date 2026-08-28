@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Library Entry Entrance}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Library Entry Entrance}"
+        }
       }
     ],
-    "name": "Entry.ui.button.library.outline.entry-entrance",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.library.outline.entry-entrance"
+  },
+  "schema_version": 1
 }

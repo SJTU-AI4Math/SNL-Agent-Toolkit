@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Button}"
+        }
       }
     ],
-    "name": "Button_component",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Button_component"
+  },
+  "schema_version": 1
 }

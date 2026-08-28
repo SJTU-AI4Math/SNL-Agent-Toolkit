@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Counter Numbering DSL Field}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Counter Numbering DSL Field}"
+        }
       }
     ],
-    "name": "Counter_Numbering_DSL_Field",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Counter_Numbering_DSL_Field"
+  },
+  "schema_version": 1
 }

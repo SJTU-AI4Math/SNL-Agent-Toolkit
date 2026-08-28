@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{LaTeX Content Tab (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{LaTeX Content Tab (Create)}"
+        }
       }
     ],
-    "name": "Entry.ui.button.entry.create.content.latex",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.entry.create.content.latex"
+  },
+  "schema_version": 1
 }

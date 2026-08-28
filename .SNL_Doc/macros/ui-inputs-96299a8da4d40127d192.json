@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Dynamic Separator Input (Create)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Dynamic Separator Input (Create)}"
+        }
       }
     ],
-    "name": "macro_create_separator",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "macro_create_separator"
+  },
+  "schema_version": 1
 }

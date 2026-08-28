@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Create Macro Package}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Create Macro Package}"
+        }
       }
     ],
-    "name": "Create_Macro_Package",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Create_Macro_Package"
+  },
+  "schema_version": 1
 }

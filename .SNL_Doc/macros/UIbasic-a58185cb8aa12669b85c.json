@@ -14,14 +14,14 @@
       {
         "style_name": "default",
         "tags": [],
-        "mode": "text",
-        "template": "reference an existing Entry, or insert a pending stub and open Create Entry when unresolved"
+        "template": {
+          "mode": "text",
+          "body": "reference an existing Entry, or insert a pending stub and open Create Entry when unresolved"
+        }
       }
     ],
     "tags": [],
-    "name": "ReferenceOrCreateEntry",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "ReferenceOrCreateEntry"
+  },
+  "schema_version": 1
 }

@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Library}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Library}"
+        }
       }
     ],
-    "name": "Library",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Library"
+  },
+  "schema_version": 1
 }

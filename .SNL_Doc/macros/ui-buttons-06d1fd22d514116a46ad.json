@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{AddBar (dashed +)}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{AddBar (dashed +)}"
+        }
       }
     ],
-    "name": "AddBar_dashed",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "AddBar_dashed"
+  },
+  "schema_version": 1
 }

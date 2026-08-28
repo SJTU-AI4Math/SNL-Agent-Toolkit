@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{Infoview Outline Toggle Button}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{Infoview Outline Toggle Button}"
+        }
       }
     ],
-    "name": "Entry.ui.button.infoview.outline-toggle",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "Entry.ui.button.infoview.outline-toggle"
+  },
+  "schema_version": 1
 }

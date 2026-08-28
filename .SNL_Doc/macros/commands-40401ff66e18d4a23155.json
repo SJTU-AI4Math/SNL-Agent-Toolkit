@@ -15,15 +15,15 @@
     "tags": [],
     "styles": [
       {
-        "mode": "formula_inline",
-        "template": "\\texttt{SNL: Open Dashboard}",
         "style_name": "default",
-        "tags": []
+        "tags": [],
+        "template": {
+          "mode": "formula_inline",
+          "body": "\\texttt{SNL: Open Dashboard}"
+        }
       }
     ],
-    "name": "SNL_Open_Dashboard",
-    "default_style": {
-      "en": "default"
-    }
-  }
+    "name": "SNL_Open_Dashboard"
+  },
+  "schema_version": 1
 }
