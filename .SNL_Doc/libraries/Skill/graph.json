@@ -69,6 +69,328 @@
       "props": {
         "entryId": "Skill.SNLeco.cpt.Entry"
       }
+    },
+    {
+      "id": "n_11",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryPackage"
+      }
+    },
+    {
+      "id": "n_12",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryTitle"
+      }
+    },
+    {
+      "id": "n_13",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryID"
+      }
+    },
+    {
+      "id": "n_14",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryIDNamespace"
+      }
+    },
+    {
+      "id": "n_15",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryUUID"
+      }
+    },
+    {
+      "id": "n_16",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryContent"
+      }
+    },
+    {
+      "id": "n_17",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryTag"
+      }
+    },
+    {
+      "id": "n_18",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Pointer"
+      }
+    },
+    {
+      "id": "n_19",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.MacroPackage"
+      }
+    },
+    {
+      "id": "n_20",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroName"
+      }
+    },
+    {
+      "id": "n_21",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroKind"
+      }
+    },
+    {
+      "id": "n_22",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroNamespace"
+      }
+    },
+    {
+      "id": "n_23",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroUUID"
+      }
+    },
+    {
+      "id": "n_24",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroStyle"
+      }
+    },
+    {
+      "id": "n_25",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroStyleTag"
+      }
+    },
+    {
+      "id": "n_26",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroContent"
+      }
+    },
+    {
+      "id": "n_27",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.FormulaModeTermMacro"
+      }
+    },
+    {
+      "id": "n_28",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TextModeTermMacro"
+      }
+    },
+    {
+      "id": "n_29",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.BlockModeTermMacro"
+      }
+    },
+    {
+      "id": "n_30",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroSource"
+      }
+    },
+    {
+      "id": "n_31",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TermMacroTag"
+      }
+    },
+    {
+      "id": "n_32",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Library"
+      }
+    },
+    {
+      "id": "n_33",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.LibraryTitle"
+      }
+    },
+    {
+      "id": "n_34",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.LibraryID"
+      }
+    },
+    {
+      "id": "n_35",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.LibraryDescription"
+      }
+    },
+    {
+      "id": "n_36",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Counter"
+      }
+    },
+    {
+      "id": "n_37",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.ReferenceTree"
+      }
+    },
+    {
+      "id": "n_38",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.HTMLExport"
+      }
+    },
+    {
+      "id": "n_39",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryKind"
+      }
+    },
+    {
+      "id": "n_40",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryKindName"
+      }
+    },
+    {
+      "id": "n_41",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryKindID"
+      }
+    },
+    {
+      "id": "n_42",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryKindDescription"
+      }
+    },
+    {
+      "id": "n_43",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.EntryKindColoring"
+      }
+    },
+    {
+      "id": "n_44",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.MacroKind"
+      }
+    },
+    {
+      "id": "n_45",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.MacroKindName"
+      }
+    },
+    {
+      "id": "n_46",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.MacroKindID"
+      }
+    },
+    {
+      "id": "n_47",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.MacroKindDescription"
+      }
+    },
+    {
+      "id": "n_48",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.MacroKindColoring"
+      }
+    },
+    {
+      "id": "n_49",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Contributor"
+      }
+    },
+    {
+      "id": "n_50",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.I18N"
+      }
+    },
+    {
+      "id": "n_51",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.UILanguage"
+      }
+    },
+    {
+      "id": "n_52",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.ContentLanguage"
+      }
+    },
+    {
+      "id": "n_53",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.SNoogL"
+      }
+    },
+    {
+      "id": "n_54",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.DataSchema"
+      }
+    },
+    {
+      "id": "n_55",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.Dashboard"
+      }
+    },
+    {
+      "id": "n_56",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.InfoView"
+      }
     }
   ],
   "relationships": [
@@ -100,6 +422,236 @@
     {
       "from": "n_9",
       "to": "n_8",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_11",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_12",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_13",
+      "label": "branch"
+    },
+    {
+      "from": "n_13",
+      "to": "n_14",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_15",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_16",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_17",
+      "label": "branch"
+    },
+    {
+      "from": "n_10",
+      "to": "n_18",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_19",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_20",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_21",
+      "label": "branch"
+    },
+    {
+      "from": "n_21",
+      "to": "n_22",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_23",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_24",
+      "label": "branch"
+    },
+    {
+      "from": "n_24",
+      "to": "n_25",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_26",
+      "label": "branch"
+    },
+    {
+      "from": "n_26",
+      "to": "n_27",
+      "label": "branch"
+    },
+    {
+      "from": "n_26",
+      "to": "n_28",
+      "label": "branch"
+    },
+    {
+      "from": "n_26",
+      "to": "n_29",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_30",
+      "label": "branch"
+    },
+    {
+      "from": "n_8",
+      "to": "n_31",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_32",
+      "label": "branch"
+    },
+    {
+      "from": "n_32",
+      "to": "n_33",
+      "label": "branch"
+    },
+    {
+      "from": "n_32",
+      "to": "n_34",
+      "label": "branch"
+    },
+    {
+      "from": "n_32",
+      "to": "n_35",
+      "label": "branch"
+    },
+    {
+      "from": "n_32",
+      "to": "n_36",
+      "label": "branch"
+    },
+    {
+      "from": "n_32",
+      "to": "n_37",
+      "label": "branch"
+    },
+    {
+      "from": "n_32",
+      "to": "n_38",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_39",
+      "label": "branch"
+    },
+    {
+      "from": "n_39",
+      "to": "n_40",
+      "label": "branch"
+    },
+    {
+      "from": "n_39",
+      "to": "n_41",
+      "label": "branch"
+    },
+    {
+      "from": "n_39",
+      "to": "n_42",
+      "label": "branch"
+    },
+    {
+      "from": "n_39",
+      "to": "n_43",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_44",
+      "label": "branch"
+    },
+    {
+      "from": "n_44",
+      "to": "n_45",
+      "label": "branch"
+    },
+    {
+      "from": "n_44",
+      "to": "n_46",
+      "label": "branch"
+    },
+    {
+      "from": "n_44",
+      "to": "n_47",
+      "label": "branch"
+    },
+    {
+      "from": "n_44",
+      "to": "n_48",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_49",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_50",
+      "label": "branch"
+    },
+    {
+      "from": "n_50",
+      "to": "n_51",
+      "label": "branch"
+    },
+    {
+      "from": "n_50",
+      "to": "n_52",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_53",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_54",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_55",
+      "label": "branch"
+    },
+    {
+      "from": "n_9",
+      "to": "n_56",
       "label": "branch"
     }
   ]

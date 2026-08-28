@@ -1,0 +1,15 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.I18N",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": "I18N",
+    "content": {},
+    "contribution_info": null,
+    "pointer": null
+  }
+}
