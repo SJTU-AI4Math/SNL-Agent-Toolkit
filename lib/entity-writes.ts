@@ -3,9 +3,9 @@ import * as path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import {
   ENTRY_STORAGE_VERSION,
-  CURRENT_ENTRY_SCHEMA_VERSION,
+
   MACRO_STORAGE_VERSION,
-  CURRENT_MACRO_SCHEMA_VERSION,
+
   PACKAGE_STORAGE_VERSION,
   CURRENT_PACKAGE_SCHEMA_VERSION,
   UNPACKAGED_PACKAGE_ID,
@@ -29,6 +29,7 @@ import {
   readEntryKinds,
   snlDocRoot,
   configPath,
+  entityPayloadSchemaVersion,
   usesCurrentEntitySchemas,
   usesEntityStorage,
 } from './snl-doc.ts';
@@ -68,7 +69,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function assertCurrentWriteConfig(config: unknown, cli: string): asserts config is Record<string, unknown> {
   if (!usesEntityStorage(config)) {
-    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
+    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, 0.1.0, or 0.2.0 per-entity storage.`);
   }
   if (!isRecord(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error('Current config.json entry_kinds must be an array.');
@@ -271,13 +272,17 @@ export async function addEntryEntity(
     if (issues.some((issue) => issue.severity === 'error')) {
       return { status: 'invalid', entity: 'entry', issues };
     }
-    const entry = normalized as Record<string, unknown> & { id: string; package: string };
+    const schemaVersion = entityPayloadSchemaVersion(config);
+    const normalizedEntry = normalized as Record<string, unknown> & { id: string; package: string };
+    const entry = schemaVersion === 2
+      ? { ...normalizedEntry, uuid: '' }
+      : normalizedEntry;
     const relativePath = entryEntityPath(entry.package, entry.id);
     const envelope: EntryEnvelope = {
       format: 'snl-entry',
       version: ENTRY_STORAGE_VERSION,
       ...(usesCurrentEntitySchemas(config)
-        ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION }
+        ? { schema_version: schemaVersion }
         : {}),
       package: entry.package,
       entry,
@@ -401,12 +406,16 @@ export async function addMacroEntity(
     if (issues.some((issue) => issue.severity === 'error')) {
       return { status: 'invalid', entity: 'macro', issues };
     }
-    const macro = normalized as Record<string, unknown> & { name: string };
+    const schemaVersion = entityPayloadSchemaVersion(config);
+    const normalizedMacro = normalized as Record<string, unknown> & { name: string };
+    const macro = schemaVersion === 2
+      ? { ...normalizedMacro, uuid: '' }
+      : normalizedMacro;
     const relativePath = macroEntityPath(packageId, macro.name);
     const envelope: MacroEnvelope = {
       format: 'snl-macro',
       version: MACRO_STORAGE_VERSION,
-      ...(current ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {}),
+      ...(current ? { schema_version: schemaVersion } : {}),
       package: packageId,
       macro,
     };

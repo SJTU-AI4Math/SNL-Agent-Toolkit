@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -156,6 +156,57 @@ test('prebuilt MCP artifact uses the bundled v0.1.0 entity adapter without host 
   assert.equal(response.result.structuredContent.entity.id, 'Logic::FOL.implies');
   assert.match(response.result.structuredContent.revision, /^[0-9a-f]{64}$/);
   child.kill();
+});
+
+test('prebuilt MCP artifact reads schema-v2 uuid roots from a v0.2.0 workspace', async () => {
+  const parent = await mkdtemp(join(tmpdir(), 'snl-prebuilt-v020-'));
+  const workspace = join(parent, 'workspace');
+  try {
+    await cp(resolve(root, 'CLI_Scripts/fixtures/workspace-v0.1.0'), workspace, { recursive: true });
+    const snlRoot = join(workspace, '.SNL_Doc');
+    const configPath = join(snlRoot, 'config.json');
+    const config = JSON.parse(await readFile(configPath, 'utf8')) as Record<string, unknown>;
+    config.version = '0.2.0';
+    await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
+    for (const [directory, key] of [['entries', 'entry'], ['macros', 'macro']] as const) {
+      for (const name of await readdir(join(snlRoot, directory))) {
+        const file = join(snlRoot, directory, name);
+        const envelope = JSON.parse(await readFile(file, 'utf8')) as Record<string, unknown>;
+        envelope.schema_version = 2;
+        (envelope[key] as Record<string, unknown>).uuid = '';
+        await writeFile(file, `${JSON.stringify(envelope, null, 2)}\n`);
+      }
+    }
+
+    const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+    const output = new Promise<string>((resolveOutput, reject) => {
+      let text = '';
+      child.stdout.setEncoding('utf8');
+      child.stdout.on('data', (chunk: string) => { text += chunk; if (text.includes('\n')) resolveOutput(text); });
+      child.once('error', reject);
+      child.once('exit', (code) => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
+    });
+    child.stdin.write(`${JSON.stringify({
+      jsonrpc: '2.0', id: 20, method: 'tools/call',
+      params: {
+        name: 'snl_entity_get',
+        arguments: { root: workspace, entityType: 'macro', id: 'Logic::FOL.implies' },
+      },
+    })}\n`);
+    try {
+      const response = JSON.parse((await output).trim()) as {
+        result: { structuredContent: { entity: { id: string; value: { uuid: string } }; revision: string }; isError?: boolean };
+      };
+      assert.equal(response.result.isError, undefined);
+      assert.equal(response.result.structuredContent.entity.id, 'Logic::FOL.implies');
+      assert.equal(response.result.structuredContent.entity.value.uuid, '');
+      assert.match(response.result.structuredContent.revision, /^[0-9a-f]{64}$/);
+    } finally {
+      child.kill();
+    }
+  } finally {
+    await rm(parent, { recursive: true, force: true });
+  }
 });
 
 

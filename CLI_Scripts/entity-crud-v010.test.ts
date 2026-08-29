@@ -24,6 +24,22 @@ async function mutateJson(file: string, mutate: (value: Record<string, unknown>)
   await writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+async function upgradeFixtureToV020(root: string): Promise<void> {
+  await mutateJson(path.join(root, '.SNL_Doc', 'config.json'), (config) => {
+    config.version = '0.2.0';
+  });
+  for (const [directory, payloadKey] of [['entries', 'entry'], ['macros', 'macro']] as const) {
+    const dir = path.join(root, '.SNL_Doc', directory);
+    for (const name of await readdir(dir)) {
+      if (!name.endsWith('.json')) continue;
+      await mutateJson(path.join(dir, name), (envelope) => {
+        envelope.schema_version = 2;
+        (envelope[payloadKey] as Record<string, unknown>).uuid = '';
+      });
+    }
+  }
+}
+
 describe('unified CRUD on workspace v0.1.0', () => {
   it('uses authoritative current schema gates for Package, Entry, and Macro lists', async () => {
     const cases = [
@@ -67,6 +83,50 @@ describe('unified CRUD on workspace v0.1.0', () => {
     }
     assert.equal((await listManagedEntities(legacy, 'entry')).length, 1);
     assert.equal((await listManagedEntities(legacy, 'macro')).length, 1);
+  });
+
+  it('reads and creates v0.2.0 schema-2 entities with independent inert uuid roots', async () => {
+    const root = await fixtureCopy();
+    await upgradeFixtureToV020(root);
+
+    const existing = await getManagedEntity(root, 'entry', 'entry.localized');
+    assert.equal(existing?.value.uuid, '');
+    const createdEntry = await createManagedEntity(root, 'entry', {
+      id: 'entry.v020', package: 'Logic', kind: 'definition', title: 'v0.2.0',
+      content: {}, contribution_info: null, pointer: null,
+    });
+    assert.equal(createdEntry.status, 'ok');
+    const entryEnvelope = JSON.parse(await readFile(path.join(
+      root, '.SNL_Doc', entryEntityPath('Logic', 'entry.v020'),
+    ), 'utf8'));
+    assert.equal(entryEnvelope.schema_version, 2);
+    assert.equal(entryEnvelope.entry.uuid, '');
+
+    const createdMacro = await createManagedEntity(root, 'macro', {
+      package: 'Logic', name: 'FOL.v020', description: '', source: { entries: [], urls: [] },
+      kind: 'const', dynamic_arity: false, tags: [],
+      styles: [{ style_name: 'default', tags: [], template: { mode: 'text', body: 'v0.2.0' } }],
+    });
+    assert.equal(createdMacro.status, 'ok');
+    const macroEnvelope = JSON.parse(await readFile(path.join(
+      root, '.SNL_Doc', macroEntityPath('Logic', 'FOL.v020'),
+    ), 'utf8'));
+    assert.equal(macroEnvelope.schema_version, 2);
+    assert.equal(macroEnvelope.macro.uuid, '');
+  });
+
+  it('rejects missing and non-empty uuid roots in v0.2.0', async () => {
+    for (const replacement of [undefined, 'already-active']) {
+      const root = await fixtureCopy();
+      await upgradeFixtureToV020(root);
+      const file = path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized'));
+      await mutateJson(file, (envelope) => {
+        const entry = envelope.entry as Record<string, unknown>;
+        if (replacement === undefined) delete entry.uuid;
+        else entry.uuid = replacement;
+      });
+      await assert.rejects(() => listManagedEntities(root, 'entry'), /empty uuid/i);
+    }
   });
 
   it('creates and reads schema-1 Entries with the blank title allowed by the Entry linter', async () => {

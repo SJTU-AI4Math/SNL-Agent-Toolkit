@@ -15472,6 +15472,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   let installed = false;
   try {
     handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, current.mode);
+    await handle.chmod(current.mode);
     await handle.writeFile(jsonText(value), "utf8");
     await handle.sync();
     await handle.close();
@@ -15670,8 +15671,6 @@ var PACKAGE_STORAGE_VERSION = 1;
 var ENTRY_STORAGE_VERSION = 1;
 var MACRO_STORAGE_VERSION = 1;
 var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
-var CURRENT_ENTRY_SCHEMA_VERSION = 1;
-var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
 function semanticDigest(value) {
   return (0, import_node_crypto2.createHash)("sha256").update(JSON.stringify(value)).digest("hex");
@@ -15822,7 +15821,13 @@ async function assertSnlDoc(workspaceRoot) {
   }
 }
 function usesCurrentEntitySchemas(config) {
-  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+  return isRecord2(config) && (config.version === "0.0.11" || config.version === "0.1.0" || config.version === "0.2.0");
+}
+function entityPayloadSchemaVersion(config) {
+  return isRecord2(config) && config.version === "0.2.0" ? 2 : 1;
+}
+function requiresEntitySchemaMarker(config) {
+  return isRecord2(config) && (config.version === "0.1.0" || config.version === "0.2.0");
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
@@ -15873,9 +15878,12 @@ function isLocalizedLabel(value, required) {
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
-function assertCurrentEntryPayload(value, label) {
+function assertCurrentEntryPayload(value, label, schemaVersion) {
   if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord2(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
-    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+    throw new Error(`${label} is not a valid schema-${schemaVersion} Entry payload.`);
+  }
+  if (schemaVersion === 2 && value.uuid !== "") {
+    throw new Error(`${label} schema-2 requires an empty uuid root.`);
   }
   if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
     throw new Error(`${label}#content.snl must be a string when present.`);
@@ -15996,12 +16004,12 @@ async function readEntries(workspaceRoot) {
       }
       assertCompatibleSchemaMarker(
         value,
-        CURRENT_ENTRY_SCHEMA_VERSION,
+        entityPayloadSchemaVersion(config),
         `${relativePath} Entry envelope`,
-        config.version === "0.1.0"
+        requiresEntitySchemaMarker(config)
       );
       if (usesCurrentEntitySchemas(config)) {
-        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`, entityPayloadSchemaVersion(config));
         if (!entryKindIds.has(value.entry.kind)) {
           throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
         }
@@ -16084,13 +16092,16 @@ async function readEntityMacroPackages(workspaceRoot) {
     }
     assertCompatibleSchemaMarker(
       value,
-      CURRENT_MACRO_SCHEMA_VERSION,
+      entityPayloadSchemaVersion(config),
       `${relativePath} Macro envelope`,
-      config.version === "0.1.0"
+      requiresEntitySchemaMarker(config)
     );
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
+    if (entityPayloadSchemaVersion(config) === 2 && value.macro.uuid !== "") {
+      throw new Error(`${relativePath} Macro payload schema-2 requires an empty uuid root.`);
+    }
     if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
@@ -19026,7 +19037,7 @@ function isRecord6(value) {
 }
 function assertCurrentWriteConfig(config, cli) {
   if (!usesEntityStorage(config)) {
-    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
+    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, 0.1.0, or 0.2.0 per-entity storage.`);
   }
   if (!isRecord6(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error("Current config.json entry_kinds must be an array.");
@@ -19190,12 +19201,14 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     if (issues.some((issue) => issue.severity === "error")) {
       return { status: "invalid", entity: "entry", issues };
     }
-    const entry = normalized;
+    const schemaVersion = entityPayloadSchemaVersion(config);
+    const normalizedEntry = normalized;
+    const entry = schemaVersion === 2 ? { ...normalizedEntry, uuid: "" } : normalizedEntry;
     const relativePath = entryEntityPath(entry.package, entry.id);
     const envelope = {
       format: "snl-entry",
       version: ENTRY_STORAGE_VERSION,
-      ...usesCurrentEntitySchemas(config) ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
+      ...usesCurrentEntitySchemas(config) ? { schema_version: schemaVersion } : {},
       package: entry.package,
       entry
     };
@@ -19313,12 +19326,14 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
     if (issues.some((issue) => issue.severity === "error")) {
       return { status: "invalid", entity: "macro", issues };
     }
-    const macro = normalized;
+    const schemaVersion = entityPayloadSchemaVersion(config);
+    const normalizedMacro = normalized;
+    const macro = schemaVersion === 2 ? { ...normalizedMacro, uuid: "" } : normalizedMacro;
     const relativePath = macroEntityPath(packageId, macro.name);
     const envelope = {
       format: "snl-macro",
       version: MACRO_STORAGE_VERSION,
-      ...current ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
+      ...current ? { schema_version: schemaVersion } : {},
       package: packageId,
       macro
     };
@@ -20224,14 +20239,17 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           if (sha(JSON.parse(originalEntity.text)) !== ifMatch)
             return conflict(`entry ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
           const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
-          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          const config = await readConfig(root);
+          const currentSchema = usesCurrentEntitySchemas(config);
+          const schemaVersion = entityPayloadSchemaVersion(config);
+          const entryValue = schemaVersion === 2 ? { ...value, uuid: "" } : value;
           const nextEnvelope = {
             ...envelope,
             format: "snl-entry",
             version: ENTRY_STORAGE_VERSION,
-            ...currentSchema ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
+            ...currentSchema ? { schema_version: schemaVersion } : {},
             package: value.package,
-            entry: value
+            entry: entryValue
           };
           const oldPackage = typeof current.value.package === "string" ? current.value.package : "";
           const newPackage = typeof value.package === "string" ? value.package : "";
@@ -20315,17 +20333,20 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         } else {
           const split = id.indexOf("::");
           const pkg = id.slice(0, split);
-          const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
+          const rawMacro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
           const originalMacro = await readRegularText(file);
           if (sha(JSON.parse(originalMacro.text)) !== ifMatch)
             return conflict(`macro ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
           const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
-          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          const config = await readConfig(root);
+          const currentSchema = usesCurrentEntitySchemas(config);
+          const schemaVersion = entityPayloadSchemaVersion(config);
+          const macro = schemaVersion === 2 ? { ...rawMacro, uuid: "" } : rawMacro;
           const nextEnvelope = {
             ...envelope,
             format: "snl-macro",
             version: MACRO_STORAGE_VERSION,
-            ...currentSchema ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
+            ...currentSchema ? { schema_version: schemaVersion } : {},
             package: pkg,
             macro
           };

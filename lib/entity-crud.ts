@@ -1,8 +1,8 @@
 import { createHash, randomUUID } from "node:crypto";
 import { constants, promises as fs } from "node:fs";
 import path from "node:path";
-import { CURRENT_ENTRY_SCHEMA_VERSION, CURRENT_MACRO_SCHEMA_VERSION, CURRENT_PACKAGE_SCHEMA_VERSION, ENTRY_STORAGE_VERSION, MACRO_STORAGE_VERSION, PACKAGE_STORAGE_VERSION, packageManifestPath, entryEntityPath, macroEntityPath } from "./entity-storage.ts";
-import { assertCurrentKindCatalogs, readActiveMacros, readAllMacroPackages, readConfig, readEntries, readEntryKinds, usesCurrentEntitySchemas, usesEntityStorage } from "./snl-doc.ts";
+import { CURRENT_PACKAGE_SCHEMA_VERSION, ENTRY_STORAGE_VERSION, MACRO_STORAGE_VERSION, PACKAGE_STORAGE_VERSION, packageManifestPath, entryEntityPath, macroEntityPath } from "./entity-storage.ts";
+import { assertCurrentKindCatalogs, entityPayloadSchemaVersion, readActiveMacros, readAllMacroPackages, readConfig, readEntries, readEntryKinds, usesCurrentEntitySchemas, usesEntityStorage } from "./snl-doc.ts";
 import type { SnlConfig } from "./snl-doc-schema.ts";
 import { lintEntry } from "./lint-entry.ts";
 import { lintPackage } from "./lint-package.ts";
@@ -790,14 +790,17 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
                 if (sha(JSON.parse(originalEntity.text)) !== ifMatch)
                     return conflict(`entry ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
                 const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
-                const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+                const config = await readConfig(root);
+                const currentSchema = usesCurrentEntitySchemas(config);
+                const schemaVersion = entityPayloadSchemaVersion(config);
+                const entryValue = schemaVersion === 2 ? { ...value, uuid: '' } : value;
                 const nextEnvelope = {
                     ...envelope,
                     format: "snl-entry",
                     version: ENTRY_STORAGE_VERSION,
-                    ...(currentSchema ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {}),
+                    ...(currentSchema ? { schema_version: schemaVersion } : {}),
                     package: value.package,
-                    entry: value,
+                    entry: entryValue,
                 };
                 const oldPackage = typeof current.value.package === "string" ? current.value.package : "";
                 const newPackage = typeof value.package === "string" ? value.package : "";
@@ -877,17 +880,20 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             else {
                 const split = id.indexOf("::");
                 const pkg = id.slice(0, split);
-                const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
+                const rawMacro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
                 const originalMacro = await readRegularText(file);
                 if (sha(JSON.parse(originalMacro.text)) !== ifMatch)
                     return conflict(`macro ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
                 const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
-                const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+                const config = await readConfig(root);
+                const currentSchema = usesCurrentEntitySchemas(config);
+                const schemaVersion = entityPayloadSchemaVersion(config);
+                const macro = schemaVersion === 2 ? { ...rawMacro, uuid: '' } : rawMacro;
                 const nextEnvelope = {
                     ...envelope,
                     format: "snl-macro",
                     version: MACRO_STORAGE_VERSION,
-                    ...(currentSchema ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {}),
+                    ...(currentSchema ? { schema_version: schemaVersion } : {}),
                     package: pkg,
                     macro,
                 };

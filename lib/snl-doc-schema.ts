@@ -138,6 +138,8 @@ export interface I18n<TLanguage extends string, TValue> {
 
 export interface EntryData {
   id: string;
+  /** Schema 2 root reserved for future identity design; currently always empty. */
+  uuid?: '';
   /** Immutable Package identity in per-entity storage. */
   package?: string;
   kind: string;
@@ -239,6 +241,8 @@ export interface SnlMacroStyle {
 
 export interface SnlMacro {
   name: string;
+  /** Schema 2 root reserved for future identity design; currently always empty. */
+  uuid?: '';
   description: string;
   source: SnlMacroSource;
   kind: string;

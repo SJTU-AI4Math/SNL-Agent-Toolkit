@@ -1452,8 +1452,6 @@ var PACKAGE_STORAGE_VERSION = 1;
 var ENTRY_STORAGE_VERSION = 1;
 var MACRO_STORAGE_VERSION = 1;
 var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
-var CURRENT_ENTRY_SCHEMA_VERSION = 1;
-var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
 function semanticDigest(value) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -1586,7 +1584,13 @@ async function assertSnlDoc(workspaceRoot) {
   }
 }
 function usesCurrentEntitySchemas(config) {
-  return isRecord(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+  return isRecord(config) && (config.version === "0.0.11" || config.version === "0.1.0" || config.version === "0.2.0");
+}
+function entityPayloadSchemaVersion(config) {
+  return isRecord(config) && config.version === "0.2.0" ? 2 : 1;
+}
+function requiresEntitySchemaMarker(config) {
+  return isRecord(config) && (config.version === "0.1.0" || config.version === "0.2.0");
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
@@ -1637,9 +1641,12 @@ function isLocalizedLabel(value, required) {
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
-function assertCurrentEntryPayload(value, label) {
+function assertCurrentEntryPayload(value, label, schemaVersion) {
   if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
-    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+    throw new Error(`${label} is not a valid schema-${schemaVersion} Entry payload.`);
+  }
+  if (schemaVersion === 2 && value.uuid !== "") {
+    throw new Error(`${label} schema-2 requires an empty uuid root.`);
   }
   if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
     throw new Error(`${label}#content.snl must be a string when present.`);
@@ -1760,12 +1767,12 @@ async function readEntries(workspaceRoot) {
       }
       assertCompatibleSchemaMarker(
         value,
-        CURRENT_ENTRY_SCHEMA_VERSION,
+        entityPayloadSchemaVersion(config),
         `${relativePath} Entry envelope`,
-        config.version === "0.1.0"
+        requiresEntitySchemaMarker(config)
       );
       if (usesCurrentEntitySchemas(config)) {
-        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`, entityPayloadSchemaVersion(config));
         if (!entryKindIds.has(value.entry.kind)) {
           throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
         }
@@ -1848,13 +1855,16 @@ async function readEntityMacroPackages(workspaceRoot) {
     }
     assertCompatibleSchemaMarker(
       value,
-      CURRENT_MACRO_SCHEMA_VERSION,
+      entityPayloadSchemaVersion(config),
       `${relativePath} Macro envelope`,
-      config.version === "0.1.0"
+      requiresEntitySchemaMarker(config)
     );
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
+    if (entityPayloadSchemaVersion(config) === 2 && value.macro.uuid !== "") {
+      throw new Error(`${relativePath} Macro payload schema-2 requires an empty uuid root.`);
+    }
     if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`

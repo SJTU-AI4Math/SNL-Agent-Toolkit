@@ -29,8 +29,7 @@ import {
   MACRO_STORAGE_VERSION,
   PACKAGE_STORAGE_VERSION,
   CURRENT_PACKAGE_SCHEMA_VERSION,
-  CURRENT_ENTRY_SCHEMA_VERSION,
-  CURRENT_MACRO_SCHEMA_VERSION,
+
   assertCompatibleSchemaMarker,
   UNPACKAGED_PACKAGE_ID,
   entryEntityPath,
@@ -157,7 +156,15 @@ export async function assertSnlDoc(workspaceRoot: string): Promise<void> {
  */
 export function usesCurrentEntitySchemas(config: unknown): boolean {
   return isRecord(config) &&
-    (config.version === '0.0.11' || config.version === '0.1.0');
+    (config.version === '0.0.11' || config.version === '0.1.0' || config.version === '0.2.0');
+}
+
+export function entityPayloadSchemaVersion(config: unknown): 1 | 2 {
+  return isRecord(config) && config.version === '0.2.0' ? 2 : 1;
+}
+
+function requiresEntitySchemaMarker(config: unknown): boolean {
+  return isRecord(config) && (config.version === '0.1.0' || config.version === '0.2.0');
 }
 
 export async function readConfig(workspaceRoot: string): Promise<SnlConfig> {
@@ -215,11 +222,14 @@ function isLocalizedLabel(value: unknown, required: boolean): boolean {
     (!required || values.some((item) => (item as string).trim()));
 }
 
-function assertCurrentEntryPayload(value: Record<string, unknown>, label: string): void {
+function assertCurrentEntryPayload(value: Record<string, unknown>, label: string, schemaVersion: 1 | 2): void {
   if (typeof value.kind !== 'string' || !value.kind.trim() || value.kind !== value.kind.trim() ||
       !isLocalizedLabel(value.title, false) || !isRecord(value.content) ||
       !Object.hasOwn(value, 'contribution_info') || !Object.hasOwn(value, 'pointer')) {
-    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+    throw new Error(`${label} is not a valid schema-${schemaVersion} Entry payload.`);
+  }
+  if (schemaVersion === 2 && value.uuid !== '') {
+    throw new Error(`${label} schema-2 requires an empty uuid root.`);
   }
   if (value.content.snl !== undefined && typeof value.content.snl !== 'string') {
     throw new Error(`${label}#content.snl must be a string when present.`);
@@ -363,12 +373,12 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
       }
       assertCompatibleSchemaMarker(
         value,
-        CURRENT_ENTRY_SCHEMA_VERSION,
+        entityPayloadSchemaVersion(config),
         `${relativePath} Entry envelope`,
-        config.version === '0.1.0',
+        requiresEntitySchemaMarker(config),
       );
       if (usesCurrentEntitySchemas(config)) {
-        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`, entityPayloadSchemaVersion(config));
         if (!entryKindIds.has(value.entry.kind as string)) {
           throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
         }
@@ -472,13 +482,16 @@ async function readEntityMacroPackages(
     }
     assertCompatibleSchemaMarker(
       value,
-      CURRENT_MACRO_SCHEMA_VERSION,
+      entityPayloadSchemaVersion(config),
       `${relativePath} Macro envelope`,
-      config.version === '0.1.0',
+      requiresEntitySchemaMarker(config),
     );
     const macroDocument: Record<string, unknown> = Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
+    if (entityPayloadSchemaVersion(config) === 2 && value.macro.uuid !== '') {
+      throw new Error(`${relativePath} Macro payload schema-2 requires an empty uuid root.`);
+    }
     if (currentMacro ? !isSnlBasicsMacroDocumentV11(macroDocument) : !isMacroDocumentV8(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? '11' : '8'} data.`,

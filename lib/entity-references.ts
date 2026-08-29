@@ -16,13 +16,12 @@ import {
 import {
   readActiveMacros,
   readEntries,
+  entityPayloadSchemaVersion,
   snlDocRoot,
   usesCurrentEntitySchemas,
   usesEntityStorage,
 } from './snl-doc.ts';
 import {
-  CURRENT_ENTRY_SCHEMA_VERSION,
-  CURRENT_MACRO_SCHEMA_VERSION,
   entryEntityPath,
   macroEntityPath,
   packageManifestPath,
@@ -446,13 +445,15 @@ async function styleRenameUnlocked(
   if (!isTraceableSnlIdentity('macro', newStyle)) throw new Error(`Style name '${newStyle}' is not representable as an SNL identifier.`);
   const files = await loadWorkspaceJson(root);
   const { occurrences, changed } = buildStyleRename(files, packageId, macroId, oldStyle, newStyle);
-  const currentWorkspace = usesCurrentEntitySchemas(files.find((file) => file.relPath === 'config.json')?.data);
+  const config = files.find((file) => file.relPath === 'config.json')?.data;
+  const currentWorkspace = usesCurrentEntitySchemas(config);
+  const schemaVersion = entityPayloadSchemaVersion(config);
   if (currentWorkspace) {
     for (const file of changed.values()) {
       if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
-        file.next = stampSchemaVersion(file.next, CURRENT_ENTRY_SCHEMA_VERSION);
+        file.next = stampSchemaVersion(file.next, schemaVersion);
       } else if (/^macros\/[^/]+\.json$/.test(file.relPath)) {
-        file.next = stampSchemaVersion(file.next, CURRENT_MACRO_SCHEMA_VERSION);
+        file.next = stampSchemaVersion(file.next, schemaVersion);
       }
     }
   }
@@ -657,7 +658,9 @@ async function renameEntityIdUnlocked(
   }
 
   const rewriteSnlMacroTokens = entityType !== 'macro' || macroIsActive(files, oldId);
-  const currentWorkspace = usesCurrentEntitySchemas(files.find((file) => file.relPath === 'config.json')?.data);
+  const config = files.find((file) => file.relPath === 'config.json')?.data;
+  const currentWorkspace = usesCurrentEntitySchemas(config);
+  const schemaVersion = entityPayloadSchemaVersion(config);
   const changed = new Map<string, LoadedJson & { next: string; targetAbsPath: string; targetRelPath: string }>();
   for (const file of files) {
     const edits = buildStructuredEdits(
@@ -674,9 +677,9 @@ async function renameEntityIdUnlocked(
       }
       let next = applyTextEdits(file.raw, edits);
       if (currentWorkspace && /^entries\/[^/]+\.json$/.test(file.relPath)) {
-        next = stampSchemaVersion(next, CURRENT_ENTRY_SCHEMA_VERSION);
+        next = stampSchemaVersion(next, schemaVersion);
       } else if (currentWorkspace && /^macros\/[^/]+\.json$/.test(file.relPath)) {
-        next = stampSchemaVersion(next, CURRENT_MACRO_SCHEMA_VERSION);
+        next = stampSchemaVersion(next, schemaVersion);
       }
       changed.set(file.absPath, {
         ...file,

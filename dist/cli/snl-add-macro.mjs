@@ -119,7 +119,6 @@ import { createHash } from "node:crypto";
 var PACKAGE_STORAGE_VERSION = 1;
 var MACRO_STORAGE_VERSION = 1;
 var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
-var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
 function semanticDigest(value) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -15703,7 +15702,13 @@ async function assertSnlDoc(workspaceRoot) {
   }
 }
 function usesCurrentEntitySchemas(config) {
-  return isRecord3(config) && (config.version === "0.0.11" || config.version === "0.1.0");
+  return isRecord3(config) && (config.version === "0.0.11" || config.version === "0.1.0" || config.version === "0.2.0");
+}
+function entityPayloadSchemaVersion(config) {
+  return isRecord3(config) && config.version === "0.2.0" ? 2 : 1;
+}
+function requiresEntitySchemaMarker(config) {
+  return isRecord3(config) && (config.version === "0.1.0" || config.version === "0.2.0");
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
@@ -15893,13 +15898,16 @@ async function readEntityMacroPackages(workspaceRoot) {
     }
     assertCompatibleSchemaMarker(
       value,
-      CURRENT_MACRO_SCHEMA_VERSION,
+      entityPayloadSchemaVersion(config),
       `${relativePath} Macro envelope`,
-      config.version === "0.1.0"
+      requiresEntitySchemaMarker(config)
     );
     const macroDocument = /* @__PURE__ */ Object.create(null);
     macroDocument[value.macro.name] = value.macro;
     const currentMacro = usesCurrentEntitySchemas(config);
+    if (entityPayloadSchemaVersion(config) === 2 && value.macro.uuid !== "") {
+      throw new Error(`${relativePath} Macro payload schema-2 requires an empty uuid root.`);
+    }
     if (currentMacro ? !P(macroDocument) : !f(macroDocument)) {
       throw new Error(
         `${relativePath} Macro payload is not valid Macro v${currentMacro ? "11" : "8"} data.`
@@ -16092,7 +16100,7 @@ function isRecord4(value) {
 }
 function assertCurrentWriteConfig(config, cli) {
   if (!usesEntityStorage(config)) {
-    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
+    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, 0.1.0, or 0.2.0 per-entity storage.`);
   }
   if (!isRecord4(config) || !Array.isArray(config.entry_kinds)) {
     throw new Error("Current config.json entry_kinds must be an array.");
@@ -16232,12 +16240,14 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
     if (issues.some((issue) => issue.severity === "error")) {
       return { status: "invalid", entity: "macro", issues };
     }
-    const macro = normalized;
+    const schemaVersion = entityPayloadSchemaVersion(config);
+    const normalizedMacro = normalized;
+    const macro = schemaVersion === 2 ? { ...normalizedMacro, uuid: "" } : normalizedMacro;
     const relativePath = macroEntityPath(packageId, macro.name);
     const envelope = {
       format: "snl-macro",
       version: MACRO_STORAGE_VERSION,
-      ...current ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
+      ...current ? { schema_version: schemaVersion } : {},
       package: packageId,
       macro
     };

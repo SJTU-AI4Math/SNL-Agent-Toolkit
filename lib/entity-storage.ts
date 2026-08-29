@@ -4,8 +4,8 @@ export const PACKAGE_STORAGE_VERSION = 1 as const;
 export const ENTRY_STORAGE_VERSION = 1 as const;
 export const MACRO_STORAGE_VERSION = 1 as const;
 export const CURRENT_PACKAGE_SCHEMA_VERSION = 2 as const;
-export const CURRENT_ENTRY_SCHEMA_VERSION = 1 as const;
-export const CURRENT_MACRO_SCHEMA_VERSION = 1 as const;
+export const CURRENT_ENTRY_SCHEMA_VERSION = 2 as const;
+export const CURRENT_MACRO_SCHEMA_VERSION = 2 as const;
 export const UNPACKAGED_PACKAGE_ID = '_unpackaged' as const;
 
 export type EntityIdentityKind = 'package' | 'entry' | 'macro';
@@ -62,7 +62,7 @@ export interface PackageManifest {
 export interface EntryEnvelope<T extends Record<string, unknown> = Record<string, unknown>> {
   format: 'snl-entry';
   version: typeof ENTRY_STORAGE_VERSION;
-  schema_version?: typeof CURRENT_ENTRY_SCHEMA_VERSION;
+  schema_version?: 1 | typeof CURRENT_ENTRY_SCHEMA_VERSION;
   package: string;
   entry: T;
 }
@@ -70,7 +70,7 @@ export interface EntryEnvelope<T extends Record<string, unknown> = Record<string
 export interface MacroEnvelope<T extends Record<string, unknown> = Record<string, unknown>> {
   format: 'snl-macro';
   version: typeof MACRO_STORAGE_VERSION;
-  schema_version?: typeof CURRENT_MACRO_SCHEMA_VERSION;
+  schema_version?: 1 | typeof CURRENT_MACRO_SCHEMA_VERSION;
   package: string;
   macro: T;
 }
