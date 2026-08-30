@@ -15,7 +15,9 @@
         "zh-CN": "I18N 国际化"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%Let #0 be a type, define an #1 of #2 to be a function mapping from the collection all available languages to the type%(@T,I18N,T,)"
+    },
     "contribution_info": null,
     "pointer": null
   }

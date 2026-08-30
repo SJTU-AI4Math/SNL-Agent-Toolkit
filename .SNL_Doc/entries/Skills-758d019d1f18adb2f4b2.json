@@ -15,7 +15,9 @@
         "zh-CN": "术语宏"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A #0 is the basic component of any SNL corpus. It's designed to be a syntax with a finite (fixed / dynamic) arity in order to capture the semantic information of abstract concepts -- concepts undergone $\\lambda$-abstraction and are subject to function application. Specific macro template details are stored in a list of #1.%(Concept.TermMacro,Concept.TermMacroStyle[plural])"
+    },
     "contribution_info": null,
     "pointer": null
   }

@@ -1,4 +1,96 @@
 {
   "version": 1,
-  "relationships": []
+  "relationships": [
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryContent.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.EntryContent",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryID.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.EntryID",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": false
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryID.Skill.SNLeco.cpt.EntryTitle",
+      "from": "Skill.SNLeco.cpt.EntryID",
+      "to": "Skill.SNLeco.cpt.EntryTitle",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryTitle"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryID.Skill.SNLeco.cpt.EntryUUID",
+      "from": "Skill.SNLeco.cpt.EntryID",
+      "to": "Skill.SNLeco.cpt.EntryUUID",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryUUID"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryPackage.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.EntryPackage",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryTitle.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.EntryTitle",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacro.Skill.SNLeco.cpt.TermMacroStyle",
+      "from": "Skill.SNLeco.cpt.TermMacro",
+      "to": "Skill.SNLeco.cpt.TermMacroStyle",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacroStyle"
+        ],
+        "isAtomic": true
+      }
+    }
+  ]
 }

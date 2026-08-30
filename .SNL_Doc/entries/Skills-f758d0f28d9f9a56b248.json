@@ -15,7 +15,9 @@
         "zh-CN": "创建"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%This skill will later be renamed as “Author”%"
+    },
     "contribution_info": null,
     "pointer": null
   }

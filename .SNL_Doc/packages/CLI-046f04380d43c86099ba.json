@@ -1,0 +1,11 @@
+{
+  "format": "snl-package",
+  "version": 1,
+  "schema_version": 2,
+  "id": "CLI",
+  "name": "CLI Tools",
+  "description": "",
+  "entry_ids": [
+    "CLI.snl-add-entry"
+  ]
+}

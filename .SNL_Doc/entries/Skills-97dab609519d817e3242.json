@@ -15,7 +15,9 @@
         "zh-CN": "条目 ID"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "__enum__(%The #0 of an #1 is a string which serves as the universally unique identifier.%(Concept.EntryID,Concept.Entry),%Do not confuse #0 with #1.\n#2%(Concept.EntryID,Concept.Entry,__enum__[dot](%The #0 of an #1 is data-oriented, but the #2 is a string for demonstration and supports basic $\\KaTeX$ rendering, which is irrelevant to data structures.%(Concept.EntryID,Concept.Entry,Concept.EntryTitle),%The #0 of an #1 is universally unique, but the #2 is not.%(Concept.EntryID,Concept.Entry,Concept.EntryTitle))),%Do not confuse #0 with #1.\n#2%(Concept.EntryID,Concept.EntryUUID,__enum__[dot](%The #0 of an #1 should be readable and memorizable, but the #2 is algorithm-generated and totally unreadable.%(Concept.EntryID,Concept.Entry,Concept.EntryUUID),%The #0 of an #1 is subject to change, but the #2 mustn't be changed once generated.%(Concept.EntryID,Concept.Entry,Concept.EntryUUID))))"
+    },
     "contribution_info": null,
     "pointer": null
   }

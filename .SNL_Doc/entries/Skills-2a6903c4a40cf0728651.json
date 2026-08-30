@@ -15,7 +15,9 @@
         "zh-CN": "条目标题"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The #0 of an #1 is a string, where contents inside “\\$” delimiters is rendered as $\\KaTeX$ code.%(Concept.EntryTitle,Concept.Entry)"
+    },
     "contribution_info": null,
     "pointer": null
   }

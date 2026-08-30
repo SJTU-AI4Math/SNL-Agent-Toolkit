@@ -1,4 +1,12 @@
 {
-  "nodes": [],
+  "nodes": [
+    {
+      "id": "n_1",
+      "label": "Entry",
+      "props": {
+        "entryId": "CLI.snl-add-entry"
+      }
+    }
+  ],
   "relationships": []
 }

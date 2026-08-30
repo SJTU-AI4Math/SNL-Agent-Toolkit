@@ -1,0 +1,19 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.DSL_manual.md",
+    "package": "Skills",
+    "kind": "file",
+    "title": "DSL Manual",
+    "content": {},
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/DSL_manual.md",
+      "mode": "lines",
+      "line": 1
+    }
+  }
+}

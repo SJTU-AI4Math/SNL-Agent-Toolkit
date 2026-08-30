@@ -503,6 +503,13 @@
       "props": {
         "entryId": "Skill.SKILL.md-CLI"
       }
+    },
+    {
+      "id": "n_73",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.DSL_manual.md"
+      }
     }
   ],
   "relationships": [
@@ -819,6 +826,11 @@
     {
       "from": "n_4",
       "to": "n_72",
+      "label": "branch"
+    },
+    {
+      "from": "n_3",
+      "to": "n_73",
       "label": "branch"
     }
   ]

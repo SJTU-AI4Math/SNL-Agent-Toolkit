@@ -85,6 +85,7 @@
     {
       "id": "entry-kind.concept",
       "name": "Concept",
+      "description": "",
       "coloring": {
         "light": {
           "stroke": "#6a1b9a",
@@ -96,8 +97,7 @@
         }
       },
       "defaultCounterName": "",
-      "style": "",
-      "description": ""
+      "style": ""
     },
     {
       "id": "img",
@@ -135,6 +135,23 @@
     {
       "id": "Skill",
       "name": "Skill",
+      "description": "",
+      "coloring": {
+        "light": {
+          "stroke": "#475569",
+          "background": "#F1F5F9"
+        },
+        "dark": {
+          "stroke": "#94A3B8",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "",
+      "style": ""
+    },
+    {
+      "id": "cli",
+      "name": "CLI Tool",
       "description": "",
       "coloring": {
         "light": {
@@ -285,9 +302,26 @@
           "background": "#efebe9"
         }
       }
+    },
+    {
+      "id": "sub",
+      "name": "sub",
+      "description": "",
+      "coloring": {
+        "light": {
+          "stroke": "#475569",
+          "background": "#F1F5F9"
+        },
+        "dark": {
+          "stroke": "#94A3B8",
+          "background": "#313131"
+        }
+      }
     }
   ],
   "active_macro_packages": [
+    "BasicMacros",
+    "CLI",
     "commands",
     "computer-basics",
     "filesystem",

@@ -15,8 +15,14 @@
         "zh-CN": "条目"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%An #0 is an atomic carrier of knowledge concepts. Every #0 is stored globally in an SNL-initialized repository, and is presented in a library through reference instead of having copies.%(Concept.Entry)"
+    },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "\\* \\*\\*Entry \\(条目\\)\\*\\*"
+    }
   }
 }

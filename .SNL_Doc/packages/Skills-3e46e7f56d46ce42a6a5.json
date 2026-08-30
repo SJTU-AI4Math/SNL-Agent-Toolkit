@@ -8,6 +8,7 @@
   "entry_ids": [
     "Skill.CLI",
     "Skill.Create",
+    "Skill.DSL_manual.md",
     "Skill.Init",
     "Skill.Init.sec.EntryKindInit",
     "Skill.Init.sec.MacroKindInit",

@@ -15,7 +15,9 @@
         "zh-CN": "术语宏标签"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A #0 can be equipped with multiple string tags, according to which SNoogL gives auto-completion suggestions and reranks search results.%(Concept.TermMacro)"
+    },
     "contribution_info": null,
     "pointer": null
   }

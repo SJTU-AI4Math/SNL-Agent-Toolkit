@@ -15,7 +15,9 @@
         "zh-CN": "条目包"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%An #0 is a collection of #1. Designed solely for convenience of redistribution, which has not been deliberately supported, of little relevance for now.%(Concept.EntryPackage,Concept.Entry[plural])"
+    },
     "contribution_info": null,
     "pointer": null
   }
