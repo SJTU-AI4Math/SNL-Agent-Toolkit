@@ -11,12 +11,16 @@
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "$\\texttt{SKILL.md}$ of CLI Tools",
-        "zh-CN": "CLI 工具的 $\\texttt{SKILL.md}$"
+        "en": "SNL CLI Manual",
+        "zh-CN": "SNL CLI 手册"
       }
     },
     "content": {},
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/HowToMaintain/Use_Toolkit_CLIs.md",
+      "mode": "lines",
+      "line": 1
+    }
   }
 }

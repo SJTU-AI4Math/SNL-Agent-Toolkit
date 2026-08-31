@@ -1,0 +1,15 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "CLI",
+  "entry": {
+    "id": "CLI.snl-entry--package",
+    "package": "CLI",
+    "kind": "cli",
+    "title": "snl entry-package",
+    "content": {},
+    "contribution_info": null,
+    "pointer": null
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "CLI",
+  "entry": {
+    "id": "CLI.snl-relationship-delete",
+    "package": "CLI",
+    "kind": "cli",
+    "title": "snl relationship delete",
+    "content": {},
+    "contribution_info": null,
+    "pointer": null
+  }
+}

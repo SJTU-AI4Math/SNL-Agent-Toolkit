@@ -1,389 +1,560 @@
-# Use the Toolkit CLIs
-
-> Use this to create Packages, Entries, and Macros safely, then lint and maintain them.
-
-## Part B — Toolkit CLIs
-
-### Status: agent-safe write and maintenance CLIs shipped
-
-- ✅ **`snl-add-package`** — create and activate a canonical Package manifest.
-- ✅ **`snl-add-entry`** — validate an inner Entry draft and install its canonical entity.
-- ✅ **`snl-add-macro`** — normalize a Macro v11 draft and install it in a Package.
-- ✅ **`snl-lint-entry`** — schema + SNL syntax + identifier resolution for EntryData JSON payloads.
-- ✅ **`snl-lint-graph`** — schema + label vocabulary + branch-tree integrity for library graph.json.
-- ✅ **`snl-lint-package`** — schema + template placeholder rules for macro package files.
-- ✅ **`snl-find-refs`** — trace every structured definition/reference to an Entry or Macro id.
-- ✅ **`snl-rename-id`** — collision-checked global Entry/Macro id rename with dry-run and rollback.
-- ✅ **`snl-rename-style`** — parser-scoped Style rename for one Package/Macro owner.
-- ✅ **`snoogle`** — fuzzy Entry or active-Macro query with the shared SNoogL ranker.
-- ✅ **`snl-entity`** — unified exact query and guarded CRUD for all eight managed entity families.
-
-### Unified entity CRUD/query
-
-`snl-entity` exposes one machine-stable surface for `entry-kind`, `macro-kind`,
-`entry-package`, `macro-package`, `entry`, `macro`, `relationship`, and
-`library`:
-
-```bash
-node bin/snl-entity.mjs --root . --json list --type entry-kind
-node bin/snl-entity.mjs --root . --json get --type entry algebra.def.group
-node bin/snl-entity.mjs --root . --json create --type relationship --input relationship.json
-node bin/snl-entity.mjs --root . --json update --type entry --if-match <revision> --input entry.json algebra.def.group
-node bin/snl-entity.mjs --root . --json delete --type entry --if-match <revision> algebra.def.group
-```
-
-Every listed/get entity has `{type,id,revision,value}`. Updates and deletes
-require the exact 64-hex `revision` returned by a fresh read; stale revisions
-exit `1` with `entity.revision-conflict`. Macro ids are exact composite
-`<PackageId>::<MacroName>` identities. On the current `0.0.6` schema,
-`entry-package` and `macro-package` are deliberately separate adapter views of
-the shared Package manifest: the Macro view additionally includes `macros`.
-This compatibility adapter is isolated in `lib/entity-crud.ts` for integration
-with a future authoritative split-package schema; it does not redesign disk
-distribution.
-
-Writes require canonical non-symlink workspaces, use `.data-write.lock`, and use
-same-directory temporary files plus rename for atomic single-file replacement.
-Package/Library multi-file operations are guarded cooperative transactions, not
-lock-free or crash-atomic database transactions. Exit codes are `0` success,
-`1` not-found/invalid/conflict, and `2` usage/input/workspace/lock failure.
-JSON mode always emits one object; no process-global entity cache is used.
-
-### Write CLI rule: drafts in, storage plumbing stays inside
-
-For normal authoring, never calculate a hash, write an envelope, choose an entity
-filename, edit the migration receipt, or modify frozen aggregate backups. Use:
-
-```bash
-node bin/snl-add-package.mjs --root . --json package-draft.json
-node bin/snl-add-macro.mjs --root . --package Algebra --json macro-draft.json
-node bin/snl-add-entry.mjs --root . --json entry-draft.json
-```
-
-Minimal Package draft:
-
-```json
-{ "id": "Algebra", "name": "Algebra", "description": "Algebra terminology" }
-```
-
-Minimal Macro draft:
-
-```json
-{
-  "name": "mul",
-  "styles": [
-    { "style_name": "default", "template": { "mode": "formula_inline", "body": "#0 \\cdot #1" } }
-  ]
-}
-```
-
-Minimal Entry draft:
-
-```json
-{
-  "id": "algebra.def.mul",
-  "package": "Algebra",
-  "kind": "definition",
-  "title": "Multiplication",
-  "content": { "snl": "%Multiplication is #0.%(mul)" }
-}
-```
-
-`snl-add-entry` defaults Package ownership to draft `package`, then `_unpackaged`;
-`--package` supplies it when omitted, and must agree when both are present.
-`snl-add-macro` requires `--package`. Package
-creation activates the new Package in `active_macro_packages` while preserving all
-unknown config fields.
-
-All three commands:
-
-- require a canonical, non-symlink `0.1.0` workspace (with legacy `0.0.6` write compatibility);
-- validate topology, receipt, Package ownership, catalogs, identity collisions, and payload;
-- compute canonical filenames and storage envelopes internally;
-- acquire the Extension-compatible `.data-write.lock`;
-- use exclusive no-clobber entity installation;
-- leave `entries.json`, `term_macros/*.json`, and `entity_storage.receipt` unchanged.
-
-Package creation is a guarded two-file write (manifest, then config), not a
-crash-atomic transaction. Cooperative writers are serialized by `.data-write.lock`;
-the config replacement also performs optimistic byte checks. If config installation
-fails, the CLI deliberately leaves and reports a Package manifest residue rather
-than unlinking a live path that a non-cooperating writer could have replaced. Its
-effective activation follows the unchanged config, so it may already be active when
-`active_macro_packages` is omitted. A non-cooperating writer can still race the
-final config rename syscall; the CLI does not claim lock-free CAS semantics.
-
-**Write CLI exit codes:**
-
-- `0` — entity created;
-- `1` — valid invocation, but payload is `invalid` or identity is in `conflict`;
-- `2` — usage, input-read/JSON, lock, workspace, or write failure.
-
-With `--json`, stdout always contains one object. Branch on `status`:
-`created`, `invalid`, `conflict`, `help`, or `error`. `issues[]` uses stable linter
-`severity`, `code`, `message`, and optional `path` fields. Do not scrape human text.
-
-### snl-lint-entry
-
-Lint one or more EntryData JSON payloads against a workspace's `.SNL_Doc/`
-context.
-
-```bash
-node bin/snl-lint-entry.mjs --root /path/to/project entry-draft.json [more.json ...]
-
-# Machine-readable output for programmatic consumption:
-node bin/snl-lint-entry.mjs --root . --json entry-draft.json
-
-# Treat unknown-macro references as errors (default: info).
-node bin/snl-lint-entry.mjs --root . --strict-macros entry-draft.json
-```
-
-**Exit codes:**
-- `0` — clean, or warnings only
-- `1` — at least one lint error
-- `2` — CLI-level failure (bad flags, no `.SNL_Doc/`, unreadable JSON)
-
-**Layered validation** the linter runs:
-
-- **L1 (schema)** — id/kind/title/content/contribution_info/pointer presence,
-  id-uniqueness against the shared pool, kind is one of `config.entry_kinds`.
-- **L2 (SNL syntax)** — if `content.snl` is non-empty, it must parse via
-  SNL-Basics's `tryParseSnlSyntaxTree`; parse errors carry the character
-  offset.
-- **L3 (identifiers)** — bare identifiers in `content.snl` that don't resolve
-  to a registered macro are reported as **info notes** (not warnings, not
-  errors). SNL intentionally falls back to fvar/bvar rendering for unbound
-  identifiers, so an unresolved name may be a bound variable, a locally-scoped
-  free variable, a typo, or a genuinely missing macro registration — the
-  agent decides. Under `--strict-macros` these become errors (rare; typically
-  off).
-
-### snl-lint-graph
-
-Lint one or more `graph.json` payloads (Library Graph v2) against the
-shared entry pool.
-
-```bash
-# Lint every library on disk under .SNL_Doc/libraries/*/graph.json
-node bin/snl-lint-graph.mjs --root /path/to/project
-
-# Named library
-node bin/snl-lint-graph.mjs --root . --slug my-lib
-
-# Multiple slugs — repeat --slug
-node bin/snl-lint-graph.mjs --root . --slug lib-a --slug lib-b
-
-# Draft graph living outside .SNL_Doc/
-node bin/snl-lint-graph.mjs --root . path/to/draft-graph.json
-```
-
-Checks:
-- **Schema** — top-level `nodes[]` + `relationships[]` shape; node id
-  uniqueness; per-node `id/label/props` and per-relationship `from/to/label`.
-- **Label vocabulary** — v2 recognises `label: 'Entry'` (nodes) and
-  `label: 'branch'` (relationships). Others get **warnings** (kept on disk
-  round-trip, ignored by the numbering engine).
-- **Branch integrity** — every branch edge's `from`/`to` resolves to a
-  declared node; each node has at most one incoming branch (multi-parent
-  = error); the branch subgraph has no cycles.
-- **Pool references** — `props.entryId`, when set, must resolve in
-  the live `.SNL_Doc/entries/*.json` pool. Placeholder nodes (no entryId) are fine.
-
-### snl-lint-package
-
-Lint one or more Macro payloads. Named mode assembles a Package from the live
-Package manifest and per-entity Macro files; positional mode still accepts a
-standalone synthetic Package JSON payload.
-
-```bash
-# Lint every package on disk
-node bin/snl-lint-package.mjs --root /path/to/project
-
-# Named Package (Package ID)
-node bin/snl-lint-package.mjs --root . --name core
-
-# Multiple packages — repeat --name
-node bin/snl-lint-package.mjs --root . --name core --name blocks
-
-# Draft package living outside .SNL_Doc/
-node bin/snl-lint-package.mjs --root . path/to/draft-pkg.json
-```
-
-Checks:
-- **Schema** — top-level `version` / `name` / optional `description` /
-  `macros` (name → entry map). Per macro: `description` / `source` /
-  `kind` / `dynamic_arity` / required `tags[]` /
-  non-empty `styles[]`. Per style:
-  valid unique `style_name`, atomic `template`, and required `tags[]`.
-- **Template placeholders** — canonical `#0` through `#99` and `#*` are
-  recognised; anything else (`#foo`, `#-1`, `##`, `#00`, `#100`, …) is an
-  error. Escape a literal hash as `\#`. `#*` is only legal when the
-  macro's `dynamic_arity` is `true`; every dynamic style must contain it.
-- **Macro v11 rules** — `styles[0]` is the implicit default and `default_style`
-  is retired; every template is an atomic `{ mode, body, ... }` object (or an
-  i18n map of complete template objects); `separator`, when present, is a string (including
-  explicit `""`); `block_template_name` is valid only in block mode; tags
-  cannot contain backslashes; pre-v7 style fields are errors rather than
-  runtime aliases.
-- **Cross-style arity** — when styles disagree on their maximum `#N`
-  index, we surface an **info** note; legal (SNL fills missing children
-  as empty) but often unintended — agent decides.
-
-Note: positional `snl-lint-package` remains file-local and does not install data.
-`snl-add-macro` adds the workspace topology, Package ownership, target-identity,
-activation, lock, and no-clobber checks needed for a real write.
-
-### snl-find-refs
-
-Trace a stable Entry or Macro identity across every structured location in the
-workspace:
-
-```bash
-node bin/snl-find-refs.mjs --root . --type entry algebra.def.group
-node bin/snl-find-refs.mjs --root . --type macro Group
-node bin/snl-find-refs.mjs --root . --type macro --json Group
-```
-
-For Entry ids, this covers the `entries/*.json` definition, Library graph
-`props.entryId`, pool-wide relationship `from`/`to`, macro
-`source.entries[]`, SNL `x@entry-id` references, and Extension-generated
-relationship `metadata.postfixes[]` witnesses. For Macro ids, it covers the
-package `macros` map key, actual SNL macro tokens, and generated relationship
-`metadata.macros[]` witnesses. Style tags and `%…%` / `$…$` literal
-environments are not misreported as Macro references. User-authored opaque
-metadata remains outside the default migration boundary. Macro package definitions
-are always reported, but SNL invocation references are attributed only to macros
-resolved from `config.active_macro_packages`; renaming an inactive macro does
-not rewrite same-spelled fallback variables.
-
-### snl-rename-id
-
-Synchronously rename one Entry or Macro identity and all references found by
-`snl-find-refs`:
-
-```bash
-# Always inspect first.
-node bin/snl-rename-id.mjs --root . --type entry --dry-run old.entry new.entry
-
-# Apply after reviewing the plan.
-node bin/snl-rename-id.mjs --root . --type entry old.entry new.entry
-node bin/snl-rename-id.mjs --root . --type macro OldMacro NewMacro
-```
-
-Safety rules:
-
-- the old identity must have exactly one definition;
-- the destination must not already occur as either a definition or a reference
-  (renaming never merges two identities);
-- if the old identity has SNL references, the new identity must be expressible
-  by the current SNL identifier grammar; JSON-only Unicode Macro identities
-  remain traceable and renameable;
-- every schema-owned JSON file and every non-empty SNL source must parse before
-  any write; malformed reference fields fail closed instead of being skipped;
-- JSON changes are source-range edits to the owning string token/property key;
-  every unedited token—including opaque numbers, unknown fields, whitespace,
-  key order, and CRLFs—remains byte-for-byte unchanged. The deliberately edited
-  identity/SNL string token is re-encoded as valid JSON and may normalize its
-  own prior escape spelling;
-- `.SNL_Doc`, `packages`, `entries`, `macros`, `libraries`, Library slug directories, and schema
-  files must stay within the canonical workspace and may not be symlinks;
-  reads use `O_NOFOLLOW`, temporary files use exclusive creation, parent
-  directories plus inode/content are checked again before installation, and
-  original permission modes are preserved;
-- writes acquire the Extension-compatible `.data-write.lock`, use same-directory
-  temporary files, recheck each source immediately before its installation, and
-  restore already-installed originals if a later replacement fails. Rollback
-  refuses to overwrite/delete output that changed concurrently. This is
-  guarded multi-file safety, **not crash-atomic transaction semantics**: process/machine failure
-  between per-file renames can still require recovery from version control;
-- only schema-owned identity/reference fields, generated relationship witness
-  arrays, and parsed SNL tokens change; titles, Markdown/LaTeX/text, arbitrary
-  user metadata, pointers, and unknown properties are not text-replaced;
-- after installation, the workspace is reloaded and checked for exactly one
-  new definition, zero stale occurrences, and the expected occurrence count;
-  verification failure triggers rollback;
-- `--dry-run` performs the complete validation and plan construction with zero
-  writes.
-
-The library also exposes `planEntityRename` and `applyEntityRename`. A plan records
-SHA-256 provenance for every parsed workspace source. Apply acquires the same writer
-lock, rebuilds the plan, and refuses to write if the source revisions, occurrences,
-or changed-file set differ. This two-phase API is useful when an agent must inspect
-the exact plan before applying it; the one-shot CLI retains the same source-range
-editing, compare-before-install checks, post-write verification, and rollback.
-
-### snl-rename-style
-
-Rename one Style owned by an exact `(Package, Macro)` pair:
-
-```bash
-node bin/snl-rename-style.mjs --root . --package logic --macro Logic.forall --dry-run default compact
-node bin/snl-rename-style.mjs --root . --package logic --macro Logic.forall default compact
-```
-
-The command requires exactly one old Style definition and rejects a colliding new
-name. It changes only that definition, matching values in that Macro's
-`default_style`, and explicit parsed `Macro[style]` selections where the target
-Package is the active resolution winner for that Macro. Same-named Styles on other
-Macros are untouched. Every non-empty Entry SNL source is parsed before writing, so
-malformed SNL fails closed. JSON is edited by source range rather than reserialized,
-preserving unrelated bytes and unknown fields.
-
-Style rename uses the same two-phase SHA-256 provenance check, workspace writer lock,
-source/inode compare-before-install checks, permission preservation, post-write
-verification, and guarded rollback as identity rename. `--dry-run` returns the exact
-plan without writing. `--json` includes the scoped identities, categorized
-occurrences, changed files, source revisions, and `dryRun`.
-
-### snoogle
-
-Run one free-form query against either Entries or active Macros:
-
-```bash
-node bin/snoogle.mjs --root . --entry "group identity"
-node bin/snoogle.mjs --root . --macro "Logic forall"
-node bin/snoogle.mjs --root . --macro "quantifier forall" --json
-```
-
-Exactly one of `--entry <query>` and `--macro <query>` is required. There are
-deliberately **no filter flags**: options such as `--kind`, `--package`, or `--tag`
-are rejected as unknown flags. Space-separated terms use AND semantics. Dotted
-terms give the tail and namespace segments their SNoogL field tiers; Entry titles
-and Macro tags contribute labels. Macro mode reads only Packages enabled by
-`active_macro_packages` (or all Packages when that config field is absent).
-
-`--json` emits `{ schemaVersion: 1, mode, query, results }`. Entry hits contain
-`kind`, `id`, `title`, `entryKind`, and `score`; Macro hits contain `kind`, `id`,
-`packageId`, `packageName`, `macroKind`, `tags`, `sourceEntries`, and `score`.
-
-### Single-Entry SSI and bare LaTeX
-
-Analyze exactly one live Entry by identity:
-
-```bash
-node bin/snl-entry-ssi.mjs --root . --json <entry-id>
-node bin/snl-entry-latex.mjs --root . --json <entry-id>
-```
-
-`snl-entry-ssi` reads the complete Entry pool and active Macro source metadata, so
-cross-Entry `x@entry` bindings and source resolution follow the Extension's SSI
-semantics. JSON includes raw and weighted strong/weak freedom plus
-`structuralIndex` in `[0, 1]`.
-
-`snl-entry-latex` recursively fills the selected Macro styles for that Entry. It
-returns bare LaTeX with no `\\htmlData` hover/index wrappers. Unresolved Macros are
-retained and explained in `notes`, never silently discarded.
-
-Both commands require exactly one Entry id. Exit `0` means success; exit `2` covers
-invocation, workspace, missing-Entry, no-content, and parse failures. In `--json`
-mode, stdout is one parseable document and analysis failures leave stderr empty.
-
-### Common flag conventions
-
-Every CLI accepts:
-
-- `-r, --root <path>` — workspace containing `.SNL_Doc/`. Defaults to `.`.
-- `--json` — output JSON instead of coloured human text (when supported).
-- `-h, --help` — show usage and exit.
-
----
+# SNL CLI Manual
+
+## `snl init`
+
+* `--root <path>`
+* `--json`
+
+## `snl info`
+
+* `--root <path>`
+* `--json`
+
+## `snl validate`
+
+* `--root <path>`
+* `--json`
+
+## `snl import`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+## `snl migrate`
+
+* `--root <path>`
+* `--to <schema-version>`
+* `--json`
+
+## `snl snoogl`
+
+* `<query>`
+* `--root <path>`
+* `--type <entry|macro>`
+* `--kind <kind-id>`
+* `--limit <number>`
+* `--json`
+
+## `snl entry`
+
+### `snl entry list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl entry get`
+
+* `<entry-id>`
+* `--root <path>`
+* `--json`
+
+### `snl entry check`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry update`
+
+* `<entry-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry rename`
+
+* `<entry-id>`
+* `--to <new-entry-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl entry delete`
+
+* `<entry-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl entry latex`
+
+* `<entry-id>`
+* `--root <path>`
+* `--json`
+
+### `snl entry references`
+
+* `<entry-id>`
+* `--root <path>`
+* `--json`
+
+### `snl entry relationships`
+
+* `<entry-id>`
+* `--root <path>`
+* `--direction <incoming|outgoing|both>`
+* `--json`
+
+### `snl entry package`
+
+#### `snl entry package get`
+
+* `<entry-id>`
+* `--root <path>`
+* `--json`
+
+#### `snl entry package set`
+
+* `<entry-id>`
+* `<entry-package-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+## `snl macro`
+
+### `snl macro list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl macro get`
+
+* `<macro-id>`
+* `--root <path>`
+* `--json`
+
+### `snl macro check`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro update`
+
+* `<macro-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro rename`
+
+* `<macro-id>`
+* `--to <new-macro-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl macro delete`
+
+* `<macro-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl macro preview`
+
+* `<macro-id>`
+* `--root <path>`
+* `--style <style-name>`
+* `--json`
+
+### `snl macro usages`
+
+* `<macro-id>`
+* `--root <path>`
+* `--json`
+
+## `snl entry-kind`
+
+### `snl entry-kind list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl entry-kind get`
+
+* `<entry-kind-id>`
+* `--root <path>`
+* `--json`
+
+### `snl entry-kind create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry-kind update`
+
+* `<entry-kind-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry-kind delete`
+
+* `<entry-kind-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl entry-kind usages`
+
+* `<entry-kind-id>`
+* `--root <path>`
+* `--json`
+
+## `snl macro-kind`
+
+### `snl macro-kind list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl macro-kind get`
+
+* `<macro-kind-id>`
+* `--root <path>`
+* `--json`
+
+### `snl macro-kind create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro-kind update`
+
+* `<macro-kind-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro-kind delete`
+
+* `<macro-kind-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl macro-kind usages`
+
+* `<macro-kind-id>`
+* `--root <path>`
+* `--json`
+
+## `snl entry-package`
+
+### `snl entry-package list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl entry-package get`
+
+* `<entry-package-id>`
+* `--root <path>`
+* `--json`
+
+### `snl entry-package create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry-package update`
+
+* `<entry-package-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl entry-package delete`
+
+* `<entry-package-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl entry-package export`
+
+* `<entry-package-id>`
+* `--root <path>`
+* `--output <path>`
+* `--json`
+
+## `snl macro-package`
+
+### `snl macro-package list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl macro-package get`
+
+* `<macro-package-id>`
+* `--root <path>`
+* `--json`
+
+### `snl macro-package create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro-package update`
+
+* `<macro-package-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl macro-package delete`
+
+* `<macro-package-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl macro-package members`
+
+* `<macro-package-id>`
+* `--root <path>`
+* `--json`
+
+### `snl macro-package add-member`
+
+* `<macro-package-id>`
+* `<macro-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl macro-package remove-member`
+
+* `<macro-package-id>`
+* `<macro-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl macro-package export`
+
+* `<macro-package-id>`
+* `--root <path>`
+* `--output <path>`
+* `--json`
+
+## `snl relationship`
+
+### `snl relationship list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl relationship get`
+
+* `<relationship-id>`
+* `--root <path>`
+* `--json`
+
+### `snl relationship create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl relationship update`
+
+* `<relationship-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl relationship delete`
+
+* `<relationship-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl relationship incoming`
+
+* `<entity-id>`
+* `--root <path>`
+* `--json`
+
+### `snl relationship outgoing`
+
+* `<entity-id>`
+* `--root <path>`
+* `--json`
+
+### `snl relationship between`
+
+* `<source-id>`
+* `<target-id>`
+* `--root <path>`
+* `--json`
+
+### `snl relationship generate`
+
+* `--root <path>`
+* `--library <library-slug>`
+* `--json`
+
+## `snl library`
+
+### `snl library list`
+
+* `--root <path>`
+* `--query <text>`
+* `--cursor <token>`
+* `--limit <number>`
+* `--json`
+
+### `snl library get`
+
+* `<library-slug>`
+* `--root <path>`
+* `--json`
+
+### `snl library check`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl library create`
+
+* `--root <path>`
+* `--input <file|->`
+* `--json`
+
+### `snl library update`
+
+* `<library-slug>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--input <file|->`
+* `--json`
+
+### `snl library rename`
+
+* `<library-slug>`
+* `--to <new-library-slug>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl library delete`
+
+* `<library-slug>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl library tree`
+
+* `<library-slug>`
+* `--root <path>`
+* `--language <language-tag>`
+* `--json`
+
+### `snl library add-entry`
+
+* `<library-slug>`
+* `<entry-id>`
+* `--root <path>`
+* `--parent <entry-id>`
+* `--after <entry-id>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl library move-entry`
+
+* `<library-slug>`
+* `<entry-id>`
+* `--root <path>`
+* `--parent <entry-id>`
+* `--after <entry-id>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl library remove-entry`
+
+* `<library-slug>`
+* `<entry-id>`
+* `--root <path>`
+* `--if-match <revision>`
+* `--json`
+
+### `snl library html`
+
+* `<library-slug>`
+* `--root <path>`
+* `--output <path>`
+* `--json`
+
+### `snl library export`
+
+* `<library-slug>`
+* `--root <path>`
+* `--format <format>`
+* `--output <path>`
+* `--json`
+
+## `snl batch`
+
+### `snl batch check`
+
+* `--root <path>`
+* `--input <file|directory|->`
+* `--json`
+
+### `snl batch apply`
+
+* `--root <path>`
+* `--input <file|directory|->`
+* `--json`

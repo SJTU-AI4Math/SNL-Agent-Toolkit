@@ -510,6 +510,622 @@
       "props": {
         "entryId": "Skill.DSL_manual.md"
       }
+    },
+    {
+      "id": "skill.cli.snl-init",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-init"
+      }
+    },
+    {
+      "id": "skill.cli.snl-info",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-info"
+      }
+    },
+    {
+      "id": "skill.cli.snl-validate",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-validate"
+      }
+    },
+    {
+      "id": "skill.cli.snl-import",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-import"
+      }
+    },
+    {
+      "id": "skill.cli.snl-migrate",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-migrate"
+      }
+    },
+    {
+      "id": "skill.cli.snl-snoogl",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-snoogl"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-check",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-check"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-rename",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-rename"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-latex",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-latex"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-references",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-references"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-relationships",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-relationships"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-package",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-package"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-package-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-package-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry-package-set",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry-package-set"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-check",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-check"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-rename",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-rename"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-preview",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-preview"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro-usages",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro-usages"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--kind-usages",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--kind-usages"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--kind-usages",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--kind-usages"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-entry--package-export",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-entry--package-export"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-members",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-members"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-add--member",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-add--member"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-remove--member",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-remove--member"
+      }
+    },
+    {
+      "id": "skill.cli.snl-macro--package-export",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-macro--package-export"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-incoming",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-incoming"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-outgoing",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-outgoing"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-between",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-between"
+      }
+    },
+    {
+      "id": "skill.cli.snl-relationship-generate",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-relationship-generate"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-list",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-list"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-get",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-get"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-check",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-check"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-create",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-create"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-update",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-update"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-rename",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-rename"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-delete",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-delete"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-tree",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-tree"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-add--entry",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-add--entry"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-move--entry",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-move--entry"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-remove--entry",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-remove--entry"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-html",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-html"
+      }
+    },
+    {
+      "id": "skill.cli.snl-library-export",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-library-export"
+      }
+    },
+    {
+      "id": "skill.cli.snl-batch",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-batch"
+      }
+    },
+    {
+      "id": "skill.cli.snl-batch-check",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-batch-check"
+      }
+    },
+    {
+      "id": "skill.cli.snl-batch-apply",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.snl-batch-apply"
+      }
     }
   ],
   "relationships": [
@@ -831,6 +1447,446 @@
     {
       "from": "n_3",
       "to": "n_73",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-init",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-info",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-validate",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-import",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-migrate",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-snoogl",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-entry",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-macro",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-entry--kind",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-macro--kind",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-entry--package",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-macro--package",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-relationship",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-library",
+      "label": "branch"
+    },
+    {
+      "from": "n_72",
+      "to": "skill.cli.snl-batch",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-check",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-rename",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-latex",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-references",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-relationships",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry",
+      "to": "skill.cli.snl-entry-package",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry-package",
+      "to": "skill.cli.snl-entry-package-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry-package",
+      "to": "skill.cli.snl-entry-package-set",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-check",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-rename",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-preview",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro",
+      "to": "skill.cli.snl-macro-usages",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--kind",
+      "to": "skill.cli.snl-entry--kind-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--kind",
+      "to": "skill.cli.snl-entry--kind-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--kind",
+      "to": "skill.cli.snl-entry--kind-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--kind",
+      "to": "skill.cli.snl-entry--kind-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--kind",
+      "to": "skill.cli.snl-entry--kind-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--kind",
+      "to": "skill.cli.snl-entry--kind-usages",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--kind",
+      "to": "skill.cli.snl-macro--kind-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--kind",
+      "to": "skill.cli.snl-macro--kind-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--kind",
+      "to": "skill.cli.snl-macro--kind-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--kind",
+      "to": "skill.cli.snl-macro--kind-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--kind",
+      "to": "skill.cli.snl-macro--kind-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--kind",
+      "to": "skill.cli.snl-macro--kind-usages",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--package",
+      "to": "skill.cli.snl-entry--package-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--package",
+      "to": "skill.cli.snl-entry--package-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--package",
+      "to": "skill.cli.snl-entry--package-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--package",
+      "to": "skill.cli.snl-entry--package-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--package",
+      "to": "skill.cli.snl-entry--package-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-entry--package",
+      "to": "skill.cli.snl-entry--package-export",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-members",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-add--member",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-remove--member",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-macro--package",
+      "to": "skill.cli.snl-macro--package-export",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-incoming",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-outgoing",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-between",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-relationship",
+      "to": "skill.cli.snl-relationship-generate",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-list",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-get",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-check",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-create",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-update",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-rename",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-delete",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-tree",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-add--entry",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-move--entry",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-remove--entry",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-html",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-library",
+      "to": "skill.cli.snl-library-export",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-batch",
+      "to": "skill.cli.snl-batch-check",
+      "label": "branch"
+    },
+    {
+      "from": "skill.cli.snl-batch",
+      "to": "skill.cli.snl-batch-apply",
       "label": "branch"
     }
   ]

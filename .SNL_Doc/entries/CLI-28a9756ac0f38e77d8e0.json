@@ -1,0 +1,15 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "CLI",
+  "entry": {
+    "id": "CLI.snl-macro--package-remove--member",
+    "package": "CLI",
+    "kind": "cli",
+    "title": "snl macro-package remove-member",
+    "content": {},
+    "contribution_info": null,
+    "pointer": null
+  }
+}
