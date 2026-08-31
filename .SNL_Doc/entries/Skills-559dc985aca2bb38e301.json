@@ -20,7 +20,7 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "\\#\\# Core Concepts of SNL \\(SNL 核心概念\\)"
+      "pattern": "^## Core Concepts of SNL \\(SNL 核心概念\\)$"
     }
   }
 }

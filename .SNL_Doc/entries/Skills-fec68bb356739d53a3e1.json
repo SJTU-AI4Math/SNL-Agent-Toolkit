@@ -17,6 +17,10 @@
     },
     "content": {},
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^    \\* \\*\\*Text Mode Term Macro \\(文本模式术语宏\\)\\*\\*$"
+    }
   }
 }

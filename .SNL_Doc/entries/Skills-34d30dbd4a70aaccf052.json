@@ -19,6 +19,10 @@
       "snl": "%A #0 can be equipped with multiple string tags, according to which SNoogL gives auto-completion suggestions and reranks search results.%(Concept.TermMacro)"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^  \\* \\*\\*Term Macro Tag \\(术语宏标签\\)\\*\\*$"
+    }
   }
 }

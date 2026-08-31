@@ -17,6 +17,10 @@
     },
     "content": {},
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^    \\* \\*\\*Term Macro Namespace \\(术语宏命名空间\\)\\*\\*$"
+    }
   }
 }

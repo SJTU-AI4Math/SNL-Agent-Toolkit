@@ -4,18 +4,20 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.SKILL.md-Create",
+    "id": "Skill.Author",
     "package": "Skills",
-    "kind": "file",
+    "kind": "Skill",
     "title": {
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "$\\texttt{SKILL.md}$ of Create",
-        "zh-CN": "创建的 $\\texttt{SKILL.md}$"
+        "en": "Author",
+        "zh-CN": "创作"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%This skill will later be renamed as “Author”%"
+    },
     "contribution_info": null,
     "pointer": null
   }

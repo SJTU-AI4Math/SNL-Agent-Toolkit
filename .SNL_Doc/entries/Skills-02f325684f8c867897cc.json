@@ -17,6 +17,10 @@
     },
     "content": {},
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*Info View \\(信息视图\\)\\*\\*$"
+    }
   }
 }

@@ -19,6 +19,10 @@
       "snl": "%The #0 of an #1 is a string, where contents inside “\\$” delimiters is rendered as $\\KaTeX$ code.%(Concept.EntryTitle,Concept.Entry)"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^  \\* \\*\\*Entry Title \\(条目标题\\)\\*\\*$"
+    }
   }
 }

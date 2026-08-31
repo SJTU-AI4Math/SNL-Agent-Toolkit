@@ -19,6 +19,10 @@
       "snl": "%An #0 is a collection of #1. Designed solely for convenience of redistribution, which has not been deliberately supported, of little relevance for now.%(Concept.EntryPackage,Concept.Entry[plural])"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^  \\* \\*\\*Entry Package \\(条目包\\)\\*\\*$"
+    }
   }
 }

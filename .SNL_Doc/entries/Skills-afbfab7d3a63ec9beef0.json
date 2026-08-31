@@ -19,6 +19,10 @@
       "snl": "%The #0 of an #1 can be one of the following:\n#2Where the first non-empty member is considered the actual content of the #1.%(Concept.EntryContent,Concept.Entry,__enum__(Concept.SNLDSL,%Markdown%,%Pure text%))"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^  \\* \\*\\*Entry Content \\(条目内容\\)\\*\\*$"
+    }
   }
 }

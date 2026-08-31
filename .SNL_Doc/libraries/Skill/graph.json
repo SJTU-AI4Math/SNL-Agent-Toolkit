@@ -424,14 +424,14 @@
       "id": "n_63",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Create"
+        "entryId": "Skill.Author"
       }
     },
     {
       "id": "n_64",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.SKILL.md-Create"
+        "entryId": "Skill.SKILL.md-Author"
       }
     },
     {

@@ -5,7 +5,5 @@
   "id": "CLI",
   "name": "CLI Tools",
   "description": "",
-  "entry_ids": [
-    "CLI.snl-add-entry"
-  ]
+  "entry_ids": []
 }
