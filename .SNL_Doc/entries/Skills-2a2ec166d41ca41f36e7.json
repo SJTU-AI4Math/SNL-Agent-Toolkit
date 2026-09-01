@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl relationship generate}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl relationship generate` to regenerate derived relationships from current authoritative entities.\n\n### Agent procedure\n1. Validate the workspace first and ensure no uncommitted manual relationship edits are being mistaken for generated authority.\n2. Run generation once, inspect the exact created/updated/removed set, and reject unexpected unrelated churn.\n3. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl relationship generate` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro-package add-member}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro-package add-member` to add one Macro to an existing Macro Package through guarded membership management.\n\n### Agent procedure\n1. Get the package and Macro first and confirm both exact identities.\n2. Apply only the requested membership delta; do not rewrite the package manifest or Macro file directly.\n3. On conflict, reread the package membership and decide whether the requested delta is still necessary.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl macro-package add-member` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

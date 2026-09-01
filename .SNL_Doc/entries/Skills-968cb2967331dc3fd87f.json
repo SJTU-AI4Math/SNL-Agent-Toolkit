@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl library remove-entry}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library remove-entry` to remove one Library occurrence without deleting the underlying Entry.\n\n### Agent procedure\n1. Inspect the current Library tree and retrieve the exact Library revision before planning the change.\n2. Identify occurrences by their graph/node identity when an Entry can appear more than once; never guess from title text.\n3. Apply the single topology change, inspect the resulting tree, and verify there are no dangling edges, cycles, or unintended sibling reordering.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl library remove-entry` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl library check}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library check` to validate a proposed Library payload without publishing it.\n\n### Agent procedure\n1. Provide the draft with `--input <file|->` and keep it outside canonical storage.\n2. Require zero errors before create or update. Read warnings and informational notices by code instead of mechanically rewriting valid fallback behavior.\n\n### Machine-use contract\nInvoke `snl library check` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl relationship incoming}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl relationship incoming` to query incoming relationships for one exact endpoint.\n\n### Agent procedure\n1. Supply the exact endpoint identity and inspect all returned pages/results.\n2. Retrieve a returned Relationship by ID before editing or deleting it.\n\n### Machine-use contract\nInvoke `snl relationship incoming` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -12,6 +12,10 @@
       "snl": "%For every entry refinement, check the following before commiting: #0%(__enum__(%I have ran the linter and no errors are present, the repository is safe for commit;%,%The snl entry content (if written) reflects the content's semantic structure and is not a trivial syntax tree such as a plain string or a single node;%,%I have checked the entry's #0 and the number is satisfying, all semantic freedom can be justified;%(%SSI (SNL Structural Index)%),%If the entry describes part of the source code in the repository, a pointer pointing to the corresponding source code is provided.%))"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/RefineNL2SNL/checklist.md",
+      "mode": "lines",
+      "line": 9
+    }
   }
 }

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry package set}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry package set` to move one Entry to a different Entry Package without hand-editing either membership index.\n\n### Agent procedure\n1. Get the Entry and both relevant packages immediately before the move.\n2. Supply the exact Entry ID, destination package ID, and current Entry revision with `--if-match`.\n3. On conflict, reread all affected entities and reconsider the move rather than retrying a stale revision.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl entry package set` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

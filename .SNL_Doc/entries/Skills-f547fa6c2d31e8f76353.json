@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry package get}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry package get` to read the current owning Entry Package before deciding whether a move is needed.\n\n### Agent procedure\n1. Supply the exact Entry ID.\n2. Record the returned package identity and Entry revision; no write should occur.\n\n### Machine-use contract\nInvoke `snl entry package get` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

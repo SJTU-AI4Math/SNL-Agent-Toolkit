@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro-package delete}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro-package delete` to remove one Macro Package only after proving that the removal will not leave dangling structure.\n\n### Agent procedure\n1. Get the Macro Package and inspect its members immediately before deletion.\n2. If references or memberships remain, remove or redesign them explicitly rather than requesting an implicit cascade.\n3. Delete with the current `--if-match` revision and verify the identity can no longer be retrieved.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl macro-package delete` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

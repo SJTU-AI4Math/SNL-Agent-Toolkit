@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl library html}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library html` to render one validated Library as HTML for inspection or publication staging.\n\n### Agent procedure\n1. Validate the Library and inspect its tree first.\n2. Write generated output outside canonical data, inspect missing-render diagnostics and links, and do not treat HTML as editable source authority.\n\n### Machine-use contract\nInvoke `snl library html` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

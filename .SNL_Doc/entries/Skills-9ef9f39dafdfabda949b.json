@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry-package export}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry-package export` to produce a portable export of one Entry Package after it validates.\n\n### Agent procedure\n1. Get the package first and confirm its exact identity and intended membership.\n2. Write the export outside `.SNL_Doc`, inspect the structured manifest, and retain the reported provenance/version with the artifact.\n\n### Machine-use contract\nInvoke `snl entry-package export` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

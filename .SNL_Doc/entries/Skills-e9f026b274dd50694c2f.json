@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry references}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry references` to enumerate structured references to one Entry before rename, deletion, or dependency analysis.\n\n### Agent procedure\n1. Supply the exact Entry ID and inspect every returned reference class.\n2. Use the result as a safety gate; do not infer absence from text search or a truncated human display.\n\n### Machine-use contract\nInvoke `snl entry references` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

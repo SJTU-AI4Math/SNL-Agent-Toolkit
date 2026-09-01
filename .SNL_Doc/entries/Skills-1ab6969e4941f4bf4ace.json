@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl batch apply}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl batch apply` to publish exactly a previously reviewed dependent batch as one atomic or explicitly guarded operation.\n\n### Agent procedure\n1. Run `snl batch check` on the exact unchanged input immediately before apply.\n2. Apply once and inspect the structured per-operation result; on conflict, rebuild and recheck the whole batch rather than replaying a suffix.\n3. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl batch apply` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

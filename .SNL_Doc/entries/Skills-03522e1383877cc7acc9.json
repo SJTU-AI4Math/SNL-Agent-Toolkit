@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl library rename}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library rename` to change the identity of one Library while preserving structured reference closure.\n\n### Agent procedure\n1. Get the source Library, inspect its tree, and confirm the destination identity is unused.\n2. Pass the new identity with `--to` and the current `--if-match` revision.\n3. Inspect the rename report for rewritten definitions and references; stop on any ambiguous or unsupported occurrence.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl library rename` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

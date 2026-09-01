@@ -19,6 +19,10 @@
       "snl": "%Given a natural language corpus, either a large document or a small chunk, this skill provides methodologies to refine it into well-structured SNL.%"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/RefineNL2SNL/SKILL.md",
+      "mode": "lines",
+      "line": 1
+    }
   }
 }

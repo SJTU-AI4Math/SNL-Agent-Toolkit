@@ -12,6 +12,10 @@
       "snl": "%For every library refinement, check the following before commiting: #0%(__enum__(%I have ran the linter and no errors are present, the repository is safe for commit;%,%All entry kinds are properly created and can cover the natural language corpus, which the user has agreed on;%,%All entries are properly created, and have undergone entry-level refinements;%,%The tree-structure hierarchy of the library is reasonable and reflects the semantic structure of the natural language corpus.%))"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/RefineNL2SNL/checklist.md",
+      "mode": "lines",
+      "line": 3
+    }
   }
 }

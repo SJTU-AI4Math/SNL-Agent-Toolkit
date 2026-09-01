@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry get}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry get` to retrieve one exact Entry and its current opaque revision.\n\n### Agent procedure\n1. Supply the exact entry ID; do not substitute a display title.\n2. Preserve the returned revision for an immediate guarded update, rename, or delete; reread if any other writer may have intervened.\n\n### Machine-use contract\nInvoke `snl entry get` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

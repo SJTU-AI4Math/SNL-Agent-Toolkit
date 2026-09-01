@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry latex}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry latex` to inspect the authoritative bare-LaTeX rendering of one Entry.\n\n### Agent procedure\n1. Get the Entry first when title, package, or revision context matters.\n2. Use the rendering as a diagnostic or export input; do not treat it as an editable replacement for the Entry SNL tree.\n\n### Machine-use contract\nInvoke `snl entry latex` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

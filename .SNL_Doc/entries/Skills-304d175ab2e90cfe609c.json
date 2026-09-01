@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "file",
     "title": "$\\texttt{SKILL.md}$",
-    "content": {},
+    "content": {
+      "markdown": "This Entry is the Agent-facing usage specification for the completed `snl` CLI. Its child command Entries are normative: each states when an Agent should invoke a command, the required safety sequence, and how machine-readable results drive the next action.\n\nThe physical `SKILL.md` is an implementation of this SNL specification, not its authority. Generate or revise that file from these Entries only after the user-side workflow stabilizes. Product behavior and implementation requirements belong to the separate CLI Tools Library.\n"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

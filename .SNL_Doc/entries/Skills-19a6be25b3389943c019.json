@@ -15,7 +15,9 @@
         "zh-CN": "CLI 工具"
       }
     },
-    "content": {},
+    "content": {
+      "markdown": "This Skill specifies how an autonomous Agent uses the completed `snl` CLI as the only supported operational gateway to an SNL workspace.\n\n### Global Agent protocol\n1. Pass an explicit workspace `--root` and request `--json` for every machine-consumed invocation.\n2. Discover exact identities with `list` or `snoogl`, then retrieve the current entity and opaque revision with `get` immediately before a write.\n3. Run `snl validate` before and after every mutation sequence. Never hand-edit `.SNL_Doc`, derive hash filenames, or repair package/graph indexes outside the CLI.\n4. Treat exit `0` as successful execution, exit `1` as rejected/invalid domain data that must be corrected, and exit `2` as an invocation or workspace-level failure that requires reconsidering the call.\n5. On revision conflict, reread current state and re-plan. Never retry a stale `--if-match` token or silently overwrite concurrent work.\n"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

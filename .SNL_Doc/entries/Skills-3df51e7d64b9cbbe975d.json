@@ -12,6 +12,10 @@
       "snl": "%The ultimate goal of library-level refinement is to transform an ill-structured natural language corpus into a tree-structured entry hierarchy.%"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/RefineNL2SNL/SKILL.md",
+      "mode": "lines",
+      "line": 7
+    }
   }
 }

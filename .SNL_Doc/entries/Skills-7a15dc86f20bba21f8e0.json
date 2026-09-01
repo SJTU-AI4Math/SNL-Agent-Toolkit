@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro-package members}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro-package members` to enumerate exact Macro membership before adding, removing, exporting, or deleting a package.\n\n### Agent procedure\n1. Supply the exact Macro Package ID.\n2. Treat the returned set as current authority; do not reconstruct membership by scanning filenames or Macro name prefixes.\n\n### Machine-use contract\nInvoke `snl macro-package members` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

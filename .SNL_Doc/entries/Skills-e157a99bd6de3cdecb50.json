@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl init}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl init` only when the target directory is intended to become a new SNL workspace.\n\n### Agent procedure\n1. Inspect the target first and refuse to initialize over an existing or non-empty managed workspace unless the user explicitly authorizes replacement.\n2. Initialize the workspace once, then run `snl info` and `snl validate` to record its schema and baseline health.\n3. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl init` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

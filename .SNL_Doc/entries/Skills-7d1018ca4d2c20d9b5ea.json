@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl import}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl import` to ingest an explicitly supplied SNL export or transfer bundle into a target workspace.\n\n### Agent procedure\n1. Validate the destination first and inspect the input as untrusted data.\n2. Use `--input <file|->`; keep stdin payloads reproducible by saving or hashing the source outside the workspace when provenance matters.\n3. Inspect the import result for created, updated, skipped, and conflicting identities, then validate the resulting workspace.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl import` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

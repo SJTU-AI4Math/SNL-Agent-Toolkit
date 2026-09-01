@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry-package list}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry-package list` to enumerate or search Entry Packages when an exact identity is not yet known.\n\n### Agent procedure\n1. Use `--query` only to narrow candidates and use cursor pagination until the required search is complete.\n2. Choose an exact entry-package ID from structured results, then call `snl entry-package get` before relying on its current value.\n\n### Machine-use contract\nInvoke `snl entry-package list` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

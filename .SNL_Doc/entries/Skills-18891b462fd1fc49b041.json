@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro preview}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro preview` to render one Macro style before using or publishing that style.\n\n### Agent procedure\n1. Supply the exact Macro ID and, when needed, an explicit `--style <style-name>`.\n2. Inspect rendering diagnostics and confirm the requested style rather than assuming the default locale/style selection.\n\n### Machine-use contract\nInvoke `snl macro preview` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

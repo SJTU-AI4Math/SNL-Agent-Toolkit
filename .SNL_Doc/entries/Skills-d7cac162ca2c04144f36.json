@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl info}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl info` to discover the workspace version, capabilities, and current configuration before choosing another command.\n\n### Agent procedure\n1. Read the report before assuming a schema version, active package set, storage layout, or migration requirement.\n2. Use the returned facts to select compatible inputs and commands; never infer them from filenames alone.\n\n### Machine-use contract\nInvoke `snl info` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl library list}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library list` to enumerate or search Librarys when an exact identity is not yet known.\n\n### Agent procedure\n1. Use `--query` only to narrow candidates and use cursor pagination until the required search is complete.\n2. Choose an exact library slug from structured results, then call `snl library get` before relying on its current value.\n\n### Machine-use contract\nInvoke `snl library list` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro usages}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro usages` to find every structured use of a Macro before rename, update, or deletion.\n\n### Agent procedure\n1. Supply the exact Macro ID and inspect all returned usage classes.\n2. Distinguish semantic Macro calls from local variables or literal text; use the result as the destructive-action gate.\n\n### Machine-use contract\nInvoke `snl macro usages` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

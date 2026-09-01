@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry relationships}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry relationships` to query graph relationships adjacent to one Entry.\n\n### Agent procedure\n1. Choose `--direction incoming`, `outgoing`, or `both` according to the question.\n2. Treat relationship IDs and endpoints as exact identities, then retrieve any relationship that will drive a mutation.\n\n### Machine-use contract\nInvoke `snl entry relationships` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl snoogl}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl snoogl` for discovery when the exact Entry or Macro identity is not yet known.\n\n### Agent procedure\n1. Provide a focused query and the appropriate `--type <entry|macro>`; narrow by kind only when the intended semantic class is known.\n2. Paginate or raise the limit deliberately instead of treating the first result page as complete.\n3. Treat matches as candidates: select an exact ID, then use the corresponding `get` command before making decisions or writes.\n\n### Machine-use contract\nInvoke `snl snoogl` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

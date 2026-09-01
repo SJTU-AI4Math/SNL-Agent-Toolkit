@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl migrate}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl migrate` only when `snl info` shows that the workspace needs an explicit schema migration.\n\n### Agent procedure\n1. Require a clean version-controlled workspace or a user-approved backup before migration.\n2. Set the target with `--to <schema-version>` and never emulate migration through manual JSON edits.\n3. Read the migration report, rerun `snl info`, and require `snl validate` to pass before any further authoring.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl migrate` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

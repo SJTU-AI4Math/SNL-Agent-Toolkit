@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl relationship between}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl relationship between` to query relationships between two exact endpoints.\n\n### Agent procedure\n1. Supply both endpoint identities in the intended direction/order.\n2. Do not infer uniqueness: inspect every returned Relationship and its type before acting.\n\n### Machine-use contract\nInvoke `snl relationship between` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

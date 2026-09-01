@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry package}$",
-    "content": {},
+    "content": {
+      "markdown": "Use this command family to inspect or change the owning Entry Package of one Entry.\n\n### Agent workflow\n1. Do not treat `snl entry package` without a subcommand as a mutation. Select the narrowest child command for the task.\n2. Discover an exact identity before reading or writing. Retrieve the current revision immediately before any revision-guarded operation.\n3. For writes, validate before and after the sequence and preserve unrelated fields and entities.\n\n### Machine-use contract\nUse the `snl entry package` subcommands with an explicit `--root` and `--json`. Consume structured IDs, revisions, issue codes, and statuses; never rewrite canonical storage files by hand."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

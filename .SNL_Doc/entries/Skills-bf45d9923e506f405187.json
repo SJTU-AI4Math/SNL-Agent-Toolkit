@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry-package create}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry-package create` to publish a new Entry Package only after its draft passes the corresponding check.\n\n### Agent procedure\n1. Validate the workspace and check the draft first.\n2. Provide the complete draft with `--input <file|->`; let the CLI own canonical identity paths, defaults, and membership bookkeeping.\n3. If the identity already exists, stop and retrieve it; never convert an identity conflict into an implicit overwrite.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl entry-package create` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

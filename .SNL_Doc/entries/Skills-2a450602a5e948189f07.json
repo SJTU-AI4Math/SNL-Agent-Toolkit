@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl library export}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library export` to create a portable Library export with its required entity closure.\n\n### Agent procedure\n1. Validate the Library and inspect the exact tree and dependency closure first.\n2. Write the export outside `.SNL_Doc`, retain reported schema/provenance metadata, and test the artifact with the intended importer before publication.\n\n### Machine-use contract\nInvoke `snl library export` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro rename}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro rename` to change the identity of one Macro while preserving structured reference closure.\n\n### Agent procedure\n1. Get the source Macro, inspect its usages, and confirm the destination identity is unused.\n2. Pass the new identity with `--to` and the current `--if-match` revision.\n3. Inspect the rename report for rewritten definitions and references; stop on any ambiguous or unsupported occurrence.\n4. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl macro rename` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

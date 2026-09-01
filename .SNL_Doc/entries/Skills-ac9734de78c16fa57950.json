@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl macro-kind usages}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro-kind usages` to find all entities that currently use one Macro Kind before changing or deleting it.\n\n### Agent procedure\n1. Supply the exact macro-kind ID and inspect the complete structured result.\n2. Keep the kind while usages remain unless the user explicitly authorizes a coordinated replacement.\n\n### Machine-use contract\nInvoke `snl macro-kind usages` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",

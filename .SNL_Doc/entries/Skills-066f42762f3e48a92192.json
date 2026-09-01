@@ -8,7 +8,9 @@
     "package": "Skills",
     "kind": "cli",
     "title": "$\\texttt{snl entry-kind usages}$",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry-kind usages` to find all entities that currently use one Entry Kind before changing or deleting it.\n\n### Agent procedure\n1. Supply the exact entry-kind ID and inspect the complete structured result.\n2. Keep the kind while usages remain unless the user explicitly authorizes a coordinated replacement.\n\n### Machine-use contract\nInvoke `snl entry-kind usages` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",
