@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Entry Kind Coloring \\(条目类型配色\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Entry Kind Coloring \\(条目类型配色\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

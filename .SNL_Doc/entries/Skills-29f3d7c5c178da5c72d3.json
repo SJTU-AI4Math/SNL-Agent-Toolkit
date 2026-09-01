@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^    \\* \\*\\*Formula Mode Term Macro \\(公式模式术语宏\\)\\*\\*$"
+      "pattern": "^    \\* \\*\\*Formula Mode Term Macro \\(公式模式术语宏\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

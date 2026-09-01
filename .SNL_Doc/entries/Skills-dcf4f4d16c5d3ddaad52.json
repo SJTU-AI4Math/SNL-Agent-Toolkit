@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Term Macro UUID \\(术语宏 UUID\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Term Macro UUID \\(术语宏 UUID\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

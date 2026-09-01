@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*UI Language \\(UI 语言\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*UI Language \\(UI 语言\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

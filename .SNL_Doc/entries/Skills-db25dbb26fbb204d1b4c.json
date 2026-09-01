@@ -22,7 +22,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Entry Package \\(条目包\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Entry Package \\(条目包\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

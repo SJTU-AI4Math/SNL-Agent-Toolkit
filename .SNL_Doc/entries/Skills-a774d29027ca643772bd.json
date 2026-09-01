@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Entry Tag \\(条目标签\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Entry Tag \\(条目标签\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

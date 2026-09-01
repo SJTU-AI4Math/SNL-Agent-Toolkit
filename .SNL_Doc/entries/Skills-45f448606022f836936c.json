@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^\\* \\*\\*Dashboard \\(仪表盘\\)\\*\\*$"
+      "pattern": "^\\* \\*\\*Dashboard \\(仪表盘\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

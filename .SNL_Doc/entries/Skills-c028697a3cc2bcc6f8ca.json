@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^## Data Schema \\(数据模式\\)$"
+      "pattern": "^## Data Schema \\(数据模式\\)$",
+      "flags": "m"
     }
   }
 }

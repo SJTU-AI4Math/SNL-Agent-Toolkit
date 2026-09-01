@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Library Description \\(库描述\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Library Description \\(库描述\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

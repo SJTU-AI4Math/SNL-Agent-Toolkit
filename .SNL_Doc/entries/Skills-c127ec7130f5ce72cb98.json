@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Reference Tree \\(引用树\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Reference Tree \\(引用树\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^    \\* \\*\\*Entry ID Namespace \\(条目 ID 命名空间\\)\\*\\*$"
+      "pattern": "^    \\* \\*\\*Entry ID Namespace \\(条目 ID 命名空间\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

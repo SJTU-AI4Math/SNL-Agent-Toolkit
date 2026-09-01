@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Content Language \\(内容语言\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Content Language \\(内容语言\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

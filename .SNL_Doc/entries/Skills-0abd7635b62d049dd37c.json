@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Counter \\(计数器\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Counter \\(计数器\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

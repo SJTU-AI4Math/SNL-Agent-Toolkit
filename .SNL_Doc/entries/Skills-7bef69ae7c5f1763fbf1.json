@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Term Macro Kind \\(术语宏类型\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Term Macro Kind \\(术语宏类型\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*HTML Export \\(HTML 导出\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*HTML Export \\(HTML 导出\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^\\* \\*\\*Info View \\(信息视图\\)\\*\\*$"
+      "pattern": "^\\* \\*\\*Info View \\(信息视图\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

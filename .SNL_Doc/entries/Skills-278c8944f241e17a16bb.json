@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Pointer \\(指针\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Pointer \\(指针\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

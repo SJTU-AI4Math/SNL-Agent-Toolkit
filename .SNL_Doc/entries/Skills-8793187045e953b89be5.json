@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^\\* \\*\\*SNoogL\\*\\*$"
+      "pattern": "^\\* \\*\\*SNoogL\\*\\*$",
+      "flags": "m"
     }
   }
 }

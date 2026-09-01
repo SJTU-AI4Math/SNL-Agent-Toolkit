@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Macro Kind Coloring \\(宏类型配色\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Macro Kind Coloring \\(宏类型配色\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

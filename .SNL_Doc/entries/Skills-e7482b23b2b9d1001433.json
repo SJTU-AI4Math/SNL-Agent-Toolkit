@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^## Pragmatic Concepts of SNL \\(SNL 实用概念\\)$"
+      "pattern": "^## Pragmatic Concepts of SNL \\(SNL 实用概念\\)$",
+      "flags": "m"
     }
   }
 }

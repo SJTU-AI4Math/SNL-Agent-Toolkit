@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Term Macro Name \\(术语宏名称\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Term Macro Name \\(术语宏名称\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

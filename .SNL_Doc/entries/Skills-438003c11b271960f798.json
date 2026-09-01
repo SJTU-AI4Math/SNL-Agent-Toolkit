@@ -22,7 +22,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^\\* \\*\\*I18N \\(I18N 国际化\\)\\*\\*$"
+      "pattern": "^\\* \\*\\*I18N \\(I18N 国际化\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^\\* \\*\\*Contributor \\(贡献者\\)\\*\\*$"
+      "pattern": "^\\* \\*\\*Contributor \\(贡献者\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }

@@ -20,7 +20,8 @@
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
       "mode": "regex",
-      "pattern": "^  \\* \\*\\*Entry UUID \\(条目 UUID\\)\\*\\*$"
+      "pattern": "^  \\* \\*\\*Entry UUID \\(条目 UUID\\)\\*\\*$",
+      "flags": "m"
     }
   }
 }
