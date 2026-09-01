@@ -14,7 +14,9 @@ SNL-Agent-Toolkit/
 │   ├── HowToRead/             # inspect an existing SNL Library
 │   ├── HowToBuild/            # large-scale NL → SNL construction
 │   └── HowToMaintain/         # modify/optimize existing Libraries and Toolkit
-├── bin/                       # executable CLI shims and implementations
+├── src/cli/                   # hand-written unified and compatibility CLI sources
+├── dist/cli/                  # prebuilt executable artifacts
+├── bin/                       # checkout-only legacy compatibility shims
 ├── lib/                       # shared runtime logic and compatibility types
 ├── CLI_Scripts/               # executable CLI validation/test scripts
 ├── examples/                  # few-shot payloads
@@ -30,10 +32,15 @@ npm install
 npm test
 ```
 
-Invoke a CLI directly. For agent-authored writes, always use the add CLIs rather
-than creating hash-named entity files yourself:
+Invoke the unified CLI from a checkout or as the installed `snl` bin. Legacy
+`bin/snl-*.mjs` shims remain checkout-only compatibility entry points:
 
 ```bash
+./dist/cli/snl.mjs --root /path/to/project --json entry list --limit 50
+./dist/cli/snl.mjs --root /path/to/project --json entry get algebra.def.group
+./dist/cli/snl.mjs --root /path/to/project --json validate
+
+# Legacy compatibility examples
 node bin/snl-entity.mjs --root /path/to/project --json list --type entry-kind
 node bin/snl-entity.mjs --root /path/to/project --json get --type entry algebra.def.group
 node bin/snl-add-package.mjs --root /path/to/project --json examples/package-draft.minimal.json
@@ -75,7 +82,7 @@ MIT (TBD — will match SNL-Doc-Extension once that repository picks one).
 
 ## Agent Plugin
 
-The repository ships one prebuilt Node core, one shared Agent Skill, one stdio MCP server, and thin manifests for Claude Code, Codex, Hermes Agent, and DeepSeek Harness. The six MCP tools expose Entry and Library reading projections plus all managed entity families through a stable surface:
+The repository ships one prebuilt Node core, one stdio MCP server, and thin manifests for Claude Code, Codex, Hermes Agent, and DeepSeek Harness. The seven MCP tools expose Entry and Library reading projections plus all managed entity families through a stable surface:
 
 - `snl_entities_list`
 - `snl_entity_get`
@@ -83,6 +90,7 @@ The repository ships one prebuilt Node core, one shared Agent Skill, one stdio M
 - `snl_library_entry_tree` — folder-style multiline Library hierarchy with field and language controls
 - `snl_entity_apply` (`create`, `update`, `delete` with revision CAS)
 - `snl_workspace_validate`
+- `snl_execute` — strict `snl.operation/v1` object execution shared with the unified `snl` CLI
 
 Managed entity types are `entry-kind`, `macro-kind`, `entry-package`, `macro-package`, `entry`, `macro`, `relationship`, and `library`.
 
@@ -107,16 +115,14 @@ claude plugin install snl-agent-toolkit@snl-agent-toolkit
 codex plugin marketplace add SJTU-AI4Math/SNL-Agent-Toolkit
 codex plugin add snl-agent-toolkit@snl-agent-toolkit
 
-# Hermes Agent: install the shared Skill and register the prebuilt stdio MCP
+# Hermes Agent: register the prebuilt stdio MCP
 # (Hermes native `plugins install` expects a Python plugin.yaml plugin, not a portable Agent Plugin.)
 git clone https://github.com/SJTU-AI4Math/SNL-Agent-Toolkit.git ~/.hermes/vendor/snl-agent-toolkit
-mkdir -p ~/.hermes/skills
-cp -R ~/.hermes/vendor/snl-agent-toolkit/skills/snl-agent-toolkit ~/.hermes/skills/
 hermes mcp add snl-agent-toolkit \
   --command node \
   --args ~/.hermes/vendor/snl-agent-toolkit/dist/mcp/server.cjs
 hermes mcp test snl-agent-toolkit
-# Start a new Hermes session so the Skill and six MCP tools enter its fixed tool/context set.
+# Start a new Hermes session so the seven MCP tools enter its fixed tool set.
 
 # DeepSeek Harness profile bundle, from a checkout or packed npm artifact
 dsh plugin --profile default add .

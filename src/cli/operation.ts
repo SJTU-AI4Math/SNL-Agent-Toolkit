@@ -10,7 +10,7 @@ import {
 } from '../../lib/entity-crud.ts';
 import { readConfig } from '../../lib/snl-doc.ts';
 import { querySnoogl } from '../../lib/snoogle-query.ts';
-import { computeEntryBareLatex } from '../../lib/entry-analysis.ts';
+import { computeEntryBareLatex, EntryAnalysisError } from '../../lib/entry-analysis.ts';
 import { findEntityReferences } from '../../lib/entity-references.ts';
 
 export const OPERATION_PROTOCOL = 'snl.operation/v1' as const;
@@ -32,15 +32,29 @@ export const COMMAND_PATHS = Object.freeze([
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
   'snoogl', 'entry/latex', 'entry/references', 'macro/usages',
 ]);
+type CommandDescriptor = { command: string; access: 'read' | 'write'; arguments: Record<string, { type: string; required: boolean }>; summary: string };
+const field = (type: string, required: boolean) => ({ type, required });
+function describeCommand(command: string): CommandDescriptor {
+  const action = command.split('/').at(-1);
+  if (action === 'list') return { command, access: 'read', arguments: { query: field('string|null', false), limit: field('integer', false), cursor: field('string|null', false) }, summary: 'List one managed entity family with stable pagination.' };
+  if (action === 'get') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Read one exact managed entity and its revision.' };
+  if (action === 'create') return { command, access: 'write', arguments: { value: field('object', true) }, summary: 'Create one validated managed entity.' };
+  if (action === 'update') return { command, access: 'write', arguments: { id: field('string', true), value: field('object', true), expectedRevision: field('string', true) }, summary: 'Replace one managed entity under revision control.' };
+  if (action === 'delete') return { command, access: 'write', arguments: { id: field('string', true), expectedRevision: field('string', true) }, summary: 'Delete one managed entity under revision control.' };
+  if (command === 'entry/latex') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Render one Entry as bare LaTeX.' };
+  if (command === 'entry/references' || command === 'macro/usages') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Find structured references to one existing identity.' };
+  return { command, access: 'read', arguments: {}, summary: 'Discover this command namespace.' };
+}
 const own = (value: object, key: string) => Object.prototype.hasOwnProperty.call(value, key);
+const isRecord = (value: unknown): value is JsonObject => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 export const operationFailure = (command: string, exitCode: 1 | 2, code: string, message: string, details?: unknown): ExecutedOperation => ({
   exitCode,
-  response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...(details === undefined ? {} : { details }), retryable: code.endsWith('revision-conflict') || code.endsWith('locked') } },
+  response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...(details === undefined ? {} : { details }), retryable: code.endsWith('locked') } },
 });
 const succeed = (command: string, data: unknown): ExecutedOperation => ({ exitCode: 0, response: { protocol: RESULT_PROTOCOL, ok: true, command, data, diagnostics: [] } });
 function stringArg(args: JsonObject, name: string, required = true): string | undefined {
   const value = args[name];
-  if (value === undefined && !required) return undefined;
+  if ((value === undefined || value === null) && !required) return undefined;
   if (typeof value !== 'string' || (required && value.length === 0)) throw new TypeError(`${name} must be ${required ? 'a non-empty' : 'a'} string.`);
   return value;
 }
@@ -50,7 +64,7 @@ function exactArguments(args: JsonObject, allowed: readonly string[]): void {
 }
 
 export async function executeOperation(request: OperationRequest): Promise<ExecutedOperation> {
-  const command = request.command;
+  const command = request && typeof request.command === 'string' ? request.command : 'unknown';
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== 'string' || !request.root || !request.arguments || typeof request.arguments !== 'object' || Array.isArray(request.arguments))
       return operationFailure(command || 'unknown', 2, 'operation.invalid-request', 'Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.');
@@ -61,14 +75,25 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
       return succeed(command, { operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL, commands: COMMAND_PATHS.filter(path => path !== 'help') });
     }
     if (tokens.length === 1 && command === 'validate') {
-      exactArguments(request.arguments, []);
+      exactArguments(request.arguments, ['scope']);
+      const scope = stringArg(request.arguments, 'scope');
+      if (scope !== 'workspace') throw new TypeError('scope must be workspace.');
       const validation = await validateManagedWorkspace(request.root);
       return validation.valid ? succeed(command, validation) : operationFailure(command, 1, 'workspace.invalid', 'Workspace validation reported errors.', validation);
     }
     if (tokens.length === 1 && command === 'info') {
       exactArguments(request.arguments, []);
       const [config, validation] = await Promise.all([readConfig(request.root), validateManagedWorkspace(request.root)]);
-      return succeed(command, { root: path.resolve(request.root), version: config.version, counts: validation.counts, valid: validation.valid, protocol: OPERATION_PROTOCOL });
+      if (!validation.valid) return operationFailure(command, 1, 'workspace.invalid', 'Workspace validation reported errors.', validation);
+      return succeed(command, {
+        root: path.resolve(request.root),
+        version: config.version,
+        versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
+        counts: validation.counts,
+        valid: true,
+        capabilities: COMMAND_PATHS.filter(item => item !== 'help'),
+        commandRegistryVersion: 1,
+      });
     }
     if (command === 'snoogl') {
       exactArguments(request.arguments, ['mode', 'query']);
@@ -78,19 +103,27 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     }
     if (command === 'entry/latex') {
       exactArguments(request.arguments, ['id']);
-      const rendered = await computeEntryBareLatex(request.root, stringArg(request.arguments, 'id')!);
-      return succeed(command, { latex: rendered.output, notes: rendered.notes });
+      const id = stringArg(request.arguments, 'id')!;
+      try {
+        const rendered = await computeEntryBareLatex(request.root, id);
+        return succeed(command, { entryId: id, latex: rendered.output, notes: rendered.notes });
+      } catch (error) {
+        if (error instanceof EntryAnalysisError) return operationFailure(command, 1, error.code, error.message);
+        throw error;
+      }
     }
     if (command === 'entry/references' || command === 'macro/usages') {
       exactArguments(request.arguments, ['id']);
       const entityType = command.startsWith('entry/') ? 'entry' : 'macro';
-      return succeed(command, { items: await findEntityReferences(request.root, entityType, stringArg(request.arguments, 'id')!) });
+      const id = stringArg(request.arguments, 'id')!;
+      if (!await getManagedEntity(request.root, entityType, id)) return operationFailure(command, 1, 'entity.not-found', `${entityType} ${JSON.stringify(id)} does not exist.`);
+      return succeed(command, { items: await findEntityReferences(request.root, entityType, id) });
     }
     const type = ENTITY_DOMAINS[tokens[0]];
     if (!type || tokens.length > 2) return operationFailure(command, 2, 'command.unknown', `Unknown command ${JSON.stringify(command)}.`);
     if (tokens.length === 1) {
       exactArguments(request.arguments, []);
-      return succeed(command, { commands: ['list', 'get', 'create', 'update', 'delete'].map(action => `${command}/${action}`) });
+      return succeed(command, COMMAND_PATHS.filter(item => item.startsWith(`${command}/`)).map(describeCommand));
     }
     const action = tokens[1];
     const args = request.arguments;
@@ -113,14 +146,26 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     }
     if (action === 'create') {
       exactArguments(args, ['value']); if (!own(args, 'value')) throw new TypeError('value is required.');
-      const result = await createManagedEntity(request.root, type, args.value);
-      return result.status === 'ok' ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      if (!isRecord(args.value)) return operationFailure(command, 1, 'entity.invalid', 'value must be an object.');
+      try {
+        const result = await createManagedEntity(request.root, type, args.value);
+        return result.status === 'ok' ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      } catch (error) {
+        if (error instanceof TypeError) return operationFailure(command, 1, 'entity.invalid', error.message);
+        throw error;
+      }
     }
     if (action === 'update') {
       exactArguments(args, ['id', 'value', 'expectedRevision']); const id = stringArg(args, 'id')!; const revision = stringArg(args, 'expectedRevision')!;
       if (!own(args, 'value')) throw new TypeError('value is required.');
-      const result = await updateManagedEntity(request.root, type, id, args.value, revision);
-      return result.status === 'ok' ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      if (!isRecord(args.value)) return operationFailure(command, 1, 'entity.invalid', 'value must be an object.');
+      try {
+        const result = await updateManagedEntity(request.root, type, id, args.value, revision);
+        return result.status === 'ok' ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      } catch (error) {
+        if (error instanceof TypeError) return operationFailure(command, 1, 'entity.invalid', error.message);
+        throw error;
+      }
     }
     if (action === 'delete') {
       exactArguments(args, ['id', 'expectedRevision']); const id = stringArg(args, 'id')!; const revision = stringArg(args, 'expectedRevision')!;

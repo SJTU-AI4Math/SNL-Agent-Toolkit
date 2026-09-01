@@ -9,7 +9,7 @@ import { promises as fs3 } from "node:fs";
 import * as path4 from "node:path";
 import { createHash as createHash2 } from "node:crypto";
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/scanner.js
+// node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text, ignoreTrivia = false) {
   const len = text.length;
   let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
@@ -430,7 +430,7 @@ var CharacterCodes;
   CharacterCodes2[CharacterCodes2["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+// node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
   return " ".repeat(index);
 });
@@ -461,7 +461,7 @@ var cachedBreakLinesWithSpaces = {
 };
 var supportedEols = ["\n", "\r", "\r\n"];
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/format.js
+// node_modules/jsonc-parser/lib/esm/impl/format.js
 function format(documentText, range, options) {
   let initialIndentLevel;
   let formatText;
@@ -697,7 +697,7 @@ function isEOL(text, offset) {
   return "\r\n".indexOf(text.charAt(offset)) !== -1;
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/parser.js
+// node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
 (function(ParseOptions2) {
   ParseOptions2.DEFAULT = {
@@ -1119,7 +1119,7 @@ function getNodeType(value) {
   }
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/edit.js
+// node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text, originalPath, value, options) {
   const path6 = originalPath.slice();
   const errors = [];
@@ -1263,7 +1263,7 @@ function applyEdit(text, edit) {
   return text.substring(0, edit.offset) + edit.content + text.substring(edit.offset + edit.length);
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/main.js
+// node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError2) {
   ScanError2[ScanError2["None"] = 0] = "None";
@@ -1424,7 +1424,7 @@ async function readRegularText(file) {
   }
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t2) {
   return {
     macro_name: e,
@@ -1715,7 +1715,7 @@ function b(e, t2 = []) {
   e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n2) => b(e2, [...t2, n2]));
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t2 = e;

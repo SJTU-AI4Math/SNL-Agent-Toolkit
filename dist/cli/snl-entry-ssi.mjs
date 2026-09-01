@@ -3,7 +3,7 @@
 // src/cli/entry-ssi.ts
 import * as path3 from "node:path";
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
   return {
     macro_name: e,
@@ -423,7 +423,7 @@ function O(e, t3) {
   };
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
@@ -591,7 +591,7 @@ ${" ".repeat(this.indentSpaces * t3)})`;
 };
 var J = new q(0, 2 ** 53 - 1);
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t2(t3) {
   let n3 = /* @__PURE__ */ new Set();
   if (!t3.trim()) return n3;

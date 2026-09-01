@@ -29,6 +29,7 @@ export async function buildCli() {
     outdir: 'dist/cli',
     outExtension: { '.js': '.mjs' },
     bundle: true,
+    preserveSymlinks: true,
     alias: { 'jsonc-parser': resolve(root, 'node_modules/jsonc-parser/lib/esm/main.js') },
     platform: 'node',
     format: 'esm',

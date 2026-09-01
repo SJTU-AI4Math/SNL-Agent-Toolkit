@@ -12,7 +12,7 @@ import {
 interface ParsedCli { request?: OperationRequest; json: boolean; error?: string }
 function parseCli(argv: string[]): ParsedCli {
   let root = '.'; let json = false; let help = false; const positional: string[] = []; const args: JsonObject = {};
-  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--if-match': 'expectedRevision', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode' };
+  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--if-match': 'expectedRevision', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope' };
   for (let i=0;i<argv.length;i++) {
     const token=argv[i];
     if (token==='--json') { json=true; continue; }
@@ -25,6 +25,7 @@ function parseCli(argv: string[]): ParsedCli {
   if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: 'help', root: path.resolve(root), arguments: {} } };
   const [domain,action,...rest]=positional; if(!domain)return{json,error:'Expected a command domain.'};
   const command=action?`${domain}/${action}`:domain;
+  if (command === 'validate' && args.scope === undefined) args.scope = 'workspace';
   const knownActions = new Set(['list','get','create','update','delete']);
   const singleIdentityActions = new Set(['latex','references','usages']);
   if (action && knownActions.has(action)) {

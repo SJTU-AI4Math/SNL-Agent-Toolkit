@@ -65,12 +65,33 @@ describe('unified snl command',()=>{
   call=run(root,['entry','references','entry.localized']);assert.equal(call.status,0,call.stderr||call.stdout);body=result(call);assert.ok(body.data.items.some((x:{role:string})=>x.role==='definition'));
   call=run(root,['snoogl','--mode','workspace','--query','x']);assert.equal(call.status,2);assert.equal(result(call).error.code,'operation.invalid-arguments');
  });
+ it('honors documented validation, discovery, null pagination, and info contracts',async()=>{
+  const root=await workspace();
+  let call=run(root,['validate','--scope','workspace']);assert.equal(call.status,0,call.stderr||call.stdout);
+  let operation=await executeOperation({protocol:OPERATION_PROTOCOL,command:'entry/list',root,arguments:{query:null,cursor:null,limit:1} as unknown as Record<string,unknown>});
+  assert.equal(operation.exitCode,0,JSON.stringify(operation.response));
+  operation=await executeOperation({protocol:OPERATION_PROTOCOL,command:'entry',root,arguments:{}});
+  assert.equal(operation.exitCode,0);assert.equal(operation.response.ok,true);
+  if(operation.response.ok){const commands=operation.response.data as Array<{command:string;access:string;arguments:Record<string,unknown>}>;assert.ok(commands.some(x=>x.command==='entry/latex'&&x.access==='read'&&x.arguments.id));assert.ok(commands.some(x=>x.command==='entry/references'));}
+  call=run(root,['info']);assert.equal(call.status,0,call.stderr||call.stdout);const body=result(call);
+  assert.equal(body.data.commandRegistryVersion,1);assert.equal(body.data.versions.entitySchema,1);assert.ok(body.data.capabilities.includes('entry/get'));
+  await json(path.join(root,'.SNL_Doc','relationships.json'),{version:1,relationships:'broken'});
+  call=run(root,['info']);assert.equal(call.status,1);assert.equal(result(call).error.code,'workspace.invalid');
+ });
+ it('maps command domain failures without losing identity or retry semantics',async()=>{
+  const root=await workspace();
+  let call=run(root,['entry','latex','entry.demo']);assert.equal(call.status,1);let body=result(call);assert.equal(body.error.code,'entry.invalid');
+  call=run(root,['entry','references','missing']);assert.equal(call.status,1);body=result(call);assert.equal(body.error.code,'entity.not-found');
+  const fixture=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'fixtures/workspace-v0.1.0');
+  call=run(fixture,['entry','latex','entry.localized']);assert.equal(call.status,0,call.stderr||call.stdout);body=result(call);assert.equal(body.data.entryId,'entry.localized');
+  const invalid=await executeOperation({protocol:OPERATION_PROTOCOL,command:'relationship/create',root,arguments:{value:null}});assert.equal(invalid.exitCode,1);assert.equal(invalid.response.ok,false);if(!invalid.response.ok)assert.equal(invalid.response.error.code,'entity.invalid');
+ });
  it('performs create/update/delete with exact revision and canonical readback',async()=>{
   const root=await workspace();const draft=path.join(root,'entry.json');
   await json(draft,{id:'entry.new',package:'_unpackaged',kind:'definition',title:'New',content:{},contribution_info:null,pointer:null});
   let call=run(root,['entry','create','--input',draft]);assert.equal(call.status,0,call.stderr||call.stdout);let body=result(call);const r1=body.data.entity.revision;
   await json(draft,{...body.data.entity.value,title:'Updated'});
-  call=run(root,['entry','update','entry.new','--input',draft,'--if-match','0'.repeat(64)]);assert.equal(call.status,1);assert.equal(result(call).error.code,'entity.revision-conflict');
+  call=run(root,['entry','update','entry.new','--input',draft,'--if-match','0'.repeat(64)]);assert.equal(call.status,1);body=result(call);assert.equal(body.error.code,'entity.revision-conflict');assert.equal(body.error.retryable,false);
   call=run(root,['entry','update','entry.new','--input',draft,'--if-match',r1]);assert.equal(call.status,0,call.stderr||call.stdout);body=result(call);assert.equal(body.data.entity.value.title,'Updated');
   call=run(root,['entry','delete','entry.new','--if-match',body.data.entity.revision]);assert.equal(call.status,0,call.stderr||call.stdout);
  });

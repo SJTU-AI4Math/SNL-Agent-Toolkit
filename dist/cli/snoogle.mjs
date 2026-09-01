@@ -3,7 +3,7 @@
 // src/cli/snoogle.ts
 import * as path3 from "node:path";
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/fuse.js/dist/fuse.mjs
+// node_modules/fuse.js/dist/fuse.mjs
 function isArray(value) {
   return !Array.isArray ? getTag(value) === "[object Array]" : Array.isArray(value);
 }
@@ -1598,7 +1598,7 @@ async function readRegularText(file) {
   }
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t2) {
   return {
     macro_name: e,
@@ -1889,7 +1889,7 @@ function b(e, t2 = []) {
   e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n2) => b(e2, [...t2, n2]));
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t2 = e;

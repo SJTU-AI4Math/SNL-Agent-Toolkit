@@ -363,7 +363,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   }
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
   return {
     macro_name: e,
@@ -783,7 +783,7 @@ function O(e, t3) {
   };
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
@@ -951,7 +951,7 @@ ${" ".repeat(this.indentSpaces * t3)})`;
 };
 var J = new q(0, 2 ** 53 - 1);
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/katex/dist/katex.mjs
+// node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -15458,7 +15458,7 @@ function isMacroDocumentV11(value) {
     }
     const names = /* @__PURE__ */ new Set();
     return macro.styles.every((style) => {
-      if (!isRecord(style) || typeof style.style_name !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(style.style_name) || names.has(style.style_name) || !isStringArray(style.tags) || style.tags.some((tag) => tag.includes("\\")) || Object.keys(style).some((field) => !["style_name", "tags", "template"].includes(field))) {
+      if (!isRecord(style) || typeof style.style_name !== "string" || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(style.style_name) || names.has(style.style_name) || !isStringArray(style.tags) || style.tags.some((tag) => tag.includes("\\")) || Object.keys(style).some((field2) => !["style_name", "tags", "template"].includes(field2))) {
         return false;
       }
       names.add(style.style_name);
@@ -15477,7 +15477,7 @@ function isMacroDocumentV11(value) {
 }
 function macroV11TemplateProjections(value) {
   if (isTemplate(value)) return [value];
-  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !value.default_language || !isRecord(value.values) || !Object.hasOwn(value.values, value.default_language) || Object.keys(value).some((field) => !["type", "default_language", "values"].includes(field))) {
+  if (!isRecord(value) || value.type !== "i18n" || typeof value.default_language !== "string" || !value.default_language || !isRecord(value.values) || !Object.hasOwn(value.values, value.default_language) || Object.keys(value).some((field2) => !["type", "default_language", "values"].includes(field2))) {
     return null;
   }
   const projections = Object.values(value.values);
@@ -15595,20 +15595,20 @@ async function readConfig(workspaceRoot) {
   return config;
 }
 function assertCurrentKindCatalogs(config) {
-  for (const field of ["entry_kinds", "macro_kinds"]) {
-    const catalog = config[field];
-    if (!Array.isArray(catalog)) throw new Error(`config.json#${field} must be an array.`);
+  for (const field2 of ["entry_kinds", "macro_kinds"]) {
+    const catalog = config[field2];
+    if (!Array.isArray(catalog)) throw new Error(`config.json#${field2} must be an array.`);
     const ids = /* @__PURE__ */ new Set();
     catalog.forEach((value, index) => {
       const kind = value;
       if (!isRecord2(value) || typeof value.id !== "string" || !value.id || value.id !== value.id.trim()) {
-        throw new Error(`config.json#${field}[${index}].id must be a canonical non-empty string.`);
+        throw new Error(`config.json#${field2}[${index}].id must be a canonical non-empty string.`);
       }
       if (ids.has(value.id)) {
-        throw new Error(`config.json#${field} contains duplicate id ${JSON.stringify(value.id)}.`);
+        throw new Error(`config.json#${field2} contains duplicate id ${JSON.stringify(value.id)}.`);
       }
       ids.add(value.id);
-      if (field === "entry_kinds") {
+      if (field2 === "entry_kinds") {
         if (!isLocalizedLabel(kind.name, true)) {
           throw new Error(`config.json#entry_kinds[${index}].name must be a non-empty string or valid I18n map.`);
         }
@@ -15621,7 +15621,7 @@ function assertCurrentKindCatalogs(config) {
       } else if (typeof kind.name !== "string" || typeof kind.description !== "string") {
         throw new Error(`config.json#macro_kinds[${index}] requires string name and description.`);
       }
-      assertThemedColoring(kind.coloring, `config.json#${field}[${index}].coloring`);
+      assertThemedColoring(kind.coloring, `config.json#${field2}[${index}].coloring`);
     });
   }
 }
@@ -15640,9 +15640,9 @@ function assertCurrentEntryPayload(value, label) {
   if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
     throw new Error(`${label}#content.snl must be a string when present.`);
   }
-  for (const field of ["typst", "latex", "markdown", "text"]) {
-    if (value.content[field] !== void 0 && !isLocalizedLabel(value.content[field], false)) {
-      throw new Error(`${label}#content.${field} must be a string or valid I18n map when present.`);
+  for (const field2 of ["typst", "latex", "markdown", "text"]) {
+    if (value.content[field2] !== void 0 && !isLocalizedLabel(value.content[field2], false)) {
+      throw new Error(`${label}#content.${field2} must be a string or valid I18n map when present.`);
     }
   }
 }
@@ -15989,7 +15989,7 @@ async function readEntryKinds(workspaceRoot) {
   return cfg.entry_kinds ?? [];
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t2(t3) {
   let n3 = /* @__PURE__ */ new Set();
   if (!t3.trim()) return n3;
@@ -16419,9 +16419,9 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
       return;
     }
     const style = rawStyle;
-    for (const field of LEGACY_STYLE_FIELDS) {
-      if (Object.prototype.hasOwnProperty.call(rawStyle, field)) {
-        issues.push({ severity: "error", code: "style.legacy-field", message: `${stylePath}.${field} is a pre-v7 field and is not allowed by Macro v8. Migrate the package.`, path: `${stylePath}.${field}` });
+    for (const field2 of LEGACY_STYLE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(rawStyle, field2)) {
+        issues.push({ severity: "error", code: "style.legacy-field", message: `${stylePath}.${field2} is a pre-v7 field and is not allowed by Macro v8. Migrate the package.`, path: `${stylePath}.${field2}` });
       }
     }
     if (typeof style.style_name !== "string" || style.style_name === "") {
@@ -16785,7 +16785,7 @@ import { constants as constants3 } from "node:fs";
 import { promises as fs3 } from "node:fs";
 import * as path5 from "node:path";
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/scanner.js
+// node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text2, ignoreTrivia = false) {
   const len = text2.length;
   let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
@@ -17206,7 +17206,7 @@ var CharacterCodes;
   CharacterCodes2[CharacterCodes2["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+// node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
   return " ".repeat(index);
 });
@@ -17236,7 +17236,7 @@ var cachedBreakLinesWithSpaces = {
   }
 };
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/parser.js
+// node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
 (function(ParseOptions2) {
   ParseOptions2.DEFAULT = {
@@ -17627,7 +17627,7 @@ function getNodeType(value) {
   }
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/main.js
+// node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError2) {
   ScanError2[ScanError2["None"] = 0] = "None";
@@ -18310,10 +18310,10 @@ function validateSchemaShape(absPath, relPath, data) {
       if (ids.has(rel2.id)) fail(`relationship ${index} duplicates id ${JSON.stringify(rel2.id)}.`);
       ids.add(rel2.id);
       if (isRecord4(rel2.metadata) && rel2.metadata.generator === "macro-source-scan") {
-        for (const field of ["macros", "postfixes"]) {
-          const values = rel2.metadata[field];
+        for (const field2 of ["macros", "postfixes"]) {
+          const values = rel2.metadata[field2];
           if (values !== void 0 && (!Array.isArray(values) || !values.every((v2) => typeof v2 === "string"))) {
-            fail(`relationship ${index} metadata.${field} must be a string array when present.`);
+            fail(`relationship ${index} metadata.${field2} must be a string array when present.`);
           }
         }
       }
@@ -18926,10 +18926,10 @@ async function restoreCapturedDirectory(captured, target, hooks = {}) {
     throw new Error(`${target} could not be restored without touching a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   }
 }
-function requireId(value, field = "id") {
-  if (typeof value[field] !== "string" || !value[field])
-    throw new Error(`${field} must be a non-empty string.`);
-  return value[field];
+function requireId(value, field2 = "id") {
+  if (typeof value[field2] !== "string" || !value[field2])
+    throw new Error(`${field2} must be a non-empty string.`);
+  return value[field2];
 }
 async function packageRows(root, type) {
   await readEntries(root);
@@ -19066,10 +19066,10 @@ async function listManagedEntities(root, type, options = {}) {
   await assertWorkspace(root);
   if (type === "entry-kind" || type === "macro-kind") {
     const config = await readConfig(root);
-    const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
-    const values = config[field];
+    const field2 = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
+    const values = config[field2];
     if (!Array.isArray(values))
-      throw new Error(`config.json#${field} must be an array.`);
+      throw new Error(`config.json#${field2} must be an array.`);
     return values.map((v2) => {
       const value = requireRecord(v2, type);
       return managed(type, requireId(value), value);
@@ -19159,10 +19159,10 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
     const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
     if (!usesEntityStorage(config))
       throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
-    const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
-    const values = config[field];
+    const field2 = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
+    const values = config[field2];
     if (!Array.isArray(values))
-      throw new Error(`config.json#${field} must be an array.`);
+      throw new Error(`config.json#${field2} must be an array.`);
     const index = values.findIndex((v2) => isRecord6(v2) && v2.id === id);
     if (operation === "create") {
       const value2 = requireRecord(input, type);
@@ -19172,7 +19172,7 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
       const newId = requireId(value2);
       if (values.some((v2) => isRecord6(v2) && v2.id === newId))
         return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(newId)} already exists.` };
-      const next2 = { ...config, [field]: [...values, value2] };
+      const next2 = { ...config, [field2]: [...values, value2] };
       const catalogProblem2 = currentKindCatalogProblem(config, next2);
       if (catalogProblem2) return invalid(catalogProblem2);
       await replaceJsonIfUnchanged(file, originalConfig.text, next2);
@@ -19193,7 +19193,7 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
           return { status: "conflict", code: "entity.referenced", message: `Macro Kind ${JSON.stringify(id)} is still used by Macros.` };
       }
       const nextValues2 = values.filter((_2, i4) => i4 !== index);
-      const next2 = { ...config, [field]: nextValues2 };
+      const next2 = { ...config, [field2]: nextValues2 };
       const catalogProblem2 = currentKindCatalogProblem(config, next2);
       if (catalogProblem2) return invalid(catalogProblem2);
       await replaceJsonIfUnchanged(file, originalConfig.text, next2);
@@ -19207,7 +19207,7 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
       return invalid(`${type} identity is immutable: payload id must equal ${JSON.stringify(id)}.`);
     const nextValues = [...values];
     nextValues[index] = value;
-    const next = { ...config, [field]: nextValues };
+    const next = { ...config, [field2]: nextValues };
     const catalogProblem = currentKindCatalogProblem(config, next);
     if (catalogProblem) return invalid(catalogProblem);
     await replaceJsonIfUnchanged(file, originalConfig.text, next);
@@ -19215,7 +19215,7 @@ async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
   });
 }
 async function validationMessage(root, type, value, currentId) {
-  const stringField = (field) => typeof value[field] === "string" && value[field] !== "";
+  const stringField = (field2) => typeof value[field2] === "string" && value[field2] !== "";
   if (type === "entry-kind") {
     if (!stringField("id") || !(typeof value.name === "string" || isRecord6(value.name)) || !isRecord6(value.coloring) || typeof value.style !== "string")
       return "Entry Kind requires non-empty id/name, coloring object, and string style.";
@@ -19861,7 +19861,7 @@ async function deleteManagedEntity(root, type, id, ifMatch, options = {}) {
   return mutateDirect(root, type, "delete", id, void 0, ifMatch, options);
 }
 
-// ../../.hermes/vendor/snl-agent-toolkit/node_modules/fuse.js/dist/fuse.mjs
+// node_modules/fuse.js/dist/fuse.mjs
 function isArray(value) {
   return !Array.isArray ? getTag(value) === "[object Array]" : Array.isArray(value);
 }
@@ -21430,11 +21430,11 @@ function expandSnoogleToken(token) {
   ];
 }
 function exactnessFactor(needle, fieldText) {
-  const field = fieldText.toLowerCase();
-  if (needle === field) return 1;
-  if (field.length === 0) return 0.85;
-  const coverage = Math.min(1, needle.length / field.length);
-  return (field.startsWith(needle) ? 0.9 : 0.85) * (0.6 + 0.4 * coverage);
+  const field2 = fieldText.toLowerCase();
+  if (needle === field2) return 1;
+  if (field2.length === 0) return 0.85;
+  const coverage = Math.min(1, needle.length / field2.length);
+  return (field2.startsWith(needle) ? 0.9 : 0.85) * (0.6 + 0.4 * coverage);
 }
 var SnoogleSearchIndex = class {
   documents;
@@ -22001,15 +22001,28 @@ var COMMAND_PATHS = Object.freeze([
   "entry/references",
   "macro/usages"
 ]);
+var field = (type, required) => ({ type, required });
+function describeCommand(command) {
+  const action = command.split("/").at(-1);
+  if (action === "list") return { command, access: "read", arguments: { query: field("string|null", false), limit: field("integer", false), cursor: field("string|null", false) }, summary: "List one managed entity family with stable pagination." };
+  if (action === "get") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Read one exact managed entity and its revision." };
+  if (action === "create") return { command, access: "write", arguments: { value: field("object", true) }, summary: "Create one validated managed entity." };
+  if (action === "update") return { command, access: "write", arguments: { id: field("string", true), value: field("object", true), expectedRevision: field("string", true) }, summary: "Replace one managed entity under revision control." };
+  if (action === "delete") return { command, access: "write", arguments: { id: field("string", true), expectedRevision: field("string", true) }, summary: "Delete one managed entity under revision control." };
+  if (command === "entry/latex") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Render one Entry as bare LaTeX." };
+  if (command === "entry/references" || command === "macro/usages") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Find structured references to one existing identity." };
+  return { command, access: "read", arguments: {}, summary: "Discover this command namespace." };
+}
 var own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
+var isRecord8 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
 var operationFailure = (command, exitCode, code, message, details) => ({
   exitCode,
-  response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...details === void 0 ? {} : { details }, retryable: code.endsWith("revision-conflict") || code.endsWith("locked") } }
+  response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...details === void 0 ? {} : { details }, retryable: code.endsWith("locked") } }
 });
 var succeed = (command, data) => ({ exitCode: 0, response: { protocol: RESULT_PROTOCOL, ok: true, command, data, diagnostics: [] } });
 function stringArg(args, name, required = true) {
   const value = args[name];
-  if (value === void 0 && !required) return void 0;
+  if ((value === void 0 || value === null) && !required) return void 0;
   if (typeof value !== "string" || required && value.length === 0) throw new TypeError(`${name} must be ${required ? "a non-empty" : "a"} string.`);
   return value;
 }
@@ -22018,7 +22031,7 @@ function exactArguments(args, allowed) {
   if (unknown.length) throw new TypeError(`Unknown argument key(s): ${unknown.join(", ")}.`);
 }
 async function executeOperation(request) {
-  const command = request.command;
+  const command = request && typeof request.command === "string" ? request.command : "unknown";
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
@@ -22029,14 +22042,25 @@ async function executeOperation(request) {
       return succeed(command, { operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL, commands: COMMAND_PATHS.filter((path10) => path10 !== "help") });
     }
     if (tokens.length === 1 && command === "validate") {
-      exactArguments(request.arguments, []);
+      exactArguments(request.arguments, ["scope"]);
+      const scope = stringArg(request.arguments, "scope");
+      if (scope !== "workspace") throw new TypeError("scope must be workspace.");
       const validation = await validateManagedWorkspace(request.root);
       return validation.valid ? succeed(command, validation) : operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
     }
     if (tokens.length === 1 && command === "info") {
       exactArguments(request.arguments, []);
       const [config, validation] = await Promise.all([readConfig(request.root), validateManagedWorkspace(request.root)]);
-      return succeed(command, { root: path8.resolve(request.root), version: config.version, counts: validation.counts, valid: validation.valid, protocol: OPERATION_PROTOCOL });
+      if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
+      return succeed(command, {
+        root: path8.resolve(request.root),
+        version: config.version,
+        versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
+        counts: validation.counts,
+        valid: true,
+        capabilities: COMMAND_PATHS.filter((item) => item !== "help"),
+        commandRegistryVersion: 1
+      });
     }
     if (command === "snoogl") {
       exactArguments(request.arguments, ["mode", "query"]);
@@ -22046,19 +22070,27 @@ async function executeOperation(request) {
     }
     if (command === "entry/latex") {
       exactArguments(request.arguments, ["id"]);
-      const rendered = await computeEntryBareLatex(request.root, stringArg(request.arguments, "id"));
-      return succeed(command, { latex: rendered.output, notes: rendered.notes });
+      const id = stringArg(request.arguments, "id");
+      try {
+        const rendered = await computeEntryBareLatex(request.root, id);
+        return succeed(command, { entryId: id, latex: rendered.output, notes: rendered.notes });
+      } catch (error) {
+        if (error instanceof EntryAnalysisError) return operationFailure(command, 1, error.code, error.message);
+        throw error;
+      }
     }
     if (command === "entry/references" || command === "macro/usages") {
       exactArguments(request.arguments, ["id"]);
       const entityType = command.startsWith("entry/") ? "entry" : "macro";
-      return succeed(command, { items: await findEntityReferences(request.root, entityType, stringArg(request.arguments, "id")) });
+      const id = stringArg(request.arguments, "id");
+      if (!await getManagedEntity(request.root, entityType, id)) return operationFailure(command, 1, "entity.not-found", `${entityType} ${JSON.stringify(id)} does not exist.`);
+      return succeed(command, { items: await findEntityReferences(request.root, entityType, id) });
     }
     const type = ENTITY_DOMAINS[tokens[0]];
     if (!type || tokens.length > 2) return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
     if (tokens.length === 1) {
       exactArguments(request.arguments, []);
-      return succeed(command, { commands: ["list", "get", "create", "update", "delete"].map((action2) => `${command}/${action2}`) });
+      return succeed(command, COMMAND_PATHS.filter((item) => item.startsWith(`${command}/`)).map(describeCommand));
     }
     const action = tokens[1];
     const args = request.arguments;
@@ -22083,16 +22115,28 @@ async function executeOperation(request) {
     if (action === "create") {
       exactArguments(args, ["value"]);
       if (!own(args, "value")) throw new TypeError("value is required.");
-      const result = await createManagedEntity(request.root, type, args.value);
-      return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      if (!isRecord8(args.value)) return operationFailure(command, 1, "entity.invalid", "value must be an object.");
+      try {
+        const result = await createManagedEntity(request.root, type, args.value);
+        return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      } catch (error) {
+        if (error instanceof TypeError) return operationFailure(command, 1, "entity.invalid", error.message);
+        throw error;
+      }
     }
     if (action === "update") {
       exactArguments(args, ["id", "value", "expectedRevision"]);
       const id = stringArg(args, "id");
       const revision = stringArg(args, "expectedRevision");
       if (!own(args, "value")) throw new TypeError("value is required.");
-      const result = await updateManagedEntity(request.root, type, id, args.value, revision);
-      return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      if (!isRecord8(args.value)) return operationFailure(command, 1, "entity.invalid", "value must be an object.");
+      try {
+        const result = await updateManagedEntity(request.root, type, id, args.value, revision);
+        return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+      } catch (error) {
+        if (error instanceof TypeError) return operationFailure(command, 1, "entity.invalid", error.message);
+        throw error;
+      }
     }
     if (action === "delete") {
       exactArguments(args, ["id", "expectedRevision"]);
@@ -22116,7 +22160,7 @@ function parseCli(argv) {
   let help = false;
   const positional = [];
   const args = {};
-  const valueFlags = { "--root": "root", "-r": "root", "--input": "input", "-i": "input", "--if-match": "expectedRevision", "--limit": "limit", "--cursor": "cursor", "--query": "query", "--mode": "mode" };
+  const valueFlags = { "--root": "root", "-r": "root", "--input": "input", "-i": "input", "--if-match": "expectedRevision", "--limit": "limit", "--cursor": "cursor", "--query": "query", "--mode": "mode", "--scope": "scope" };
   for (let i4 = 0; i4 < argv.length; i4++) {
     const token = argv[i4];
     if (token === "--json") {
@@ -22143,6 +22187,7 @@ function parseCli(argv) {
   const [domain, action, ...rest] = positional;
   if (!domain) return { json, error: "Expected a command domain." };
   const command = action ? `${domain}/${action}` : domain;
+  if (command === "validate" && args.scope === void 0) args.scope = "workspace";
   const knownActions = /* @__PURE__ */ new Set(["list", "get", "create", "update", "delete"]);
   const singleIdentityActions = /* @__PURE__ */ new Set(["latex", "references", "usages"]);
   if (action && knownActions.has(action)) {

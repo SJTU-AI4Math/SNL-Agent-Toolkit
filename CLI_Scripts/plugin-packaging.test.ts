@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -73,6 +73,19 @@ test('package manifest declares a DSH profile bundle and distributable payload',
     assert.ok(files.includes(required), `${required} is omitted from npm files`);
   }
   for (const forbidden of ['bin', 'src', 'skills']) assert.equal(files.includes(forbidden), false, `${forbidden} must not ship`);
+  assert.ok(files.includes('!Skills/__deprecated__/**'), 'deprecated Skills must not ship');
+  const readme = await readFile(resolve(root, 'README.md'), 'utf8');
+  assert.doesNotMatch(readme, /agent-plugin\/skills\/snl-agent-toolkit|six MCP tools/);
+  assert.notEqual((await stat(resolve(root, 'dist/mcp/server.cjs'))).mode & 0o111, 0, 'MCP bin must be executable');
+  const build = await readFile(resolve(root, 'scripts/build-plugin.mjs'), 'utf8');
+  assert.match(build, /chmod\(resolve\(root, 'dist\/mcp\/server\.cjs'\), 0o755\)/);
+});
+
+test('generated bundles do not embed machine-specific dependency paths', async () => {
+  for (const artifact of ['dist/cli/snl.mjs', 'dist/mcp/server.cjs', 'dist/dsh/adapter.mjs']) {
+    const text = await readFile(resolve(root, artifact), 'utf8');
+    assert.doesNotMatch(text, /(?:\.\.\/)+\.hermes\/vendor|\/home\/[^/]+\/\.hermes\//, artifact);
+  }
 });
 
 
