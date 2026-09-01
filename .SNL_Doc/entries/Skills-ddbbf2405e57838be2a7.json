@@ -17,6 +17,10 @@
     },
     "content": {},
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/Verify and Fix/SKILL.md",
+      "mode": "lines",
+      "line": 1
+    }
   }
 }

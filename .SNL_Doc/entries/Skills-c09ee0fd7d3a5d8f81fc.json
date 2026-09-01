@@ -19,6 +19,10 @@
       "snl": "%This skill will later be renamed as “Author”%"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/Author/SKILL.md",
+      "mode": "lines",
+      "line": 1
+    }
   }
 }
