@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl entry create",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl entry create` to publish a new Entry only after its draft passes the corresponding check.\n\n### Command path\n`entry/create` is the canonical transport-neutral command. The shell adapter is `snl entry create`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"entry/create\",\"root\":\"/absolute/workspace\",\"arguments\":{\"value\":{}}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. No upsert semantics. Existing identity is a conflict (exit 1) with zero byte changes.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"entry/create\",\"data\":...,\"diagnostics\":[]}`. `data.entity` is the canonical readback including exact identity and new revision.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"entry/create\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nMutating. Validate proposed complete state, acquire the shared lock, reject identity collision, install durably, update every membership/index authority, and read back. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. After success, canonical readback and whole-workspace validation must observe the published state.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }

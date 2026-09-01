@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl macro-package export",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro-package export` to produce a portable export of one Macro Package after it validates.\n\n### Command path\n`macro-package/export` is the canonical transport-neutral command. The shell adapter is `snl macro-package export`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"macro-package/export\",\"root\":\"/absolute/workspace\",\"arguments\":{\"id\":\"<exact-id>\",\"format\":\"json\",\"output\":\"-\"}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. Export closure includes required referenced metadata; unsupported/lossy formats fail closed.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"macro-package/export\",\"data\":...,\"diagnostics\":[]}`. `data` contains or identifies a deterministic self-describing export and its digest.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"macro-package/export\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nRead-only with respect to the workspace. Explicit output-file writes must be exclusive/atomic and never modify `.SNL_Doc`. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. Repeated calls against unchanged bytes return equivalent semantic results.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }

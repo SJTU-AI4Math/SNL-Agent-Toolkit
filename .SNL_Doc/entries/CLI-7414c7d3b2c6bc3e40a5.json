@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl macro preview",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro preview` to render one Macro style before using or publishing that style.\n\n### Command path\n`macro/preview` is the canonical transport-neutral command. The shell adapter is `snl macro preview`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"macro/preview\",\"root\":\"/absolute/workspace\",\"arguments\":{\"id\":\"<exact-macro-id>\",\"style\":null,\"arguments\":[]}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. Invalid style/arity is a domain error, never silently defaulted when the caller supplied it.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"macro/preview\",\"data\":...,\"diagnostics\":[]}`. `data` contains selected style, arity, rendered preview projections, and diagnostics.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"macro/preview\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nRead-only and stateless. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. Repeated calls against unchanged bytes return equivalent semantic results.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }

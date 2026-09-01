@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl macro-kind update",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro-kind update` to replace the mutable fields of an existing Macro Kind under revision control.\n\n### Command path\n`macro-kind/update` is the canonical transport-neutral command. The shell adapter is `snl macro-kind update`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"macro-kind/update\",\"root\":\"/absolute/workspace\",\"arguments\":{\"id\":\"<exact-id>\",\"value\":{},\"expectedRevision\":\"<opaque>\"}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. Stale revision is a conflict (exit 1) with unchanged bytes.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"macro-kind/update\",\"data\":...,\"diagnostics\":[]}`. `data.entity` is the canonical readback with a new revision.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"macro-kind/update\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nMutating. Under the shared lock, reread and compare `expectedRevision`, preserve unknown fields represented by the replacement, reject identity changes, validate, durably replace, and read back. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. After success, canonical readback and whole-workspace validation must observe the published state.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }

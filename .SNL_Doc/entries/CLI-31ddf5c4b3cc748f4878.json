@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl library list",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library list` to enumerate or search Librarys when an exact identity is not yet known.\n\n### Command path\n`library/list` is the canonical transport-neutral command. The shell adapter is `snl library list`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"library/list\",\"root\":\"/absolute/workspace\",\"arguments\":{\"query\":null,\"limit\":100,\"cursor\":null}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. Reject invalid limits/cursors. Never imply that one page is the whole collection.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"library/list\",\"data\":...,\"diagnostics\":[]}`. `data.entities` is deterministically ordered and each row contains exact identity, type, revision, and value; `data.nextCursor` is null or the opaque continuation token.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"library/list\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nRead-only and stateless. Pagination must not mutate or cache hidden workspace state. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. Repeated calls against unchanged bytes return equivalent semantic results.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }

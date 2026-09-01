@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl library delete",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl library delete` to remove one Library only after proving that the removal will not leave dangling structure.\n\n### Command path\n`library/delete` is the canonical transport-neutral command. The shell adapter is `snl library delete`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"library/delete\",\"root\":\"/absolute/workspace\",\"arguments\":{\"id\":\"<exact-id>\",\"expectedRevision\":\"<opaque>\"}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. No implicit cascade. Not-found and referenced conflicts are stable distinct codes.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"library/delete\",\"data\":...,\"diagnostics\":[]}`. `data.deleted` identifies the exact removed entity and prior revision.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"library/delete\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nMutating. Under the shared lock, compare revision and refuse deletion while schema-owned references, members, graph occurrences, or reserved-entity protections remain. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. After success, canonical readback and whole-workspace validation must observe the published state.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }

@@ -8,7 +8,9 @@
     "package": "CLI",
     "kind": "cli",
     "title": "snl macro check",
-    "content": {},
+    "content": {
+      "markdown": "Use `snl macro check` to validate a proposed Macro payload without publishing it.\n\n### Command path\n`macro/check` is the canonical transport-neutral command. The shell adapter is `snl macro check`; an Agent/MCP adapter submits the same operation object instead of reconstructing shell text.\n\n### Operation request\n```json\n{\"protocol\":\"snl.operation/v1\",\"command\":\"macro/check\",\"root\":\"/absolute/workspace\",\"arguments\":{\"input\":\"<file|->\"}}\n```\nEvery adapter accepts exactly this semantic request. Unknown argument keys are rejected. The CLI accepts `--root` and `--json` globally and emits one complete JSON document followed by a newline. Schema, syntax/semantic, and workspace-reference diagnostics remain distinguishable.\n\n### Success result\nA successful call exits `0` and returns `{\"protocol\":\"snl.result/v1\",\"ok\":true,\"command\":\"macro/check\",\"data\":...,\"diagnostics\":[]}`. `data` contains normalized identity when available and stable-code diagnostics; `ok:true` means no error-severity diagnostic.\n\n### Failure and exit semantics\nDomain rejection (invalid data, not-found, conflict, or validation errors) exits `1`. Invocation, input I/O, unsupported workspace/schema, lock acquisition, and runtime failures exit `2`. Failure stdout under `--json` is exactly one `{\"protocol\":\"snl.result/v1\",\"ok\":false,\"command\":\"macro/check\",\"error\":{\"code\":\"<stable-code>\",\"message\":\"<actionable text>\",\"details\":...,\"retryable\":false}}`; no stack trace or prose contaminates stdout.\n\n### State and concurrency\nRead-only. It must not create temp files inside `.SNL_Doc`, acquire a writer lock, or repair the draft. Revisions, cursors, checked digests, and workspace revisions are opaque tokens. Repeated calls against unchanged bytes return equivalent semantic results.\n"
+    },
     "contribution_info": null,
     "pointer": null
   }
