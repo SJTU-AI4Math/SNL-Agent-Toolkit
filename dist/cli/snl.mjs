@@ -22257,7 +22257,8 @@ async function main2(argv = process.argv.slice(2)) {
 `);
   return result.exitCode;
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(path9.resolve(process.argv[1])).href) main2().then((code) => {
+var isBuiltExecutable = true;
+if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL(path9.resolve(process.argv[1])).href) main2().then((code) => {
   process.exitCode = code;
 });
 export {

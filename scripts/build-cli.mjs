@@ -35,6 +35,7 @@ export async function buildCli() {
     format: 'esm',
     target: 'node20',
     banner: { js: '#!/usr/bin/env node' },
+    define: { __SNL_CLI_EXECUTABLE__: 'true' },
     legalComments: 'none',
   });
   const output = resolve(root, 'dist/cli');

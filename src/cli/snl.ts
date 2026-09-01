@@ -9,6 +9,8 @@ import {
   type OperationRequest,
 } from './operation.ts';
 
+declare const __SNL_CLI_EXECUTABLE__: boolean | undefined;
+
 interface ParsedCli { request?: OperationRequest; json: boolean; error?: string }
 function parseCli(argv: string[]): ParsedCli {
   let root = '.'; let json = false; let help = false; const positional: string[] = []; const args: JsonObject = {};
@@ -51,7 +53,8 @@ export async function main(argv=process.argv.slice(2)): Promise<number> {
   }
   const result=await executeOperation(parsed.request);process.stdout.write(`${JSON.stringify(result.response)}\n`);return result.exitCode;
 }
-if (process.argv[1] && import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href) main().then(code=>{process.exitCode=code;});
+const isBuiltExecutable = typeof __SNL_CLI_EXECUTABLE__ !== 'undefined' && __SNL_CLI_EXECUTABLE__;
+if (isBuiltExecutable || (process.argv[1] && import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href)) main().then(code=>{process.exitCode=code;});
 
 export { executeOperation, OPERATION_PROTOCOL } from './operation.ts';
 export type { OperationRequest, OperationResponse } from './operation.ts';
