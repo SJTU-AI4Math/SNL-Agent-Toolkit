@@ -1126,6 +1126,48 @@
       "props": {
         "entryId": "Skill.CLI.snl-batch-apply"
       }
+    },
+    {
+      "id": "n_74",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.checklist.md-Refinery"
+      }
+    },
+    {
+      "id": "n_75",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.sec.Library"
+      }
+    },
+    {
+      "id": "n_76",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.Library.subsec.Entrification"
+      }
+    },
+    {
+      "id": "n_77",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.Library.subsec.EntryCategorization"
+      }
+    },
+    {
+      "id": "n_78",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.Library.subsec.MarkdownDrafting"
+      }
+    },
+    {
+      "id": "n_79",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.sec.Entry"
+      }
     }
   ],
   "relationships": [
@@ -1887,6 +1929,36 @@
     {
       "from": "skill.cli.snl-batch",
       "to": "skill.cli.snl-batch-apply",
+      "label": "branch"
+    },
+    {
+      "from": "n_7",
+      "to": "n_74",
+      "label": "branch"
+    },
+    {
+      "from": "n_65",
+      "to": "n_75",
+      "label": "branch"
+    },
+    {
+      "from": "n_65",
+      "to": "n_79",
+      "label": "branch"
+    },
+    {
+      "from": "n_75",
+      "to": "n_76",
+      "label": "branch"
+    },
+    {
+      "from": "n_75",
+      "to": "n_77",
+      "label": "branch"
+    },
+    {
+      "from": "n_75",
+      "to": "n_78",
       "label": "branch"
     }
   ]

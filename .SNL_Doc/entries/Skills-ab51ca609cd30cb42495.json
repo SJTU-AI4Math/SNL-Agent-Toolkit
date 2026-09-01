@@ -4,17 +4,10 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.CLI",
+    "id": "Skill.checklist.md-Refinery",
     "package": "Skills",
-    "kind": "Skill",
-    "title": {
-      "type": "i18n",
-      "default_language": "en",
-      "values": {
-        "en": "CLI Tools",
-        "zh-CN": "CLI 工具"
-      }
-    },
+    "kind": "file",
+    "title": "$\\texttt{checklist.md}$",
     "content": {},
     "contribution_info": null,
     "pointer": null

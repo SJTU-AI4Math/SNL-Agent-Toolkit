@@ -1,0 +1,17 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Refinery.Library.subsec.Entrification",
+    "package": "Skills",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entrification",
+    "content": {
+      "markdown": "\r\n\r\nYou should first convert the natural language corpus into a tree of entries.\r\n\r\nAn entry should be a complete sub-structure of the whole corpus. Entrification is basically entity ontology boundary detection. Sometimes it can be tricky to determine whether a chunk of text should be considered an entry or not.\r\n\r\nSince the tree structure can easily be displayed as a TUI-style table of contents (as displayed below), consult with the user before making a formal draft.\r\n\r\n```text\r\n    library name\r\n    ├── [section] 1 ------- a section\r\n    │   ├── [kind-A] 1.1 -- some entity\r\n    │   └── [kind-B] 1.2 -- another entity\r\n    ├── [section] 2 ------- another section\r\n    │   └── [kind-A] 2.1 -- yet another entity\r\n    ├── [section] 3 ------- yet another section\r\n    ...\r\n```"
+    },
+    "contribution_info": null,
+    "pointer": null
+  }
+}

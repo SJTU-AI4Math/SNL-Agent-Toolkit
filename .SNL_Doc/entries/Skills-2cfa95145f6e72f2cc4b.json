@@ -1,0 +1,17 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Refinery.Library.subsec.MarkdownDrafting",
+    "package": "Skills",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Markdown Drafting",
+    "content": {
+      "markdown": "Create all planned entries with only the title and the markdown content provided.\r\n\r\nIt's advised to do entry-level refinement after library-level refinement is complete."
+    },
+    "contribution_info": null,
+    "pointer": null
+  }
+}

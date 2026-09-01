@@ -41,7 +41,6 @@ The ultimate goal of library-level refinement is to transform an ill-structured 
     
     Create all planned entries with only the title and the markdown content provided.
 
-
     It's advised to do entry-level refinement after library-level refinement is complete.
 
 4. **Pointer Construction**

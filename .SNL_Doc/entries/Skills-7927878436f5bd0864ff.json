@@ -4,17 +4,10 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.CLI",
+    "id": "Skill.Refinery.sec.Entry",
     "package": "Skills",
-    "kind": "Skill",
-    "title": {
-      "type": "i18n",
-      "default_language": "en",
-      "values": {
-        "en": "CLI Tools",
-        "zh-CN": "CLI 工具"
-      }
-    },
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Entry-level Refinement",
     "content": {},
     "contribution_info": null,
     "pointer": null
