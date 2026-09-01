@@ -1,0 +1,17 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Refinery.Entry.subsec.Terminologization",
+    "package": "Skills",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Terminologization",
+    "content": {
+      "snl": "%Terminologization is the most important concept in SNL authoring. Refined terminology usage is the key difference between SNL and linear NL.\nThe basic hypothesis of domain-specific terminologization is that: the specific domain has a well-founded knowledge ontology database, where abstract concepts and higher-order abstractions simplify the expression of the knowledge. So that theoretically people may leverage the terminology to express knowledge conveniently, it's just too tired to use terminology everywhere.\nGiven an NL corpus, during the terminologization process, you should identify the frequently-used concepts in the domain, create term macros accordingly, link the macros to their sources, and substitute temporary syntax nodes with constant term macros already present in the database.\nAn ideal refined SNL entry should have 1.00 SSI, which means all syntax nodes are considered well-founded and therefore should be easily readable.%"
+    },
+    "contribution_info": null,
+    "pointer": null
+  }
+}

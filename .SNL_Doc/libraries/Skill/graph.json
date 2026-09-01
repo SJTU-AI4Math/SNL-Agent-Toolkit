@@ -1182,6 +1182,27 @@
       "props": {
         "entryId": "Skill.Refinery.sec.Entry-checklist"
       }
+    },
+    {
+      "id": "n_82",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.Entry.subsec.Terminologization"
+      }
+    },
+    {
+      "id": "n_83",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.Entry.subsec.Currying"
+      }
+    },
+    {
+      "id": "n_84",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.Entry.subsec.CounterExamples"
+      }
     }
   ],
   "relationships": [
@@ -1983,6 +2004,21 @@
     {
       "from": "n_74",
       "to": "n_81",
+      "label": "branch"
+    },
+    {
+      "from": "n_79",
+      "to": "n_82",
+      "label": "branch"
+    },
+    {
+      "from": "n_79",
+      "to": "n_83",
+      "label": "branch"
+    },
+    {
+      "from": "n_79",
+      "to": "n_84",
       "label": "branch"
     }
   ]

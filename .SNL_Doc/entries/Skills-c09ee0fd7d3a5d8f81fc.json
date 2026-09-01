@@ -16,7 +16,7 @@
       }
     },
     "content": {
-      "snl": "%This skill will later be renamed as “Author”%"
+      "snl": "%This skill describes the recommended workflow of authoring an SNL library from scratch, with only NL documents for reference, where poor terminology usage is expected.\nIf maintaining an existing SNL library, please refer to #0.%(%the skill for maintaining%@Skill.Maintain)"
     },
     "contribution_info": null,
     "pointer": {

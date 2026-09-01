@@ -1,0 +1,17 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Refinery.Entry.subsec.CounterExamples",
+    "package": "Skills",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Counter Examples",
+    "content": {
+      "snl": "%Here are some bad examples that prevail when inexperienced AI Agents handle SNL authoring. Avoid these problems as possible: #0\nSSI score is a primitive measure about how well-based an SNL corpus is. It does not prevent cheating, and follows the Goodhart's Law -- once it becomes the target, it fails.\nMost of these scenarios derive from force-structurizing highly informal NL, where AI Agents tend to cheat high scores since it'd be very difficult to give a formal statement.\nThe right thing to do is, when very difficult to decide the syntactical structure of a corpus, to treat it as a whole and accept an honest low SSI rather than making blind decompositions.%(__enum__(%Syntax trees that are essentially strings are intolerable.\nConsider formula $1 + 1 = 2$. The obvious syntax tree should be something resembles:#0Normally, it's clearly wrong to write a syntax tree like:#1Writing SNL like this completely abandons readability provided by SNL, but may still have a very high SSI score, and unexperienced AI Agents tend to cheat like this.%($$#0$$(`$#0 = #1$($#0 + #1$(1, 1), 2)`),$$#0$$(`%#0#1#2#3#4%(1, $+$, 1, $=$, 2)`)),%Fake high SSI by making everything a constant macro and attaching wrong sources.\nThis makes macro management a nightmare, since force-structurizing unstructured NL means creating a massive amount of context-dependent terms that are only used once or twice.%))"
+    },
+    "contribution_info": null,
+    "pointer": null
+  }
+}
