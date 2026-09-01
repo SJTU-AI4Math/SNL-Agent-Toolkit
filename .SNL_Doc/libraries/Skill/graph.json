@@ -1168,6 +1168,20 @@
       "props": {
         "entryId": "Skill.Refinery.sec.Entry"
       }
+    },
+    {
+      "id": "n_80",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.sec.Library-checklist"
+      }
+    },
+    {
+      "id": "n_81",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Refinery.sec.Entry-checklist"
+      }
     }
   ],
   "relationships": [
@@ -1959,6 +1973,16 @@
     {
       "from": "n_75",
       "to": "n_78",
+      "label": "branch"
+    },
+    {
+      "from": "n_74",
+      "to": "n_80",
+      "label": "branch"
+    },
+    {
+      "from": "n_74",
+      "to": "n_81",
       "label": "branch"
     }
   ]
