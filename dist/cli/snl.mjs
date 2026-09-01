@@ -22015,6 +22015,7 @@ function describeCommand(command) {
 }
 var own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 var isRecord8 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+var isUnsupportedSchemaMessage = (message) => /unsupported (?:future )?(?:workspace|schema)|newer than this Toolkit supports|no registered migration/i.test(message);
 var operationFailure = (command, exitCode, code, message, details) => ({
   exitCode,
   response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...details === void 0 ? {} : { details }, retryable: code.endsWith("locked") } }
@@ -22046,11 +22047,13 @@ async function executeOperation(request) {
       const scope = stringArg(request.arguments, "scope");
       if (scope !== "workspace") throw new TypeError("scope must be workspace.");
       const validation = await validateManagedWorkspace(request.root);
+      if (validation.issues.some((issue) => isUnsupportedSchemaMessage(issue.message))) return operationFailure(command, 2, "workspace.unsupported-schema", "Workspace or entity schema is not supported by this Toolkit.", validation);
       return validation.valid ? succeed(command, validation) : operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
     }
     if (tokens.length === 1 && command === "info") {
       exactArguments(request.arguments, []);
       const [config, validation] = await Promise.all([readConfig(request.root), validateManagedWorkspace(request.root)]);
+      if (validation.issues.some((issue) => isUnsupportedSchemaMessage(issue.message))) return operationFailure(command, 2, "workspace.unsupported-schema", "Workspace or entity schema is not supported by this Toolkit.", validation);
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       return succeed(command, {
         root: path8.resolve(request.root),
@@ -22083,8 +22086,22 @@ async function executeOperation(request) {
       exactArguments(request.arguments, ["id"]);
       const entityType = command.startsWith("entry/") ? "entry" : "macro";
       const id = stringArg(request.arguments, "id");
-      if (!await getManagedEntity(request.root, entityType, id)) return operationFailure(command, 1, "entity.not-found", `${entityType} ${JSON.stringify(id)} does not exist.`);
-      return succeed(command, { items: await findEntityReferences(request.root, entityType, id) });
+      const entity = await getManagedEntity(request.root, entityType, id);
+      if (!entity) return operationFailure(command, 1, "entity.not-found", `${entityType} ${JSON.stringify(id)} does not exist.`);
+      if (entityType === "entry") return succeed(command, { items: await findEntityReferences(request.root, entityType, id) });
+      const packageId = entity.value.package;
+      const macroName = entity.value.name;
+      if (typeof packageId !== "string" || typeof macroName !== "string") return operationFailure(command, 1, "entity.invalid", `Macro ${JSON.stringify(id)} has no canonical package/name identity.`);
+      const [config, macros2, occurrences] = await Promise.all([
+        readConfig(request.root),
+        listManagedEntities(request.root, "macro"),
+        findEntityReferences(request.root, "macro", macroName)
+      ]);
+      const active = config.active_macro_packages === void 0 ? null : new Set(config.active_macro_packages);
+      const winner = macros2.filter((candidate) => candidate.value.name === macroName && typeof candidate.value.package === "string" && (!active || active.has(candidate.value.package))).sort((left, right) => `${String(left.value.package)}.json`.localeCompare(`${String(right.value.package)}.json`)).at(-1);
+      const definitionFile = macroEntityPath(packageId, macroName);
+      const items = occurrences.filter((item) => item.role === "definition" ? item.file === definitionFile : winner?.id === id).map((item) => ({ ...item, id }));
+      return succeed(command, { items });
     }
     const type = ENTITY_DOMAINS[tokens[0]];
     if (!type || tokens.length > 2) return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
@@ -22098,7 +22115,7 @@ async function executeOperation(request) {
       exactArguments(args, ["query", "limit", "cursor"]);
       const query = stringArg(args, "query", false)?.toLocaleLowerCase();
       const cursor = stringArg(args, "cursor", false);
-      const rawLimit = args.limit ?? 100;
+      const rawLimit = own(args, "limit") ? args.limit : 100;
       if (!Number.isInteger(rawLimit) || Number(rawLimit) < 1 || Number(rawLimit) > 1e3) throw new TypeError("limit must be an integer from 1 to 1000.");
       let entities = await listManagedEntities(request.root, type);
       if (query) entities = entities.filter((entity) => entity.id.toLocaleLowerCase().includes(query) || JSON.stringify(entity.value).toLocaleLowerCase().includes(query));
@@ -22148,6 +22165,7 @@ async function executeOperation(request) {
     return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    if (isUnsupportedSchemaMessage(message)) return operationFailure(command, 2, "workspace.unsupported-schema", message);
     if (error instanceof TypeError) return operationFailure(command, 2, "operation.invalid-arguments", message);
     return operationFailure(command, 2, "workspace.operation-failed", message);
   }

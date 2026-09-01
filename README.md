@@ -10,10 +10,11 @@ Agents should begin with [`AGENT.md`](AGENT.md), then load the task-specific doc
 SNL-Agent-Toolkit/
 ├── AGENT.md                   # short routing entry point
 ├── Skills/
-│   ├── Basics/                # SNL Macro, SNL DSL, Markdown JSON schema
-│   ├── HowToRead/             # inspect an existing SNL Library
-│   ├── HowToBuild/            # large-scale NL → SNL construction
-│   └── HowToMaintain/         # modify/optimize existing Libraries and Toolkit
+│   ├── SNL Ecosystem/         # workspace concepts and DSL
+│   ├── Initialize, Plan/      # setup and topology planning
+│   ├── Author, Read, Maintain/# core workflows
+│   ├── RefineNL2SNL/          # NL → SNL quality refinement
+│   └── Verify and Fix/        # validation and repair
 ├── src/cli/                   # hand-written unified and compatibility CLI sources
 ├── dist/cli/                  # prebuilt executable artifacts
 ├── bin/                       # checkout-only legacy compatibility shims
@@ -58,12 +59,11 @@ refuse malformed/current-future-incompatible workspaces. `--json` gives stable
 agent-facing `created`, `invalid`, `conflict`, or `error` output. They never edit
 migration receipts or frozen legacy backups.
 
-See [`Skills/HowToMaintain/Use_Toolkit_CLIs.md`](Skills/HowToMaintain/Use_Toolkit_CLIs.md)
-for the full creation, lint, reference-tracing, and synchronized-rename workflows.
+See [`Skills/CLI Tools/SKILL.md`](Skills/CLI%20Tools/SKILL.md) for the current command inventory and machine-facing invocation contracts.
 
 ## Schema ownership
 
-The authoritative on-disk schema implementation belongs to `SNL-Doc-Extension`. The agent-readable Markdown reference is [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md); Toolkit-only compatibility types live in `lib/snl-doc-schema.ts`.
+The authoritative product and data contracts live in `.SNL_Doc`; Toolkit compatibility types live in `lib/snl-doc-schema.ts`. The on-disk schema implementation is shared with `SNL-Doc-Extension` and must fail closed on unsupported versions.
 
 Toolkit currently targets workspace data `0.1.0`, Package schema 2,
 Entry/Macro schema 1, and Macro v11 from SNL-Basics 0.2.4. It retains

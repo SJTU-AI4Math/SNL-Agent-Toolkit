@@ -63,6 +63,7 @@ describe('unified snl command',()=>{
   assert.equal(body.command,'snoogl');assert.ok(body.data.results.some((x:{id:string})=>x.id==='entry.localized'));
   call=run(root,['entry','latex','entry.localized']);assert.equal(call.status,0,call.stderr||call.stdout);body=result(call);assert.equal(body.data.latex,'#0 \\to #1');
   call=run(root,['entry','references','entry.localized']);assert.equal(call.status,0,call.stderr||call.stdout);body=result(call);assert.ok(body.data.items.some((x:{role:string})=>x.role==='definition'));
+  call=run(root,['macro','usages','Logic::FOL.implies']);assert.equal(call.status,0,call.stderr||call.stdout);body=result(call);assert.ok(body.data.items.some((x:{role:string;path:string})=>x.role==='reference'&&x.path==='entry.content.snl'));
   call=run(root,['snoogl','--mode','workspace','--query','x']);assert.equal(call.status,2);assert.equal(result(call).error.code,'operation.invalid-arguments');
  });
  it('honors documented validation, discovery, null pagination, and info contracts',async()=>{
@@ -70,6 +71,8 @@ describe('unified snl command',()=>{
   let call=run(root,['validate','--scope','workspace']);assert.equal(call.status,0,call.stderr||call.stdout);
   let operation=await executeOperation({protocol:OPERATION_PROTOCOL,command:'entry/list',root,arguments:{query:null,cursor:null,limit:1} as unknown as Record<string,unknown>});
   assert.equal(operation.exitCode,0,JSON.stringify(operation.response));
+  operation=await executeOperation({protocol:OPERATION_PROTOCOL,command:'entry/list',root,arguments:{limit:null} as unknown as Record<string,unknown>});
+  assert.equal(operation.exitCode,2);assert.equal(operation.response.ok,false);if(!operation.response.ok)assert.equal(operation.response.error.code,'operation.invalid-arguments');
   operation=await executeOperation({protocol:OPERATION_PROTOCOL,command:'entry',root,arguments:{}});
   assert.equal(operation.exitCode,0);assert.equal(operation.response.ok,true);
   if(operation.response.ok){const commands=operation.response.data as Array<{command:string;access:string;arguments:Record<string,unknown>}>;assert.ok(commands.some(x=>x.command==='entry/latex'&&x.access==='read'&&x.arguments.id));assert.ok(commands.some(x=>x.command==='entry/references'));}
@@ -77,6 +80,11 @@ describe('unified snl command',()=>{
   assert.equal(body.data.commandRegistryVersion,1);assert.equal(body.data.versions.entitySchema,1);assert.ok(body.data.capabilities.includes('entry/get'));
   await json(path.join(root,'.SNL_Doc','relationships.json'),{version:1,relationships:'broken'});
   call=run(root,['info']);assert.equal(call.status,1);assert.equal(result(call).error.code,'workspace.invalid');
+ });
+ it('classifies unsupported workspace schemas as infrastructure failures',async()=>{
+  const root=await workspace();
+  await json(path.join(root,'.SNL_Doc','config.json'),{version:'9.9.9',entry_kinds:[],macro_kinds:[],active_macro_packages:[]});
+  for(const command of ['validate','info']){const call=run(root,[command]);assert.equal(call.status,2,call.stderr||call.stdout);assert.equal(result(call).error.code,'workspace.unsupported-schema');}
  });
  it('maps command domain failures without losing identity or retry semantics',async()=>{
   const root=await workspace();

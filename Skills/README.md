@@ -1,30 +1,24 @@
 # Skills
 
-`AGENT.md` is only the entry point. Concrete knowledge and workflows live under exactly four categories.
+`AGENT.md` is only the routing entry point. Current knowledge and workflows live in the following Skills; `.SNL_Doc` remains the specification authority.
 
-## [`Basics/`](Basics/README.md)
+## Foundations
 
-Foundational knowledge used by every workflow:
+- [`SNL Ecosystem`](SNL%20Ecosystem/SKILL.md) — SNL workspace concepts, entity topology, and the DSL manual.
+- [`CLI Tools`](CLI%20Tools/SKILL.md) — CLI command surface and machine-facing invocation skeletons.
 
-- SNL Macro syntax and semantics;
-- SNL DSL syntax;
-- `.SNL_Doc` JSON schema in Markdown.
+## Workflow
 
-## [`HowToRead/`](HowToRead/README.md)
-
-How to inspect an already-written SNL Library: reconstruct reading order, resolve Entries and macros, understand counters, and query semantic relationships.
-
-## [`HowToBuild/`](HowToBuild/README.md)
-
-How to perform large-scale natural-language → SNL Library construction, from blueprint and terminology through Entries, Library graph, and semantic index.
-
-## [`HowToMaintain/`](HowToMaintain/README.md)
-
-How to modify and optimize an existing SNL Library safely, run Toolkit validation, and maintain Toolkit implementation.
+- [`Initialize`](Initialize/SKILL.md) — initialize or import a workspace.
+- [`Plan`](Plan/SKILL.md) — design Library structure before authoring.
+- [`Author`](Author/SKILL.md) — create Entries, Macros, Packages, and topology through Toolkit operations.
+- [`Read`](Read/SKILL.md) — inspect an existing Library and resolve its semantics.
+- [`Maintain`](Maintain/SKILL.md) — update identities, references, Packages, and Library topology safely.
+- [`RefineNL2SNL`](RefineNL2SNL/SKILL.md) — refine natural-language material into high-quality SNL.
+- [`Verify and Fix`](Verify%20and%20Fix/SKILL.md) — validate, diagnose, and repair an SNL workspace.
 
 ## Maintenance rule
 
-- Put each concrete block of work in one category and one owning document.
-- Basics explains structures and syntax; HowTo guides explain procedures.
-- Link to an owning document instead of duplicating its detailed rules.
-- When a new document is added, register it in the category README and update `AGENT.md` only if top-level routing changes.
+- Keep product requirements in `.SNL_Doc`; keep these Markdown files as agent-readable implementations.
+- Link to one owning Skill instead of duplicating its detailed rules.
+- `Skills/__deprecated__/` is historical reference only: do not route agents to it and do not publish it in the npm package.

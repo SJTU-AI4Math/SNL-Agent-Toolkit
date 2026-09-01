@@ -1,33 +1,23 @@
 # AGENT.md — SNL Agent Toolkit
 
-> Entry point for agents working with SNL documents or this Toolkit.
+> Routing entry point for agents working with SNL documents or this Toolkit.
 
 ## Principle
 
-`AGENT.md` is navigation, not a manual. Concrete knowledge and workflows live in [`Skills/`](Skills/) folder.
+`.SNL_Doc` is the specification authority. `AGENT.md` only routes work to the current documents under [`Skills/`](Skills/); it is not a second manual.
 
 ## Start
 
-1. Identify whether the task is reading, building, or maintaining an SNL Library.
-2. Load the relevant foundational references from [`Skills/Basics/`](Skills/Basics/README.md).
-3. Load the matching HowTo guide.
-4. Follow that guide's validation steps before committing.
+1. Load [`SNL Ecosystem`](Skills/SNL%20Ecosystem/SKILL.md) for the data model and DSL.
+2. Choose the workflow Skill matching the task: [`Initialize`](Skills/Initialize/SKILL.md), [`Plan`](Skills/Plan/SKILL.md), [`Author`](Skills/Author/SKILL.md), [`Read`](Skills/Read/SKILL.md), or [`Maintain`](Skills/Maintain/SKILL.md).
+3. Load [`CLI Tools`](Skills/CLI%20Tools/SKILL.md) before invoking Toolkit commands.
+4. Use [`RefineNL2SNL`](Skills/RefineNL2SNL/SKILL.md) for NL→SNL refinement and [`Verify and Fix`](Skills/Verify%20and%20Fix/SKILL.md) for final validation or repair.
 
-## Rules (IMPORTANT)
+## Non-negotiable rules
 
-1. Always read json schema in [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md) before inspecting JSON files.
-2. For normal Package, Entry, or Macro creation, use `snl-add-package`, `snl-add-entry`, or `snl-add-macro`. Never hand-calculate hashes, create hash-named entity files, edit migration receipts, or touch frozen backups.
-3. For a single live Entry, use `snl-entry-ssi` for the Extension-compatible Structural Index and `snl-entry-latex` for bare macro-composed LaTeX without `\\htmlData`; do not estimate either by eye.
-4. Always refer to syntax guide in [`Skills/Basics/SNL_Macro.md`](Skills/Basics/SNL_Macro.md) and [`Skills/Basics/SNL_DSL.md`](Skills/Basics/SNL_DSL.md) when editing SNL Macros and SNL DSL strings.
-5. Always run Toolkit linting tools before committing. If any data is corrupted, fix it.
+1. Use Toolkit APIs or CLIs for canonical mutations. Never hand-calculate hash filenames, edit migration receipts, or modify frozen backups.
+2. Treat revisions as opaque CAS tokens: read, mutate with the exact revision, validate, then read back.
+3. Run workspace validation before publishing changes. Corrupt, unsupported, symlinked, or concurrently replaced data must fail closed.
+4. Keep stdout machine-readable under `--json`; diagnostics and human logs belong on stderr.
 
-## Routing
-
-- SNL Macro syntax, styles, templates, and arity → [`Skills/Basics/SNL_Macro.md`](Skills/Basics/SNL_Macro.md)
-- SNL DSL grammar and `content.snl` → [`Skills/Basics/SNL_DSL.md`](Skills/Basics/SNL_DSL.md)
-- `.SNL_Doc` JSON file shapes → [`Skills/Basics/Json_Schema.md`](Skills/Basics/Json_Schema.md)
-- Inspect an existing Library → [`Skills/HowToRead/`](Skills/HowToRead/README.md)
-- Build a large NL → SNL Library → [`Skills/HowToBuild/`](Skills/HowToBuild/README.md)
-- Modify or optimize an existing Library → [`Skills/HowToMaintain/`](Skills/HowToMaintain/README.md)
-
-The authoritative full index is [`Skills/README.md`](Skills/README.md). Add concrete instructions there, not here.
+The complete current index is [`Skills/README.md`](Skills/README.md). Deprecated documents are historical reference only and are not packaged or routed.

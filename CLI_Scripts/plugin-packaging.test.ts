@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -79,6 +79,18 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   assert.notEqual((await stat(resolve(root, 'dist/mcp/server.cjs'))).mode & 0o111, 0, 'MCP bin must be executable');
   const build = await readFile(resolve(root, 'scripts/build-plugin.mjs'), 'utf8');
   assert.match(build, /chmod\(resolve\(root, 'dist\/mcp\/server\.cjs'\), 0o755\)/);
+});
+
+test('published agent routing targets current packaged Skill documents', async () => {
+  for (const document of ['AGENT.md', 'Skills/README.md']) {
+    const text = await readFile(resolve(root, document), 'utf8');
+    assert.doesNotMatch(text, /\]\([^)]*__deprecated__|Skills\/(?:Basics|HowToRead|HowToBuild|HowToMaintain)/);
+    for (const match of text.matchAll(/\[[^\]]+\]\(([^)#]+)(?:#[^)]+)?\)/g)) {
+      const target = match[1];
+      if (/^[a-z]+:/i.test(target)) continue;
+      await access(resolve(root, decodeURIComponent(document === 'AGENT.md' ? target : `Skills/${target}`)));
+    }
+  }
 });
 
 test('generated bundles do not embed machine-specific dependency paths', async () => {
