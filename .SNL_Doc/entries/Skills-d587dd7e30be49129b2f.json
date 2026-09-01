@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-relationship-between",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl relationship between",
+    "title": "$\\texttt{snl relationship between}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

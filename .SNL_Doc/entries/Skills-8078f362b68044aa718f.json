@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-validate",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl validate",
+    "title": "$\\texttt{snl validate}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

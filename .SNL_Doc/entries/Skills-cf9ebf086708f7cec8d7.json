@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-library-move--entry",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl library move-entry",
+    "title": "$\\texttt{snl library move-entry}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

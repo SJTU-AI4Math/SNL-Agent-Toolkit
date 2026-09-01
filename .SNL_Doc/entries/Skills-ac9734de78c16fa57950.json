@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro--kind-usages",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro-kind usages",
+    "title": "$\\texttt{snl macro-kind usages}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-info",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl info",
+    "title": "$\\texttt{snl info}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

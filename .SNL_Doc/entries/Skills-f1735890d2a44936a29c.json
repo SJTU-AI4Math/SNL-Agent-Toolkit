@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro-update",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro update",
+    "title": "$\\texttt{snl macro update}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

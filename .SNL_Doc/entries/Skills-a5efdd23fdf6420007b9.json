@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-relationship-incoming",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl relationship incoming",
+    "title": "$\\texttt{snl relationship incoming}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

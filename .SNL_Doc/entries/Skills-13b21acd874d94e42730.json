@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-entry-get",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl entry get",
+    "title": "$\\texttt{snl entry get}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

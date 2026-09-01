@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-batch",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl batch",
+    "title": "$\\texttt{snl batch}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

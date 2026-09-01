@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro-delete",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro delete",
+    "title": "$\\texttt{snl macro delete}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

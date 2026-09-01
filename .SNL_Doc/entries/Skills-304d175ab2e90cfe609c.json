@@ -11,8 +11,8 @@
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "SNL CLI Manual",
-        "zh-CN": "SNL CLI 手册"
+        "en": "$\\texttt{SNL CLI Manual}$",
+        "zh-CN": "$\\texttt{SNL CLI 手册}$"
       }
     },
     "content": {},

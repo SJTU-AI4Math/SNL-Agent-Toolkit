@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-entry--kind-delete",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl entry-kind delete",
+    "title": "$\\texttt{snl entry-kind delete}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

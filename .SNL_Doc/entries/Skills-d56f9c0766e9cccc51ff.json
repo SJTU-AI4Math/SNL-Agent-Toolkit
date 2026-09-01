@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro--kind-get",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro-kind get",
+    "title": "$\\texttt{snl macro-kind get}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

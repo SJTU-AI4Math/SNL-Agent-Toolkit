@@ -11,8 +11,8 @@
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "CLI Tools",
-        "zh-CN": "CLI 工具"
+        "en": "$\\texttt{CLI Tools}$",
+        "zh-CN": "$\\texttt{CLI 工具}$"
       }
     },
     "content": {},

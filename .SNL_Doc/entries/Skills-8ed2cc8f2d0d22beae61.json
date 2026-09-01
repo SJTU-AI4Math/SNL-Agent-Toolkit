@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro-rename",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro rename",
+    "title": "$\\texttt{snl macro rename}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

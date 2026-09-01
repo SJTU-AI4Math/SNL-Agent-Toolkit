@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro--package-create",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro-package create",
+    "title": "$\\texttt{snl macro-package create}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

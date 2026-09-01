@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro--package-remove--member",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro-package remove-member",
+    "title": "$\\texttt{snl macro-package remove-member}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

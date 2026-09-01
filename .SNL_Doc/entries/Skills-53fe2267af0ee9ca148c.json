@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-migrate",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl migrate",
+    "title": "$\\texttt{snl migrate}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

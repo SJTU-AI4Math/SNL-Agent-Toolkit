@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro--package-export",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro-package export",
+    "title": "$\\texttt{snl macro-package export}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

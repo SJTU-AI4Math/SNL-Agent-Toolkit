@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-library-add--entry",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl library add-entry",
+    "title": "$\\texttt{snl library add-entry}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

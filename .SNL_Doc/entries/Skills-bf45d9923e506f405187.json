@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-entry--package-create",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl entry-package create",
+    "title": "$\\texttt{snl entry-package create}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

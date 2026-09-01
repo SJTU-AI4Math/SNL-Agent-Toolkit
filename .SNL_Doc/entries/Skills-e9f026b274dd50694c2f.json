@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-entry-references",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl entry references",
+    "title": "$\\texttt{snl entry references}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

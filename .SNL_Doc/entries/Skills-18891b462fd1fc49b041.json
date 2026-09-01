@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-macro-preview",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl macro preview",
+    "title": "$\\texttt{snl macro preview}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-import",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl import",
+    "title": "$\\texttt{snl import}$",
     "content": {},
     "contribution_info": null,
     "pointer": {

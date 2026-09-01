@@ -7,7 +7,7 @@
     "id": "Skill.CLI.snl-library",
     "package": "Skills",
     "kind": "cli",
-    "title": "snl library",
+    "title": "$\\texttt{snl library}$",
     "content": {},
     "contribution_info": null,
     "pointer": {
