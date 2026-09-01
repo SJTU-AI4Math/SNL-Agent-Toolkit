@@ -39,6 +39,10 @@ function fixtureAdapter(calls: Array<{ method: string; request: unknown }>): Ent
       calls.push({ method: 'validate', request });
       return { valid: true, issues: [] };
     },
+    async executeOperation(request) {
+      calls.push({ method: 'executeOperation', request });
+      return { protocol: 'snl.result/v1', ok: true, command: request.command, data: { fixture: true }, diagnostics: [] };
+    },
   };
 }
 
@@ -50,7 +54,7 @@ test('generic toolkit surface covers all eight entity types through one adapter 
   const calls: Array<{ method: string; request: unknown }> = [];
   const tools = createToolkitTools(fixtureAdapter(calls));
   assert.deepEqual(tools.map((tool) => tool.name), [
-    'snl_entities_list', 'snl_entity_get', 'snl_entry_latex', 'snl_library_entry_tree', 'snl_entity_apply', 'snl_workspace_validate',
+    'snl_entities_list', 'snl_entity_get', 'snl_entry_latex', 'snl_library_entry_tree', 'snl_entity_apply', 'snl_workspace_validate', 'snl_execute',
   ]);
 
   const listed = await tools[0].execute({ root, entityType: 'entry', query: 'group', limit: 10 });
@@ -58,6 +62,20 @@ test('generic toolkit surface covers all eight entity types through one adapter 
   assert.deepEqual(calls[0], {
     method: 'list', request: { root, entityType: 'entry', query: 'group', limit: 10 },
   });
+});
+
+test('structured snl_execute tool forwards one strict operation object', async () => {
+  const calls: Array<{ method: string; request: unknown }> = [];
+  const tool = createToolkitTools(fixtureAdapter(calls)).find(candidate => candidate.name === 'snl_execute');
+  assert.ok(tool);
+  assert.deepEqual(await tool.execute({ root, command: 'entry/get', arguments: { id: 'demo' } }), {
+    protocol: 'snl.result/v1', ok: true, command: 'entry/get', data: { fixture: true }, diagnostics: [],
+  });
+  assert.deepEqual(calls.at(-1), {
+    method: 'executeOperation',
+    request: { protocol: 'snl.operation/v1', root, command: 'entry/get', arguments: { id: 'demo' } },
+  });
+  await assert.rejects(() => tool.execute({ root, command: 'entry/get', arguments: {}, extra: true }), /unknown tool input/i);
 });
 
 test('first-class Entry LaTeX tool renders one Entry through the adapter', async () => {
@@ -111,7 +129,7 @@ test('legacy custom adapters still load and keep unrelated tools available', asy
   const adapter = await loadEntityAdapter(`data:text/javascript,${encodeURIComponent(source)}`);
   const tools = createToolkitTools(adapter);
   assert.deepEqual(tools.map((tool) => tool.name), [
-    'snl_entities_list', 'snl_entity_get', 'snl_entry_latex', 'snl_library_entry_tree', 'snl_entity_apply', 'snl_workspace_validate',
+    'snl_entities_list', 'snl_entity_get', 'snl_entry_latex', 'snl_library_entry_tree', 'snl_entity_apply', 'snl_workspace_validate', 'snl_execute',
   ]);
   assert.deepEqual(
     await tools[2].execute({ root, id: 'target' }),
@@ -153,7 +171,7 @@ test('MCP dispatcher advertises the generic tools and routes calls to the adapte
   });
 
   const listed = await dispatch({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
-  assert.equal((listed as { result: { tools: unknown[] } }).result.tools.length, 6);
+  assert.equal((listed as { result: { tools: unknown[] } }).result.tools.length, 7);
 
   const called = await dispatch({
     jsonrpc: '2.0', id: 3, method: 'tools/call',
@@ -174,13 +192,13 @@ test('MCP dispatcher returns protocol errors without crashing the stdio server',
 });
 
 
-test('DeepSeek Harness apply(ctx) registers the same six generic tools through defineTool', async () => {
+test('DeepSeek Harness apply(ctx) registers the same seven generic tools through defineTool', async () => {
   const calls: Array<{ method: string; request: unknown }> = [];
   const registered: Array<Record<string, any>> = [];
   const ctx = { tools: { register(tool: Record<string, any>) { registered.push(tool); return () => {}; } } };
   await applyDshAdapter(ctx, { adapter: fixtureAdapter(calls) });
   assert.deepEqual(registered.map((tool) => tool.name), [
-    'snl_entities_list', 'snl_entity_get', 'snl_entry_latex', 'snl_library_entry_tree', 'snl_entity_apply', 'snl_workspace_validate',
+    'snl_entities_list', 'snl_entity_get', 'snl_entry_latex', 'snl_library_entry_tree', 'snl_entity_apply', 'snl_workspace_validate', 'snl_execute',
   ]);
   assert.ok(registered.every((tool) => tool.parameters && tool.output && typeof tool.execute === 'function'));
   assert.ok(registered.every((tool) => tool.inputSchema === undefined && tool.handler === undefined));

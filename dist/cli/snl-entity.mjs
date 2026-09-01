@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// bin/impl/entity.ts
+// src/cli/entity.ts
 import path8 from "node:path";
 import { promises as fs6 } from "node:fs";
 
@@ -343,6 +343,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   let installed = false;
   try {
     handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
+    await handle.chmod(current.mode);
     await handle.writeFile(jsonText(value), "utf8");
     await handle.sync();
     await handle.close();
@@ -465,7 +466,7 @@ async function removeJsonIfUnchanged(file, expected, hooks = {}) {
   }
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t3) {
   return {
     macro_name: e,
@@ -756,7 +757,7 @@ function b(e, t3 = []) {
   e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n3) => b(e2, [...t3, n3]));
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t3 = e;
@@ -924,7 +925,7 @@ ${" ".repeat(this.indentSpaces * t3)})`;
 };
 var J = new q(0, 2 ** 53 - 1);
 
-// node_modules/katex/dist/katex.mjs
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -15962,7 +15963,7 @@ async function readEntryKinds(workspaceRoot) {
   return cfg.entry_kinds ?? [];
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t2(t3) {
   let n3 = /* @__PURE__ */ new Set();
   if (!t3.trim()) return n3;
@@ -16758,7 +16759,7 @@ import { constants as constants3 } from "node:fs";
 import { promises as fs3 } from "node:fs";
 import * as path5 from "node:path";
 
-// node_modules/jsonc-parser/lib/esm/impl/scanner.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text2, ignoreTrivia = false) {
   const len = text2.length;
   let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
@@ -17179,7 +17180,7 @@ var CharacterCodes;
   CharacterCodes2[CharacterCodes2["tab"] = 9] = "tab";
 })(CharacterCodes || (CharacterCodes = {}));
 
-// node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
 var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
   return " ".repeat(index);
 });
@@ -17209,7 +17210,7 @@ var cachedBreakLinesWithSpaces = {
   }
 };
 
-// node_modules/jsonc-parser/lib/esm/impl/parser.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
 (function(ParseOptions2) {
   ParseOptions2.DEFAULT = {
@@ -17600,7 +17601,7 @@ function getNodeType(value) {
   }
 }
 
-// node_modules/jsonc-parser/lib/esm/main.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError2) {
   ScanError2[ScanError2["None"] = 0] = "None";
@@ -19792,7 +19793,7 @@ async function deleteManagedEntity(root, type, id, ifMatch, options = {}) {
   return mutateDirect(root, type, "delete", id, void 0, ifMatch, options);
 }
 
-// bin/impl/entity.ts
+// src/cli/entity.ts
 var TYPE = { name: "type", short: "t", hasValue: true, help: "Entity type enum." };
 var INPUT = { name: "input", short: "i", hasValue: true, help: "JSON payload file for create/update." };
 var MATCH = { name: "if-match", hasValue: true, help: "Exact revision returned by get/list; required for update/delete." };

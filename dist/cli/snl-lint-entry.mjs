@@ -29,9 +29,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// node_modules/react/cjs/react.production.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react.production.js
 var require_react_production = __commonJS({
-  "node_modules/react/cjs/react.production.js"(exports) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react.production.js"(exports) {
     "use strict";
     var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element");
     var REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal");
@@ -470,9 +470,9 @@ var require_react_production = __commonJS({
   }
 });
 
-// node_modules/react/cjs/react.development.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react.development.js
 var require_react_development = __commonJS({
-  "node_modules/react/cjs/react.development.js"(exports, module) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react.development.js"(exports, module) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function defineDeprecationWarning(methodName, info) {
@@ -1442,9 +1442,9 @@ var require_react_development = __commonJS({
   }
 });
 
-// node_modules/react/index.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react/index.js
 var require_react = __commonJS({
-  "node_modules/react/index.js"(exports, module) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react/index.js"(exports, module) {
     "use strict";
     if (process.env.NODE_ENV === "production") {
       module.exports = require_react_production();
@@ -1454,9 +1454,9 @@ var require_react = __commonJS({
   }
 });
 
-// node_modules/react/cjs/react-jsx-runtime.production.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react-jsx-runtime.production.js
 var require_react_jsx_runtime_production = __commonJS({
-  "node_modules/react/cjs/react-jsx-runtime.production.js"(exports) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react-jsx-runtime.production.js"(exports) {
     "use strict";
     var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element");
     var REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment");
@@ -1484,9 +1484,9 @@ var require_react_jsx_runtime_production = __commonJS({
   }
 });
 
-// node_modules/react/cjs/react-jsx-runtime.development.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react-jsx-runtime.development.js
 var require_react_jsx_runtime_development = __commonJS({
-  "node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function getComponentNameFromType(type) {
@@ -1741,9 +1741,9 @@ var require_react_jsx_runtime_development = __commonJS({
   }
 });
 
-// node_modules/react/jsx-runtime.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react/jsx-runtime.js
 var require_jsx_runtime = __commonJS({
-  "node_modules/react/jsx-runtime.js"(exports, module) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react/jsx-runtime.js"(exports, module) {
     "use strict";
     if (process.env.NODE_ENV === "production") {
       module.exports = require_react_jsx_runtime_production();
@@ -1753,9 +1753,9 @@ var require_jsx_runtime = __commonJS({
   }
 });
 
-// node_modules/react-dom/cjs/react-dom.production.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react-dom/cjs/react-dom.production.js
 var require_react_dom_production = __commonJS({
-  "node_modules/react-dom/cjs/react-dom.production.js"(exports) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react-dom/cjs/react-dom.production.js"(exports) {
     "use strict";
     var React = require_react();
     function formatProdErrorMessage(code) {
@@ -1902,9 +1902,9 @@ var require_react_dom_production = __commonJS({
   }
 });
 
-// node_modules/react-dom/cjs/react-dom.development.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react-dom/cjs/react-dom.development.js
 var require_react_dom_development = __commonJS({
-  "node_modules/react-dom/cjs/react-dom.development.js"(exports) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react-dom/cjs/react-dom.development.js"(exports) {
     "use strict";
     "production" !== process.env.NODE_ENV && (function() {
       function noop() {
@@ -2146,9 +2146,9 @@ var require_react_dom_development = __commonJS({
   }
 });
 
-// node_modules/react-dom/index.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/react-dom/index.js
 var require_react_dom = __commonJS({
-  "node_modules/react-dom/index.js"(exports, module) {
+  "../../.hermes/vendor/snl-agent-toolkit/node_modules/react-dom/index.js"(exports, module) {
     "use strict";
     function checkDCE() {
       if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") {
@@ -2172,7 +2172,7 @@ var require_react_dom = __commonJS({
   }
 });
 
-// bin/impl/lint-entry.ts
+// src/cli/lint-entry.ts
 import { promises as fs3 } from "node:fs";
 import * as path4 from "node:path";
 
@@ -2331,7 +2331,7 @@ async function readRegularText(file) {
   }
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/runtime-Bg8CFx23.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/runtime-Bg8CFx23.js
 function i(e3) {
   if (typeof e3 != "object" || !e3 || Array.isArray(e3)) return false;
   let t4 = e3;
@@ -2352,10 +2352,10 @@ function a(e3) {
   };
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/render-context-TpPwfdH-.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/render-context-TpPwfdH-.js
 var e = () => ({ color_scheme: "light" });
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e3, t4) {
   return {
     macro_name: e3,
@@ -2709,7 +2709,7 @@ function b(e3, t4 = []) {
   e3.env_mode && (e3.temporary_source = e3.macro_name, e3.macro_name = t4.length === 0 ? "#" : `#${t4.join(".")}`), e3.binder_explicit && e3.binder_name === void 0 && (e3.binder_name = e3.temporary_source ?? e3.macro_name), e3.children.forEach((e4, n4) => b(e4, [...t4, n4]));
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r2(e3) {
   if (!e3 || typeof e3 != "object" || Array.isArray(e3)) return false;
   let t4 = e3;
@@ -2933,7 +2933,7 @@ function Z(e3, t4 = []) {
   a5(e3, i6);
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-apply-QZ0PkjYJ.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-apply-QZ0PkjYJ.js
 var import_react = __toESM(require_react(), 1);
 var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
 function i3(e3) {
@@ -2961,10 +2961,10 @@ var C = [
   S.binderDecl
 ];
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-DTz43-3h.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-DTz43-3h.js
 var import_react2 = __toESM(require_react(), 1);
 
-// node_modules/katex/dist/katex.mjs
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -17462,7 +17462,7 @@ var katex = {
   __domTree
 };
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-DTz43-3h.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/hover-popovers-DTz43-3h.js
 var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
 var import_react_dom = __toESM(require_react_dom(), 1);
 function T3(e3) {
@@ -18442,7 +18442,7 @@ async function readEntryKinds(workspaceRoot) {
   return cfg.entry_kinds ?? [];
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
 function t3(t4) {
   let n4 = /* @__PURE__ */ new Set();
   if (!t4.trim()) return n4;
@@ -19242,7 +19242,7 @@ function titleToKatexSource(src) {
   }).join("");
 }
 
-// bin/impl/lint-entry.ts
+// src/cli/lint-entry.ts
 var STRICT_FLAG = {
   name: "strict-macros",
   hasValue: false,

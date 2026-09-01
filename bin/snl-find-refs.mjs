@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const child = spawn(join(here, '..', 'node_modules', '.bin', 'tsx'), [
-  join(here, 'impl', 'find-refs.ts'),
+  join(here, '..', 'src', 'cli', 'find-refs.ts'),
   ...process.argv.slice(2),
 ], { stdio: 'inherit' });
 child.on('exit', (code, signal) => {

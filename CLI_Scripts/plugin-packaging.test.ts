@@ -11,6 +11,8 @@ const root = resolve(import.meta.dirname, '..');
 const json = async (path: string) => JSON.parse(await readFile(resolve(root, path), 'utf8')) as Record<string, unknown>;
 
 test('all host manifests are generated from one canonical metadata source', async () => {
+  const source = await json('plugin/metadata.json');
+  assert.doesNotMatch(source.description as string, /\bSkills\b/);
   const expected = await generatedMetadata(root);
   for (const [path, value] of Object.entries(expected)) {
     assert.deepEqual(await json(path), value, `${path} drifted; run npm run generate:plugin`);
@@ -36,7 +38,7 @@ test('portable Hermes and host-native manifests select the bundled stdio runtime
     const manifest = await json(path);
     assert.equal(manifest.name, 'snl-agent-toolkit');
     assert.equal(manifest.version, '0.1.0');
-    assert.equal(manifest.skills, './skills/');
+    assert.equal(manifest.skills, undefined);
     assert.equal(manifest.mcpServers, './.mcp.json');
   }
 });
@@ -67,9 +69,10 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   }
 
   const files = packageJson.files as string[];
-  for (const required of ['dist', 'skills', 'agent-plugin', '.agents', '.claude-plugin', 'cordis.patch.yml']) {
+  for (const required of ['dist', 'agent-plugin', '.agents', '.claude-plugin', 'cordis.patch.yml']) {
     assert.ok(files.includes(required), `${required} is omitted from npm files`);
   }
+  for (const forbidden of ['bin', 'src', 'skills']) assert.equal(files.includes(forbidden), false, `${forbidden} must not ship`);
 });
 
 
@@ -94,23 +97,18 @@ test('prebuilt DSH adapter bundles defineTool instead of importing a second Harn
 });
 
 
-test('shared Agent Skill and DSH layer point at packaged components', async () => {
-  const skill = await readFile(resolve(root, 'skills/snl-agent-toolkit/SKILL.md'), 'utf8');
-  assert.match(skill, /^---\nname: snl-agent-toolkit\ndescription: /);
-  assert.match(skill, /references\/entity-adapter-contract\.md/);
+test('DSH layer points at the packaged runtime without a stale Agent Skill', async () => {
   const patch = await readFile(resolve(root, 'cordis.patch.yml'), 'utf8');
   assert.match(patch, /name: '@snl-doc\/agent-toolkit\/dsh'/);
+  await assert.rejects(readFile(resolve(root, 'skills/snl-agent-toolkit/SKILL.md'), 'utf8'));
 });
 
-test('isolated Agent Plugin carries the exact canonical MCP and Skill artifacts', async () => {
+test('isolated Agent Plugin carries the exact canonical MCP artifact and no stale Skill copy', async () => {
   assert.deepEqual(
     await readFile(resolve(root, 'agent-plugin/dist/mcp/server.cjs')),
     await readFile(resolve(root, 'dist/mcp/server.cjs')),
   );
-  assert.deepEqual(
-    await readFile(resolve(root, 'agent-plugin/skills/snl-agent-toolkit/SKILL.md')),
-    await readFile(resolve(root, 'skills/snl-agent-toolkit/SKILL.md')),
-  );
+  await assert.rejects(readFile(resolve(root, 'agent-plugin/skills/snl-agent-toolkit/SKILL.md')));
 });
 
 test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', async () => {
@@ -126,9 +124,24 @@ test('prebuilt MCP artifact speaks stdio JSON-RPC without tsx or source files', 
     child.once('exit', (code) => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
   });
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' })}\n`);
-  const response = JSON.parse((await output).trim()) as { result: { tools: unknown[] } };
-  assert.equal(response.result.tools.length, 6);
+  const response = JSON.parse((await output).trim()) as { result: { tools: Array<{name:string}> } };
+  assert.equal(response.result.tools.length, 7);
+  assert.ok(response.result.tools.some(tool => tool.name === 'snl_execute'));
   child.kill();
+});
+
+test('prebuilt MCP snl_execute returns the same v1 result envelope as the CLI', async () => {
+  const child = spawn(process.execPath, [resolve(root, 'dist/mcp/server.cjs')], { stdio: ['pipe', 'pipe', 'pipe'] });
+  const output = new Promise<string>((resolveOutput, reject) => {
+    let text = ''; child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (chunk: string) => { text += chunk; if (text.includes('\n')) resolveOutput(text); });
+    child.once('error', reject); child.once('exit', code => { if (!text.includes('\n')) reject(new Error(`MCP exited ${code}: no response`)); });
+  });
+  child.stdin.write(`${JSON.stringify({jsonrpc:'2.0',id:11,method:'tools/call',params:{name:'snl_execute',arguments:{root:resolve(root,'CLI_Scripts/fixtures/workspace-v0.1.0'),command:'entry/get',arguments:{id:'entry.localized'}}}})}\n`);
+  try {
+    const response=JSON.parse((await output).trim()) as {result:{structuredContent:{protocol:string;ok:boolean;command:string;data:{entity:{id:string}}}}};
+    assert.deepEqual({protocol:response.result.structuredContent.protocol,ok:response.result.structuredContent.ok,command:response.result.structuredContent.command,id:response.result.structuredContent.data.entity.id},{protocol:'snl.result/v1',ok:true,command:'entry/get',id:'entry.localized'});
+  } finally { child.kill(); }
 });
 
 

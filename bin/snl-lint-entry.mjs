@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const target = join(here, 'impl', 'lint-entry.ts');
+const target = join(here, '..', 'src', 'cli', 'lint-entry.ts');
 const tsx = join(here, '..', 'node_modules', '.bin', 'tsx');
 
 const child = spawn(tsx, [target, ...process.argv.slice(2)], {

@@ -19,7 +19,6 @@ export async function generatedMetadata(root = ownRoot) {
   };
   const hostManifest = {
     ...common,
-    skills: './skills/',
     mcpServers: './.mcp.json',
   };
   const nativeMcp = {

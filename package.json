@@ -1,9 +1,10 @@
 {
   "name": "@snl-doc/agent-toolkit",
   "version": "0.1.0",
-  "description": "Portable SNL workspace Skills, CLIs, and MCP tools for AI coding agents.",
+  "description": "Portable SNL workspace CLI and MCP tools for AI coding agents.",
   "type": "module",
   "bin": {
+    "snl": "./dist/cli/snl.mjs",
     "snl-add-entry": "./dist/cli/snl-add-entry.mjs",
     "snl-add-macro": "./dist/cli/snl-add-macro.mjs",
     "snl-add-package": "./dist/cli/snl-add-package.mjs",
@@ -21,8 +22,9 @@
   },
   "scripts": {
     "generate:plugin": "node scripts/generate-plugin-metadata.mjs",
+    "build:cli": "node scripts/build-cli.mjs",
     "build:plugin": "npm run generate:plugin && node scripts/build-plugin.mjs",
-    "test": "tsx --test CLI_Scripts/*.test.ts",
+    "test": "tsx --test --test-concurrency=4 CLI_Scripts/*.test.ts",
     "lint-types": "tsc --noEmit",
     "prepack": "npm run build:plugin && npm test && npm run lint-types"
   },
@@ -58,12 +60,10 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "bin",
     "lib",
     "Skills",
     "examples",
     "dist",
-    "skills",
     "plugin",
     "agent-plugin",
     ".claude-plugin",

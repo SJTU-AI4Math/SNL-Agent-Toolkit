@@ -5,7 +5,7 @@
     "url": "https://github.com/SJTU-AI4Math"
   },
   "metadata": {
-    "description": "Portable SNL workspace Skills and MCP tools for Entry Kinds, Macro Kinds, Entry Packages, Macro Packages, Entries, Macros, Relationships, and Libraries."
+    "description": "Portable SNL workspace CLI and MCP tools for Entry Kinds, Macro Kinds, Entry Packages, Macro Packages, Entries, Macros, Relationships, and Libraries."
   },
   "plugins": [
     {

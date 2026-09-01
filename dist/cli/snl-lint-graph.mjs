@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// bin/impl/lint-graph.ts
+// src/cli/lint-graph.ts
 import { promises as fs3 } from "node:fs";
 import * as path3 from "node:path";
 
@@ -892,7 +892,7 @@ function formatReport(reports) {
   return lines.join("\n");
 }
 
-// bin/impl/lint-graph.ts
+// src/cli/lint-graph.ts
 var SLUG_FLAG = {
   name: "slug",
   hasValue: true,

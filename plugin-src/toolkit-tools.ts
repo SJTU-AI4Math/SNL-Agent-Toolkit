@@ -51,6 +51,13 @@ export interface EntityApplyRequest {
   expectedRevision?: string;
 }
 
+export interface StructuredOperationRequest {
+  protocol: 'snl.operation/v1';
+  root: string;
+  command: string;
+  arguments: JsonObject;
+}
+
 export interface EntityAdapter {
   list(request: EntityListRequest): Promise<unknown>;
   get(request: EntityGetRequest): Promise<unknown>;
@@ -58,6 +65,7 @@ export interface EntityAdapter {
   renderLibraryTree?(request: LibraryEntryTreeRequest): Promise<unknown>;
   apply(request: EntityApplyRequest): Promise<unknown>;
   validate(request: { root: string }): Promise<unknown>;
+  executeOperation?(request: StructuredOperationRequest): Promise<unknown>;
 }
 
 export interface ToolkitTool {
@@ -72,6 +80,11 @@ function object(input: unknown): JsonObject {
     throw new TypeError('tool input must be an object');
   }
   return input as JsonObject;
+}
+
+function exactToolKeys(input: JsonObject, allowed: readonly string[]): void {
+  const unknown = Object.keys(input).filter(key => !allowed.includes(key));
+  if (unknown.length) throw new TypeError(`unknown tool input key(s): ${unknown.join(', ')}`);
 }
 
 function requiredString(value: unknown, name: string): string {
@@ -224,6 +237,35 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       async execute(raw) {
         const input = object(raw);
         return adapter.validate({ root: requiredString(input.root, 'root') });
+      },
+    },
+    {
+      name: 'snl_execute',
+      description: 'Execute one canonical SNL operation through the same strict request/result protocol as the unified snl CLI.',
+      inputSchema: {
+        type: 'object', additionalProperties: false, required: ['root', 'command', 'arguments'],
+        properties: {
+          root: baseProperties.root,
+          command: { type: 'string', description: 'Canonical command path such as entry/get or validate.' },
+          arguments: { type: 'object', additionalProperties: true, description: 'Command-specific argument object.' },
+        },
+      },
+      async execute(raw) {
+        const input = object(raw);
+        exactToolKeys(input, ['root', 'command', 'arguments']);
+        const request: StructuredOperationRequest = {
+          protocol: 'snl.operation/v1',
+          root: requiredString(input.root, 'root'),
+          command: requiredString(input.command, 'command'),
+          arguments: object(input.arguments),
+        };
+        if (!adapter.executeOperation) {
+          return {
+            protocol: 'snl.result/v1', ok: false, command: request.command,
+            error: { code: 'operation.unsupported', message: 'This adapter does not implement the unified operation protocol.', retryable: false },
+          };
+        }
+        return adapter.executeOperation(request);
       },
     },
   ];

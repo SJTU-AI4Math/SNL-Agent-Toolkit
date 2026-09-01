@@ -1,115 +1,94 @@
 #!/usr/bin/env node
 
-// src/cli/lint-package.ts
-import { promises as fs3 } from "node:fs";
-import * as path4 from "node:path";
+// src/cli/snl.ts
+import { promises as fs6 } from "node:fs";
+import path9 from "node:path";
+import { pathToFileURL } from "node:url";
 
-// lib/cli-args.ts
-function parseArgs(argv, specs) {
-  const bySpec = {};
-  const shortAlias = {};
-  for (const s2 of specs) {
-    bySpec[s2.name] = s2;
-    if (s2.short) shortAlias[s2.short] = s2.name;
-  }
-  const flags = {};
-  const positional = [];
-  for (const s2 of specs) {
-    if (s2.default !== void 0) flags[s2.name] = s2.default;
-  }
-  let i3 = 0;
-  let seenDashDash = false;
-  while (i3 < argv.length) {
-    const tok = argv[i3];
-    if (seenDashDash) {
-      positional.push(tok);
-      i3++;
-      continue;
-    }
-    if (tok === "--") {
-      seenDashDash = true;
-      i3++;
-      continue;
-    }
-    if (tok.startsWith("--")) {
-      const eq = tok.indexOf("=");
-      const name = eq === -1 ? tok.slice(2) : tok.slice(2, eq);
-      const inlineVal = eq === -1 ? void 0 : tok.slice(eq + 1);
-      const spec = bySpec[name];
-      if (!spec) throw new Error(`Unknown flag: --${name}`);
-      if (spec.hasValue === false) {
-        if (inlineVal !== void 0) {
-          throw new Error(`Flag --${name} is boolean; did you mean --${name}?`);
-        }
-        flags[name] = true;
-        i3++;
-      } else {
-        if (inlineVal !== void 0) {
-          flags[name] = inlineVal;
-          i3++;
-        } else {
-          const next = argv[i3 + 1];
-          if (next === void 0 || next.startsWith("-")) {
-            throw new Error(`Flag --${name} requires a value`);
-          }
-          flags[name] = next;
-          i3 += 2;
-        }
-      }
-    } else if (tok.startsWith("-") && tok.length === 2) {
-      const short = tok.slice(1);
-      const name = shortAlias[short];
-      if (!name) throw new Error(`Unknown flag: -${short}`);
-      const spec = bySpec[name];
-      if (spec.hasValue === false) {
-        flags[name] = true;
-        i3++;
-      } else {
-        const next = argv[i3 + 1];
-        if (next === void 0 || next.startsWith("-")) {
-          throw new Error(`Flag -${short} (--${name}) requires a value`);
-        }
-        flags[name] = next;
-        i3 += 2;
-      }
-    } else {
-      positional.push(tok);
-      i3++;
-    }
-  }
-  return { flags, positional };
+// src/cli/operation.ts
+import path8 from "node:path";
+
+// lib/entity-crud.ts
+import { createHash as createHash2, randomUUID as randomUUID3 } from "node:crypto";
+import { constants as constants5, promises as fs5 } from "node:fs";
+import path7 from "node:path";
+
+// lib/entity-storage.ts
+import { createHash } from "node:crypto";
+var PACKAGE_STORAGE_VERSION = 1;
+var ENTRY_STORAGE_VERSION = 1;
+var MACRO_STORAGE_VERSION = 1;
+var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
+var CURRENT_ENTRY_SCHEMA_VERSION = 1;
+var CURRENT_MACRO_SCHEMA_VERSION = 1;
+var UNPACKAGED_PACKAGE_ID = "_unpackaged";
+function semanticDigest(value) {
+  return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
-function formatUsage(cliName, synopsis, specs) {
-  const lines = [`Usage: ${cliName} ${synopsis}`, "", "Options:"];
-  for (const s2 of specs) {
-    const flagStr = s2.short ? `-${s2.short}, --${s2.name}` : `    --${s2.name}`;
-    const kind = s2.hasValue === false ? "" : " <value>";
-    const dflt = s2.default !== void 0 ? ` (default: ${JSON.stringify(s2.default)})` : "";
-    lines.push(`  ${flagStr}${kind}${dflt}`);
-    if (s2.help) lines.push(`      ${s2.help}`);
-  }
-  return lines.join("\n");
+function makeEntityStorageReceipt(entries, macroPackages, legacyBackupPresent) {
+  const entryList = Array.isArray(entries) ? entries : [];
+  const packages = [...macroPackages].sort(([left], [right]) => left.localeCompare(right));
+  return {
+    legacy_backup_present: legacyBackupPresent,
+    legacy_entries_present: legacyBackupPresent && Array.isArray(entries),
+    entry_count: entryList.length,
+    macro_package_count: packages.length,
+    macro_count: packages.reduce((count, [, value]) => count + (value && typeof value === "object" && !Array.isArray(value) && value.macros && typeof value.macros === "object" && !Array.isArray(value.macros) ? Object.keys(value.macros).length : 0), 0),
+    entries_digest: semanticDigest(entryList),
+    macro_packages_digest: semanticDigest(packages)
+  };
 }
-var ROOT_FLAG = {
-  name: "root",
-  short: "r",
-  hasValue: true,
-  default: ".",
-  help: "Path to the workspace containing .SNL_Doc/ (defaults to $PWD)."
-};
-var JSON_FLAG = {
-  name: "json",
-  hasValue: false,
-  default: false,
-  help: "Output JSON instead of human-readable text."
-};
-var HELP_FLAG = {
-  name: "help",
-  short: "h",
-  hasValue: false,
-  default: false,
-  help: "Show usage and exit."
-};
+var PACKAGE_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+var WINDOWS_DEVICE_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i;
+function assertPackageId(packageId) {
+  if (packageId !== UNPACKAGED_PACKAGE_ID && (!PACKAGE_ID_RE.test(packageId) || packageId.toLowerCase().endsWith(".json"))) {
+    throw new Error(
+      `Package id ${JSON.stringify(packageId)} must be 1-64 ASCII letters, digits, dots, underscores, or hyphens, start with a letter or digit, and not end in .json.`
+    );
+  }
+  if (WINDOWS_DEVICE_RE.test(packageId)) {
+    throw new Error(`Package id ${JSON.stringify(packageId)} is a reserved Windows device name.`);
+  }
+}
+function entityIdentityHash(kind, ...segments) {
+  if (segments.some((segment) => segment.includes("\0"))) {
+    throw new Error("Entity identities may not contain NUL characters.");
+  }
+  return createHash("sha256").update(Buffer.from(`snl-doc/v1\0${kind}\0${segments.join("\0")}`, "utf8")).digest("hex").slice(0, 20);
+}
+function packageManifestPath(packageId) {
+  assertPackageId(packageId);
+  return `packages/${packageId}-${entityIdentityHash("package", packageId)}.json`;
+}
+function entryEntityPath(packageId, entryId) {
+  assertPackageId(packageId);
+  if (!entryId) throw new Error("Entry id must be non-empty.");
+  return `entries/${packageId}-${entityIdentityHash("entry", packageId, entryId)}.json`;
+}
+function macroEntityPath(packageId, macroName) {
+  assertPackageId(packageId);
+  if (!macroName) throw new Error("Macro name must be non-empty.");
+  return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
+}
+function assertCompatibleSchemaMarker(value, current, label, required = false) {
+  if (!Object.hasOwn(value, "schema_version")) {
+    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
+    return;
+  }
+  if (!Number.isInteger(value.schema_version) || value.schema_version < 1) {
+    throw new Error(`${label} schema_version must be a positive integer.`);
+  }
+  if (value.schema_version > current) {
+    throw new Error(
+      `${label} schema version ${String(value.schema_version)} is newer than this Toolkit supports (${current}).`
+    );
+  }
+  if (value.schema_version < current) {
+    throw new Error(
+      `${label} schema_version ${String(value.schema_version)} has no registered migration to ${current}.`
+    );
+  }
+}
 
 // lib/snl-doc.ts
 import { constants as constants2, promises as fs2 } from "node:fs";
@@ -118,6 +97,11 @@ import * as path3 from "node:path";
 // lib/guarded-json-file.ts
 import { constants, promises as fs } from "node:fs";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
+function jsonText(value) {
+  return `${JSON.stringify(value, null, 2)}
+`;
+}
 async function readCanonicalDirectoryIdentity(directory) {
   const resolved = path.resolve(directory);
   const stat = await fs.lstat(resolved);
@@ -158,14 +142,234 @@ async function readRegularText(file) {
     await handle?.close();
   }
 }
+async function syncDirectory(directory, beforeSync, expected) {
+  await beforeSync?.();
+  await assertCanonicalDirectory(directory, expected);
+  const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
+  try {
+    const stat = await handle.stat();
+    if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
+      throw new Error(`${directory} changed concurrently before directory sync.`);
+    await handle.sync();
+    await assertCanonicalDirectory(directory, expected);
+  } finally {
+    await handle.close();
+  }
+}
+async function sameInode(left, right) {
+  try {
+    const [a3, b2] = await Promise.all([fs.lstat(left), fs.lstat(right)]);
+    return a3.dev === b2.dev && a3.ino === b2.ino;
+  } catch {
+    return false;
+  }
+}
+async function quarantineAndRemoveOwnedPath(file, ownedLink) {
+  const quarantine = path.join(path.dirname(file), `.${path.basename(file)}.snl-rollback-${process.pid}-${randomUUID()}.captured`);
+  try {
+    await fs.rename(file, quarantine);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (await sameInode(quarantine, ownedLink)) {
+    await fs.rm(quarantine);
+    return true;
+  }
+  try {
+    await fs.link(quarantine, file);
+    if (await sameInode(quarantine, file)) await fs.rm(quarantine);
+  } catch {
+  }
+  return false;
+}
+async function installNewJson(file, value, hooks = {}) {
+  const directory = path.dirname(file);
+  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const temp = path.join(
+    directory,
+    `.${path.basename(file)}.snl-create-${process.pid}-${randomUUID()}.tmp`
+  );
+  let handle;
+  let installed = false;
+  try {
+    handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, 420);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await assertCanonicalDirectory(directory, directoryIdentity);
+    await fs.link(temp, file);
+    installed = true;
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
+    } catch (error) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
+      throw error;
+    }
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await fs.rm(temp, { force: true }).catch(() => void 0);
+    if (installed) {
+    }
+  }
+}
+async function restoreCapturedPath(captured, target) {
+  try {
+    await fs.link(captured, target);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `${target} changed while guarded mutation was in flight; the captured file was preserved at ${captured} because restoration failed: ${detail}`,
+      { cause: error }
+    );
+  }
+  await fs.rm(captured);
+}
+async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+  const directory = path.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
+  const nonce = `${process.pid}-${randomUUID()}`;
+  const temp = path.join(directory, `.${path.basename(file)}.snl-write-${nonce}.tmp`);
+  const captured = path.join(directory, `.${path.basename(file)}.snl-write-${nonce}.captured`);
+  let handle;
+  let capturedPresent = false;
+  let installed = false;
+  try {
+    handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
+    await handle.chmod(current.mode);
+    await handle.writeFile(jsonText(value), "utf8");
+    await handle.sync();
+    await handle.close();
+    handle = void 0;
+    await hooks.beforeCapture?.();
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterParentCheckBeforeCapture?.();
+    await fs.rename(file, captured);
+    capturedPresent = true;
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
+    const observed = await readRegularText(captured);
+    if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
+    }
+    try {
+      await fs.link(temp, file);
+      installed = true;
+    } catch (error) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${file} changed while installing its replacement. ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    try {
+      await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
+    } catch (error) {
+      await hooks.beforeRollbackQuarantine?.();
+      if (!await quarantineAndRemoveOwnedPath(file, temp)) {
+        throw new Error(
+          `${file} changed before its replacement could be durably committed; the captured original remains at ${captured}.`,
+          { cause: error }
+        );
+      }
+      installed = false;
+      await restoreCapturedPath(captured, file);
+      capturedPresent = false;
+      throw error;
+    }
+    try {
+      await fs.rm(captured);
+      capturedPresent = false;
+    } catch {
+    }
+  } catch (error) {
+    if (capturedPresent && !installed) {
+      try {
+        await restoreCapturedPath(captured, file);
+        capturedPresent = false;
+      } catch (restoreError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+          { cause: error }
+        );
+      }
+    }
+    throw error;
+  } finally {
+    await handle?.close().catch(() => void 0);
+    await fs.rm(temp, { force: true }).catch(() => void 0);
+  }
+}
+async function removeJsonIfUnchanged(file, expected, hooks = {}) {
+  const current = await readRegularText(file);
+  if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  const directory = path.dirname(file);
+  const expectedDirectory = { dev: current.directoryDev, ino: current.directoryIno };
+  const captured = path.join(
+    directory,
+    `.${path.basename(file)}.snl-remove-${process.pid}-${randomUUID()}.captured`
+  );
+  await hooks.beforeCapture?.();
+  await assertCanonicalDirectory(directory, expectedDirectory);
+  await hooks.afterParentCheckBeforeCapture?.();
+  await fs.rename(file, captured);
+  let observed;
+  try {
+    await assertCanonicalDirectory(directory, expectedDirectory);
+    await hooks.afterCapture?.();
+    observed = await readRegularText(captured);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  if (observed.text !== expected || observed.dev !== current.dev || observed.ino !== current.ino) {
+    await restoreCapturedPath(captured, file);
+    throw new Error(`${file} changed concurrently; refusing to remove it.`);
+  }
+  try {
+    await syncDirectory(directory, hooks.beforeDirectorySync, expectedDirectory);
+  } catch (error) {
+    try {
+      await restoreCapturedPath(captured, file);
+    } catch (restoreError) {
+      throw new Error(
+        `${error instanceof Error ? error.message : String(error)} Recovery failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`,
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+  try {
+    await fs.rm(captured);
+  } catch {
+  }
+}
 
 // ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
-function t(e, t2) {
+function t(e, t3) {
   return {
     macro_name: e,
-    kind: t2?.kind ?? "",
-    mdata: t2?.mdata ?? null,
-    children: t2?.children ?? []
+    kind: t3?.kind ?? "",
+    mdata: t3?.mdata ?? null,
+    children: t3?.children ?? []
   };
 }
 function n() {
@@ -174,202 +378,202 @@ function n() {
 var o = /^[A-Za-z0-9_\\]$/;
 var s = /^[A-Za-z0-9_.-]$/;
 var c = /[\p{White_Space}\p{Cc}\p{Cf}\p{Cs}]/u;
-function l(e, t2) {
-  let n2 = e.codePointAt(t2);
-  return n2 === void 0 ? null : String.fromCodePoint(n2);
+function l(e, t3) {
+  let n3 = e.codePointAt(t3);
+  return n3 === void 0 ? null : String.fromCodePoint(n3);
 }
-function u(e, t2, n2) {
-  let r2 = l(e, t2);
-  return r2 === null ? 0 : r2.codePointAt(0) <= 127 ? +!!(n2 ? o : s).test(r2) : c.test(r2) ? 0 : r2.length;
+function u(e, t3, n3) {
+  let r3 = l(e, t3);
+  return r3 === null ? 0 : r3.codePointAt(0) <= 127 ? +!!(n3 ? o : s).test(r3) : c.test(r3) ? 0 : r3.length;
 }
 function d(e) {
   if (e.length === 0) return false;
-  let t2 = 0, n2 = u(e, t2, true);
-  if (n2 === 0) return false;
-  for (t2 += n2; t2 < e.length; ) {
-    if (n2 = u(e, t2, false), n2 === 0) return false;
-    t2 += n2;
+  let t3 = 0, n3 = u(e, t3, true);
+  if (n3 === 0) return false;
+  for (t3 += n3; t3 < e.length; ) {
+    if (n3 = u(e, t3, false), n3 === 0) return false;
+    t3 += n3;
   }
   return true;
 }
 function p(e) {
-  let t2 = e.replace(/\\#/g, "ESCAPED_HASH"), n2 = -1;
-  for (let e2 of t2.matchAll(/#(\d{1,2})(?!\d)/g)) n2 = Math.max(n2, Number(e2[1]));
+  let t3 = e.replace(/\\#/g, "ESCAPED_HASH"), n3 = -1;
+  for (let e2 of t3.matchAll(/#(\d{1,2})(?!\d)/g)) n3 = Math.max(n3, Number(e2[1]));
   return {
-    positional_arity: n2 + 1,
-    variadic: /#\*/.test(t2),
-    invalid: /#\d{3,}/.test(t2)
+    positional_arity: n3 + 1,
+    variadic: /#\*/.test(t3),
+    invalid: /#\d{3,}/.test(t3)
   };
 }
 var h = class extends Error {
   position;
-  constructor(e, t2) {
-    super(`${e} at position ${t2}`), this.name = "SnlSyntaxTreeParseError", this.position = t2;
+  constructor(e, t3) {
+    super(`${e} at position ${t3}`), this.name = "SnlSyntaxTreeParseError", this.position = t3;
   }
 };
-function g(e, t2) {
-  let n2 = e.length - t2;
-  if (n2 >= 2 && e[t2] === "`") {
-    let n3 = e.indexOf("`", t2 + 1);
-    if (n3 < 0) throw new h("Unclosed ` delimiter", t2);
+function g(e, t3) {
+  let n3 = e.length - t3;
+  if (n3 >= 2 && e[t3] === "`") {
+    let n4 = e.indexOf("`", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed ` delimiter", t3);
     return {
       token: {
         type: "BACKTICK_DELIMITED",
-        value: e.slice(t2 + 1, n3),
-        position: t2
+        value: e.slice(t3 + 1, n4),
+        position: t3
       },
-      next: n3 + 1
+      next: n4 + 1
     };
   }
-  if (n2 >= 4 && e[t2] === "$" && e[t2 + 1] === "$") {
-    let n3 = e.indexOf("$$", t2 + 2);
-    if (n3 < 0) throw new h("Unclosed $$ delimiter", t2);
+  if (n3 >= 4 && e[t3] === "$" && e[t3 + 1] === "$") {
+    let n4 = e.indexOf("$$", t3 + 2);
+    if (n4 < 0) throw new h("Unclosed $$ delimiter", t3);
     return {
       token: {
         type: "DOLLAR2_DELIMITED",
-        value: e.slice(t2 + 2, n3),
-        position: t2
+        value: e.slice(t3 + 2, n4),
+        position: t3
       },
-      next: n3 + 2
+      next: n4 + 2
     };
   }
-  if (n2 >= 2 && e[t2] === "$") {
-    let n3 = e.indexOf("$", t2 + 1);
-    if (n3 < 0) throw new h("Unclosed $ delimiter", t2);
+  if (n3 >= 2 && e[t3] === "$") {
+    let n4 = e.indexOf("$", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed $ delimiter", t3);
     return {
       token: {
         type: "DOLLAR_DELIMITED",
-        value: e.slice(t2 + 1, n3),
-        position: t2
+        value: e.slice(t3 + 1, n4),
+        position: t3
       },
-      next: n3 + 1
+      next: n4 + 1
     };
   }
-  if (n2 >= 2 && e[t2] === "%") {
-    let n3 = e.indexOf("%", t2 + 1);
-    if (n3 < 0) throw new h("Unclosed % delimiter", t2);
+  if (n3 >= 2 && e[t3] === "%") {
+    let n4 = e.indexOf("%", t3 + 1);
+    if (n4 < 0) throw new h("Unclosed % delimiter", t3);
     return {
       token: {
         type: "PERCENT_DELIMITED",
-        value: e.slice(t2 + 1, n3),
-        position: t2
+        value: e.slice(t3 + 1, n4),
+        position: t3
       },
-      next: n3 + 1
+      next: n4 + 1
     };
   }
   return null;
 }
 function _(e) {
-  let t2 = [], n2 = 0;
-  for (; n2 < e.length; ) {
-    let r2 = e[n2];
-    if (/[ \t\r\n\f\v]/.test(r2)) {
-      n2 += 1;
+  let t3 = [], n3 = 0;
+  for (; n3 < e.length; ) {
+    let r3 = e[n3];
+    if (/[ \t\r\n\f\v]/.test(r3)) {
+      n3 += 1;
       continue;
     }
-    if (r2 === "%" || r2 === "$" || r2 === "`") {
-      let r3 = g(e, n2);
-      if (r3) {
-        t2.push(r3.token), n2 = r3.next;
+    if (r3 === "%" || r3 === "$" || r3 === "`") {
+      let r4 = g(e, n3);
+      if (r4) {
+        t3.push(r4.token), n3 = r4.next;
         continue;
       }
     }
-    if (r2 === "@") {
-      t2.push({
+    if (r3 === "@") {
+      t3.push({
         type: "AT",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (r2 === "#") {
-      t2.push({
+    if (r3 === "#") {
+      t3.push({
         type: "HASH",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    let i3 = u(e, n2, true);
-    if (i3 > 0) {
-      let r3 = n2;
-      for (n2 += i3; n2 < e.length; ) {
-        let t3 = u(e, n2, false);
-        if (t3 === 0) break;
-        n2 += t3;
+    let i4 = u(e, n3, true);
+    if (i4 > 0) {
+      let r4 = n3;
+      for (n3 += i4; n3 < e.length; ) {
+        let t4 = u(e, n3, false);
+        if (t4 === 0) break;
+        n3 += t4;
       }
-      t2.push({
+      t3.push({
         type: "IDENT",
-        value: e.slice(r3, n2),
-        position: r3
+        value: e.slice(r4, n3),
+        position: r4
       });
       continue;
     }
-    if (r2 === "[") {
-      t2.push({
+    if (r3 === "[") {
+      t3.push({
         type: "LBRACKET",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (r2 === "]") {
-      t2.push({
+    if (r3 === "]") {
+      t3.push({
         type: "RBRACKET",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (r2 === "(") {
-      t2.push({
+    if (r3 === "(") {
+      t3.push({
         type: "LPAREN",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (r2 === ")") {
-      t2.push({
+    if (r3 === ")") {
+      t3.push({
         type: "RPAREN",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (r2 === ",") {
-      t2.push({
+    if (r3 === ",") {
+      t3.push({
         type: "COMMA",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (r2 === "=") {
-      t2.push({
+    if (r3 === "=") {
+      t3.push({
         type: "EQ",
-        value: r2,
-        position: n2
-      }), n2 += 1;
+        value: r3,
+        position: n3
+      }), n3 += 1;
       continue;
     }
-    if (/\d/.test(r2)) {
-      let r3 = n2;
-      for (; n2 < e.length && /\d/.test(e[n2]); ) n2 += 1;
-      t2.push({
+    if (/\d/.test(r3)) {
+      let r4 = n3;
+      for (; n3 < e.length && /\d/.test(e[n3]); ) n3 += 1;
+      t3.push({
         type: "NUMBER",
-        value: e.slice(r3, n2),
-        position: r3
+        value: e.slice(r4, n3),
+        position: r4
       });
       continue;
     }
-    throw new h(`Unexpected character "${r2}"`, n2);
+    throw new h(`Unexpected character "${r3}"`, n3);
   }
-  return t2.push({
+  return t3.push({
     type: "EOF",
     value: "",
     position: e.length
-  }), t2;
+  }), t3;
 }
 var v = class {
   cursor = 0;
@@ -384,41 +588,41 @@ var v = class {
   parseNode() {
     let e = this.peek().type === "AT";
     e && this.consume("AT");
-    let n2 = this.peek(), r2;
-    if (n2.type === "IDENT") this.consume("IDENT"), r2 = t(n2.value);
-    else if (n2.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r2 = t(n2.value), r2.env_mode = "text";
-    else if (n2.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r2 = t(n2.value), r2.env_mode = "formula_inline";
-    else if (n2.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r2 = t(n2.value), r2.env_mode = "formula_display";
-    else if (n2.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r2 = t(n2.value), r2.env_mode = "formula_inline", r2.temporary_format = "texttt";
-    else throw new h(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n2.type}`, n2.position);
+    let n3 = this.peek(), r3;
+    if (n3.type === "IDENT") this.consume("IDENT"), r3 = t(n3.value);
+    else if (n3.type === "PERCENT_DELIMITED") this.consume("PERCENT_DELIMITED"), r3 = t(n3.value), r3.env_mode = "text";
+    else if (n3.type === "DOLLAR_DELIMITED") this.consume("DOLLAR_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline";
+    else if (n3.type === "DOLLAR2_DELIMITED") this.consume("DOLLAR2_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_display";
+    else if (n3.type === "BACKTICK_DELIMITED") this.consume("BACKTICK_DELIMITED"), r3 = t(n3.value), r3.env_mode = "formula_inline", r3.temporary_format = "texttt";
+    else throw new h(`Expected macro name (IDENT or %\u2026% / $\u2026$ / $$\u2026$$) but got ${n3.type}`, n3.position);
     if (this.peek().type === "AT") if (this.consume("AT"), this.peek().type === "HASH") {
       if (e) throw new h("Binder name override must not use #", this.peek().position);
       this.consume("HASH");
-      let t2 = this.expect("IDENT");
-      /^\d+(?:\.\d+)*$/.test(t2.value) ? r2.postfix = {
+      let t3 = this.expect("IDENT");
+      /^\d+(?:\.\d+)*$/.test(t3.value) ? r3.postfix = {
         type: "tree_path",
-        path: t2.value.split(".").map(Number)
-      } : r2.postfix = {
+        path: t3.value.split(".").map(Number)
+      } : r3.postfix = {
         type: "binder_name",
-        name: t2.value
+        name: t3.value
       };
     } else {
-      let t2 = this.expect("IDENT");
-      e ? r2.binder_name = t2.value : r2.postfix = {
+      let t3 = this.expect("IDENT");
+      e ? r3.binder_name = t3.value : r3.postfix = {
         type: "name",
-        name: t2.value
+        name: t3.value
       };
     }
     if (this.peek().type === "LBRACKET") {
       this.consume("LBRACKET");
       let e2 = this.expect("IDENT");
-      r2.style_name = e2.value, this.expect("RBRACKET");
+      r3.style_name = e2.value, this.expect("RBRACKET");
     }
-    if (this.peek().type === "LPAREN" && (this.consume("LPAREN"), r2.children = this.parseNodeList(), this.expect("RPAREN")), e) {
-      if (r2.children.length > 0) throw new h("Binder must be a leaf", n2.position);
-      r2.binder_explicit = true, r2.kind = "binder";
+    if (this.peek().type === "LPAREN" && (this.consume("LPAREN"), r3.children = this.parseNodeList(), this.expect("RPAREN")), e) {
+      if (r3.children.length > 0) throw new h("Binder must be a leaf", n3.position);
+      r3.binder_explicit = true, r3.kind = "binder";
     }
-    return r2;
+    return r3;
   }
   parseNodeList() {
     if (this.peek().type === "RPAREN") return [];
@@ -431,9 +635,9 @@ var v = class {
     return e === "COMMA" || e === "RPAREN" ? n() : this.parseNode();
   }
   expect(e) {
-    let t2 = this.peek();
-    if (t2.type !== e) throw new h(`Expected ${e} but got ${t2.type}`, t2.position);
-    return this.cursor += 1, t2;
+    let t3 = this.peek();
+    if (t3.type !== e) throw new h(`Expected ${e} but got ${t3.type}`, t3.position);
+    return this.cursor += 1, t3;
   }
   consume(e) {
     return this.expect(e);
@@ -442,65 +646,194 @@ var v = class {
     return this.tokens[this.cursor];
   }
 };
-function y(e, t2 = {}) {
-  let n2 = new v(_(e)).parse();
-  return b(n2), n2;
+function y(e, t3 = {}) {
+  let n3 = new v(_(e)).parse();
+  return b(n3), n3;
 }
-function b(e, t2 = []) {
-  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n2) => b(e2, [...t2, n2]));
+function b(e, t3 = []) {
+  e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t3.length === 0 ? "#" : `#${t3.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n3) => b(e2, [...t3, n3]));
+}
+function x(e) {
+  try {
+    return {
+      ok: true,
+      tree: y(e)
+    };
+  } catch (e2) {
+    return e2 instanceof h ? {
+      ok: false,
+      error: e2.message,
+      position: e2.position
+    } : {
+      ok: false,
+      error: e2 instanceof Error ? e2.message : String(e2)
+    };
+  }
+}
+function S(e) {
+  if (!e || typeof e != "object" || Array.isArray(e)) return e;
+  let t3 = { ...e };
+  return delete t3.bindRef, Object.keys(t3).length > 0 ? t3 : null;
+}
+function C(e) {
+  return {
+    ...e,
+    mdata: S(e.mdata),
+    postfix: e.postfix?.type === "tree_path" ? {
+      type: "tree_path",
+      path: [...e.postfix.path]
+    } : e.postfix ? { ...e.postfix } : void 0,
+    source: void 0,
+    children: e.children.map(C)
+  };
+}
+function w(e, t3) {
+  return e.length === t3.length && e.every((e2, n3) => e2 === t3[n3]);
+}
+function T(e, t3) {
+  let n3 = 0;
+  for (; n3 < e.length && n3 < t3.length && e[n3] === t3[n3]; ) n3 += 1;
+  return n3;
+}
+function E(e, t3, n3) {
+  return e.filter((e2) => !n3 || e2.order < t3.order).sort((e2, n4) => T(n4.path, t3.path) - T(e2.path, t3.path) || n4.order - e2.order)[0];
+}
+function D(e) {
+  return e.temporary_source ?? e.macro_name;
+}
+function O(e, t3) {
+  let n3 = C(e), r3 = [], i4 = [], a3 = 0, o3 = (e2, n4) => {
+    i4.push({
+      node: e2,
+      path: n4,
+      order: a3++
+    }), e2.scope = void 0;
+    let s3 = e2.env_mode ? void 0 : t3[e2.macro_name], c3 = n4.length === 0 && e2.env_mode === "text", l3 = s3?.kind === "sub";
+    if (c3 || l3 || e2.kind === "sub") e2.kind = "sub", e2.binder_name = void 0, e2.source = void 0, (e2.postfix || e2.binder_explicit) && r3.push({
+      code: "SNL_SUB_IGNORES_BINDER_SUFFIX",
+      severity: "warning",
+      tree_path: [...n4],
+      message: "sub nodes ignore binder declarations and postfix sources"
+    });
+    else if (e2.binder_explicit) e2.kind = "binder", e2.binder_name ??= e2.macro_name;
+    else if (s3) {
+      if (e2.kind = s3.kind || "const", e2.style_name && !s3.styles.some((t4) => t4.style_name === e2.style_name) && (r3.push({
+        code: "SNL_STYLE_NOT_FOUND",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `style ${JSON.stringify(e2.style_name)} was not found; using the first style`
+      }), e2.style_name = void 0), e2.postfix?.type === "name" && (e2.binder_name = e2.postfix.name), e2.source = void 0, e2.mdata && typeof e2.mdata == "object") {
+        let t4 = { ...e2.mdata };
+        delete t4.src, e2.mdata = Object.keys(t4).length > 0 ? t4 : null;
+      }
+    } else e2.kind && e2.kind !== "bvar" && e2.kind !== "fvar" || (e2.kind = "", e2.binder_name = void 0);
+    e2.children.forEach((e3, t4) => o3(e3, [...n4, t4]));
+  };
+  o3(n3, []);
+  let s2 = i4.flatMap((e2) => {
+    let t4 = e2.node.binder_name;
+    return t4 && (e2.node.kind === "binder" || e2.node.kind !== "" && e2.node.source === void 0) ? [{
+      ...e2,
+      binderName: t4
+    }] : [];
+  });
+  for (let e2 of i4) {
+    let { node: t4, path: n4 } = e2;
+    if (t4.kind !== "") continue;
+    let a4;
+    if (t4.postfix?.type === "name") {
+      let e3 = t4.mdata && typeof t4.mdata == "object" ? t4.mdata.srcStatus : void 0;
+      e3 === "dangling" || e3 === "srcResolvedNoDecl" ? r3.push({
+        code: e3 === "dangling" ? "SNL_ENTRY_SOURCE_NOT_FOUND" : "SNL_ENTRY_SOURCE_NO_DECL",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `Entry source ${JSON.stringify(t4.postfix.name)} did not export this reference`
+      }) : a4 = {
+        type: "entry",
+        entry_id: t4.postfix.name
+      };
+    } else if (t4.postfix?.type === "tree_path") {
+      let e3 = i4.find((e4) => e4.node.kind !== "sub" && w(e4.path, t4.postfix.type === "tree_path" ? t4.postfix.path : []));
+      e3 ? a4 = {
+        type: "tree_path",
+        path: [...e3.path]
+      } : r3.push({
+        code: "SNL_DANGLING_TREE_SOURCE",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `tree source #${t4.postfix.path.join(".")} does not name a semantic node`
+      });
+    } else {
+      let i5 = t4.postfix?.type === "binder_name" ? t4.postfix.name : D(t4), o4 = E(s2.filter((e3) => e3.binderName === i5), e2, true);
+      o4 ? a4 = {
+        type: "tree_path",
+        path: [...o4.path]
+      } : t4.postfix?.type === "binder_name" && r3.push({
+        code: "SNL_BINDER_NAME_NOT_FOUND",
+        severity: "warning",
+        tree_path: [...n4],
+        message: `binder source ${JSON.stringify(i5)} was not found in the current context`
+      });
+    }
+    a4 ? (t4.kind = "bvar", t4.source = a4) : (t4.kind = "fvar", t4.source = void 0);
+  }
+  return {
+    tree: n3,
+    diagnostics: r3
+  };
 }
 
 // ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let t2 = e;
-  if (t2.type !== "i18n" || typeof t2.default_language != "string" || !t2.values || typeof t2.values != "object" || Array.isArray(t2.values)) return false;
-  let n2 = t2.values, r2 = Object.keys(n2);
-  return r2.length > 0 && Object.prototype.hasOwnProperty.call(n2, t2.default_language) && typeof n2[t2.default_language] == "string" && r2.every((e2) => typeof n2[e2] == "string");
+  let t3 = e;
+  if (t3.type !== "i18n" || typeof t3.default_language != "string" || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return false;
+  let n3 = t3.values, r3 = Object.keys(n3);
+  return r3.length > 0 && Object.prototype.hasOwnProperty.call(n3, t3.default_language) && typeof n3[t3.default_language] == "string" && r3.every((e2) => typeof n3[e2] == "string");
 }
 function i(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let t2 = e;
-  return typeof t2.style_name != "string" || !d(t2.style_name) || "tag" in t2 || "variadic_left" in t2 || "variadic_join" in t2 || "variadic_right" in t2 || !Array.isArray(t2.tags) || !t2.tags.every((e2) => typeof e2 == "string") || t2.separator !== void 0 && typeof t2.separator != "string" || t2.block_template_name !== void 0 && (t2.mode !== "block" || typeof t2.block_template_name != "string") ? false : t2.mode === "text" ? typeof t2.template == "string" || r(t2.template) : t2.mode === "formula_inline" || t2.mode === "formula_display" || t2.mode === "block" ? typeof t2.template == "string" : false;
+  let t3 = e;
+  return typeof t3.style_name != "string" || !d(t3.style_name) || "tag" in t3 || "variadic_left" in t3 || "variadic_join" in t3 || "variadic_right" in t3 || !Array.isArray(t3.tags) || !t3.tags.every((e2) => typeof e2 == "string") || t3.separator !== void 0 && typeof t3.separator != "string" || t3.block_template_name !== void 0 && (t3.mode !== "block" || typeof t3.block_template_name != "string") ? false : t3.mode === "text" ? typeof t3.template == "string" || r(t3.template) : t3.mode === "formula_inline" || t3.mode === "formula_display" || t3.mode === "block" ? typeof t3.template == "string" : false;
 }
 function a(e) {
   return Array.isArray(e) && e.every((e2) => typeof e2 == "string");
 }
-function o2(e, t2 = true) {
-  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (t2 || e.tags !== void 0) && !a(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
-  let r2 = e.source;
-  return a(r2.entries) && a(r2.urls);
+function o2(e, t3 = true) {
+  if (typeof e.name != "string" || !d(e.name) || typeof e.description != "string" || typeof e.dynamic_arity != "boolean" || (t3 || e.tags !== void 0) && !a(e.tags) || e.kind !== void 0 && typeof e.kind != "string" || !e.source || typeof e.source != "object" || Array.isArray(e.source)) return false;
+  let r3 = e.source;
+  return a(r3.entries) && a(r3.urls);
 }
 function c2(e) {
   return !e || typeof e != "object" || Array.isArray(e) ? false : Object.values(e).every((e2) => typeof e2 == "string");
 }
 function l2(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let t2 = Object.getPrototypeOf(e);
-  return t2 === Object.prototype || t2 === null;
+  let t3 = Object.getPrototypeOf(e);
+  return t3 === Object.prototype || t3 === null;
 }
 function f(e) {
   if (!l2(e)) return false;
-  for (let t2 of Object.values(e)) {
-    if (!t2 || typeof t2 != "object" || Array.isArray(t2)) return false;
-    let e2 = t2;
+  for (let t3 of Object.values(e)) {
+    if (!t3 || typeof t3 != "object" || Array.isArray(t3)) return false;
+    let e2 = t3;
     if (!o2(e2) || !c2(e2.default_style)) return false;
-    let n2 = e2.styles;
-    if (!n2 || n2.length === 0 || n2.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
-    let r2 = n2.map((e3) => e3.style_name);
-    if (new Set(r2).size !== r2.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r2.includes(e3))) return false;
+    let n3 = e2.styles;
+    if (!n3 || n3.length === 0 || n3.some((e3) => !i(e3) || typeof e3.template != "string")) return false;
+    let r3 = n3.map((e3) => e3.style_name);
+    if (new Set(r3).size !== r3.length || Object.keys(e2.default_style).some((e3) => e3.trim().length === 0) || Object.values(e2.default_style).some((e3) => !r3.includes(e3))) return false;
   }
   return true;
 }
-function O(e) {
+function O2(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
-  let t2 = e;
-  return "type" in t2 || ![
+  let t3 = e;
+  return "type" in t3 || ![
     "formula_inline",
     "formula_display",
     "text",
     "block"
-  ].includes(String(t2.mode)) || typeof t2.body != "string" || t2.separator !== void 0 && typeof t2.separator != "string" ? false : t2.block_template_name === void 0 || t2.mode === "block" && typeof t2.block_template_name == "string";
+  ].includes(String(t3.mode)) || typeof t3.body != "string" || t3.separator !== void 0 && typeof t3.separator != "string" ? false : t3.block_template_name === void 0 || t3.mode === "block" && typeof t3.block_template_name == "string";
 }
 var k = /* @__PURE__ */ new Set([
   "type",
@@ -508,16 +841,16 @@ var k = /* @__PURE__ */ new Set([
   "values"
 ]);
 function A(e) {
-  if (O(e)) return [e];
+  if (O2(e)) return [e];
   if (!e || typeof e != "object" || Array.isArray(e)) return null;
-  let t2 = e;
-  if (t2.type !== "i18n" || typeof t2.default_language != "string" || Object.keys(t2).some((e2) => !k.has(e2)) || !t2.values || typeof t2.values != "object" || Array.isArray(t2.values)) return null;
-  let n2 = t2.values;
-  return !Object.prototype.hasOwnProperty.call(n2, t2.default_language) || Object.keys(n2).length === 0 || !Object.values(n2).every(O) ? null : Object.values(n2);
+  let t3 = e;
+  if (t3.type !== "i18n" || typeof t3.default_language != "string" || Object.keys(t3).some((e2) => !k.has(e2)) || !t3.values || typeof t3.values != "object" || Array.isArray(t3.values)) return null;
+  let n3 = t3.values;
+  return !Object.prototype.hasOwnProperty.call(n3, t3.default_language) || Object.keys(n3).length === 0 || !Object.values(n3).every(O2) ? null : Object.values(n3);
 }
-function j(t2) {
-  let n2 = p(t2.body);
-  return `${n2.variadic ? "dynamic" : "fixed"}:${n2.positional_arity}`;
+function j(t3) {
+  let n3 = p(t3.body);
+  return `${n3.variadic ? "dynamic" : "fixed"}:${n3.positional_arity}`;
 }
 var M = [
   "tag",
@@ -534,69 +867,69 @@ var N = /* @__PURE__ */ new Set([
   "tags",
   "template"
 ]);
-function P(t2) {
-  if (!l2(t2)) return false;
-  for (let r2 of Object.values(t2)) {
-    if (!r2 || typeof r2 != "object" || Array.isArray(r2)) return false;
-    let t3 = r2;
-    if (!o2(t3) || typeof t3.kind != "string" || t3.kind.length === 0 || t3.kind === "partial" || "default_style" in t3 || !Array.isArray(t3.styles) || t3.styles.length === 0) return false;
-    let i3 = [];
-    for (let r3 of t3.styles) {
-      if (!r3 || typeof r3 != "object" || Array.isArray(r3)) return false;
-      let o3 = r3, s2 = A(o3.template);
-      if (typeof o3.style_name != "string" || !d(o3.style_name) || !a(o3.tags) || !s2 || M.some((e) => e in o3) || Object.keys(o3).some((e) => !N.has(e)) || new Set(s2.map(j)).size !== 1 || s2.some((n2) => {
-        let r4 = p(n2.body);
-        return r4.invalid || r4.variadic !== t3.dynamic_arity;
+function P(t3) {
+  if (!l2(t3)) return false;
+  for (let r3 of Object.values(t3)) {
+    if (!r3 || typeof r3 != "object" || Array.isArray(r3)) return false;
+    let t4 = r3;
+    if (!o2(t4) || typeof t4.kind != "string" || t4.kind.length === 0 || t4.kind === "partial" || "default_style" in t4 || !Array.isArray(t4.styles) || t4.styles.length === 0) return false;
+    let i4 = [];
+    for (let r4 of t4.styles) {
+      if (!r4 || typeof r4 != "object" || Array.isArray(r4)) return false;
+      let o3 = r4, s2 = A(o3.template);
+      if (typeof o3.style_name != "string" || !d(o3.style_name) || !a(o3.tags) || !s2 || M.some((e) => e in o3) || Object.keys(o3).some((e) => !N.has(e)) || new Set(s2.map(j)).size !== 1 || s2.some((n3) => {
+        let r5 = p(n3.body);
+        return r5.invalid || r5.variadic !== t4.dynamic_arity;
       })) return false;
-      i3.push(o3.style_name);
+      i4.push(o3.style_name);
     }
-    if (new Set(i3).size !== i3.length) return false;
+    if (new Set(i4).size !== i4.length) return false;
   }
   return true;
 }
 var G = 256;
-function K(e, t2) {
-  return e.reduce((n2, r2, i3) => i3 === 0 ? r2 : `${n2}${e[i3 - 1] !== "" && r2 !== "" ? `,${t2}` : ","}${r2}`, "");
+function K(e, t3) {
+  return e.reduce((n3, r3, i4) => i4 === 0 ? r3 : `${n3}${e[i4 - 1] !== "" && r3 !== "" ? `,${t3}` : ","}${r3}`, "");
 }
 var q = class {
   indentSpaces;
   inlineParenthesisDepth;
-  constructor(e = 4, t2 = 3) {
-    this.assertIntegerInRange(e, "indentSpaces", G), this.assertIntegerInRange(t2, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t2;
+  constructor(e = 4, t3 = 3) {
+    this.assertIntegerInRange(e, "indentSpaces", G), this.assertIntegerInRange(t3, "inlineParenthesisDepth", 2 ** 53 - 1), this.indentSpaces = e, this.inlineParenthesisDepth = t3;
   }
   format(e) {
     return this.formatNode(y(e), 0, " ");
   }
-  formatTree(e, t2 = " ") {
-    return this.formatNode(e, 0, t2);
+  formatTree(e, t3 = " ") {
+    return this.formatNode(e, 0, t3);
   }
-  formatNode(e, t2, n2) {
-    let r2 = this.formatNodeHead(e);
-    if (e.children.length === 0) return r2;
-    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r2}(${K(e.children.map((e2) => this.formatNode(e2, 0, n2)), n2)})`;
-    let i3 = " ".repeat(this.indentSpaces * (t2 + 1));
-    return `${r2}(
-${e.children.map((e2) => `${i3}${this.formatNode(e2, t2 + 1, n2)}`).join(",\n")}
-${" ".repeat(this.indentSpaces * t2)})`;
+  formatNode(e, t3, n3) {
+    let r3 = this.formatNodeHead(e);
+    if (e.children.length === 0) return r3;
+    if (this.parenthesisDepth(e) <= this.inlineParenthesisDepth) return `${r3}(${K(e.children.map((e2) => this.formatNode(e2, 0, n3)), n3)})`;
+    let i4 = " ".repeat(this.indentSpaces * (t3 + 1));
+    return `${r3}(
+${e.children.map((e2) => `${i4}${this.formatNode(e2, t3 + 1, n3)}`).join(",\n")}
+${" ".repeat(this.indentSpaces * t3)})`;
   }
   formatNodeHead(e) {
-    let t2 = e.binder_explicit ? "@" : "", n2, r2 = e.temporary_source ?? e.macro_name;
-    if (e.temporary_format === "texttt") n2 = `\`${r2}\``;
+    let t3 = e.binder_explicit ? "@" : "", n3, r3 = e.temporary_source ?? e.macro_name;
+    if (e.temporary_format === "texttt") n3 = `\`${r3}\``;
     else switch (e.env_mode) {
       case "text":
-        n2 = `%${r2}%`;
+        n3 = `%${r3}%`;
         break;
       case "formula_inline":
-        n2 = `$${r2}$`;
+        n3 = `$${r3}$`;
         break;
       case "formula_display":
-        n2 = `$$${r2}$$`;
+        n3 = `$$${r3}$$`;
         break;
       default:
-        n2 = e.macro_name;
+        n3 = e.macro_name;
     }
-    let i3 = this.sourceReference(e), a2 = i3 === void 0 ? "" : `@${i3}`, o3 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
-    return `${t2}${n2}${a2}${o3}`;
+    let i4 = this.sourceReference(e), a3 = i4 === void 0 ? "" : `@${i4}`, o3 = e.style_name === void 0 ? "" : `[${e.style_name}]`;
+    return `${t3}${n3}${a3}${o3}`;
   }
   sourceReference(e) {
     if (e.binder_explicit && e.binder_name && e.binder_name !== e.macro_name) return e.binder_name;
@@ -604,16 +937,16 @@ ${" ".repeat(this.indentSpaces * t2)})`;
     if (e.postfix?.type === "binder_name") return `#${e.postfix.name}`;
     if (e.postfix?.type === "name") return e.postfix.name;
     if (!e.mdata || typeof e.mdata != "object") return;
-    let t2 = e.mdata.src;
-    return typeof t2 == "string" ? t2 : void 0;
+    let t3 = e.mdata.src;
+    return typeof t3 == "string" ? t3 : void 0;
   }
-  assertIntegerInRange(e, t2, n2) {
-    if (!Number.isSafeInteger(e) || e < 0 || e > n2) throw RangeError(`${t2} must be a non-negative integer no greater than ${n2}`);
+  assertIntegerInRange(e, t3, n3) {
+    if (!Number.isSafeInteger(e) || e < 0 || e > n3) throw RangeError(`${t3} must be a non-negative integer no greater than ${n3}`);
   }
   parenthesisDepth(e) {
-    let t2 = -1;
-    for (let n2 of e.children) t2 = Math.max(t2, this.parenthesisDepth(n2));
-    return t2 + 1;
+    let t3 = -1;
+    for (let n3 of e.children) t3 = Math.max(t3, this.parenthesisDepth(n3));
+    return t3 + 1;
   }
 };
 var J = new q(0, 2 ** 53 - 1);
@@ -755,7 +1088,7 @@ var SETTINGS_SCHEMA = {
   minRuleThickness: {
     type: "number",
     description: "Specifies a minimum thickness, in ems, for fraction lines, `\\sqrt` top lines, `{array}` vertical lines, `\\hline`, `\\hdashline`, `\\underline`, `\\overline`, and the borders of `\\fbox`, `\\boxed`, and `\\fcolorbox`.",
-    processor: (t2) => Math.max(0, t2),
+    processor: (t3) => Math.max(0, t3),
     cli: "--min-rule-thickness <size>",
     cliProcessor: parseFloat
   },
@@ -789,9 +1122,9 @@ var SETTINGS_SCHEMA = {
     type: "number",
     default: 1e3,
     description: "Limit the number of macro expansions to the specified number, to prevent e.g. infinite macro loops. If set to Infinity, the macro expander will try to fully expand as in LaTeX.",
-    processor: (n2) => Math.max(0, n2),
+    processor: (n3) => Math.max(0, n3),
     cli: "-e, --max-expand <n>",
-    cliProcessor: (n2) => n2 === "Infinity" ? Infinity : parseInt(n2)
+    cliProcessor: (n3) => n3 === "Infinity" ? Infinity : parseInt(n3)
   },
   globalGroup: {
     type: "boolean",
@@ -857,19 +1190,19 @@ var Settings = class {
    * Report nonstrict (non-LaTeX-compatible) input.
    * Can safely not be called if `this.strict` is false in JavaScript.
    */
-  reportNonstrict(errorCode, errorMsg, token) {
+  reportNonstrict(errorCode2, errorMsg, token) {
     var strict = this.strict;
     if (typeof strict === "function") {
-      strict = strict(errorCode, errorMsg, token);
+      strict = strict(errorCode2, errorMsg, token);
     }
     if (!strict || strict === "ignore") {
       return;
     } else if (strict === true || strict === "error") {
-      throw new ParseError("LaTeX-incompatible input and strict mode is set to 'error': " + (errorMsg + " [" + errorCode + "]"), token);
+      throw new ParseError("LaTeX-incompatible input and strict mode is set to 'error': " + (errorMsg + " [" + errorCode2 + "]"), token);
     } else if (strict === "warn") {
-      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to 'warn': " + (errorMsg + " [" + errorCode + "]"));
+      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to 'warn': " + (errorMsg + " [" + errorCode2 + "]"));
     } else {
-      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to " + ("unrecognized '" + strict + "': " + errorMsg + " [" + errorCode + "]"));
+      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to " + ("unrecognized '" + strict + "': " + errorMsg + " [" + errorCode2 + "]"));
     }
   }
   /**
@@ -880,11 +1213,11 @@ var Settings = class {
    * "warn" prints a warning and returns `false`.
    * This is for the second category of `errorCode`s listed in the README.
    */
-  useStrictBehavior(errorCode, errorMsg, token) {
+  useStrictBehavior(errorCode2, errorMsg, token) {
     var strict = this.strict;
     if (typeof strict === "function") {
       try {
-        strict = strict(errorCode, errorMsg, token);
+        strict = strict(errorCode2, errorMsg, token);
       } catch (error) {
         strict = "error";
       }
@@ -894,10 +1227,10 @@ var Settings = class {
     } else if (strict === true || strict === "error") {
       return true;
     } else if (strict === "warn") {
-      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to 'warn': " + (errorMsg + " [" + errorCode + "]"));
+      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to 'warn': " + (errorMsg + " [" + errorCode2 + "]"));
       return false;
     } else {
-      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to " + ("unrecognized '" + strict + "': " + errorMsg + " [" + errorCode + "]"));
+      typeof console !== "undefined" && console.warn("LaTeX-incompatible input and strict mode is set to " + ("unrecognized '" + strict + "': " + errorMsg + " [" + errorCode2 + "]"));
       return false;
     }
   }
@@ -976,25 +1309,25 @@ var Style = class {
     return this.size >= 2;
   }
 };
-var D = 0;
+var D2 = 0;
 var Dc = 1;
-var T = 2;
+var T2 = 2;
 var Tc = 3;
-var S = 4;
+var S2 = 4;
 var Sc = 5;
 var SS = 6;
 var SSc = 7;
-var styles = [new Style(D, 0, false), new Style(Dc, 0, true), new Style(T, 1, false), new Style(Tc, 1, true), new Style(S, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
-var sup = [S, Sc, S, Sc, SS, SSc, SS, SSc];
+var styles = [new Style(D2, 0, false), new Style(Dc, 0, true), new Style(T2, 1, false), new Style(Tc, 1, true), new Style(S2, 2, false), new Style(Sc, 2, true), new Style(SS, 3, false), new Style(SSc, 3, true)];
+var sup = [S2, Sc, S2, Sc, SS, SSc, SS, SSc];
 var sub = [Sc, Sc, Sc, Sc, SSc, SSc, SSc, SSc];
-var fracNum = [T, Tc, S, Sc, SS, SSc, SS, SSc];
+var fracNum = [T2, Tc, S2, Sc, SS, SSc, SS, SSc];
 var fracDen = [Tc, Tc, Sc, Sc, SSc, SSc, SSc, SSc];
 var cramp = [Dc, Dc, Tc, Tc, Sc, Sc, SSc, SSc];
-var text$1 = [D, Dc, T, Tc, T, Tc, T, Tc];
+var text$1 = [D2, Dc, T2, Tc, T2, Tc, T2, Tc];
 var Style$1 = {
-  DISPLAY: styles[D],
-  TEXT: styles[T],
-  SCRIPT: styles[S],
+  DISPLAY: styles[D2],
+  TEXT: styles[T2],
+  SCRIPT: styles[S2],
   SCRIPTSCRIPT: styles[SS]
 };
 var scriptData = [{
@@ -1057,8 +1390,8 @@ var scriptData = [{
   blocks: [[44032, 55215]]
 }];
 function scriptFromCodepoint(codepoint) {
-  for (var i3 = 0; i3 < scriptData.length; i3++) {
-    var script2 = scriptData[i3];
+  for (var i4 = 0; i4 < scriptData.length; i4++) {
+    var script2 = scriptData[i4];
     for (var _i6 = 0; _i6 < script2.blocks.length; _i6++) {
       var block = script2.blocks[_i6];
       if (codepoint >= block[0] && codepoint <= block[1]) {
@@ -1071,8 +1404,8 @@ function scriptFromCodepoint(codepoint) {
 var allBlocks = [];
 scriptData.forEach((s2) => s2.blocks.forEach((b2) => allBlocks.push(...b2)));
 function supportedCodepoint(codepoint) {
-  for (var i3 = 0; i3 < allBlocks.length; i3 += 2) {
-    if (codepoint >= allBlocks[i3] && codepoint <= allBlocks[i3 + 1]) {
+  for (var i4 = 0; i4 < allBlocks.length; i4 += 2) {
+    if (codepoint >= allBlocks[i4] && codepoint <= allBlocks[i4 + 1]) {
       return true;
     }
   }
@@ -1096,8 +1429,8 @@ var sqrtSize4 = function sqrtSize42(extraVinculum, hLinePad2) {
   return "M473," + (2713 + extraVinculum + hLinePad2) + "\nc339.3,-1799.3,509.3,-2700,510,-2702 l" + extraVinculum / 5.298 + " -" + extraVinculum + "\nc3.3,-7.3,9.3,-11,18,-11 H400000v" + (40 + extraVinculum) + "H1017.7\ns-90.5,478,-276.2,1466c-185.7,988,-279.5,1483,-281.5,1485c-2,6,-10,9,-24,9\nc-8,0,-12,-0.7,-12,-2c0,-1.3,-5.3,-32,-16,-92c-50.7,-293.3,-119.7,-693.3,-207,-1200\nc0,-1.3,-5.3,8.7,-16,30c-10.7,21.3,-21.3,42.7,-32,64s-16,33,-16,33s-26,-26,-26,-26\ns76,-153,76,-153s77,-151,77,-151c0.7,0.7,35.7,202,105,604c67.3,400.7,102,602.7,104,\n606zM" + (1001 + extraVinculum) + " " + hLinePad2 + "h400000v" + (40 + extraVinculum) + "H1017.7z";
 };
 var phasePath = function phasePath2(y3) {
-  var x2 = y3 / 2;
-  return "M400000 " + y3 + " H0 L" + x2 + " 0 l65 45 L145 " + (y3 - 80) + " H400000z";
+  var x3 = y3 / 2;
+  return "M400000 " + y3 + " H0 L" + x3 + " 0 l65 45 L145 " + (y3 - 80) + " H400000z";
 };
 var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
   var vertSegment = viewBoxHeight - 54 - hLinePad2 - extraVinculum;
@@ -1105,27 +1438,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path5 = "";
+  var path10 = "";
   switch (size) {
     case "sqrtMain":
-      path5 = sqrtMain(extraVinculum, hLinePad);
+      path10 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path5 = sqrtSize1(extraVinculum, hLinePad);
+      path10 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path5 = sqrtSize2(extraVinculum, hLinePad);
+      path10 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path5 = sqrtSize3(extraVinculum, hLinePad);
+      path10 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path5 = sqrtSize4(extraVinculum, hLinePad);
+      path10 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path5 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path10 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path5;
+  return path10;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -1284,16 +1617,16 @@ var DocumentFragment = class {
   /** Convert the fragment into a node. */
   toNode() {
     var frag = document.createDocumentFragment();
-    for (var i3 = 0; i3 < this.children.length; i3++) {
-      frag.appendChild(this.children[i3].toNode());
+    for (var i4 = 0; i4 < this.children.length; i4++) {
+      frag.appendChild(this.children[i4].toNode());
     }
     return frag;
   }
   /** Convert the fragment into HTML markup. */
   toMarkup() {
     var markup = "";
-    for (var i3 = 0; i3 < this.children.length; i3++) {
-      markup += this.children[i3].toMarkup();
+    for (var i4 = 0; i4 < this.children.length; i4++) {
+      markup += this.children[i4].toMarkup();
     }
     return markup;
   }
@@ -1376,8 +1709,8 @@ var calculateSize = function calculateSize2(sizeValue, options) {
   }
   return Math.min(sizeValue.number * scale, options.maxSize);
 };
-var makeEm = function makeEm2(n2) {
-  return +n2.toFixed(4) + "em";
+var makeEm = function makeEm2(n3) {
+  return +n3.toFixed(4) + "em";
 };
 var createClass = function createClass2(classes) {
   return classes.filter((cls) => cls).join(" ");
@@ -1416,8 +1749,8 @@ var toNode = function toNode2(tagName) {
   for (var attr of Object.keys(this.attributes)) {
     node.setAttribute(attr, this.attributes[attr]);
   }
-  for (var i3 = 0; i3 < this.children.length; i3++) {
-    node.appendChild(this.children[i3].toNode());
+  for (var i4 = 0; i4 < this.children.length; i4++) {
+    node.appendChild(this.children[i4].toNode());
   }
   return node;
 };
@@ -1438,8 +1771,8 @@ var toMarkup = function toMarkup2(tagName) {
     markup += " " + attr + '="' + escape(this.attributes[attr]) + '"';
   }
   markup += ">";
-  for (var i3 = 0; i3 < this.children.length; i3++) {
-    markup += this.children[i3].toMarkup();
+  for (var i4 = 0; i4 < this.children.length; i4++) {
+    markup += this.children[i4].toMarkup();
   }
   markup += "</" + tagName + ">";
   return markup;
@@ -1649,8 +1982,8 @@ var SvgNode = class {
     for (var attr of Object.keys(this.attributes)) {
       node.setAttribute(attr, this.attributes[attr]);
     }
-    for (var i3 = 0; i3 < this.children.length; i3++) {
-      node.appendChild(this.children[i3].toNode());
+    for (var i4 = 0; i4 < this.children.length; i4++) {
+      node.appendChild(this.children[i4].toNode());
     }
     return node;
   }
@@ -1660,8 +1993,8 @@ var SvgNode = class {
       markup += " " + attr + '="' + escape(this.attributes[attr]) + '"';
     }
     markup += ">";
-    for (var i3 = 0; i3 < this.children.length; i3++) {
-      markup += this.children[i3].toMarkup();
+    for (var i4 = 0; i4 < this.children.length; i4++) {
+      markup += this.children[i4].toMarkup();
     }
     markup += "</svg>";
     return markup;
@@ -4868,8 +5201,8 @@ var wideCharacterFont = (wideChar2) => {
   var L2 = wideChar2.charCodeAt(1);
   var codePoint = (H - 55296) * 1024 + (L2 - 56320) + 65536;
   if (119808 <= codePoint && codePoint < 120484) {
-    var i3 = Math.floor((codePoint - 119808) / 26);
-    return wideLatinLetterData[i3];
+    var i4 = Math.floor((codePoint - 119808) / 26);
+    return wideLatinLetterData[i4];
   } else if (120782 <= codePoint && codePoint <= 120831) {
     var _i6 = Math.floor((codePoint - 120782) / 10);
     return wideNumeralData[_i6];
@@ -4984,8 +5317,8 @@ var makeOrd = function makeOrd2(group, options, type) {
       return makeSymbol(text2, fontName, mode, options, classes.concat(fontClasses));
     } else if (ligatures.hasOwnProperty(text2) && fontName.slice(0, 10) === "Typewriter") {
       var parts = [];
-      for (var i3 = 0; i3 < text2.length; i3++) {
-        parts.push(makeSymbol(text2[i3], fontName, mode, options, classes.concat(fontClasses)));
+      for (var i4 = 0; i4 < text2.length; i4++) {
+        parts.push(makeSymbol(text2[i4], fontName, mode, options, classes.concat(fontClasses)));
       }
       return makeFragment(parts);
     }
@@ -5031,16 +5364,16 @@ var canCombine = (prev, next) => {
   return true;
 };
 var tryCombineChars = (chars) => {
-  for (var i3 = 0; i3 < chars.length - 1; i3++) {
-    var prev = chars[i3];
-    var next = chars[i3 + 1];
+  for (var i4 = 0; i4 < chars.length - 1; i4++) {
+    var prev = chars[i4];
+    var next = chars[i4 + 1];
     if (prev instanceof SymbolNode && next instanceof SymbolNode && canCombine(prev, next)) {
       prev.text += next.text;
       prev.height = Math.max(prev.height, next.height);
       prev.depth = Math.max(prev.depth, next.depth);
       prev.italic = next.italic;
-      chars.splice(i3 + 1, 1);
-      i3--;
+      chars.splice(i4 + 1, 1);
+      i4--;
     }
   }
   return chars;
@@ -5049,8 +5382,8 @@ var sizeElementFromChildren = function sizeElementFromChildren2(elem) {
   var height = 0;
   var depth = 0;
   var maxFontSize = 0;
-  for (var i3 = 0; i3 < elem.children.length; i3++) {
-    var child = elem.children[i3];
+  for (var i4 = 0; i4 < elem.children.length; i4++) {
+    var child = elem.children[i4];
     if (child.height > height) {
       height = child.height;
     }
@@ -5100,15 +5433,15 @@ var getVListChildrenAndDepth = function getVListChildrenAndDepth2(params) {
     var children = [oldChildren[0]];
     var _depth = -oldChildren[0].shift - oldChildren[0].elem.depth;
     var currPos = _depth;
-    for (var i3 = 1; i3 < oldChildren.length; i3++) {
-      var diff = -oldChildren[i3].shift - currPos - oldChildren[i3].elem.depth;
-      var size = diff - (oldChildren[i3 - 1].elem.height + oldChildren[i3 - 1].elem.depth);
+    for (var i4 = 1; i4 < oldChildren.length; i4++) {
+      var diff = -oldChildren[i4].shift - currPos - oldChildren[i4].elem.depth;
+      var size = diff - (oldChildren[i4 - 1].elem.height + oldChildren[i4 - 1].elem.depth);
       currPos = currPos + diff;
       children.push({
         type: "kern",
         size
       });
-      children.push(oldChildren[i3]);
+      children.push(oldChildren[i4]);
     }
     return {
       children,
@@ -5149,8 +5482,8 @@ var makeVList = function makeVList2(params, options) {
     depth
   } = getVListChildrenAndDepth(params);
   var pstrutSize = 0;
-  for (var i3 = 0; i3 < children.length; i3++) {
-    var child = children[i3];
+  for (var i4 = 0; i4 < children.length; i4++) {
+    var child = children[i4];
     if (child.type === "elem") {
       var elem = child.elem;
       pstrutSize = Math.max(pstrutSize, elem.maxFontSize, elem.height);
@@ -5308,8 +5641,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path5 = new PathNode(pathName);
-  var svgNode = new SvgNode([path5], {
+  var path10 = new PathNode(pathName);
+  var svgNode = new SvgNode([path10], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -5429,8 +5762,8 @@ function defineFunction(_ref) {
     primitive: !!props.primitive,
     handler
   };
-  for (var i3 = 0; i3 < names.length; ++i3) {
-    _functions[names[i3]] = data;
+  for (var i4 = 0; i4 < names.length; ++i4) {
+    _functions[names[i4]] = data;
   }
   if (type) {
     if (htmlBuilder3) {
@@ -5489,8 +5822,8 @@ var buildExpression$1 = function buildExpression(expression, options, isRealGrou
     surrounding = [null, null];
   }
   var groups = [];
-  for (var i3 = 0; i3 < expression.length; i3++) {
-    var output = buildGroup$1(expression[i3], options);
+  for (var i4 = 0; i4 < expression.length; i4++) {
+    var output = buildGroup$1(expression[i4], options);
     if (output instanceof DocumentFragment) {
       var children = output.children;
       groups.push(...children);
@@ -5542,9 +5875,9 @@ var _traverseNonSpaceNodes = function traverseNonSpaceNodes(nodes, callback, pre
   if (next) {
     nodes.push(next);
   }
-  var i3 = 0;
-  for (; i3 < nodes.length; i3++) {
-    var node = nodes[i3];
+  var i4 = 0;
+  for (; i4 < nodes.length; i4++) {
+    var node = nodes[i4];
     var partialGroup = checkPartialGroup(node);
     if (partialGroup) {
       _traverseNonSpaceNodes(partialGroup.children, callback, prev, null, isRoot);
@@ -5558,7 +5891,7 @@ var _traverseNonSpaceNodes = function traverseNonSpaceNodes(nodes, callback, pre
           prev.insertAfter(result);
         } else {
           nodes.unshift(result);
-          i3++;
+          i4++;
         }
       }
     }
@@ -5567,10 +5900,10 @@ var _traverseNonSpaceNodes = function traverseNonSpaceNodes(nodes, callback, pre
     } else if (isRoot && node.hasClass("newline")) {
       prev.node = makeSpan(["leftmost"]);
     }
-    prev.insertAfter = /* @__PURE__ */ ((index) => (n2) => {
-      nodes.splice(index + 1, 0, n2);
-      i3++;
-    })(i3);
+    prev.insertAfter = /* @__PURE__ */ ((index) => (n3) => {
+      nodes.splice(index + 1, 0, n3);
+      i4++;
+    })(i4);
   }
   if (next) {
     nodes.pop();
@@ -5650,14 +5983,14 @@ function buildHTML(tree, options) {
   }
   var children = [];
   var parts = [];
-  for (var i3 = 0; i3 < expression.length; i3++) {
-    parts.push(expression[i3]);
-    if (expression[i3].hasClass("mbin") || expression[i3].hasClass("mrel") || expression[i3].hasClass("allowbreak")) {
+  for (var i4 = 0; i4 < expression.length; i4++) {
+    parts.push(expression[i4]);
+    if (expression[i4].hasClass("mbin") || expression[i4].hasClass("mrel") || expression[i4].hasClass("allowbreak")) {
       var nobreak = false;
-      while (i3 < expression.length - 1 && expression[i3 + 1].hasClass("mspace") && !expression[i3 + 1].hasClass("newline")) {
-        i3++;
-        parts.push(expression[i3]);
-        if (expression[i3].hasClass("nobreak")) {
+      while (i4 < expression.length - 1 && expression[i4 + 1].hasClass("mspace") && !expression[i4 + 1].hasClass("newline")) {
+        i4++;
+        parts.push(expression[i4]);
+        if (expression[i4].hasClass("nobreak")) {
           nobreak = true;
         }
       }
@@ -5665,13 +5998,13 @@ function buildHTML(tree, options) {
         children.push(buildHTMLUnbreakable(parts, options));
         parts = [];
       }
-    } else if (expression[i3].hasClass("newline")) {
+    } else if (expression[i4].hasClass("newline")) {
       parts.pop();
       if (parts.length > 0) {
         children.push(buildHTMLUnbreakable(parts, options));
         parts = [];
       }
-      children.push(expression[i3]);
+      children.push(expression[i4]);
     }
   }
   if (parts.length > 0) {
@@ -5736,15 +6069,15 @@ var MathNode = class {
     if (this.classes.length > 0) {
       node.className = createClass(this.classes);
     }
-    for (var i3 = 0; i3 < this.children.length; i3++) {
-      if (this.children[i3] instanceof TextNode && this.children[i3 + 1] instanceof TextNode) {
-        var text2 = this.children[i3].toText() + this.children[++i3].toText();
-        while (this.children[i3 + 1] instanceof TextNode) {
-          text2 += this.children[++i3].toText();
+    for (var i4 = 0; i4 < this.children.length; i4++) {
+      if (this.children[i4] instanceof TextNode && this.children[i4 + 1] instanceof TextNode) {
+        var text2 = this.children[i4].toText() + this.children[++i4].toText();
+        while (this.children[i4 + 1] instanceof TextNode) {
+          text2 += this.children[++i4].toText();
         }
         node.appendChild(new TextNode(text2).toNode());
       } else {
-        node.appendChild(this.children[i3].toNode());
+        node.appendChild(this.children[i4].toNode());
       }
     }
     return node;
@@ -5765,8 +6098,8 @@ var MathNode = class {
       markup += ' class ="' + escape(createClass(this.classes)) + '"';
     }
     markup += ">";
-    for (var i3 = 0; i3 < this.children.length; i3++) {
-      markup += this.children[i3].toMarkup();
+    for (var i4 = 0; i4 < this.children.length; i4++) {
+      markup += this.children[i4].toMarkup();
     }
     markup += "</" + this.type + ">";
     return markup;
@@ -5964,8 +6297,8 @@ var buildExpression2 = function buildExpression3(expression, options, isOrdgroup
   }
   var groups = [];
   var lastGroup;
-  for (var i3 = 0; i3 < expression.length; i3++) {
-    var _group = buildGroup2(expression[i3], options);
+  for (var i4 = 0; i4 < expression.length; i4++) {
+    var _group = buildGroup2(expression[i4], options);
     if (_group instanceof MathNode && lastGroup instanceof MathNode) {
       if (_group.type === "mtext" && lastGroup.type === "mtext" && _group.getAttribute("mathvariant") === lastGroup.getAttribute("mathvariant")) {
         lastGroup.children.push(..._group.children);
@@ -6478,8 +6811,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path5 = new PathNode(pathName);
-      var svgNode = new SvgNode([path5], {
+      var path10 = new PathNode(pathName);
+      var svgNode = new SvgNode([path10], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -6516,15 +6849,15 @@ var stretchySvg = function stretchySvg2(group, options) {
       } else {
         throw new Error("Correct katexImagesData or update code here to support\n                    " + numSvgChildren + " children.");
       }
-      for (var i3 = 0; i3 < numSvgChildren; i3++) {
-        var _path = new PathNode(paths[i3]);
+      for (var i4 = 0; i4 < numSvgChildren; i4++) {
+        var _path = new PathNode(paths[i4]);
         var _svgNode = new SvgNode([_path], {
           "width": "400em",
           "height": makeEm(_height2),
           "viewBox": "0 0 " + viewBoxWidth + " " + _viewBoxHeight,
-          "preserveAspectRatio": aligns[i3] + " slice"
+          "preserveAspectRatio": aligns[i4] + " slice"
         });
-        var _span = makeSvgSpan([widthClasses[i3]], [_svgNode], options);
+        var _span = makeSvgSpan([widthClasses[i4]], [_svgNode], options);
         if (numSvgChildren === 1) {
           return {
             span: _span,
@@ -7234,8 +7567,8 @@ function parseCD(parser) {
   }
   var row = [];
   var body = [row];
-  for (var i3 = 0; i3 < parsedRows.length; i3++) {
-    var rowNodes = parsedRows[i3];
+  for (var i4 = 0; i4 < parsedRows.length; i4++) {
+    var rowNodes = parsedRows[i4];
     var cell = newCell();
     for (var j2 = 0; j2 < rowNodes.length; j2++) {
       if (!isStartOfArrow(rowNodes[j2])) {
@@ -7290,7 +7623,7 @@ function parseCD(parser) {
         cell = newCell();
       }
     }
-    if (i3 % 2 === 0) {
+    if (i4 % 2 === 0) {
       row.push(cell);
     } else {
       row.shift();
@@ -7400,8 +7733,8 @@ defineFunction({
     var arg = assertNodeType(args[0], "ordgroup");
     var group = arg.body;
     var number = "";
-    for (var i3 = 0; i3 < group.length; i3++) {
-      var node = assertNodeType(group[i3], "textord");
+    for (var i4 = 0; i4 < group.length; i4++) {
+      var node = assertNodeType(group[i4], "textord");
       number += node.text;
     }
     var code = parseInt(number);
@@ -7776,8 +8109,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path5 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path5], {
+  var path10 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path10], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -7946,10 +8279,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path5 = new PathNode(svgLabel, pathStr);
+    var path10 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path5], {
+    var svg = new SvgNode([path10], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -7990,8 +8323,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path5 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path5);
+  var path10 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path10);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -8140,8 +8473,8 @@ var delimTypeToFont = function delimTypeToFont2(type) {
 };
 var traverseSequence = function traverseSequence2(delim, height, sequence, options) {
   var start = Math.min(2, 3 - options.style.size);
-  for (var i3 = start; i3 < sequence.length; i3++) {
-    var delimType = sequence[i3];
+  for (var i4 = start; i4 < sequence.length; i4++) {
+    var delimType = sequence[i4];
     if (delimType.type === "stack") {
       break;
     }
@@ -8377,13 +8710,13 @@ defineFunction({
     var innerHeight = 0;
     var innerDepth = 0;
     var hadMiddle = false;
-    for (var i3 = 0; i3 < inner2.length; i3++) {
-      var node = inner2[i3];
+    for (var i4 = 0; i4 < inner2.length; i4++) {
+      var node = inner2[i4];
       if (isMiddleDelimNode(node)) {
         hadMiddle = true;
       } else {
-        innerHeight = Math.max(inner2[i3].height, innerHeight);
-        innerDepth = Math.max(inner2[i3].depth, innerDepth);
+        innerHeight = Math.max(inner2[i4].height, innerHeight);
+        innerDepth = Math.max(inner2[i4].depth, innerDepth);
       }
     }
     innerHeight *= options.sizeMultiplier;
@@ -8498,8 +8831,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path5 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path5)], {
+    var path10 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path10)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -8807,8 +9140,8 @@ function defineEnvironment(_ref) {
     numOptionalArgs: 0,
     handler
   };
-  for (var i3 = 0; i3 < names.length; ++i3) {
-    _environments[names[i3]] = data;
+  for (var i4 = 0; i4 < names.length; ++i4) {
+    _environments[names[i4]] = data;
   }
   if (htmlBuilder3) {
     _htmlGroupBuilders[type] = htmlBuilder3;
@@ -9026,7 +9359,7 @@ function dCellStyle(envName) {
   }
 }
 var htmlBuilder$6 = function htmlBuilder(group, options) {
-  var r2;
+  var r3;
   var c3;
   var nr = group.body.length;
   var hLinesBeforeRow = group.hLinesBeforeRow;
@@ -9054,19 +9387,19 @@ var htmlBuilder$6 = function htmlBuilder(group, options) {
   var arstrutDepth = 0.3 * arrayskip;
   var totalHeight = 0;
   function setHLinePos(hlinesInGap) {
-    for (var i3 = 0; i3 < hlinesInGap.length; ++i3) {
-      if (i3 > 0) {
+    for (var i4 = 0; i4 < hlinesInGap.length; ++i4) {
+      if (i4 > 0) {
         totalHeight += 0.25;
       }
       hlines.push({
         pos: totalHeight,
-        isDashed: hlinesInGap[i3]
+        isDashed: hlinesInGap[i4]
       });
     }
   }
   setHLinePos(hLinesBeforeRow[0]);
-  for (r2 = 0; r2 < group.body.length; ++r2) {
-    var inrow = group.body[r2];
+  for (r3 = 0; r3 < group.body.length; ++r3) {
+    var inrow = group.body[r3];
     var height = arstrutHeight;
     var depth = arstrutDepth;
     if (nc < inrow.length) {
@@ -9088,7 +9421,7 @@ var htmlBuilder$6 = function htmlBuilder(group, options) {
       }
       outrow.cells[c3] = elt;
     }
-    var rowGap = group.rowGaps[r2];
+    var rowGap = group.rowGaps[r3];
     var gap = 0;
     if (rowGap) {
       gap = calculateSize(rowGap, options);
@@ -9100,7 +9433,7 @@ var htmlBuilder$6 = function htmlBuilder(group, options) {
         gap = 0;
       }
     }
-    if (group.addJot && r2 < group.body.length - 1) {
+    if (group.addJot && r3 < group.body.length - 1) {
       depth += jot;
     }
     outrow.height = height;
@@ -9108,8 +9441,8 @@ var htmlBuilder$6 = function htmlBuilder(group, options) {
     totalHeight += height;
     outrow.pos = totalHeight;
     totalHeight += depth + gap;
-    body[r2] = outrow;
-    setHLinePos(hLinesBeforeRow[r2 + 1]);
+    body[r3] = outrow;
+    setHLinePos(hLinesBeforeRow[r3 + 1]);
   }
   var offset = totalHeight / 2 + options.fontMetrics().axisHeight;
   var colDescriptions = group.cols || [];
@@ -9118,10 +9451,10 @@ var htmlBuilder$6 = function htmlBuilder(group, options) {
   var colDescrNum;
   var tagSpans = [];
   if (group.tags && group.tags.some((tag2) => tag2)) {
-    for (r2 = 0; r2 < nr; ++r2) {
-      var rw = body[r2];
+    for (r3 = 0; r3 < nr; ++r3) {
+      var rw = body[r3];
       var shift = rw.pos - offset;
-      var tag = group.tags[r2];
+      var tag = group.tags[r3];
       var tagSpan = void 0;
       if (tag === true) {
         tagSpan = makeSpan(["eqn-num"], [], options);
@@ -9189,8 +9522,8 @@ var htmlBuilder$6 = function htmlBuilder(group, options) {
       }
     }
     var colElems = [];
-    for (r2 = 0; r2 < nr; ++r2) {
-      var row = body[r2];
+    for (r3 = 0; r3 < nr; ++r3) {
+      var row = body[r3];
       var elem = row.cells[c3];
       if (!elem) {
         continue;
@@ -9271,13 +9604,13 @@ var mathmlBuilder$5 = function mathmlBuilder(group, options) {
   var tbl = [];
   var glue = new MathNode("mtd", [], ["mtr-glue"]);
   var tag = new MathNode("mtd", [], ["mml-eqn-num"]);
-  for (var i3 = 0; i3 < group.body.length; i3++) {
-    var rw = group.body[i3];
+  for (var i4 = 0; i4 < group.body.length; i4++) {
+    var rw = group.body[i4];
     var row = [];
     for (var j2 = 0; j2 < rw.length; j2++) {
       row.push(new MathNode("mtd", [buildGroup2(rw[j2], options)]));
     }
-    if (group.tags && group.tags[i3]) {
+    if (group.tags && group.tags[i4]) {
       row.unshift(glue);
       row.push(glue);
       if (group.leqno) {
@@ -9388,8 +9721,8 @@ var alignedHandler = function alignedHandler2(context, args) {
   };
   if (args[0] && args[0].type === "ordgroup") {
     var arg0 = "";
-    for (var i3 = 0; i3 < args[0].body.length; i3++) {
-      var textord2 = assertNodeType(args[0].body[i3], "textord");
+    for (var i4 = 0; i4 < args[0].body.length; i4++) {
+      var textord2 = assertNodeType(args[0].body[i4], "textord");
       arg0 += textord2.text;
     }
     numMaths = Number(arg0);
@@ -9737,8 +10070,8 @@ defineFunction({
       throw new ParseError("Invalid environment name", nameGroup);
     }
     var envName = "";
-    for (var i3 = 0; i3 < nameGroup.body.length; ++i3) {
-      envName += assertNodeType(nameGroup.body[i3], "textord").text;
+    for (var i4 = 0; i4 < nameGroup.body.length; ++i4) {
+      envName += assertNodeType(nameGroup.body[i4], "textord").text;
     }
     if (funcName === "\\begin") {
       if (!environments.hasOwnProperty(envName)) {
@@ -10453,8 +10786,8 @@ defineFunction({
       return parser.formatUnsupportedCmd("\\url");
     }
     var chars = [];
-    for (var i3 = 0; i3 < href.length; i3++) {
-      var c3 = href[i3];
+    for (var i4 = 0; i4 < href.length; i4++) {
+      var c3 = href[i4];
       if (c3 === "~") {
         c3 = "\\textasciitilde";
       }
@@ -10550,8 +10883,8 @@ defineFunction({
         break;
       case "\\htmlData": {
         var data = value.split(",");
-        for (var i3 = 0; i3 < data.length; i3++) {
-          var item = data[i3];
+        for (var i4 = 0; i4 < data.length; i4++) {
+          var item = data[i4];
           var firstEquals = item.indexOf("=");
           if (firstEquals < 0) {
             throw new ParseError("\\htmlData key/value '" + item + "' missing equals sign");
@@ -10675,8 +11008,8 @@ defineFunction({
     if (optArgs[0]) {
       var attributeStr = assertNodeType(optArgs[0], "raw").string;
       var attributes = attributeStr.split(",");
-      for (var i3 = 0; i3 < attributes.length; i3++) {
-        var keyVal = attributes[i3].split("=");
+      for (var i4 = 0; i4 < attributes.length; i4++) {
+        var keyVal = attributes[i4].split("=");
         if (keyVal.length === 2) {
           var str = keyVal[1].trim();
           switch (keyVal[0].trim()) {
@@ -11100,8 +11433,8 @@ var htmlBuilder$2 = (grp, options) => {
     }
   } else {
     var output = [];
-    for (var i3 = 1; i3 < group.name.length; i3++) {
-      output.push(mathsym(group.name[i3], group.mode, options));
+    for (var i4 = 1; i4 < group.name.length; i4++) {
+      output.push(mathsym(group.name[i4], group.mode, options));
     }
     base = makeSpan(["mop"], output, options);
   }
@@ -11317,8 +11650,8 @@ var htmlBuilder$1 = (grp, options) => {
       }
     });
     var expression = buildExpression$1(body, options.withFont("mathrm"), true);
-    for (var i3 = 0; i3 < expression.length; i3++) {
-      var child = expression[i3];
+    for (var i4 = 0; i4 < expression.length; i4++) {
+      var child = expression[i4];
       if (child instanceof SymbolNode) {
         child.text = child.text.replace(/\u2212/, "-").replace(/\u2217/, "*");
       }
@@ -11336,8 +11669,8 @@ var htmlBuilder$1 = (grp, options) => {
 var mathmlBuilder2 = (group, options) => {
   var expression = buildExpression2(group.body, options.withFont("mathrm"));
   var isAllString = true;
-  for (var i3 = 0; i3 < expression.length; i3++) {
-    var node = expression[i3];
+  for (var i4 = 0; i4 < expression.length; i4++) {
+    var node = expression[i4];
     if (node instanceof SpaceNode) ;
     else if (node instanceof MathNode) {
       switch (node.type) {
@@ -11639,15 +11972,15 @@ defineFunction({
 function sizingGroup(value, options, baseOptions) {
   var inner2 = buildExpression$1(value, options, false);
   var multiplier = options.sizeMultiplier / baseOptions.sizeMultiplier;
-  for (var i3 = 0; i3 < inner2.length; i3++) {
-    var pos = inner2[i3].classes.indexOf("sizing");
+  for (var i4 = 0; i4 < inner2.length; i4++) {
+    var pos = inner2[i4].classes.indexOf("sizing");
     if (pos < 0) {
-      Array.prototype.push.apply(inner2[i3].classes, options.sizingClasses(baseOptions));
-    } else if (inner2[i3].classes[pos + 1] === "reset-size" + options.size) {
-      inner2[i3].classes[pos + 1] = "reset-size" + baseOptions.size;
+      Array.prototype.push.apply(inner2[i4].classes, options.sizingClasses(baseOptions));
+    } else if (inner2[i4].classes[pos + 1] === "reset-size" + options.size) {
+      inner2[i4].classes[pos + 1] = "reset-size" + baseOptions.size;
     }
-    inner2[i3].height *= multiplier;
-    inner2[i3].depth *= multiplier;
+    inner2[i4].height *= multiplier;
+    inner2[i4].depth *= multiplier;
   }
   return makeFragment(inner2);
 }
@@ -11704,8 +12037,8 @@ defineFunction({
     var tbArg = optArgs[0] && assertNodeType(optArgs[0], "ordgroup");
     if (tbArg) {
       var letter;
-      for (var i3 = 0; i3 < tbArg.body.length; ++i3) {
-        var node = tbArg.body[i3];
+      for (var i4 = 0; i4 < tbArg.body.length; ++i4) {
+        var node = tbArg.body[i4];
         letter = assertSymbolNodeType(node).text;
         if (letter === "t") {
           smashHeight = true;
@@ -11745,12 +12078,12 @@ defineFunction({
       return makeSpan(["mord", "smash"], [node], options);
     }
     if (node.children) {
-      for (var i3 = 0; i3 < node.children.length; i3++) {
+      for (var i4 = 0; i4 < node.children.length; i4++) {
         if (group.smashHeight) {
-          node.children[i3].height = 0;
+          node.children[i4].height = 0;
         }
         if (group.smashDepth) {
-          node.children[i3].depth = 0;
+          node.children[i4].depth = 0;
         }
       }
     }
@@ -12406,8 +12739,8 @@ defineFunction({
     var text2 = makeVerb(group);
     var body = [];
     var newOptions = options.havingStyle(options.style.text());
-    for (var i3 = 0; i3 < text2.length; i3++) {
-      var c3 = text2[i3];
+    for (var i4 = 0; i4 < text2.length; i4++) {
+      var c3 = text2[i4];
       if (c3 === "~") {
         c3 = "\\textasciitilde";
       }
@@ -12574,8 +12907,8 @@ var Namespace = class {
       global = false;
     }
     if (global) {
-      for (var i3 = 0; i3 < this.undefStack.length; i3++) {
-        delete this.undefStack[i3][name];
+      for (var i4 = 0; i4 < this.undefStack.length; i4++) {
+        delete this.undefStack[i4][name];
       }
       if (this.undefStack.length > 0) {
         this.undefStack[this.undefStack.length - 1][name] = value;
@@ -12595,21 +12928,21 @@ var Namespace = class {
 };
 var macros = _macros;
 defineMacro("\\noexpand", function(context) {
-  var t2 = context.popToken();
-  if (context.isExpandable(t2.text)) {
-    t2.noexpand = true;
-    t2.treatAsRelax = true;
+  var t3 = context.popToken();
+  if (context.isExpandable(t3.text)) {
+    t3.noexpand = true;
+    t3.treatAsRelax = true;
   }
   return {
-    tokens: [t2],
+    tokens: [t3],
     numArgs: 0
   };
 });
 defineMacro("\\expandafter", function(context) {
-  var t2 = context.popToken();
+  var t3 = context.popToken();
   context.expandOnce(true);
   return {
-    tokens: [t2],
+    tokens: [t3],
     numArgs: 0
   };
 });
@@ -13446,9 +13779,9 @@ var MacroExpander = class {
         throw new ParseError("The length of delimiters doesn't match the number of args!");
       }
       var delims = delimiters2[0];
-      for (var i3 = 0; i3 < delims.length; i3++) {
+      for (var i4 = 0; i4 < delims.length; i4++) {
         var tok = this.popToken();
-        if (delims[i3] !== tok.text) {
+        if (delims[i4] !== tok.text) {
           throw new ParseError("Use of the macro doesn't match its definition", tok);
         }
       }
@@ -13504,17 +13837,17 @@ var MacroExpander = class {
     var args = this.consumeArgs(expansion.numArgs, expansion.delimiters);
     if (expansion.numArgs) {
       tokens = tokens.slice();
-      for (var i3 = tokens.length - 1; i3 >= 0; --i3) {
-        var tok = tokens[i3];
+      for (var i4 = tokens.length - 1; i4 >= 0; --i4) {
+        var tok = tokens[i4];
         if (tok.text === "#") {
-          if (i3 === 0) {
+          if (i4 === 0) {
             throw new ParseError("Incomplete placeholder at end of macro body", tok);
           }
-          tok = tokens[--i3];
+          tok = tokens[--i4];
           if (tok.text === "#") {
-            tokens.splice(i3 + 1, 1);
+            tokens.splice(i4 + 1, 1);
           } else if (/^[1-9]$/.test(tok.text)) {
-            tokens.splice(i3, 2, ...args[+tok.text - 1]);
+            tokens.splice(i4, 2, ...args[+tok.text - 1]);
           } else {
             throw new ParseError("Not a valid argument number", tok);
           }
@@ -14208,12 +14541,12 @@ var Parser = class _Parser {
       this.gullet.macros.set("\\color", "\\textcolor");
     }
     try {
-      var parse = this.parseExpression(false);
+      var parse3 = this.parseExpression(false);
       this.expect("EOF");
       if (!this.settings.globalGroup) {
         this.gullet.endGroup();
       }
-      return parse;
+      return parse3;
     } finally {
       this.gullet.endGroups();
     }
@@ -14227,10 +14560,10 @@ var Parser = class _Parser {
     this.consume();
     this.gullet.pushToken(new Token("}"));
     this.gullet.pushTokens(tokens);
-    var parse = this.parseExpression(false);
+    var parse3 = this.parseExpression(false);
     this.expect("}");
     this.nextToken = oldToken;
-    return parse;
+    return parse3;
   }
   /**
    * Parses an "expression", which is a list of atoms.
@@ -14282,13 +14615,13 @@ var Parser = class _Parser {
   handleInfixNodes(body) {
     var overIndex = -1;
     var funcName;
-    for (var i3 = 0; i3 < body.length; i3++) {
-      var node = body[i3];
+    for (var i4 = 0; i4 < body.length; i4++) {
+      var node = body[i4];
       if (node.type === "infix") {
         if (overIndex !== -1) {
           throw new ParseError("only one infix operator per group", node.token);
         }
-        overIndex = i3;
+        overIndex = i4;
         funcName = node.replaceWith;
       }
     }
@@ -14350,11 +14683,11 @@ var Parser = class _Parser {
    */
   formatUnsupportedCmd(text2) {
     var textordArray = [];
-    for (var i3 = 0; i3 < text2.length; i3++) {
+    for (var i4 = 0; i4 < text2.length; i4++) {
       textordArray.push({
         type: "textord",
         mode: "text",
-        text: text2[i3]
+        text: text2[i4]
       });
     }
     var textNode = {
@@ -14532,11 +14865,11 @@ var Parser = class _Parser {
     }
     var args = [];
     var optArgs = [];
-    for (var i3 = 0; i3 < totalArgs; i3++) {
-      var argType = funcData.argTypes && funcData.argTypes[i3];
-      var isOptional = i3 < funcData.numOptionalArgs;
+    for (var i4 = 0; i4 < totalArgs; i4++) {
+      var argType = funcData.argTypes && funcData.argTypes[i4];
+      var isOptional = i4 < funcData.numOptionalArgs;
       if ("primitive" in funcData && funcData.primitive && argType == null || // \sqrt expands into primitive if optional argument doesn't exist
-      funcData.type === "sqrt" && i3 === 1 && optArgs[0] == null) {
+      funcData.type === "sqrt" && i4 === 1 && optArgs[0] == null) {
         argType = "primitive";
       }
       var arg = this.parseGroupOfType("argument to '" + func + "'", argType, isOptional);
@@ -14678,7 +15011,7 @@ var Parser = class _Parser {
    */
   parseSizeGroup(optional) {
     var res;
-    var isBlank = false;
+    var isBlank2 = false;
     this.gullet.consumeSpaces();
     if (!optional && this.gullet.future().text !== "{") {
       res = this.parseRegexGroup(/^[-+]? *(?:$|\d+|\d+\.\d*|\.\d*) *[a-z]{0,2} *$/, "size");
@@ -14690,7 +15023,7 @@ var Parser = class _Parser {
     }
     if (!optional && res.text.length === 0) {
       res.text = "0pt";
-      isBlank = true;
+      isBlank2 = true;
     }
     var match = /([-+]?) *(\d+(?:\.\d*)?|\.\d+) *([a-z]{2})/.exec(res.text);
     if (!match) {
@@ -14708,7 +15041,7 @@ var Parser = class _Parser {
       type: "size",
       mode: this.mode,
       value: data,
-      isBlank
+      isBlank: isBlank2
     };
   }
   /**
@@ -14808,45 +15141,45 @@ var Parser = class _Parser {
    * The group will be modified in place.
    */
   formLigatures(group) {
-    var n2 = group.length - 1;
-    for (var i3 = 0; i3 < n2; ++i3) {
-      var a2 = group[i3];
-      if (a2.type !== "textord") {
+    var n3 = group.length - 1;
+    for (var i4 = 0; i4 < n3; ++i4) {
+      var a3 = group[i4];
+      if (a3.type !== "textord") {
         continue;
       }
-      var v2 = a2.text;
-      var next = group[i3 + 1];
+      var v2 = a3.text;
+      var next = group[i4 + 1];
       if (!next || next.type !== "textord") {
         continue;
       }
       if (v2 === "-" && next.text === "-") {
-        var afterNext = group[i3 + 2];
-        if (i3 + 1 < n2 && afterNext && afterNext.type === "textord" && afterNext.text === "-") {
-          group.splice(i3, 3, {
+        var afterNext = group[i4 + 2];
+        if (i4 + 1 < n3 && afterNext && afterNext.type === "textord" && afterNext.text === "-") {
+          group.splice(i4, 3, {
             type: "textord",
             mode: "text",
-            loc: SourceLocation.range(a2, afterNext),
+            loc: SourceLocation.range(a3, afterNext),
             text: "---"
           });
-          n2 -= 2;
+          n3 -= 2;
         } else {
-          group.splice(i3, 2, {
+          group.splice(i4, 2, {
             type: "textord",
             mode: "text",
-            loc: SourceLocation.range(a2, next),
+            loc: SourceLocation.range(a3, next),
             text: "--"
           });
-          n2 -= 1;
+          n3 -= 1;
         }
       }
       if ((v2 === "'" || v2 === "`") && next.text === v2) {
-        group.splice(i3, 2, {
+        group.splice(i4, 2, {
           type: "textord",
           mode: "text",
-          loc: SourceLocation.range(a2, next),
+          loc: SourceLocation.range(a3, next),
           text: v2 + v2
         });
-        n2 -= 1;
+        n3 -= 1;
       }
     }
   }
@@ -14934,8 +15267,8 @@ var Parser = class _Parser {
     }
     this.consume();
     if (match) {
-      for (var i3 = 0; i3 < match[0].length; i3++) {
-        var accent2 = match[0][i3];
+      for (var i4 = 0; i4 < match[0].length; i4++) {
+        var accent2 = match[0][i4];
         if (!unicodeAccents[accent2]) {
           throw new ParseError("Unknown accent ' " + accent2 + "'", nucleus);
         }
@@ -15159,7 +15492,7 @@ function isTemplate(value) {
 function analyzePlaceholders(body) {
   let variadic = false;
   let max = -1;
-  let invalid = false;
+  let invalid2 = false;
   for (let index = 0; index < body.length; index += 1) {
     if (body[index] !== "#" || index > 0 && body[index - 1] === "\\") continue;
     const next = body[index + 1];
@@ -15171,89 +15504,19 @@ function analyzePlaceholders(body) {
       while (end < body.length && /\d/.test(body[end])) end += 1;
       const digits = body.slice(index + 1, end);
       if (/^(?:0|[1-9]\d?)$/.test(digits)) max = Math.max(max, Number(digits));
-      else invalid = true;
+      else invalid2 = true;
       index = end - 1;
     } else {
-      invalid = true;
+      invalid2 = true;
     }
   }
-  return { variadic, arity: max + 1, invalid };
+  return { variadic, arity: max + 1, invalid: invalid2 };
 }
 function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function isStringArray(value) {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
-}
-
-// lib/entity-storage.ts
-import { createHash } from "node:crypto";
-var PACKAGE_STORAGE_VERSION = 1;
-var MACRO_STORAGE_VERSION = 1;
-var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
-var CURRENT_MACRO_SCHEMA_VERSION = 1;
-var UNPACKAGED_PACKAGE_ID = "_unpackaged";
-function semanticDigest(value) {
-  return createHash("sha256").update(JSON.stringify(value)).digest("hex");
-}
-function makeEntityStorageReceipt(entries, macroPackages, legacyBackupPresent) {
-  const entryList = Array.isArray(entries) ? entries : [];
-  const packages = [...macroPackages].sort(([left], [right]) => left.localeCompare(right));
-  return {
-    legacy_backup_present: legacyBackupPresent,
-    legacy_entries_present: legacyBackupPresent && Array.isArray(entries),
-    entry_count: entryList.length,
-    macro_package_count: packages.length,
-    macro_count: packages.reduce((count, [, value]) => count + (value && typeof value === "object" && !Array.isArray(value) && value.macros && typeof value.macros === "object" && !Array.isArray(value.macros) ? Object.keys(value.macros).length : 0), 0),
-    entries_digest: semanticDigest(entryList),
-    macro_packages_digest: semanticDigest(packages)
-  };
-}
-var PACKAGE_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
-var WINDOWS_DEVICE_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i;
-function assertPackageId(packageId) {
-  if (packageId !== UNPACKAGED_PACKAGE_ID && (!PACKAGE_ID_RE.test(packageId) || packageId.toLowerCase().endsWith(".json"))) {
-    throw new Error(
-      `Package id ${JSON.stringify(packageId)} must be 1-64 ASCII letters, digits, dots, underscores, or hyphens, start with a letter or digit, and not end in .json.`
-    );
-  }
-  if (WINDOWS_DEVICE_RE.test(packageId)) {
-    throw new Error(`Package id ${JSON.stringify(packageId)} is a reserved Windows device name.`);
-  }
-}
-function entityIdentityHash(kind, ...segments) {
-  if (segments.some((segment) => segment.includes("\0"))) {
-    throw new Error("Entity identities may not contain NUL characters.");
-  }
-  return createHash("sha256").update(Buffer.from(`snl-doc/v1\0${kind}\0${segments.join("\0")}`, "utf8")).digest("hex").slice(0, 20);
-}
-function packageManifestPath(packageId) {
-  assertPackageId(packageId);
-  return `packages/${packageId}-${entityIdentityHash("package", packageId)}.json`;
-}
-function macroEntityPath(packageId, macroName) {
-  assertPackageId(packageId);
-  if (!macroName) throw new Error("Macro name must be non-empty.");
-  return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
-}
-function assertCompatibleSchemaMarker(value, current, label, required = false) {
-  if (!Object.hasOwn(value, "schema_version")) {
-    if (required) throw new Error(`${label} must carry schema_version ${current}.`);
-    return;
-  }
-  if (!Number.isInteger(value.schema_version) || value.schema_version < 1) {
-    throw new Error(`${label} schema_version must be a positive integer.`);
-  }
-  if (value.schema_version > current) {
-    throw new Error(
-      `${label} schema version ${String(value.schema_version)} is newer than this Toolkit supports (${current}).`
-    );
-  }
-  if (value.schema_version < current) {
-    throw new Error(
-      `${label} schema_version ${String(value.schema_version)} has no registered migration to ${current}.`
-    );
-  }
 }
 
 // lib/snl-doc.ts
@@ -15370,6 +15633,19 @@ function isLocalizedLabel(value, required) {
   const values = Object.values(value.values);
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
+function assertCurrentEntryPayload(value, label) {
+  if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord2(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
+    throw new Error(`${label} is not a valid schema-1 Entry payload.`);
+  }
+  if (value.content.snl !== void 0 && typeof value.content.snl !== "string") {
+    throw new Error(`${label}#content.snl must be a string when present.`);
+  }
+  for (const field of ["typst", "latex", "markdown", "text"]) {
+    if (value.content[field] !== void 0 && !isLocalizedLabel(value.content[field], false)) {
+      throw new Error(`${label}#content.${field} must be a string or valid I18n map when present.`);
+    }
+  }
+}
 function assertThemedColoring(value, label) {
   if (!isRecord2(value) || Object.hasOwn(value, "stroke") || Object.hasOwn(value, "background")) {
     throw new Error(`${label} must contain light and dark variants.`);
@@ -15466,6 +15742,65 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     }
   }
 }
+async function readEntries(workspaceRoot) {
+  const config = await readConfig(workspaceRoot);
+  if (usesEntityStorage(config)) {
+    await assertEntityStorageTopology(workspaceRoot, config);
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
+    const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
+    const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
+    const ids = /* @__PURE__ */ new Set();
+    const entries = records.map(({ relativePath, value }) => {
+      if (!isRecord2(value) || value.format !== "snl-entry" || value.version !== ENTRY_STORAGE_VERSION || typeof value.package !== "string" || !isRecord2(value.entry) || typeof value.entry.id !== "string" || !value.entry.id || value.entry.id !== value.entry.id.trim() || typeof value.entry.package !== "string") {
+        throw new Error(`${relativePath} is not a valid SNL Entry envelope.`);
+      }
+      assertCompatibleSchemaMarker(
+        value,
+        CURRENT_ENTRY_SCHEMA_VERSION,
+        `${relativePath} Entry envelope`,
+        config.version === "0.1.0"
+      );
+      if (usesCurrentEntitySchemas(config)) {
+        assertCurrentEntryPayload(value.entry, `${relativePath} Entry payload`);
+        if (!entryKindIds.has(value.entry.kind)) {
+          throw new Error(`${relativePath} Entry references missing Entry Kind ${JSON.stringify(value.entry.kind)}.`);
+        }
+      }
+      if (value.entry.package !== value.package) {
+        throw new Error(`${relativePath} Entry package disagrees with its envelope package.`);
+      }
+      if (!manifests.has(value.package)) {
+        throw new Error(`${relativePath} references missing Package ${JSON.stringify(value.package)}.`);
+      }
+      assertExpectedEntityPath(relativePath, entryEntityPath(value.package, value.entry.id));
+      if (ids.has(value.entry.id)) {
+        throw new Error(`Duplicate Entry identity ${JSON.stringify(value.entry.id)}.`);
+      }
+      ids.add(value.entry.id);
+      return value.entry;
+    }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
+    if (usesCurrentEntitySchemas(config)) {
+      for (const manifest of manifests.values()) {
+        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
+        if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
+          throw new Error(
+            `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`
+          );
+        }
+      }
+    }
+    return entries;
+  }
+  const p3 = entriesPath(workspaceRoot);
+  if (!await pathExists(p3)) {
+    return [];
+  }
+  const raw = await readJson(p3);
+  if (!Array.isArray(raw)) {
+    throw new Error(`${p3} is not a JSON array`);
+  }
+  return raw;
+}
 function defineIdentity(target, key, value) {
   Object.defineProperty(target, key, {
     value,
@@ -15539,7 +15874,7 @@ async function readEntityMacroPackages(workspaceRoot) {
     macros2.set(value.package, packageMacros);
   }
   const out = {};
-  for (const manifest of [...manifests.values()].sort((a2, b2) => a2.id.localeCompare(b2.id))) {
+  for (const manifest of [...manifests.values()].sort((a3, b2) => a3.id.localeCompare(b2.id))) {
     defineIdentity(out, manifest.id, {
       version: usesCurrentEntitySchemas(config) ? "11" : "8",
       name: manifest.name,
@@ -15619,6 +15954,278 @@ function assertExpectedEntityPath(actual, expected) {
 function isRecord2(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+async function readActiveMacros(workspaceRoot) {
+  const [config, packages] = await Promise.all([
+    readConfig(workspaceRoot),
+    readAllMacroPackages(workspaceRoot)
+  ]);
+  const active = config.active_macro_packages === void 0 ? null : new Set(config.active_macro_packages);
+  if (active && usesEntityStorage(config)) {
+    for (const packageId of active) {
+      if (!Object.prototype.hasOwnProperty.call(packages, packageId)) {
+        throw new Error(`active_macro_packages references missing Package ${JSON.stringify(packageId)}.`);
+      }
+    }
+  }
+  const flat = {};
+  for (const pkgName of Object.keys(packages).sort(
+    (left, right) => `${left}.json`.localeCompare(`${right}.json`)
+  )) {
+    if (active && !active.has(pkgName)) continue;
+    const pkg = packages[pkgName];
+    if (!pkg?.macros) continue;
+    for (const [macroName, entry] of Object.entries(pkg.macros)) {
+      const withName = {
+        name: macroName,
+        ...entry
+      };
+      defineIdentity(flat, macroName, withName);
+    }
+  }
+  return flat;
+}
+async function readEntryKinds(workspaceRoot) {
+  const cfg = await readConfig(workspaceRoot);
+  return cfg.entry_kinds ?? [];
+}
+
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/context-source-DWcRwFd7.js
+function t2(t3) {
+  let n3 = /* @__PURE__ */ new Set();
+  if (!t3.trim()) return n3;
+  let r3;
+  try {
+    r3 = y(t3);
+  } catch {
+    return n3;
+  }
+  let i4 = (e) => {
+    if (e.kind === "binder") {
+      n3.add(e.binder_name ?? e.temporary_source ?? e.macro_name);
+      return;
+    }
+    e.children.forEach(i4);
+  };
+  return i4(r3), n3;
+}
+
+// lib/snl-parser.ts
+function tryParseSnlSyntaxTree(input) {
+  try {
+    return { ok: true, tree: y(input) };
+  } catch (e) {
+    if (e instanceof h) {
+      return { ok: false, error: e.message, position: e.position };
+    }
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+// lib/lint-entry.ts
+function safeExportedBinders(source) {
+  if (typeof source !== "string" || !source.trim()) return /* @__PURE__ */ new Set();
+  try {
+    return t2(source);
+  } catch {
+    return /* @__PURE__ */ new Set();
+  }
+}
+function isValidI18nString(value) {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  const record = value;
+  if (record.type !== "i18n" || typeof record.default_language !== "string") return false;
+  if (typeof record.values !== "object" || record.values === null || Array.isArray(record.values)) return false;
+  const values = Object.values(record.values);
+  return values.length > 0 && values.every((item) => typeof item === "string");
+}
+function lintEntry(raw, ctx) {
+  const issues = [];
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    issues.push({
+      severity: "error",
+      code: "entry.not-object",
+      message: `Entry payload must be a JSON object, got ${describe(raw)}.`
+    });
+    return { issues };
+  }
+  const e = raw;
+  if (typeof e.id !== "string" || e.id.trim() === "") {
+    issues.push({
+      severity: "error",
+      code: "entry.missing-id",
+      message: "Field `id` must be a non-empty string.",
+      path: "id"
+    });
+  } else if (ctx.siblingEntries.some((s2) => s2.id === e.id)) {
+    issues.push({
+      severity: "error",
+      code: "entry.duplicate-id",
+      message: `Entry id '${e.id}' already exists in the shared pool.`,
+      path: "id"
+    });
+  }
+  if (typeof e.kind !== "string" || e.kind.trim() === "") {
+    issues.push({
+      severity: "error",
+      code: "entry.missing-kind",
+      message: "Field `kind` must be a non-empty string.",
+      path: "kind"
+    });
+  } else if (!ctx.entryKinds.some((k2) => k2.id === e.kind)) {
+    const known = ctx.entryKinds.map((k2) => k2.id).join(", ") || "(none defined)";
+    issues.push({
+      severity: "error",
+      code: "entry.unknown-kind",
+      message: `kind '${e.kind}' is not in config.entry_kinds. Known: ${known}.`,
+      path: "kind"
+    });
+  }
+  if (typeof e.title !== "string" && !isValidI18nString(e.title)) {
+    issues.push({
+      severity: "error",
+      code: "entry.missing-title",
+      message: "Field `title` must be a string or valid I18n map.",
+      path: "title"
+    });
+  }
+  if (typeof e.content !== "object" || e.content === null || Array.isArray(e.content)) {
+    issues.push({
+      severity: "error",
+      code: "entry.missing-content",
+      message: "Field `content` must be an object (may be empty).",
+      path: "content"
+    });
+  } else {
+    for (const dialect of ["snl", "typst", "latex", "markdown", "text"]) {
+      const val = e.content[dialect];
+      const valid = val === void 0 || typeof val === "string" || dialect !== "snl" && isValidI18nString(val);
+      if (!valid) {
+        issues.push({
+          severity: "error",
+          code: "entry.bad-content-dialect",
+          message: dialect === "snl" ? `content.snl must be a language-invariant string when present, got ${describe(val)}.` : `content.${dialect} must be a string or valid I18n map when present, got ${describe(val)}.`,
+          path: `content.${dialect}`
+        });
+      }
+    }
+  }
+  if (!("contribution_info" in e)) {
+    issues.push({
+      severity: "error",
+      code: "entry.missing-contribution-info",
+      message: "Field `contribution_info` is required (may be null).",
+      path: "contribution_info"
+    });
+  }
+  if (!("pointer" in e)) {
+    issues.push({
+      severity: "error",
+      code: "entry.missing-pointer",
+      message: "Field `pointer` is required (may be null).",
+      path: "pointer"
+    });
+  }
+  const snl = typeof e.content === "object" && e.content !== null && typeof e.content.snl === "string" ? e.content.snl : "";
+  if (snl.trim().length > 0) {
+    const parsed = tryParseSnlSyntaxTree(snl);
+    if (!parsed.ok) {
+      issues.push({
+        severity: "error",
+        code: "snl.parse",
+        message: parsed.error,
+        path: "content.snl",
+        position: parsed.position
+      });
+    } else {
+      const unresolved = findUnresolvedIdentifiers(snl, ctx.macros);
+      for (const name of unresolved) {
+        issues.push({
+          severity: ctx.strictMacros ? "error" : "info",
+          code: "snl.identifier-not-in-pool",
+          message: `Identifier '${name}' is not a registered macro; will render as fvar/bvar fallback. May be intentional (bound variable, local free variable) or may indicate a typo / missing macro registration \u2014 agent decides.`,
+          path: "content.snl"
+        });
+      }
+      const exportedBinders = /* @__PURE__ */ new Map();
+      for (const sibling of ctx.siblingEntries) {
+        if (typeof sibling.id === "string") {
+          exportedBinders.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+        }
+      }
+      if (typeof e.id === "string") {
+        exportedBinders.set(e.id, safeExportedBinders(snl));
+      }
+      const srcRefs = collectSrcReferences(parsed.tree);
+      for (const ref of srcRefs) {
+        const declarations = exportedBinders.get(ref.sourceId);
+        if (!declarations) {
+          issues.push({
+            severity: "info",
+            code: "snl.src-dangling",
+            message: `Cross-entry src-postfix reference \`${ref.binderName}@${ref.sourceId}\` does not resolve to any entry in the shared pool. Tolerated (renders with a warning badge), but likely a typo \u2014 entry ids are stable once created and should point at a real source entry that owns the bound variable. See docs/context-entry-design.md.`,
+            path: "content.snl"
+          });
+        } else if (!declarations.has(ref.binderName)) {
+          issues.push({
+            severity: "info",
+            code: "snl.src-no-declaration",
+            message: `Cross-entry source ${JSON.stringify(ref.sourceId)} exists but does not export binder ${JSON.stringify(ref.binderName)}.`,
+            path: "content.snl"
+          });
+        }
+      }
+    }
+  }
+  return { issues };
+}
+function collectSrcReferences(node) {
+  const out = /* @__PURE__ */ new Map();
+  visit2(node);
+  return [...out.values()].sort((a3, b2) => a3.sourceId.localeCompare(b2.sourceId) || a3.binderName.localeCompare(b2.binderName));
+  function visit2(n3) {
+    if (!n3 || typeof n3 !== "object") return;
+    const nn = n3;
+    const binderName = typeof nn.temporary_source === "string" ? nn.temporary_source : typeof nn.binder_name === "string" ? nn.binder_name : typeof nn.macro_name === "string" ? nn.macro_name : "";
+    if (nn.postfix && typeof nn.postfix === "object") {
+      const postfix = nn.postfix;
+      if (postfix.type === "name" && typeof postfix.name === "string" && postfix.name.length > 0) {
+        const ref = { sourceId: postfix.name, binderName };
+        out.set(`${ref.sourceId}\0${ref.binderName}`, ref);
+      }
+    }
+    if (nn.mdata && typeof nn.mdata === "object") {
+      const src = nn.mdata.src;
+      if (typeof src === "string" && src.length > 0) {
+        const ref = { sourceId: src, binderName };
+        out.set(`${ref.sourceId}\0${ref.binderName}`, ref);
+      }
+    }
+    if (Array.isArray(nn.children)) for (const child of nn.children) visit2(child);
+  }
+}
+function findUnresolvedIdentifiers(snl, pool) {
+  const stripped = snl.replace(/\$\$[\s\S]*?\$\$/g, " ").replace(/\$[\s\S]*?\$/g, " ").replace(/%[\s\S]*?%/g, " ").replace(/`[\s\S]*?`/g, " ");
+  const withoutAtIdents = stripped.replace(
+    /@[A-Za-z_][A-Za-z0-9_.\-]*/g,
+    " "
+  );
+  const re = /([A-Za-z_][A-Za-z0-9_.\-]*)/g;
+  const seen = /* @__PURE__ */ new Set();
+  const unresolved = /* @__PURE__ */ new Set();
+  let m3;
+  while ((m3 = re.exec(withoutAtIdents)) !== null) {
+    const name = m3[1];
+    if (seen.has(name)) continue;
+    seen.add(name);
+    if (!Object.hasOwn(pool, name)) unresolved.add(name);
+  }
+  return [...unresolved].sort();
+}
+function describe(v2) {
+  if (v2 === null) return "null";
+  if (Array.isArray(v2)) return "array";
+  return typeof v2;
+}
 
 // lib/katex-check.ts
 function checkKatex(source, opts = {}) {
@@ -15656,32 +16263,32 @@ function fillTemplateWithPlaceholders(template, dynamic = {}) {
   const separator = dynamic.separator ?? ", ";
   const variadicBody = [PH, PH, PH].join(separator);
   const out = [];
-  let i3 = 0;
-  while (i3 < template.length) {
-    const ch2 = template[i3];
-    if (ch2 === "\\" && template[i3 + 1] === "#") {
+  let i4 = 0;
+  while (i4 < template.length) {
+    const ch2 = template[i4];
+    if (ch2 === "\\" && template[i4 + 1] === "#") {
       out.push("\\#");
-      i3 += 2;
+      i4 += 2;
       continue;
     }
     if (ch2 === "#") {
-      if (template[i3 + 1] === "*") {
+      if (template[i4 + 1] === "*") {
         out.push(variadicBody);
-        i3 += 2;
+        i4 += 2;
         continue;
       }
-      const digitsMatch = template.slice(i3 + 1).match(/^\d+/);
+      const digitsMatch = template.slice(i4 + 1).match(/^\d+/);
       if (digitsMatch) {
         out.push(PH);
-        i3 += 1 + digitsMatch[0].length;
+        i4 += 1 + digitsMatch[0].length;
         continue;
       }
       out.push(ch2);
-      i3 += 1;
+      i4 += 1;
       continue;
     }
     out.push(ch2);
-    i3 += 1;
+    i4 += 1;
   }
   return out.join("");
 }
@@ -15703,7 +16310,7 @@ var LEGACY_STYLE_FIELDS = [
 function lintPackage(raw, opts = {}) {
   const issues = [];
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "package.not-object", message: `Macro package must be a JSON object, got ${describe(raw)}.` });
+    issues.push({ severity: "error", code: "package.not-object", message: `Macro package must be a JSON object, got ${describe2(raw)}.` });
     return { issues };
   }
   const pkg = raw;
@@ -15751,12 +16358,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path5 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path10 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path5} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path5,
+              message: `${path10} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path10,
               position: result.position
             });
           }
@@ -15770,43 +16377,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path5 = `macros.${name}`;
+  const path10 = `macros.${name}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path5}: macro entry must be an object.`, path: path5 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path10}: macro entry must be an object.`, path: path10 });
     return;
   }
   const macro = raw;
   if (typeof macro.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path5}.description must be a string (may be empty).`, path: `${path5}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path10}.description must be a string (may be empty).`, path: `${path10}.description` });
   }
   if (!isRecord3(macro.source) || !isStringArray2(macro.source.entries) || !isStringArray2(macro.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path5}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path5}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path10}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path10}.source` });
   }
   if (typeof macro.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path5}.dynamic_arity must be a boolean.`, path: `${path5}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path10}.dynamic_arity must be a boolean.`, path: `${path10}.dynamic_arity` });
   }
   if (macro.kind !== void 0 && typeof macro.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path5}.kind must be a string when present.`, path: `${path5}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path10}.kind must be a string when present.`, path: `${path10}.kind` });
   }
   if (!isStringArray2(macro.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path5}.tags must be a string array (may be empty).`, path: `${path5}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path10}.tags must be a string array (may be empty).`, path: `${path10}.tags` });
   } else if (macro.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path5}.tags must not contain backslashes.`, path: `${path5}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path10}.tags must not contain backslashes.`, path: `${path10}.tags` });
   }
   const defaultStyle = macro.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path5}.default_style must be a language \u2192 style-name object.`, path: `${path5}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path10}.default_style must be a language \u2192 style-name object.`, path: `${path10}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path5}.default_style must map language keys to style-name strings.`, path: `${path5}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path10}.default_style must map language keys to style-name strings.`, path: `${path10}.default_style` });
   }
   if (!Array.isArray(macro.styles) || macro.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path5}.styles must be a non-empty array.`, path: `${path5}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path10}.styles must be a non-empty array.`, path: `${path10}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path5}.styles[${index}]`;
+    const stylePath = `${path10}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -15870,12 +16477,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path5}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path5}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path10}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path10}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path5}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a2, b2) => a2 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path5}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path10}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a3, b2) => a3 - b2).join(", ")}). This is legal but may be an oversight.`, path: `${path10}.styles` });
   }
 }
 function scanTemplatePlaceholders(template) {
@@ -15919,192 +16526,5679 @@ function isRecord3(value) {
 function isStringArray2(value) {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
-function describe(value) {
+function describe2(value) {
   if (value === null) return "null";
   if (Array.isArray(value)) return "array";
   return typeof value;
 }
 
-// lib/lint-report.ts
-function hasErrors(report) {
-  return report.issues.some((i3) => i3.severity === "error");
-}
-function issueCount(reports) {
-  const c3 = { errors: 0, warnings: 0, infos: 0 };
-  for (const r2 of reports) {
-    for (const i3 of r2.issues) {
-      if (i3.severity === "error") c3.errors++;
-      else if (i3.severity === "warning") c3.warnings++;
-      else c3.infos++;
+// lib/lint-graph.ts
+function lintGraph(raw, ctx) {
+  const issues = [];
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    issues.push({
+      severity: "error",
+      code: "graph.not-object",
+      message: `graph.json must be a JSON object, got ${describe3(raw)}.`
+    });
+    return { issues };
+  }
+  const g2 = raw;
+  if (!Array.isArray(g2.nodes)) {
+    issues.push({
+      severity: "error",
+      code: "graph.missing-nodes",
+      message: "`nodes` must be an array.",
+      path: "nodes"
+    });
+  }
+  if (!Array.isArray(g2.relationships)) {
+    issues.push({
+      severity: "error",
+      code: "graph.missing-relationships",
+      message: "`relationships` must be an array.",
+      path: "relationships"
+    });
+  }
+  if (!Array.isArray(g2.nodes) || !Array.isArray(g2.relationships)) {
+    return { issues };
+  }
+  const seenNodeIds = /* @__PURE__ */ new Set();
+  const nodes = [];
+  g2.nodes.forEach((rawNode, i4) => {
+    if (typeof rawNode !== "object" || rawNode === null || Array.isArray(rawNode)) {
+      issues.push({
+        severity: "error",
+        code: "graph.node.not-object",
+        message: `nodes[${i4}] must be an object.`,
+        path: `nodes[${i4}]`
+      });
+      return;
+    }
+    const n3 = rawNode;
+    if (typeof n3.id !== "string" || n3.id === "") {
+      issues.push({
+        severity: "error",
+        code: "graph.node.missing-id",
+        message: `nodes[${i4}].id must be a non-empty string.`,
+        path: `nodes[${i4}].id`
+      });
+      return;
+    }
+    if (typeof n3.label !== "string" || n3.label === "") {
+      issues.push({
+        severity: "error",
+        code: "graph.node.missing-label",
+        message: `nodes[${i4}].label must be a non-empty string.`,
+        path: `nodes[${i4}].label`
+      });
+    } else if (n3.label !== "Entry") {
+      issues.push({
+        severity: "warning",
+        code: "graph.node.unknown-label",
+        message: `nodes[${i4}].label = '${n3.label}' \u2014 v2 only understands 'Entry'. The node is kept as-is on disk but ignored by the numbering engine.`,
+        path: `nodes[${i4}].label`
+      });
+    }
+    if (typeof n3.props !== "object" || n3.props === null || Array.isArray(n3.props)) {
+      issues.push({
+        severity: "error",
+        code: "graph.node.missing-props",
+        message: `nodes[${i4}].props must be an object (may be empty {}).`,
+        path: `nodes[${i4}].props`
+      });
+    }
+    if (seenNodeIds.has(n3.id)) {
+      issues.push({
+        severity: "error",
+        code: "graph.node.duplicate-id",
+        message: `nodes[${i4}].id '${n3.id}' is not unique within this library.`,
+        path: `nodes[${i4}].id`
+      });
+      return;
+    }
+    seenNodeIds.add(n3.id);
+    nodes.push(n3);
+  });
+  const relationships = [];
+  g2.relationships.forEach((rawRel, i4) => {
+    if (typeof rawRel !== "object" || rawRel === null || Array.isArray(rawRel)) {
+      issues.push({
+        severity: "error",
+        code: "graph.rel.not-object",
+        message: `relationships[${i4}] must be an object.`,
+        path: `relationships[${i4}]`
+      });
+      return;
+    }
+    const r3 = rawRel;
+    let bad = false;
+    if (typeof r3.from !== "string" || r3.from === "") {
+      issues.push({
+        severity: "error",
+        code: "graph.rel.missing-from",
+        message: `relationships[${i4}].from must be a non-empty string.`,
+        path: `relationships[${i4}].from`
+      });
+      bad = true;
+    }
+    if (typeof r3.to !== "string" || r3.to === "") {
+      issues.push({
+        severity: "error",
+        code: "graph.rel.missing-to",
+        message: `relationships[${i4}].to must be a non-empty string.`,
+        path: `relationships[${i4}].to`
+      });
+      bad = true;
+    }
+    if (typeof r3.label !== "string" || r3.label === "") {
+      issues.push({
+        severity: "error",
+        code: "graph.rel.missing-label",
+        message: `relationships[${i4}].label must be a non-empty string.`,
+        path: `relationships[${i4}].label`
+      });
+      bad = true;
+    } else if (r3.label !== "branch") {
+      issues.push({
+        severity: "warning",
+        code: "graph.rel.unknown-label",
+        message: `relationships[${i4}].label = '${r3.label}' \u2014 v2 only understands 'branch'. Kept as-is but ignored by the numbering engine.`,
+        path: `relationships[${i4}].label`
+      });
+    }
+    if (!bad) relationships.push(r3);
+  });
+  const branchRels = relationships.filter((r3) => r3.label === "branch");
+  branchRels.forEach((r3, i4) => {
+    if (!seenNodeIds.has(r3.from)) {
+      issues.push({
+        severity: "error",
+        code: "graph.rel.dangling-from",
+        message: `Branch relationship references unknown node id '${r3.from}' as parent.`,
+        path: `relationships (branch #${i4})`
+      });
+    }
+    if (!seenNodeIds.has(r3.to)) {
+      issues.push({
+        severity: "error",
+        code: "graph.rel.dangling-to",
+        message: `Branch relationship references unknown node id '${r3.to}' as child.`,
+        path: `relationships (branch #${i4})`
+      });
+    }
+  });
+  const parentCount = /* @__PURE__ */ new Map();
+  for (const r3 of branchRels) {
+    if (!seenNodeIds.has(r3.to)) continue;
+    parentCount.set(r3.to, (parentCount.get(r3.to) ?? 0) + 1);
+  }
+  for (const [nodeId, cnt] of parentCount) {
+    if (cnt > 1) {
+      issues.push({
+        severity: "error",
+        code: "graph.multi-parent",
+        message: `Node '${nodeId}' has ${cnt} incoming branch edges. Each Entry node must have at most one branch parent.`,
+        path: `nodes (id=${nodeId})`
+      });
     }
   }
-  return c3;
-}
-function formatReport(reports) {
-  const useColor = process.stdout.isTTY;
-  const c3 = (color, text2) => useColor ? `\x1B[${color}m${text2}\x1B[0m` : text2;
-  const sevBadge = {
-    error: c3("31", "ERROR  "),
-    warning: c3("33", "WARN   "),
-    info: c3("36", "INFO   ")
-  };
-  const lines = [];
-  for (const r2 of reports) {
-    if (r2.file) lines.push(c3("1", r2.file));
-    if (r2.issues.length === 0) {
-      lines.push("  (no issues)");
+  const cyclesFound = detectCycles(branchRels, seenNodeIds);
+  for (const cycle of cyclesFound) {
+    issues.push({
+      severity: "error",
+      code: "graph.cycle",
+      message: `Branch subgraph contains a cycle: ${cycle.join(" -> ")}. The numbering engine's chain walk would loop forever.`,
+      path: "relationships"
+    });
+  }
+  const poolIds = new Set(ctx.poolEntries.map((e) => e.id));
+  for (const n3 of nodes) {
+    if (n3.label !== "Entry") continue;
+    const entryId = n3.props?.entryId;
+    if (entryId === void 0 || entryId === null || entryId === "") {
       continue;
     }
-    for (const i3 of r2.issues) {
-      const loc = i3.path ? c3("2", ` [${i3.path}]`) : "";
-      const pos = i3.position !== void 0 ? c3("2", ` (at ${i3.position})`) : "";
-      lines.push(`  ${sevBadge[i3.severity]} ${c3("2", i3.code)}${loc}${pos}`);
-      lines.push(`         ${i3.message}`);
+    if (typeof entryId !== "string") {
+      issues.push({
+        severity: "error",
+        code: "graph.node.bad-entry-id-type",
+        message: `Node '${n3.id}'.props.entryId must be a string when present.`,
+        path: `nodes (id=${n3.id}).props.entryId`
+      });
+      continue;
+    }
+    if (!poolIds.has(entryId)) {
+      issues.push({
+        severity: "error",
+        code: "graph.node.entry-not-in-pool",
+        message: `Node '${n3.id}'.props.entryId = '${entryId}' does not exist in the shared Entry entity pool (.SNL_Doc/entries/*.json).`,
+        path: `nodes (id=${n3.id}).props.entryId`
+      });
     }
   }
-  const tot = issueCount(reports);
-  lines.push("");
-  lines.push(
-    `${tot.errors} error${tot.errors === 1 ? "" : "s"}, ${tot.warnings} warning${tot.warnings === 1 ? "" : "s"}, ${tot.infos} info`
-  );
-  return lines.join("\n");
+  return { issues };
+}
+function detectCycles(branchRels, nodeIds) {
+  const children = /* @__PURE__ */ new Map();
+  for (const r3 of branchRels) {
+    if (!nodeIds.has(r3.from) || !nodeIds.has(r3.to)) continue;
+    const list = children.get(r3.from);
+    if (list) list.push(r3.to);
+    else children.set(r3.from, [r3.to]);
+  }
+  const WHITE = 0;
+  const GRAY = 1;
+  const BLACK = 2;
+  const colour = /* @__PURE__ */ new Map();
+  const stack = [];
+  const found = [];
+  const visit2 = (nodeId) => {
+    colour.set(nodeId, GRAY);
+    stack.push(nodeId);
+    for (const c3 of children.get(nodeId) ?? []) {
+      const state = colour.get(c3) ?? WHITE;
+      if (state === GRAY) {
+        const idx = stack.indexOf(c3);
+        const chain = stack.slice(idx).concat([c3]);
+        found.push(chain);
+      } else if (state === WHITE) {
+        visit2(c3);
+      }
+    }
+    stack.pop();
+    colour.set(nodeId, BLACK);
+  };
+  for (const id of nodeIds) {
+    if ((colour.get(id) ?? WHITE) === WHITE) visit2(id);
+  }
+  return found;
+}
+function describe3(v2) {
+  if (v2 === null) return "null";
+  if (Array.isArray(v2)) return "array";
+  return typeof v2;
 }
 
-// src/cli/lint-package.ts
-var NAME_FLAG = {
-  name: "name",
-  hasValue: true,
-  help: "Package ID. May be repeated. When neither --name nor a positional file is given, every package on disk is linted."
-};
-var NO_KATEX_FLAG = {
-  name: "no-katex",
-  hasValue: false,
-  default: false,
-  help: "Skip the KaTeX compile preview (default: enabled). Each macro style whose template will be routed through KaTeX at render time is otherwise fed through headless KaTeX with `#N` / `#*` slots filled by a neutral `x` placeholder. Turn this off in environments where KaTeX is unavailable or preview noise is not wanted; leave on for authoring feedback."
-};
-var SPECS = [ROOT_FLAG, NAME_FLAG, NO_KATEX_FLAG, JSON_FLAG, HELP_FLAG];
-async function main2() {
-  const rawArgv = process.argv.slice(2);
-  const names = [];
-  const filtered = [];
-  for (let i3 = 0; i3 < rawArgv.length; i3++) {
-    const tok = rawArgv[i3];
-    if (tok === "--name" || tok === "-n") {
-      const next = rawArgv[i3 + 1];
-      if (next === void 0 || next.startsWith("-")) {
-        process.stderr.write(`Flag ${tok} requires a value.
-`);
-        return 2;
-      }
-      names.push(next);
-      i3++;
-    } else if (tok.startsWith("--name=")) {
-      names.push(tok.slice("--name=".length));
-    } else {
-      filtered.push(tok);
-    }
-  }
-  let parsed;
-  try {
-    parsed = parseArgs(filtered, SPECS.filter((s2) => s2.name !== "name"));
-  } catch (err) {
-    process.stderr.write(`${err.message}
+// lib/entity-references.ts
+import { constants as constants3 } from "node:fs";
+import { promises as fs3 } from "node:fs";
+import * as path5 from "node:path";
 
-`);
-    process.stderr.write(usage() + "\n");
-    return 2;
-  }
-  if (parsed.flags.help === true) {
-    process.stdout.write(usage() + "\n");
-    return 0;
-  }
-  const root = path4.resolve(String(parsed.flags.root));
-  const asJson = parsed.flags.json === true;
-  const checkKatexEnabled = parsed.flags["no-katex"] !== true;
-  try {
-    await assertSnlDoc(root);
-  } catch (err) {
-    process.stderr.write(`${err.message}
-`);
-    return 2;
-  }
-  const reports = [];
-  const targets = parsed.positional.map((p3) => ({
-    file: path4.resolve(p3)
-  }));
-  if (names.length > 0 || targets.length === 0) {
-    let packages;
-    try {
-      packages = await readAllMacroPackages(root);
-    } catch (error) {
-      const failure = {
-        file: path4.join(root, ".SNL_Doc"),
-        issues: [{ severity: "error", code: "file.read", message: error.message }]
-      };
-      if (asJson) process.stdout.write(JSON.stringify([failure], null, 2) + "\n");
-      else process.stdout.write(formatReport([failure]) + "\n");
-      return 1;
-    }
-    const selected = names.length > 0 ? names.map((name) => name.replace(/\.json$/i, "")) : Object.keys(packages).sort();
-    if (selected.length === 0) {
-      process.stderr.write(`No Packages found in ${path4.join(root, ".SNL_Doc")}.
-`);
-      return 2;
-    }
-    for (const name of selected) {
-      if (!Object.prototype.hasOwnProperty.call(packages, name)) {
-        reports.push({
-          file: `package:${name}`,
-          issues: [{ severity: "error", code: "file.read", message: `Package ${JSON.stringify(name)} was not found.` }]
-        });
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/scanner.js
+function createScanner(text2, ignoreTrivia = false) {
+  const len = text2.length;
+  let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
+  function scanHexDigits(count, exact) {
+    let digits = 0;
+    let value2 = 0;
+    while (digits < count || !exact) {
+      let ch2 = text2.charCodeAt(pos);
+      if (ch2 >= 48 && ch2 <= 57) {
+        value2 = value2 * 16 + ch2 - 48;
+      } else if (ch2 >= 65 && ch2 <= 70) {
+        value2 = value2 * 16 + ch2 - 65 + 10;
+      } else if (ch2 >= 97 && ch2 <= 102) {
+        value2 = value2 * 16 + ch2 - 97 + 10;
       } else {
-        targets.push({ file: `package:${name}`, raw: packages[name] });
+        break;
+      }
+      pos++;
+      digits++;
+    }
+    if (digits < count) {
+      value2 = -1;
+    }
+    return value2;
+  }
+  function setPosition(newPosition) {
+    pos = newPosition;
+    value = "";
+    tokenOffset = 0;
+    token = 16;
+    scanError = 0;
+  }
+  function scanNumber() {
+    let start = pos;
+    if (text2.charCodeAt(pos) === 48) {
+      pos++;
+    } else {
+      pos++;
+      while (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+        pos++;
       }
     }
+    if (pos < text2.length && text2.charCodeAt(pos) === 46) {
+      pos++;
+      if (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+        pos++;
+        while (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+          pos++;
+        }
+      } else {
+        scanError = 3;
+        return text2.substring(start, pos);
+      }
+    }
+    let end = pos;
+    if (pos < text2.length && (text2.charCodeAt(pos) === 69 || text2.charCodeAt(pos) === 101)) {
+      pos++;
+      if (pos < text2.length && text2.charCodeAt(pos) === 43 || text2.charCodeAt(pos) === 45) {
+        pos++;
+      }
+      if (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+        pos++;
+        while (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+          pos++;
+        }
+        end = pos;
+      } else {
+        scanError = 3;
+      }
+    }
+    return text2.substring(start, end);
   }
-  for (const target of targets) {
-    let raw;
-    if (target.raw !== void 0) {
-      raw = target.raw;
-    } else {
-      try {
-        const text2 = await fs3.readFile(target.file, "utf8");
-        raw = JSON.parse(text2);
-      } catch (err) {
-        reports.push({
-          file: target.file,
-          issues: [
-            {
-              severity: "error",
-              code: "file.read",
-              message: err.message
+  function scanString() {
+    let result = "", start = pos;
+    while (true) {
+      if (pos >= len) {
+        result += text2.substring(start, pos);
+        scanError = 2;
+        break;
+      }
+      const ch2 = text2.charCodeAt(pos);
+      if (ch2 === 34) {
+        result += text2.substring(start, pos);
+        pos++;
+        break;
+      }
+      if (ch2 === 92) {
+        result += text2.substring(start, pos);
+        pos++;
+        if (pos >= len) {
+          scanError = 2;
+          break;
+        }
+        const ch22 = text2.charCodeAt(pos++);
+        switch (ch22) {
+          case 34:
+            result += '"';
+            break;
+          case 92:
+            result += "\\";
+            break;
+          case 47:
+            result += "/";
+            break;
+          case 98:
+            result += "\b";
+            break;
+          case 102:
+            result += "\f";
+            break;
+          case 110:
+            result += "\n";
+            break;
+          case 114:
+            result += "\r";
+            break;
+          case 116:
+            result += "	";
+            break;
+          case 117:
+            const ch3 = scanHexDigits(4, true);
+            if (ch3 >= 0) {
+              result += String.fromCharCode(ch3);
+            } else {
+              scanError = 4;
             }
-          ]
-        });
+            break;
+          default:
+            scanError = 5;
+        }
+        start = pos;
         continue;
       }
+      if (ch2 >= 0 && ch2 <= 31) {
+        if (isLineBreak(ch2)) {
+          result += text2.substring(start, pos);
+          scanError = 2;
+          break;
+        } else {
+          scanError = 6;
+        }
+      }
+      pos++;
     }
-    const report = lintPackage(raw, { checkKatex: checkKatexEnabled });
-    report.file = target.file;
-    reports.push(report);
+    return result;
   }
-  if (asJson) {
-    process.stdout.write(JSON.stringify(reports, null, 2) + "\n");
-  } else {
-    process.stdout.write(formatReport(reports) + "\n");
-    const c3 = issueCount(reports);
-    process.stdout.write(
-      `Linted ${reports.length} file${reports.length === 1 ? "" : "s"}: ${c3.errors} error${c3.errors === 1 ? "" : "s"}, ${c3.warnings} warning${c3.warnings === 1 ? "" : "s"}, ${c3.infos} info.
-`
+  function scanNext() {
+    value = "";
+    scanError = 0;
+    tokenOffset = pos;
+    lineStartOffset = lineNumber;
+    prevTokenLineStartOffset = tokenLineStartOffset;
+    if (pos >= len) {
+      tokenOffset = len;
+      return token = 17;
+    }
+    let code = text2.charCodeAt(pos);
+    if (isWhiteSpace(code)) {
+      do {
+        pos++;
+        value += String.fromCharCode(code);
+        code = text2.charCodeAt(pos);
+      } while (isWhiteSpace(code));
+      return token = 15;
+    }
+    if (isLineBreak(code)) {
+      pos++;
+      value += String.fromCharCode(code);
+      if (code === 13 && text2.charCodeAt(pos) === 10) {
+        pos++;
+        value += "\n";
+      }
+      lineNumber++;
+      tokenLineStartOffset = pos;
+      return token = 14;
+    }
+    switch (code) {
+      // tokens: []{}:,
+      case 123:
+        pos++;
+        return token = 1;
+      case 125:
+        pos++;
+        return token = 2;
+      case 91:
+        pos++;
+        return token = 3;
+      case 93:
+        pos++;
+        return token = 4;
+      case 58:
+        pos++;
+        return token = 6;
+      case 44:
+        pos++;
+        return token = 5;
+      // strings
+      case 34:
+        pos++;
+        value = scanString();
+        return token = 10;
+      // comments
+      case 47:
+        const start = pos - 1;
+        if (text2.charCodeAt(pos + 1) === 47) {
+          pos += 2;
+          while (pos < len) {
+            if (isLineBreak(text2.charCodeAt(pos))) {
+              break;
+            }
+            pos++;
+          }
+          value = text2.substring(start, pos);
+          return token = 12;
+        }
+        if (text2.charCodeAt(pos + 1) === 42) {
+          pos += 2;
+          const safeLength = len - 1;
+          let commentClosed = false;
+          while (pos < safeLength) {
+            const ch2 = text2.charCodeAt(pos);
+            if (ch2 === 42 && text2.charCodeAt(pos + 1) === 47) {
+              pos += 2;
+              commentClosed = true;
+              break;
+            }
+            pos++;
+            if (isLineBreak(ch2)) {
+              if (ch2 === 13 && text2.charCodeAt(pos) === 10) {
+                pos++;
+              }
+              lineNumber++;
+              tokenLineStartOffset = pos;
+            }
+          }
+          if (!commentClosed) {
+            pos++;
+            scanError = 1;
+          }
+          value = text2.substring(start, pos);
+          return token = 13;
+        }
+        value += String.fromCharCode(code);
+        pos++;
+        return token = 16;
+      // numbers
+      case 45:
+        value += String.fromCharCode(code);
+        pos++;
+        if (pos === len || !isDigit(text2.charCodeAt(pos))) {
+          return token = 16;
+        }
+      // found a minus, followed by a number so
+      // we fall through to proceed with scanning
+      // numbers
+      case 48:
+      case 49:
+      case 50:
+      case 51:
+      case 52:
+      case 53:
+      case 54:
+      case 55:
+      case 56:
+      case 57:
+        value += scanNumber();
+        return token = 11;
+      // literals and unknown symbols
+      default:
+        while (pos < len && isUnknownContentCharacter(code)) {
+          pos++;
+          code = text2.charCodeAt(pos);
+        }
+        if (tokenOffset !== pos) {
+          value = text2.substring(tokenOffset, pos);
+          switch (value) {
+            case "true":
+              return token = 8;
+            case "false":
+              return token = 9;
+            case "null":
+              return token = 7;
+          }
+          return token = 16;
+        }
+        value += String.fromCharCode(code);
+        pos++;
+        return token = 16;
+    }
+  }
+  function isUnknownContentCharacter(code) {
+    if (isWhiteSpace(code) || isLineBreak(code)) {
+      return false;
+    }
+    switch (code) {
+      case 125:
+      case 93:
+      case 123:
+      case 91:
+      case 34:
+      case 58:
+      case 44:
+      case 47:
+        return false;
+    }
+    return true;
+  }
+  function scanNextNonTrivia() {
+    let result;
+    do {
+      result = scanNext();
+    } while (result >= 12 && result <= 15);
+    return result;
+  }
+  return {
+    setPosition,
+    getPosition: () => pos,
+    scan: ignoreTrivia ? scanNextNonTrivia : scanNext,
+    getToken: () => token,
+    getTokenValue: () => value,
+    getTokenOffset: () => tokenOffset,
+    getTokenLength: () => pos - tokenOffset,
+    getTokenStartLine: () => lineStartOffset,
+    getTokenStartCharacter: () => tokenOffset - prevTokenLineStartOffset,
+    getTokenError: () => scanError
+  };
+}
+function isWhiteSpace(ch2) {
+  return ch2 === 32 || ch2 === 9;
+}
+function isLineBreak(ch2) {
+  return ch2 === 10 || ch2 === 13;
+}
+function isDigit(ch2) {
+  return ch2 >= 48 && ch2 <= 57;
+}
+var CharacterCodes;
+(function(CharacterCodes2) {
+  CharacterCodes2[CharacterCodes2["lineFeed"] = 10] = "lineFeed";
+  CharacterCodes2[CharacterCodes2["carriageReturn"] = 13] = "carriageReturn";
+  CharacterCodes2[CharacterCodes2["space"] = 32] = "space";
+  CharacterCodes2[CharacterCodes2["_0"] = 48] = "_0";
+  CharacterCodes2[CharacterCodes2["_1"] = 49] = "_1";
+  CharacterCodes2[CharacterCodes2["_2"] = 50] = "_2";
+  CharacterCodes2[CharacterCodes2["_3"] = 51] = "_3";
+  CharacterCodes2[CharacterCodes2["_4"] = 52] = "_4";
+  CharacterCodes2[CharacterCodes2["_5"] = 53] = "_5";
+  CharacterCodes2[CharacterCodes2["_6"] = 54] = "_6";
+  CharacterCodes2[CharacterCodes2["_7"] = 55] = "_7";
+  CharacterCodes2[CharacterCodes2["_8"] = 56] = "_8";
+  CharacterCodes2[CharacterCodes2["_9"] = 57] = "_9";
+  CharacterCodes2[CharacterCodes2["a"] = 97] = "a";
+  CharacterCodes2[CharacterCodes2["b"] = 98] = "b";
+  CharacterCodes2[CharacterCodes2["c"] = 99] = "c";
+  CharacterCodes2[CharacterCodes2["d"] = 100] = "d";
+  CharacterCodes2[CharacterCodes2["e"] = 101] = "e";
+  CharacterCodes2[CharacterCodes2["f"] = 102] = "f";
+  CharacterCodes2[CharacterCodes2["g"] = 103] = "g";
+  CharacterCodes2[CharacterCodes2["h"] = 104] = "h";
+  CharacterCodes2[CharacterCodes2["i"] = 105] = "i";
+  CharacterCodes2[CharacterCodes2["j"] = 106] = "j";
+  CharacterCodes2[CharacterCodes2["k"] = 107] = "k";
+  CharacterCodes2[CharacterCodes2["l"] = 108] = "l";
+  CharacterCodes2[CharacterCodes2["m"] = 109] = "m";
+  CharacterCodes2[CharacterCodes2["n"] = 110] = "n";
+  CharacterCodes2[CharacterCodes2["o"] = 111] = "o";
+  CharacterCodes2[CharacterCodes2["p"] = 112] = "p";
+  CharacterCodes2[CharacterCodes2["q"] = 113] = "q";
+  CharacterCodes2[CharacterCodes2["r"] = 114] = "r";
+  CharacterCodes2[CharacterCodes2["s"] = 115] = "s";
+  CharacterCodes2[CharacterCodes2["t"] = 116] = "t";
+  CharacterCodes2[CharacterCodes2["u"] = 117] = "u";
+  CharacterCodes2[CharacterCodes2["v"] = 118] = "v";
+  CharacterCodes2[CharacterCodes2["w"] = 119] = "w";
+  CharacterCodes2[CharacterCodes2["x"] = 120] = "x";
+  CharacterCodes2[CharacterCodes2["y"] = 121] = "y";
+  CharacterCodes2[CharacterCodes2["z"] = 122] = "z";
+  CharacterCodes2[CharacterCodes2["A"] = 65] = "A";
+  CharacterCodes2[CharacterCodes2["B"] = 66] = "B";
+  CharacterCodes2[CharacterCodes2["C"] = 67] = "C";
+  CharacterCodes2[CharacterCodes2["D"] = 68] = "D";
+  CharacterCodes2[CharacterCodes2["E"] = 69] = "E";
+  CharacterCodes2[CharacterCodes2["F"] = 70] = "F";
+  CharacterCodes2[CharacterCodes2["G"] = 71] = "G";
+  CharacterCodes2[CharacterCodes2["H"] = 72] = "H";
+  CharacterCodes2[CharacterCodes2["I"] = 73] = "I";
+  CharacterCodes2[CharacterCodes2["J"] = 74] = "J";
+  CharacterCodes2[CharacterCodes2["K"] = 75] = "K";
+  CharacterCodes2[CharacterCodes2["L"] = 76] = "L";
+  CharacterCodes2[CharacterCodes2["M"] = 77] = "M";
+  CharacterCodes2[CharacterCodes2["N"] = 78] = "N";
+  CharacterCodes2[CharacterCodes2["O"] = 79] = "O";
+  CharacterCodes2[CharacterCodes2["P"] = 80] = "P";
+  CharacterCodes2[CharacterCodes2["Q"] = 81] = "Q";
+  CharacterCodes2[CharacterCodes2["R"] = 82] = "R";
+  CharacterCodes2[CharacterCodes2["S"] = 83] = "S";
+  CharacterCodes2[CharacterCodes2["T"] = 84] = "T";
+  CharacterCodes2[CharacterCodes2["U"] = 85] = "U";
+  CharacterCodes2[CharacterCodes2["V"] = 86] = "V";
+  CharacterCodes2[CharacterCodes2["W"] = 87] = "W";
+  CharacterCodes2[CharacterCodes2["X"] = 88] = "X";
+  CharacterCodes2[CharacterCodes2["Y"] = 89] = "Y";
+  CharacterCodes2[CharacterCodes2["Z"] = 90] = "Z";
+  CharacterCodes2[CharacterCodes2["asterisk"] = 42] = "asterisk";
+  CharacterCodes2[CharacterCodes2["backslash"] = 92] = "backslash";
+  CharacterCodes2[CharacterCodes2["closeBrace"] = 125] = "closeBrace";
+  CharacterCodes2[CharacterCodes2["closeBracket"] = 93] = "closeBracket";
+  CharacterCodes2[CharacterCodes2["colon"] = 58] = "colon";
+  CharacterCodes2[CharacterCodes2["comma"] = 44] = "comma";
+  CharacterCodes2[CharacterCodes2["dot"] = 46] = "dot";
+  CharacterCodes2[CharacterCodes2["doubleQuote"] = 34] = "doubleQuote";
+  CharacterCodes2[CharacterCodes2["minus"] = 45] = "minus";
+  CharacterCodes2[CharacterCodes2["openBrace"] = 123] = "openBrace";
+  CharacterCodes2[CharacterCodes2["openBracket"] = 91] = "openBracket";
+  CharacterCodes2[CharacterCodes2["plus"] = 43] = "plus";
+  CharacterCodes2[CharacterCodes2["slash"] = 47] = "slash";
+  CharacterCodes2[CharacterCodes2["formFeed"] = 12] = "formFeed";
+  CharacterCodes2[CharacterCodes2["tab"] = 9] = "tab";
+})(CharacterCodes || (CharacterCodes = {}));
+
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/string-intern.js
+var cachedSpaces = new Array(20).fill(0).map((_2, index) => {
+  return " ".repeat(index);
+});
+var maxCachedValues = 200;
+var cachedBreakLinesWithSpaces = {
+  " ": {
+    "\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
+      return "\n" + " ".repeat(index);
+    }),
+    "\r": new Array(maxCachedValues).fill(0).map((_2, index) => {
+      return "\r" + " ".repeat(index);
+    }),
+    "\r\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
+      return "\r\n" + " ".repeat(index);
+    })
+  },
+  "	": {
+    "\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
+      return "\n" + "	".repeat(index);
+    }),
+    "\r": new Array(maxCachedValues).fill(0).map((_2, index) => {
+      return "\r" + "	".repeat(index);
+    }),
+    "\r\n": new Array(maxCachedValues).fill(0).map((_2, index) => {
+      return "\r\n" + "	".repeat(index);
+    })
+  }
+};
+
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/impl/parser.js
+var ParseOptions;
+(function(ParseOptions2) {
+  ParseOptions2.DEFAULT = {
+    allowTrailingComma: false
+  };
+})(ParseOptions || (ParseOptions = {}));
+function parseTree3(text2, errors = [], options = ParseOptions.DEFAULT) {
+  let currentParent = { type: "array", offset: -1, length: -1, children: [], parent: void 0 };
+  function ensurePropertyComplete(endOffset) {
+    if (currentParent.type === "property") {
+      currentParent.length = endOffset - currentParent.offset;
+      currentParent = currentParent.parent;
+    }
+  }
+  function onValue(valueNode) {
+    currentParent.children.push(valueNode);
+    return valueNode;
+  }
+  const visitor = {
+    onObjectBegin: (offset) => {
+      currentParent = onValue({ type: "object", offset, length: -1, parent: currentParent, children: [] });
+    },
+    onObjectProperty: (name, offset, length) => {
+      currentParent = onValue({ type: "property", offset, length: -1, parent: currentParent, children: [] });
+      currentParent.children.push({ type: "string", value: name, offset, length, parent: currentParent });
+    },
+    onObjectEnd: (offset, length) => {
+      ensurePropertyComplete(offset + length);
+      currentParent.length = offset + length - currentParent.offset;
+      currentParent = currentParent.parent;
+      ensurePropertyComplete(offset + length);
+    },
+    onArrayBegin: (offset, length) => {
+      currentParent = onValue({ type: "array", offset, length: -1, parent: currentParent, children: [] });
+    },
+    onArrayEnd: (offset, length) => {
+      currentParent.length = offset + length - currentParent.offset;
+      currentParent = currentParent.parent;
+      ensurePropertyComplete(offset + length);
+    },
+    onLiteralValue: (value, offset, length) => {
+      onValue({ type: getNodeType(value), offset, length, parent: currentParent, value });
+      ensurePropertyComplete(offset + length);
+    },
+    onSeparator: (sep2, offset, length) => {
+      if (currentParent.type === "property") {
+        if (sep2 === ":") {
+          currentParent.colonOffset = offset;
+        } else if (sep2 === ",") {
+          ensurePropertyComplete(offset);
+        }
+      }
+    },
+    onError: (error, offset, length) => {
+      errors.push({ error, offset, length });
+    }
+  };
+  visit(text2, visitor, options);
+  const result = currentParent.children[0];
+  if (result) {
+    delete result.parent;
+  }
+  return result;
+}
+function visit(text2, visitor, options = ParseOptions.DEFAULT) {
+  const _scanner = createScanner(text2, false);
+  const _jsonPath = [];
+  let suppressedCallbacks = 0;
+  function toNoArgVisit(visitFunction) {
+    return visitFunction ? () => suppressedCallbacks === 0 && visitFunction(_scanner.getTokenOffset(), _scanner.getTokenLength(), _scanner.getTokenStartLine(), _scanner.getTokenStartCharacter()) : () => true;
+  }
+  function toOneArgVisit(visitFunction) {
+    return visitFunction ? (arg) => suppressedCallbacks === 0 && visitFunction(arg, _scanner.getTokenOffset(), _scanner.getTokenLength(), _scanner.getTokenStartLine(), _scanner.getTokenStartCharacter()) : () => true;
+  }
+  function toOneArgVisitWithPath(visitFunction) {
+    return visitFunction ? (arg) => suppressedCallbacks === 0 && visitFunction(arg, _scanner.getTokenOffset(), _scanner.getTokenLength(), _scanner.getTokenStartLine(), _scanner.getTokenStartCharacter(), () => _jsonPath.slice()) : () => true;
+  }
+  function toBeginVisit(visitFunction) {
+    return visitFunction ? () => {
+      if (suppressedCallbacks > 0) {
+        suppressedCallbacks++;
+      } else {
+        let cbReturn = visitFunction(_scanner.getTokenOffset(), _scanner.getTokenLength(), _scanner.getTokenStartLine(), _scanner.getTokenStartCharacter(), () => _jsonPath.slice());
+        if (cbReturn === false) {
+          suppressedCallbacks = 1;
+        }
+      }
+    } : () => true;
+  }
+  function toEndVisit(visitFunction) {
+    return visitFunction ? () => {
+      if (suppressedCallbacks > 0) {
+        suppressedCallbacks--;
+      }
+      if (suppressedCallbacks === 0) {
+        visitFunction(_scanner.getTokenOffset(), _scanner.getTokenLength(), _scanner.getTokenStartLine(), _scanner.getTokenStartCharacter());
+      }
+    } : () => true;
+  }
+  const onObjectBegin = toBeginVisit(visitor.onObjectBegin), onObjectProperty = toOneArgVisitWithPath(visitor.onObjectProperty), onObjectEnd = toEndVisit(visitor.onObjectEnd), onArrayBegin = toBeginVisit(visitor.onArrayBegin), onArrayEnd = toEndVisit(visitor.onArrayEnd), onLiteralValue = toOneArgVisitWithPath(visitor.onLiteralValue), onSeparator = toOneArgVisit(visitor.onSeparator), onComment = toNoArgVisit(visitor.onComment), onError = toOneArgVisit(visitor.onError);
+  const disallowComments = options && options.disallowComments;
+  const allowTrailingComma = options && options.allowTrailingComma;
+  function scanNext() {
+    while (true) {
+      const token = _scanner.scan();
+      switch (_scanner.getTokenError()) {
+        case 4:
+          handleError(
+            14
+            /* ParseErrorCode.InvalidUnicode */
+          );
+          break;
+        case 5:
+          handleError(
+            15
+            /* ParseErrorCode.InvalidEscapeCharacter */
+          );
+          break;
+        case 3:
+          handleError(
+            13
+            /* ParseErrorCode.UnexpectedEndOfNumber */
+          );
+          break;
+        case 1:
+          if (!disallowComments) {
+            handleError(
+              11
+              /* ParseErrorCode.UnexpectedEndOfComment */
+            );
+          }
+          break;
+        case 2:
+          handleError(
+            12
+            /* ParseErrorCode.UnexpectedEndOfString */
+          );
+          break;
+        case 6:
+          handleError(
+            16
+            /* ParseErrorCode.InvalidCharacter */
+          );
+          break;
+      }
+      switch (token) {
+        case 12:
+        case 13:
+          if (disallowComments) {
+            handleError(
+              10
+              /* ParseErrorCode.InvalidCommentToken */
+            );
+          } else {
+            onComment();
+          }
+          break;
+        case 16:
+          handleError(
+            1
+            /* ParseErrorCode.InvalidSymbol */
+          );
+          break;
+        case 15:
+        case 14:
+          break;
+        default:
+          return token;
+      }
+    }
+  }
+  function handleError(error, skipUntilAfter = [], skipUntil = []) {
+    onError(error);
+    if (skipUntilAfter.length + skipUntil.length > 0) {
+      let token = _scanner.getToken();
+      while (token !== 17) {
+        if (skipUntilAfter.indexOf(token) !== -1) {
+          scanNext();
+          break;
+        } else if (skipUntil.indexOf(token) !== -1) {
+          break;
+        }
+        token = scanNext();
+      }
+    }
+  }
+  function parseString(isValue) {
+    const value = _scanner.getTokenValue();
+    if (isValue) {
+      onLiteralValue(value);
+    } else {
+      onObjectProperty(value);
+      _jsonPath.push(value);
+    }
+    scanNext();
+    return true;
+  }
+  function parseLiteral() {
+    switch (_scanner.getToken()) {
+      case 11:
+        const tokenValue = _scanner.getTokenValue();
+        let value = Number(tokenValue);
+        if (isNaN(value)) {
+          handleError(
+            2
+            /* ParseErrorCode.InvalidNumberFormat */
+          );
+          value = 0;
+        }
+        onLiteralValue(value);
+        break;
+      case 7:
+        onLiteralValue(null);
+        break;
+      case 8:
+        onLiteralValue(true);
+        break;
+      case 9:
+        onLiteralValue(false);
+        break;
+      default:
+        return false;
+    }
+    scanNext();
+    return true;
+  }
+  function parseProperty() {
+    if (_scanner.getToken() !== 10) {
+      handleError(3, [], [
+        2,
+        5
+        /* SyntaxKind.CommaToken */
+      ]);
+      return false;
+    }
+    parseString(false);
+    if (_scanner.getToken() === 6) {
+      onSeparator(":");
+      scanNext();
+      if (!parseValue()) {
+        handleError(4, [], [
+          2,
+          5
+          /* SyntaxKind.CommaToken */
+        ]);
+      }
+    } else {
+      handleError(5, [], [
+        2,
+        5
+        /* SyntaxKind.CommaToken */
+      ]);
+    }
+    _jsonPath.pop();
+    return true;
+  }
+  function parseObject() {
+    onObjectBegin();
+    scanNext();
+    let needsComma = false;
+    while (_scanner.getToken() !== 2 && _scanner.getToken() !== 17) {
+      if (_scanner.getToken() === 5) {
+        if (!needsComma) {
+          handleError(4, [], []);
+        }
+        onSeparator(",");
+        scanNext();
+        if (_scanner.getToken() === 2 && allowTrailingComma) {
+          break;
+        }
+      } else if (needsComma) {
+        handleError(6, [], []);
+      }
+      if (!parseProperty()) {
+        handleError(4, [], [
+          2,
+          5
+          /* SyntaxKind.CommaToken */
+        ]);
+      }
+      needsComma = true;
+    }
+    onObjectEnd();
+    if (_scanner.getToken() !== 2) {
+      handleError(7, [
+        2
+        /* SyntaxKind.CloseBraceToken */
+      ], []);
+    } else {
+      scanNext();
+    }
+    return true;
+  }
+  function parseArray2() {
+    onArrayBegin();
+    scanNext();
+    let isFirstElement = true;
+    let needsComma = false;
+    while (_scanner.getToken() !== 4 && _scanner.getToken() !== 17) {
+      if (_scanner.getToken() === 5) {
+        if (!needsComma) {
+          handleError(4, [], []);
+        }
+        onSeparator(",");
+        scanNext();
+        if (_scanner.getToken() === 4 && allowTrailingComma) {
+          break;
+        }
+      } else if (needsComma) {
+        handleError(6, [], []);
+      }
+      if (isFirstElement) {
+        _jsonPath.push(0);
+        isFirstElement = false;
+      } else {
+        _jsonPath[_jsonPath.length - 1]++;
+      }
+      if (!parseValue()) {
+        handleError(4, [], [
+          4,
+          5
+          /* SyntaxKind.CommaToken */
+        ]);
+      }
+      needsComma = true;
+    }
+    onArrayEnd();
+    if (!isFirstElement) {
+      _jsonPath.pop();
+    }
+    if (_scanner.getToken() !== 4) {
+      handleError(8, [
+        4
+        /* SyntaxKind.CloseBracketToken */
+      ], []);
+    } else {
+      scanNext();
+    }
+    return true;
+  }
+  function parseValue() {
+    switch (_scanner.getToken()) {
+      case 3:
+        return parseArray2();
+      case 1:
+        return parseObject();
+      case 10:
+        return parseString(true);
+      default:
+        return parseLiteral();
+    }
+  }
+  scanNext();
+  if (_scanner.getToken() === 17) {
+    if (options.allowEmptyContent) {
+      return true;
+    }
+    handleError(4, [], []);
+    return false;
+  }
+  if (!parseValue()) {
+    handleError(4, [], []);
+    return false;
+  }
+  if (_scanner.getToken() !== 17) {
+    handleError(9, [], []);
+  }
+  return true;
+}
+function getNodeType(value) {
+  switch (typeof value) {
+    case "boolean":
+      return "boolean";
+    case "number":
+      return "number";
+    case "string":
+      return "string";
+    case "object": {
+      if (!value) {
+        return "null";
+      } else if (Array.isArray(value)) {
+        return "array";
+      }
+      return "object";
+    }
+    default:
+      return "null";
+  }
+}
+
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/jsonc-parser/lib/esm/main.js
+var ScanError;
+(function(ScanError2) {
+  ScanError2[ScanError2["None"] = 0] = "None";
+  ScanError2[ScanError2["UnexpectedEndOfComment"] = 1] = "UnexpectedEndOfComment";
+  ScanError2[ScanError2["UnexpectedEndOfString"] = 2] = "UnexpectedEndOfString";
+  ScanError2[ScanError2["UnexpectedEndOfNumber"] = 3] = "UnexpectedEndOfNumber";
+  ScanError2[ScanError2["InvalidUnicode"] = 4] = "InvalidUnicode";
+  ScanError2[ScanError2["InvalidEscapeCharacter"] = 5] = "InvalidEscapeCharacter";
+  ScanError2[ScanError2["InvalidCharacter"] = 6] = "InvalidCharacter";
+})(ScanError || (ScanError = {}));
+var SyntaxKind;
+(function(SyntaxKind2) {
+  SyntaxKind2[SyntaxKind2["OpenBraceToken"] = 1] = "OpenBraceToken";
+  SyntaxKind2[SyntaxKind2["CloseBraceToken"] = 2] = "CloseBraceToken";
+  SyntaxKind2[SyntaxKind2["OpenBracketToken"] = 3] = "OpenBracketToken";
+  SyntaxKind2[SyntaxKind2["CloseBracketToken"] = 4] = "CloseBracketToken";
+  SyntaxKind2[SyntaxKind2["CommaToken"] = 5] = "CommaToken";
+  SyntaxKind2[SyntaxKind2["ColonToken"] = 6] = "ColonToken";
+  SyntaxKind2[SyntaxKind2["NullKeyword"] = 7] = "NullKeyword";
+  SyntaxKind2[SyntaxKind2["TrueKeyword"] = 8] = "TrueKeyword";
+  SyntaxKind2[SyntaxKind2["FalseKeyword"] = 9] = "FalseKeyword";
+  SyntaxKind2[SyntaxKind2["StringLiteral"] = 10] = "StringLiteral";
+  SyntaxKind2[SyntaxKind2["NumericLiteral"] = 11] = "NumericLiteral";
+  SyntaxKind2[SyntaxKind2["LineCommentTrivia"] = 12] = "LineCommentTrivia";
+  SyntaxKind2[SyntaxKind2["BlockCommentTrivia"] = 13] = "BlockCommentTrivia";
+  SyntaxKind2[SyntaxKind2["LineBreakTrivia"] = 14] = "LineBreakTrivia";
+  SyntaxKind2[SyntaxKind2["Trivia"] = 15] = "Trivia";
+  SyntaxKind2[SyntaxKind2["Unknown"] = 16] = "Unknown";
+  SyntaxKind2[SyntaxKind2["EOF"] = 17] = "EOF";
+})(SyntaxKind || (SyntaxKind = {}));
+var parseTree4 = parseTree3;
+var ParseErrorCode;
+(function(ParseErrorCode2) {
+  ParseErrorCode2[ParseErrorCode2["InvalidSymbol"] = 1] = "InvalidSymbol";
+  ParseErrorCode2[ParseErrorCode2["InvalidNumberFormat"] = 2] = "InvalidNumberFormat";
+  ParseErrorCode2[ParseErrorCode2["PropertyNameExpected"] = 3] = "PropertyNameExpected";
+  ParseErrorCode2[ParseErrorCode2["ValueExpected"] = 4] = "ValueExpected";
+  ParseErrorCode2[ParseErrorCode2["ColonExpected"] = 5] = "ColonExpected";
+  ParseErrorCode2[ParseErrorCode2["CommaExpected"] = 6] = "CommaExpected";
+  ParseErrorCode2[ParseErrorCode2["CloseBraceExpected"] = 7] = "CloseBraceExpected";
+  ParseErrorCode2[ParseErrorCode2["CloseBracketExpected"] = 8] = "CloseBracketExpected";
+  ParseErrorCode2[ParseErrorCode2["EndOfFileExpected"] = 9] = "EndOfFileExpected";
+  ParseErrorCode2[ParseErrorCode2["InvalidCommentToken"] = 10] = "InvalidCommentToken";
+  ParseErrorCode2[ParseErrorCode2["UnexpectedEndOfComment"] = 11] = "UnexpectedEndOfComment";
+  ParseErrorCode2[ParseErrorCode2["UnexpectedEndOfString"] = 12] = "UnexpectedEndOfString";
+  ParseErrorCode2[ParseErrorCode2["UnexpectedEndOfNumber"] = 13] = "UnexpectedEndOfNumber";
+  ParseErrorCode2[ParseErrorCode2["InvalidUnicode"] = 14] = "InvalidUnicode";
+  ParseErrorCode2[ParseErrorCode2["InvalidEscapeCharacter"] = 15] = "InvalidEscapeCharacter";
+  ParseErrorCode2[ParseErrorCode2["InvalidCharacter"] = 16] = "InvalidCharacter";
+})(ParseErrorCode || (ParseErrorCode = {}));
+function printParseErrorCode(code) {
+  switch (code) {
+    case 1:
+      return "InvalidSymbol";
+    case 2:
+      return "InvalidNumberFormat";
+    case 3:
+      return "PropertyNameExpected";
+    case 4:
+      return "ValueExpected";
+    case 5:
+      return "ColonExpected";
+    case 6:
+      return "CommaExpected";
+    case 7:
+      return "CloseBraceExpected";
+    case 8:
+      return "CloseBracketExpected";
+    case 9:
+      return "EndOfFileExpected";
+    case 10:
+      return "InvalidCommentToken";
+    case 11:
+      return "UnexpectedEndOfComment";
+    case 12:
+      return "UnexpectedEndOfString";
+    case 13:
+      return "UnexpectedEndOfNumber";
+    case 14:
+      return "InvalidUnicode";
+    case 15:
+      return "InvalidEscapeCharacter";
+    case 16:
+      return "InvalidCharacter";
+  }
+  return "<unknown ParseErrorCode>";
+}
+
+// lib/workspace-data-lock.ts
+import { randomUUID as randomUUID2 } from "node:crypto";
+import { hostname } from "node:os";
+import { open as open2, readFile, unlink } from "node:fs/promises";
+import * as path4 from "node:path";
+var DATA_WRITE_LOCK_FILENAME = ".data-write.lock";
+function errorCode(error) {
+  return error && typeof error === "object" && "code" in error ? String(error.code) : void 0;
+}
+function isLockRecord(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const record = value;
+  return record.version === 1 && Number.isInteger(record.pid) && typeof record.hostname === "string" && typeof record.token === "string" && typeof record.purpose === "string" && typeof record.createdAt === "string";
+}
+function localProcessIsAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return errorCode(error) !== "ESRCH";
+  }
+}
+async function readLock(lockPath) {
+  try {
+    const value = JSON.parse(await readFile(lockPath, "utf8"));
+    return isLockRecord(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+async function acquireLock(workspaceRoot, purpose) {
+  const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
+  const record = {
+    version: 1,
+    pid: process.pid,
+    hostname: hostname(),
+    token: randomUUID2(),
+    purpose,
+    createdAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  try {
+    const handle = await open2(lockPath, "wx", 384);
+    try {
+      await handle.writeFile(`${JSON.stringify(record)}
+`, "utf8");
+      await handle.sync();
+      return { handle, lockPath, record };
+    } catch (error) {
+      await handle.close();
+      await unlink(lockPath).catch(() => void 0);
+      throw error;
+    }
+  } catch (error) {
+    if (errorCode(error) !== "EEXIST") throw error;
+    const existing = await readLock(lockPath);
+    const stale = existing !== null && existing.hostname === hostname() && !localProcessIsAlive(existing.pid);
+    if (stale) {
+      throw new Error(
+        `SNL workspace data has a stale ${existing.purpose} lock from pid ${existing.pid}. After confirming no writer is active, remove ${lockPath} and retry.`
+      );
+    }
+    const owner = existing ? `${existing.purpose} by pid ${existing.pid} on ${existing.hostname}` : "an unreadable lock (remove it only after confirming no writer is active)";
+    throw new Error(`SNL workspace data is locked for ${owner}.`);
+  }
+}
+async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
+  const acquired = await acquireLock(workspaceRoot, purpose);
+  try {
+    return await task();
+  } finally {
+    await acquired.handle.close();
+    const current = await readLock(acquired.lockPath);
+    if (current?.token === acquired.record.token) {
+      try {
+        await unlink(acquired.lockPath);
+      } catch (error) {
+        if (errorCode(error) !== "ENOENT") throw error;
+      }
+    }
+  }
+}
+
+// lib/entity-references.ts
+async function findEntityReferences(workspaceRoot, entityType, id) {
+  const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
+  validateNonEmptyIdentity(id);
+  const files = await loadWorkspaceJson(canonicalWorkspace);
+  return collectOccurrences(files, entityType, id).sort(compareOccurrence);
+}
+function macroIsActive(files, id) {
+  const config = files.find((file) => file.relPath === "config.json")?.data;
+  const active = Array.isArray(config?.active_macro_packages) ? new Set(config.active_macro_packages) : null;
+  return files.some((file) => {
+    if (file.relPath.startsWith("macros/")) {
+      const packageId = file.data?.package;
+      if (typeof packageId !== "string" || active && !active.has(packageId)) return false;
+      return file.data?.macro?.name === id;
+    }
+    if (!file.relPath.startsWith("term_macros/")) return false;
+    const bare = path5.posix.basename(file.relPath, ".json");
+    if (active && !active.has(bare)) return false;
+    const macros2 = file.data?.macros;
+    return isRecord4(macros2) && Object.prototype.hasOwnProperty.call(macros2, id);
+  });
+}
+function collectOccurrences(files, entityType, id, options = {}) {
+  const out = [];
+  const includeSnlMacroTokens = entityType !== "macro" || options.includeUnresolvedMacroTokens === true || macroIsActive(files, id);
+  for (const file of files) {
+    collectFileOccurrences(file, entityType, id, out, includeSnlMacroTokens);
+  }
+  return out;
+}
+function collectFileOccurrences(file, entityType, id, out, includeSnlMacroTokens) {
+  const data = file.data;
+  if (/^packages\/[^/]+\.json$/.test(file.relPath)) {
+    if (entityType === "entry" && Array.isArray(data?.entry_ids)) {
+      data.entry_ids.forEach((entryId, index) => {
+        if (entryId === id) {
+          out.push(occurrence(file, entityType, id, "reference", `entry_ids[${index}]`));
+        }
+      });
+    }
+    return;
+  }
+  if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
+    const entry = data?.entry;
+    if (entityType === "entry" && entry?.id === id) {
+      out.push(occurrence(file, entityType, id, "definition", "entry.id"));
+    }
+    const snl = entry?.content?.snl;
+    if (typeof snl === "string" && snl.trim() !== "") {
+      for (const ref of scanSnlReferences(snl, {
+        postfixedMacroNames: entityType === "macro" && includeSnlMacroTokens ? /* @__PURE__ */ new Set([id]) : void 0
+      })) {
+        if (ref.entityType !== entityType || ref.id !== id) continue;
+        if (entityType === "macro" && !includeSnlMacroTokens) continue;
+        const pos = offsetPosition(snl, ref.start);
+        out.push({
+          ...occurrence(file, entityType, id, "reference", "entry.content.snl"),
+          offset: ref.start,
+          snlLine: pos.line,
+          snlColumn: pos.column
+        });
+      }
+    }
+    return;
+  }
+  if (/^macros\/[^/]+\.json$/.test(file.relPath)) {
+    const macro = data?.macro;
+    if (entityType === "macro" && macro?.name === id) {
+      out.push(occurrence(file, entityType, id, "definition", "macro.name"));
+    }
+    if (entityType === "entry" && Array.isArray(macro?.source?.entries)) {
+      macro.source.entries.forEach((entryId, index) => {
+        if (entryId === id) {
+          out.push(occurrence(file, entityType, id, "reference", `macro.source.entries[${index}]`));
+        }
+      });
+    }
+    return;
+  }
+  if (file.relPath === "entries.json" && Array.isArray(data)) {
+    data.forEach((entry, index) => {
+      if (entityType === "entry" && entry?.id === id) {
+        out.push(occurrence(file, entityType, id, "definition", `[${index}].id`));
+      }
+      const snl = entry?.content?.snl;
+      if (typeof snl === "string" && snl.trim() !== "") {
+        for (const ref of scanSnlReferences(snl, {
+          postfixedMacroNames: entityType === "macro" && includeSnlMacroTokens ? /* @__PURE__ */ new Set([id]) : void 0
+        })) {
+          if (ref.entityType !== entityType || ref.id !== id) continue;
+          if (entityType === "macro" && !includeSnlMacroTokens) continue;
+          const pos = offsetPosition(snl, ref.start);
+          out.push({
+            ...occurrence(file, entityType, id, "reference", `[${index}].content.snl`),
+            offset: ref.start,
+            snlLine: pos.line,
+            snlColumn: pos.column
+          });
+        }
+      }
+    });
+    return;
+  }
+  if (file.relPath.startsWith("term_macros/")) {
+    const macros2 = data?.macros;
+    if (!macros2 || typeof macros2 !== "object" || Array.isArray(macros2)) return;
+    for (const [macroId, macro] of Object.entries(macros2)) {
+      if (entityType === "macro" && macroId === id) {
+        out.push(occurrence(file, entityType, id, "definition", `macros[${JSON.stringify(macroId)}]`));
+      }
+      if (entityType === "entry" && Array.isArray(macro?.source?.entries)) {
+        macro.source.entries.forEach((entryId, index) => {
+          if (entryId === id) {
+            out.push(
+              occurrence(
+                file,
+                entityType,
+                id,
+                "reference",
+                `macros[${JSON.stringify(macroId)}].source.entries[${index}]`
+              )
+            );
+          }
+        });
+      }
+    }
+    return;
+  }
+  if (entityType === "entry" && /^libraries\/[^/]+\/graph\.json$/.test(file.relPath) && Array.isArray(data?.nodes)) {
+    data.nodes.forEach((node, index) => {
+      if (node?.props?.entryId === id) {
+        out.push(occurrence(file, entityType, id, "reference", `nodes[${index}].props.entryId`));
+      }
+    });
+  } else if (file.relPath === "relationships.json" && Array.isArray(data?.relationships)) {
+    data.relationships.forEach((rel2, index) => {
+      if (entityType === "entry" && rel2?.from === id) {
+        out.push(occurrence(file, entityType, id, "reference", `relationships[${index}].from`));
+      }
+      if (entityType === "entry" && rel2?.to === id) {
+        out.push(occurrence(file, entityType, id, "reference", `relationships[${index}].to`));
+      }
+      if (rel2?.metadata?.generator !== "macro-source-scan") return;
+      const witnessField = entityType === "macro" ? "macros" : "postfixes";
+      const witnesses = rel2.metadata[witnessField];
+      if (!Array.isArray(witnesses)) return;
+      witnesses.forEach((value, witnessIndex) => {
+        if (value === id) {
+          out.push(
+            occurrence(
+              file,
+              entityType,
+              id,
+              "reference",
+              `relationships[${index}].metadata.${witnessField}[${witnessIndex}]`
+            )
+          );
+        }
+      });
+    });
+  }
+}
+function scanSnlReferences(source, options = {}) {
+  y(source);
+  const tokens = tokenizeSnl(source);
+  const refs = [];
+  for (let i4 = 0; i4 < tokens.length; i4++) {
+    const token = tokens[i4];
+    if (token.type !== "ident") continue;
+    const prev = tokens[i4 - 1];
+    const next = tokens[i4 + 1];
+    if (prev?.type === "lbracket" || prev?.type === "hash") continue;
+    if (prev?.type === "at" && !isPostfixAt(tokens[i4 - 2])) continue;
+    if (next?.type === "at") {
+      if (options.postfixedMacroNames?.has(token.value)) {
+        refs.push({ entityType: "macro", id: token.value, start: token.start, end: token.end });
+      }
+      continue;
+    }
+    if (prev?.type === "at" && isPostfixAt(tokens[i4 - 2])) {
+      refs.push({ entityType: "entry", id: token.value, start: token.start, end: token.end });
+      continue;
+    }
+    if (/^\d+(?:\.\d+)*$/.test(token.value)) continue;
+    refs.push({ entityType: "macro", id: token.value, start: token.start, end: token.end });
+  }
+  return refs;
+}
+function isPostfixAt(previous) {
+  return previous !== void 0 && ["ident", "delimited", "rparen", "rbracket"].includes(previous.type);
+}
+function codePointAt(source, index) {
+  const point = source.codePointAt(index);
+  if (point === void 0) return "";
+  return String.fromCodePoint(point);
+}
+function isIdentifierStart(character) {
+  if (!character) return false;
+  if (character.codePointAt(0) <= 127) return /[A-Za-z0-9_\\]/.test(character);
+  return d(character);
+}
+function isIdentifierContinuation(character) {
+  if (!character) return false;
+  if (character.codePointAt(0) <= 127) return /[A-Za-z0-9_.\-]/.test(character);
+  return d(character);
+}
+function tokenizeSnl(source) {
+  const tokens = [];
+  let i4 = 0;
+  while (i4 < source.length) {
+    const ch2 = codePointAt(source, i4);
+    if (" 	\r\n\f\v".includes(ch2)) {
+      i4 += ch2.length;
+      continue;
+    }
+    if (ch2 === "$" || ch2 === "%" || ch2 === "`") {
+      const delimiter = ch2 === "$" && source[i4 + 1] === "$" ? "$$" : ch2;
+      const close2 = source.indexOf(delimiter, i4 + delimiter.length);
+      if (close2 < 0) throw new Error(`Malformed SNL: unclosed ${delimiter} delimiter at offset ${i4}.`);
+      tokens.push({ type: "delimited", value: source.slice(i4, close2 + delimiter.length), start: i4, end: close2 + delimiter.length });
+      i4 = close2 + delimiter.length;
+      continue;
+    }
+    if (isIdentifierStart(ch2)) {
+      const start = i4;
+      i4 += ch2.length;
+      while (i4 < source.length) {
+        const continuation = codePointAt(source, i4);
+        if (!isIdentifierContinuation(continuation)) break;
+        i4 += continuation.length;
+      }
+      tokens.push({ type: "ident", value: source.slice(start, i4), start, end: i4 });
+      continue;
+    }
+    const punctuation = {
+      "@": "at",
+      "#": "hash",
+      "(": "lparen",
+      ")": "rparen",
+      "[": "lbracket",
+      "]": "rbracket",
+      ",": "comma",
+      "=": "eq"
+    };
+    const type = punctuation[ch2];
+    if (!type) throw new Error(`Malformed SNL: unexpected character ${JSON.stringify(ch2)} at offset ${i4}.`);
+    tokens.push({ type, value: ch2, start: i4, end: i4 + ch2.length });
+    i4 += ch2.length;
+  }
+  return tokens;
+}
+async function validateWorkspaceBoundary(workspaceRoot) {
+  const requestedRoot = path5.resolve(workspaceRoot);
+  let canonicalRoot;
+  try {
+    canonicalRoot = await fs3.realpath(requestedRoot);
+  } catch {
+    throw new Error(`Workspace root does not exist: ${requestedRoot}`);
+  }
+  const rootStat = await fs3.lstat(canonicalRoot);
+  if (!rootStat.isDirectory()) throw new Error(`Workspace root is not a directory: ${canonicalRoot}`);
+  const requestedDoc = path5.join(requestedRoot, ".SNL_Doc");
+  let docStat;
+  try {
+    docStat = await fs3.lstat(requestedDoc);
+  } catch {
+    throw new Error(
+      `No .SNL_Doc/ folder at ${requestedRoot}. Point --root at the workspace that contains .SNL_Doc/.`
     );
   }
-  return reports.some(hasErrors) ? 1 : 0;
+  if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
+    throw new Error(`${requestedDoc} must be a real directory, not a symlink.`);
+  }
+  const canonicalDoc = await fs3.realpath(requestedDoc);
+  const expectedDoc = path5.join(canonicalRoot, ".SNL_Doc");
+  if (canonicalDoc !== expectedDoc) {
+    throw new Error(`${requestedDoc} escapes the canonical workspace boundary.`);
+  }
+  return canonicalRoot;
 }
-function usage() {
-  return formatUsage(
-    "snl-lint-package",
-    "[options] [pkg.json ...]",
-    [ROOT_FLAG, NAME_FLAG, NO_KATEX_FLAG, JSON_FLAG, HELP_FLAG]
+async function assertCanonicalDirectory2(dir, docRoot2) {
+  const stat = await fs3.lstat(dir);
+  if (!stat.isDirectory() || stat.isSymbolicLink()) {
+    throw new Error(`${dir} must be a real directory, not a symlink.`);
+  }
+  const real = await fs3.realpath(dir);
+  const relative2 = path5.relative(docRoot2, real);
+  if (relative2.startsWith("..") || path5.isAbsolute(relative2)) {
+    throw new Error(`${dir} escapes the canonical .SNL_Doc boundary.`);
+  }
+}
+async function workspaceUsesEntityStorage(root) {
+  const configPath2 = path5.join(root, "config.json");
+  let handle;
+  try {
+    handle = await fs3.open(configPath2, constants3.O_RDONLY | constants3.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile()) throw new Error(`${configPath2} must be a regular, non-symlink file.`);
+    const config = JSON.parse(await handle.readFile("utf8"));
+    return usesEntityStorage(config);
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    if (error.code === "ELOOP") {
+      throw new Error(`${configPath2} must be a regular, non-symlink file.`);
+    }
+    throw error;
+  } finally {
+    if (handle) await handle.close();
+  }
+}
+async function appendJsonDirectoryCandidates(root, relativeDirectory, candidates) {
+  const directory = path5.join(root, relativeDirectory);
+  try {
+    await assertCanonicalDirectory2(directory, root);
+    for (const entry of await fs3.readdir(directory, { withFileTypes: true })) {
+      const absolute = path5.join(directory, entry.name);
+      if (entry.name.endsWith(".json") && entry.isSymbolicLink()) {
+        throw new Error(`${absolute} must not be a symlink.`);
+      }
+      if (entry.isFile() && entry.name.endsWith(".json")) {
+        candidates.push(path5.join(relativeDirectory, entry.name));
+      }
+    }
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+}
+async function loadWorkspaceJson(workspaceRoot) {
+  const root = snlDocRoot(workspaceRoot);
+  await assertCanonicalDirectory2(root, root);
+  const entityStorage = await workspaceUsesEntityStorage(root);
+  const candidates = ["config.json", "relationships.json"];
+  if (entityStorage) {
+    await Promise.all([
+      readEntries(workspaceRoot),
+      readActiveMacros(workspaceRoot)
+    ]);
+    await appendJsonDirectoryCandidates(root, "packages", candidates);
+    await appendJsonDirectoryCandidates(root, "entries", candidates);
+    await appendJsonDirectoryCandidates(root, "macros", candidates);
+  } else {
+    candidates.push("entries.json");
+    await appendJsonDirectoryCandidates(root, "term_macros", candidates);
+  }
+  const libraryRoot = path5.join(root, "libraries");
+  try {
+    await assertCanonicalDirectory2(libraryRoot, root);
+    const libraries = await fs3.readdir(libraryRoot, { withFileTypes: true });
+    for (const entry of libraries) {
+      if (!entry.name.startsWith(".") && entry.isSymbolicLink()) {
+        throw new Error(`${path5.join(libraryRoot, entry.name)} must not be a symlink.`);
+      }
+      if (entry.isDirectory() && !entry.name.startsWith(".")) {
+        await assertCanonicalDirectory2(path5.join(libraryRoot, entry.name), root);
+        candidates.push(path5.join("libraries", entry.name, "graph.json"));
+      }
+    }
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  const unique = [...new Set(candidates)].sort();
+  const loaded = [];
+  for (const relPath of unique) {
+    const absPath = path5.join(root, relPath);
+    await assertCanonicalDirectory2(path5.dirname(absPath), root);
+    let raw;
+    let stat;
+    let handle;
+    try {
+      handle = await fs3.open(absPath, constants3.O_RDONLY | constants3.O_NOFOLLOW);
+      stat = await handle.stat();
+      if (!stat.isFile()) {
+        throw new Error(`${absPath} must be a regular, non-symlink file.`);
+      }
+      raw = await handle.readFile("utf8");
+    } catch (error) {
+      if (handle) await handle.close();
+      if (error.code === "ENOENT") continue;
+      if (error.code === "ELOOP") {
+        throw new Error(`${absPath} must be a regular, non-symlink file.`);
+      }
+      throw error;
+    }
+    await handle.close();
+    const errors = [];
+    const tree = parseTree4(raw, errors, { disallowComments: true, allowTrailingComma: false });
+    if (!tree || errors.length > 0) {
+      const detail = errors.map((e) => `${printParseErrorCode(e.error)}@${e.offset}`).join(", ");
+      throw new Error(`Failed to parse ${absPath}: ${detail || "empty JSON document"}`);
+    }
+    validateNoDuplicateKeys(tree, absPath);
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch (error) {
+      throw new Error(`Failed to parse ${absPath}: ${error.message}`);
+    }
+    const rel2 = relPath.split(path5.sep).join("/");
+    validateSchemaShape(absPath, rel2, data);
+    loaded.push({
+      absPath,
+      relPath: rel2,
+      raw,
+      data,
+      tree,
+      mode: stat.mode,
+      device: stat.dev,
+      inode: stat.ino,
+      docRoot: root
+    });
+  }
+  return loaded;
+}
+function validateNoDuplicateKeys(node, absPath) {
+  if (node.type === "object") {
+    const seen = /* @__PURE__ */ new Set();
+    for (const property of node.children ?? []) {
+      const key = property.children?.[0]?.value;
+      if (typeof key !== "string") continue;
+      if (seen.has(key)) {
+        throw new Error(`${absPath}: duplicate JSON property ${JSON.stringify(key)} is not safe to migrate.`);
+      }
+      seen.add(key);
+    }
+  }
+  for (const child of node.children ?? []) validateNoDuplicateKeys(child, absPath);
+}
+function validateSchemaShape(absPath, relPath, data) {
+  const value = data;
+  const fail = (message) => {
+    throw new Error(`${absPath}: ${message}`);
+  };
+  if (relPath === "config.json") {
+    if (!isRecord4(value)) fail("config.json must be an object.");
+    if (value.active_macro_packages !== void 0 && (!Array.isArray(value.active_macro_packages) || !value.active_macro_packages.every((item) => typeof item === "string"))) {
+      fail("config.active_macro_packages must be a string array when present.");
+    }
+    return;
+  }
+  if (/^packages\/[^/]+\.json$/.test(relPath)) {
+    if (!isRecord4(value) || value.format !== "snl-package" || value.version !== 1 || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
+      fail("Package manifest must use the snl-package v1 envelope.");
+    }
+    if (relPath !== packageManifestPath(value.id)) fail("Package manifest path does not match its logical identity.");
+    return;
+  }
+  if (/^entries\/[^/]+\.json$/.test(relPath)) {
+    if (!isRecord4(value) || value.format !== "snl-entry" || value.version !== 1 || typeof value.package !== "string" || !isRecord4(value.entry) || typeof value.entry.id !== "string" || !isRecord4(value.entry.content) || value.entry.package !== value.package) {
+      fail("Entry entity must use the snl-entry v1 envelope with matching Package identity.");
+    }
+    if (relPath !== entryEntityPath(value.package, value.entry.id)) fail("Entry entity path does not match its logical identity.");
+    if (value.entry.content.snl !== void 0 && typeof value.entry.content.snl !== "string") {
+      fail("Entry content.snl must be a string when present.");
+    }
+    return;
+  }
+  if (/^macros\/[^/]+\.json$/.test(relPath)) {
+    if (!isRecord4(value) || value.format !== "snl-macro" || value.version !== 1 || typeof value.package !== "string" || !isRecord4(value.macro) || typeof value.macro.name !== "string" || !isRecord4(value.macro.source) || !Array.isArray(value.macro.source.entries) || !value.macro.source.entries.every((item) => typeof item === "string")) {
+      fail("Macro entity must use the snl-macro v1 envelope with source.entries[].");
+    }
+    if (relPath !== macroEntityPath(value.package, value.macro.name)) fail("Macro entity path does not match its logical identity.");
+    return;
+  }
+  if (relPath === "entries.json") {
+    if (!Array.isArray(value)) fail("entries.json must be an array.");
+    value.forEach((entry, index) => {
+      if (!isRecord4(entry) || typeof entry.id !== "string" || !isRecord4(entry.content)) {
+        fail(`entry ${index} must contain string id and object content.`);
+      }
+      if (entry.content.snl !== void 0 && typeof entry.content.snl !== "string") {
+        fail(`entry ${index} content.snl must be a string when present.`);
+      }
+    });
+    return;
+  }
+  if (relPath.startsWith("term_macros/")) {
+    if (!isRecord4(value) || !isRecord4(value.macros)) fail("macro package must contain an object macros map.");
+    for (const [name, macro] of Object.entries(value.macros)) {
+      if (!isRecord4(macro) || !isRecord4(macro.source) || !Array.isArray(macro.source.entries)) {
+        fail(`macro ${JSON.stringify(name)} must contain source.entries[].`);
+      }
+      if (!macro.source.entries.every((item) => typeof item === "string")) {
+        fail(`macro ${JSON.stringify(name)} source.entries must contain only strings.`);
+      }
+    }
+    return;
+  }
+  if (/^libraries\/[^/]+\/graph\.json$/.test(relPath)) {
+    if (!isRecord4(value) || !Array.isArray(value.nodes) || !Array.isArray(value.relationships)) {
+      fail("Library graph must contain nodes[] and relationships[].");
+    }
+    value.nodes.forEach((node, index) => {
+      if (!isRecord4(node) || !isRecord4(node.props)) fail(`graph node ${index} must contain object props.`);
+      if (node.props.entryId !== void 0 && typeof node.props.entryId !== "string") {
+        fail(`graph node ${index} props.entryId must be a string when present.`);
+      }
+    });
+    return;
+  }
+  if (relPath === "relationships.json") {
+    if (!isRecord4(value) || !Array.isArray(value.relationships)) {
+      fail("relationships.json must contain relationships[].");
+    }
+    const ids = /* @__PURE__ */ new Set();
+    value.relationships.forEach((rel2, index) => {
+      if (!isRecord4(rel2) || typeof rel2.id !== "string" || !rel2.id || typeof rel2.from !== "string" || !rel2.from || typeof rel2.to !== "string" || !rel2.to || typeof rel2.label !== "string" || !rel2.label) {
+        fail(`relationship ${index} must contain non-empty string id/from/to/label.`);
+      }
+      if (ids.has(rel2.id)) fail(`relationship ${index} duplicates id ${JSON.stringify(rel2.id)}.`);
+      ids.add(rel2.id);
+      if (isRecord4(rel2.metadata) && rel2.metadata.generator === "macro-source-scan") {
+        for (const field of ["macros", "postfixes"]) {
+          const values = rel2.metadata[field];
+          if (values !== void 0 && (!Array.isArray(values) || !values.every((v2) => typeof v2 === "string"))) {
+            fail(`relationship ${index} metadata.${field} must be a string array when present.`);
+          }
+        }
+      }
+    });
+  }
+}
+function isRecord4(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function validateNonEmptyIdentity(id) {
+  if (id.trim() === "") throw new Error("Identity must be a non-empty string.");
+}
+function occurrence(file, entityType, id, role, jsonPath) {
+  let category;
+  if (role === "definition") category = "definition";
+  else if (file.relPath.startsWith("packages/") && jsonPath.startsWith("entry_ids[")) category = "package-membership";
+  else if (jsonPath.includes(".content.snl")) category = "snl";
+  else if (/^libraries\//.test(file.relPath)) category = "library-index";
+  else if (jsonPath.includes(".source.entries[")) category = "macro-source";
+  else if (jsonPath.includes(".metadata.macros[") || jsonPath.includes(".metadata.postfixes[")) category = "generated-witness";
+  else category = "relationship";
+  return { entityType, id, role, category, file: file.relPath, path: jsonPath };
+}
+function offsetPosition(source, offset) {
+  const before = source.slice(0, offset).split("\n");
+  return { line: before.length, column: before[before.length - 1].length + 1 };
+}
+function compareOccurrence(a3, b2) {
+  return a3.file.localeCompare(b2.file) || a3.path.localeCompare(b2.path) || (a3.offset ?? -1) - (b2.offset ?? -1);
+}
+
+// lib/entity-writes.ts
+import { promises as fs4 } from "node:fs";
+import * as path6 from "node:path";
+function isRecord5(value) {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+function assertCurrentWriteConfig(config, cli) {
+  if (!usesEntityStorage(config)) {
+    throw new Error(`${cli} requires workspace data 0.0.6, 0.0.11, or 0.1.0 per-entity storage.`);
+  }
+  if (!isRecord5(config) || !Array.isArray(config.entry_kinds)) {
+    throw new Error("Current config.json entry_kinds must be an array.");
+  }
+  if (!Array.isArray(config.macro_kinds)) {
+    throw new Error("Current config.json macro_kinds must be an array.");
+  }
+}
+function effectiveActivePackageIds(config, packages) {
+  const configured = config.active_macro_packages;
+  return new Set(Array.isArray(configured) ? configured.filter((id) => typeof id === "string") : Object.keys(packages).filter((id) => id !== UNPACKAGED_PACKAGE_ID));
+}
+async function canonicalWriteWorkspaceRoot(workspaceRoot) {
+  const resolved = path6.resolve(workspaceRoot);
+  const real = await fs4.realpath(resolved);
+  const stat = await fs4.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved) {
+    throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
+  }
+  const doc = path6.join(resolved, ".SNL_Doc");
+  let docStat;
+  try {
+    docStat = await fs4.lstat(doc);
+  } catch {
+    throw new Error(`Workspace must contain an existing .SNL_Doc directory: ${doc}.`);
+  }
+  if (!docStat.isDirectory() || docStat.isSymbolicLink()) {
+    throw new Error(`${doc} must be a real directory, not a symlink.`);
+  }
+  const realDoc = await fs4.realpath(doc);
+  if (realDoc !== path6.join(real, ".SNL_Doc")) {
+    throw new Error(`${doc} escapes the canonical workspace boundary.`);
+  }
+  return resolved;
+}
+function normalizeEntryDraft(raw, packageOverride) {
+  if (!isRecord5(raw)) return raw;
+  const normalizedOverride = typeof packageOverride === "string" ? packageOverride.trim() : packageOverride;
+  const packageId = normalizedOverride !== void 0 ? normalizedOverride : raw.package !== void 0 ? typeof raw.package === "string" ? raw.package.trim() : raw.package : UNPACKAGED_PACKAGE_ID;
+  return {
+    ...raw,
+    id: raw.id === void 0 ? raw.id : typeof raw.id === "string" ? raw.id.trim() : raw.id,
+    package: packageId,
+    kind: raw.kind === void 0 ? raw.kind : typeof raw.kind === "string" ? raw.kind.trim() : raw.kind,
+    title: raw.title === void 0 ? "" : typeof raw.title === "string" ? raw.title.trim() : raw.title,
+    content: raw.content === void 0 ? {} : raw.content,
+    contribution_info: Object.prototype.hasOwnProperty.call(raw, "contribution_info") ? raw.contribution_info : null,
+    pointer: Object.prototype.hasOwnProperty.call(raw, "pointer") ? raw.pointer : null
+  };
+}
+function templateUsesVariadic(value) {
+  if (typeof value !== "string") return false;
+  for (let index = 0; index < value.length - 1; index += 1) {
+    if (value[index] !== "#" || value[index + 1] !== "*") continue;
+    let slashes = 0;
+    for (let cursor = index - 1; cursor >= 0 && value[cursor] === "\\"; cursor -= 1) slashes += 1;
+    if (slashes % 2 === 0) return true;
+  }
+  return false;
+}
+function normalizeMacroDraft(raw, current = false) {
+  if (!isRecord5(raw)) return raw;
+  const styles2 = Array.isArray(raw.styles) ? raw.styles.map((style) => isRecord5(style) ? { ...style, tags: style.tags === void 0 ? [] : style.tags } : style) : raw.styles;
+  const firstStyle = Array.isArray(styles2) && isRecord5(styles2[0]) && typeof styles2[0].style_name === "string" ? styles2[0].style_name : void 0;
+  const source = raw.source === void 0 ? {} : raw.source;
+  const normalizedSource = isRecord5(source) ? {
+    ...source,
+    entries: source.entries === void 0 ? [] : source.entries,
+    urls: source.urls === void 0 ? [] : source.urls
+  } : source;
+  return {
+    ...raw,
+    description: raw.description === void 0 ? "" : raw.description,
+    source: normalizedSource,
+    kind: current && raw.kind === void 0 ? "const" : raw.kind,
+    dynamic_arity: raw.dynamic_arity === void 0 ? Array.isArray(styles2) && styles2.some((style) => isRecord5(style) && (current ? macroV11TemplateUsesVariadic(style.template) : templateUsesVariadic(style.template))) : raw.dynamic_arity,
+    ...current ? {} : {
+      default_style: raw.default_style === void 0 ? firstStyle ? { en: firstStyle } : void 0 : raw.default_style
+    },
+    tags: raw.tags === void 0 ? [] : raw.tags,
+    styles: styles2
+  };
+}
+function macroV11TemplateUsesVariadic(value) {
+  if (!isRecord5(value)) return false;
+  if (value.type === "i18n" && isRecord5(value.values)) {
+    return Object.values(value.values).some(macroV11TemplateUsesVariadic);
+  }
+  return templateUsesVariadic(value.body);
+}
+async function installNewJson2(docRoot2, relativePath, value) {
+  await installNewJson(path6.join(docRoot2, relativePath), value);
+}
+async function addEntryEntity(workspaceRoot, raw, options = {}) {
+  workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
+  return withWorkspaceDataLock(workspaceRoot, "add Entry entity", async () => {
+    const config = await readConfig(workspaceRoot);
+    assertCurrentWriteConfig(config, "snl-add-entry");
+    const [entries, entryKinds, macros2, packages] = await Promise.all([
+      readEntries(workspaceRoot),
+      readEntryKinds(workspaceRoot),
+      readActiveMacros(workspaceRoot),
+      readAllMacroPackages(workspaceRoot)
+    ]);
+    const normalized = normalizeEntryDraft(raw, options.package);
+    const issues = [];
+    if (isRecord5(raw) && options.package !== void 0 && Object.prototype.hasOwnProperty.call(raw, "package") && (typeof raw.package !== "string" || raw.package.trim() !== options.package.trim())) {
+      issues.push({
+        severity: "error",
+        code: "entry.package-mismatch",
+        message: `Draft package ${JSON.stringify(raw.package)} disagrees with --package ${JSON.stringify(options.package)}.`,
+        path: "package"
+      });
+    }
+    const report = lintEntry(normalized, {
+      entryKinds,
+      macros: macros2,
+      siblingEntries: entries,
+      strictMacros: options.strictMacros
+    });
+    issues.push(...report.issues);
+    const packageValue = isRecord5(normalized) ? normalized.package : void 0;
+    let packageId = "";
+    if (typeof packageValue !== "string" || packageValue.length === 0) {
+      issues.push({
+        severity: "error",
+        code: "entry.bad-package",
+        message: "Entry package must be a non-empty Package ID string.",
+        path: "package"
+      });
+    } else {
+      packageId = packageValue;
+      try {
+        assertPackageId(packageId);
+      } catch (error) {
+        issues.push({
+          severity: "error",
+          code: "entry.bad-package",
+          message: error instanceof Error ? error.message : String(error),
+          path: "package"
+        });
+      }
+    }
+    if (packageId && !Object.prototype.hasOwnProperty.call(packages, packageId)) {
+      issues.push({
+        severity: "error",
+        code: "entry.package-not-found",
+        message: `Package ${JSON.stringify(packageId)} does not exist. Create it first or use _unpackaged.`,
+        path: "package"
+      });
+    }
+    if (issues.some((issue) => issue.code === "entry.duplicate-id")) {
+      const id = isRecord5(normalized) && typeof normalized.id === "string" ? normalized.id : "";
+      return {
+        status: "conflict",
+        entity: "entry",
+        code: "entry.duplicate-id",
+        message: `Entry id ${JSON.stringify(id)} already exists.`
+      };
+    }
+    if (issues.some((issue) => issue.severity === "error")) {
+      return { status: "invalid", entity: "entry", issues };
+    }
+    const entry = normalized;
+    const relativePath = entryEntityPath(entry.package, entry.id);
+    const envelope = {
+      format: "snl-entry",
+      version: ENTRY_STORAGE_VERSION,
+      ...usesCurrentEntitySchemas(config) ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
+      package: entry.package,
+      entry
+    };
+    const manifestFile = path6.join(
+      snlDocRoot(workspaceRoot),
+      packageManifestPath(entry.package)
+    );
+    const originalManifest = usesCurrentEntitySchemas(config) ? await readRegularText(manifestFile) : null;
+    const nextManifest = originalManifest ? (() => {
+      const manifest = JSON.parse(originalManifest.text);
+      const entryIds = Array.isArray(manifest.entry_ids) ? manifest.entry_ids.filter((value) => typeof value === "string") : [];
+      return {
+        ...manifest,
+        entry_ids: [.../* @__PURE__ */ new Set([...entryIds, entry.id])].sort((left, right) => left.localeCompare(right))
+      };
+    })() : null;
+    try {
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
+      if (originalManifest && nextManifest) {
+        try {
+          await options.beforePackageManifestInstall?.();
+          await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
+        } catch (error) {
+          const entityFile = path6.join(snlDocRoot(workspaceRoot), relativePath);
+          try {
+            await removeJsonIfUnchanged(entityFile, jsonText(envelope));
+          } catch (rollbackError) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} Rollback of ${entityFile} failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`,
+              { cause: error }
+            );
+          }
+          throw error;
+        }
+      }
+    } catch (error) {
+      if (error.code === "EEXIST") {
+        return {
+          status: "conflict",
+          entity: "entry",
+          code: "entry.duplicate-id",
+          message: `Entry id ${JSON.stringify(entry.id)} already exists.`
+        };
+      }
+      throw error;
+    }
+    return {
+      status: "created",
+      entity: "entry",
+      id: entry.id,
+      package: entry.package,
+      path: relativePath,
+      issues
+    };
+  });
+}
+async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
+  workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
+  return withWorkspaceDataLock(workspaceRoot, "add Macro entity", async () => {
+    const config = await readConfig(workspaceRoot);
+    assertCurrentWriteConfig(config, "snl-add-macro");
+    const packages = await readAllMacroPackages(workspaceRoot);
+    const issues = [];
+    if (packageId === UNPACKAGED_PACKAGE_ID) {
+      issues.push({
+        severity: "error",
+        code: "macro.system-package",
+        message: "Macros cannot be added to the system _unpackaged Package.",
+        path: "package"
+      });
+    } else if (!Object.prototype.hasOwnProperty.call(packages, packageId)) {
+      issues.push({
+        severity: "error",
+        code: "macro.package-not-found",
+        message: `Package ${JSON.stringify(packageId)} does not exist. Create it first with snl-add-package.`,
+        path: "package"
+      });
+    }
+    const current = usesCurrentEntitySchemas(config);
+    const normalized = normalizeMacroDraft(raw, current);
+    const name = isRecord5(normalized) && typeof normalized.name === "string" ? normalized.name : "";
+    if (!name || /[@#$%\s()[\]{}]/u.test(name)) {
+      issues.push({
+        severity: "error",
+        code: "macro.bad-name",
+        message: "Macro name must be non-empty and must not contain @, #, $, %, whitespace, parentheses, brackets, or braces.",
+        path: "name"
+      });
+    }
+    const macroBody = isRecord5(normalized) ? Object.fromEntries(Object.entries(normalized).filter(([key]) => key !== "name")) : normalized;
+    const packageExists = Object.prototype.hasOwnProperty.call(packages, packageId);
+    const synthetic = {
+      version: current ? "11" : "8",
+      name: packageExists ? packages[packageId].name : packageId,
+      description: packageExists ? packages[packageId].description : "",
+      macros: name ? { [name]: macroBody } : {}
+    };
+    issues.push(...lintPackage(synthetic, { checkKatex: options.checkKatex !== false }).issues);
+    if (packageExists && !effectiveActivePackageIds(config, packages).has(packageId)) {
+      issues.push({
+        severity: "info",
+        code: "macro.package-inactive",
+        message: `Package ${JSON.stringify(packageId)} is not active; the Macro is stored but will not resolve until the Package is activated.`,
+        path: "package"
+      });
+    }
+    if (name && packageExists && Object.prototype.hasOwnProperty.call(packages[packageId].macros, name)) {
+      return {
+        status: "conflict",
+        entity: "macro",
+        code: "macro.duplicate-name",
+        message: `Macro ${JSON.stringify(name)} already exists in Package ${JSON.stringify(packageId)}.`
+      };
+    }
+    if (issues.some((issue) => issue.severity === "error")) {
+      return { status: "invalid", entity: "macro", issues };
+    }
+    const macro = normalized;
+    const relativePath = macroEntityPath(packageId, macro.name);
+    const envelope = {
+      format: "snl-macro",
+      version: MACRO_STORAGE_VERSION,
+      ...current ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
+      package: packageId,
+      macro
+    };
+    try {
+      await installNewJson2(snlDocRoot(workspaceRoot), relativePath, envelope);
+    } catch (error) {
+      if (error.code === "EEXIST") {
+        return {
+          status: "conflict",
+          entity: "macro",
+          code: "macro.duplicate-name",
+          message: `Macro ${JSON.stringify(macro.name)} already exists in Package ${JSON.stringify(packageId)}.`
+        };
+      }
+      throw error;
+    }
+    return {
+      status: "created",
+      entity: "macro",
+      name: macro.name,
+      package: packageId,
+      path: relativePath,
+      issues
+    };
+  });
+}
+async function addPackageEntity(workspaceRoot, raw, options = {}) {
+  workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
+  return withWorkspaceDataLock(workspaceRoot, "add Package manifest", async () => {
+    const configFile = configPath(workspaceRoot);
+    const originalConfig = await readRegularText(configFile);
+    const config = JSON.parse(originalConfig.text);
+    assertCurrentWriteConfig(config, "snl-add-package");
+    await readEntries(workspaceRoot);
+    const packages = await readAllMacroPackages(workspaceRoot);
+    const issues = [];
+    if (!isRecord5(raw)) {
+      issues.push({ severity: "error", code: "package.not-object", message: "Package draft must be a JSON object." });
+      return { status: "invalid", entity: "package", issues };
+    }
+    const id = typeof raw.id === "string" ? raw.id.trim() : "";
+    if (!id || id === UNPACKAGED_PACKAGE_ID) {
+      issues.push({
+        severity: "error",
+        code: "package.bad-id",
+        message: "Package id must be a non-empty user Package ID and cannot be _unpackaged.",
+        path: "id"
+      });
+    } else {
+      try {
+        assertPackageId(id);
+      } catch (error) {
+        issues.push({
+          severity: "error",
+          code: "package.bad-id",
+          message: error instanceof Error ? error.message : String(error),
+          path: "id"
+        });
+      }
+    }
+    const name = raw.name === void 0 ? id : typeof raw.name === "string" ? raw.name.trim() : raw.name;
+    const description = raw.description === void 0 ? "" : typeof raw.description === "string" ? raw.description.trim() : raw.description;
+    if (typeof name !== "string" || !name) {
+      issues.push({ severity: "error", code: "package.bad-name", message: "Package name must be a non-empty string.", path: "name" });
+    }
+    if (typeof description !== "string") {
+      issues.push({ severity: "error", code: "package.bad-description", message: "Package description must be a string.", path: "description" });
+    }
+    const collision = Object.keys(packages).find((existing) => existing.toLowerCase() === id.toLowerCase());
+    if (collision) {
+      return {
+        status: "conflict",
+        entity: "package",
+        code: "package.duplicate-id",
+        message: `Package id ${JSON.stringify(id)} conflicts with existing Package ${JSON.stringify(collision)}.`
+      };
+    }
+    if (issues.some((issue) => issue.severity === "error")) {
+      return { status: "invalid", entity: "package", issues };
+    }
+    const manifest = {
+      ...raw,
+      format: "snl-package",
+      version: PACKAGE_STORAGE_VERSION,
+      ...usesCurrentEntitySchemas(config) ? { schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] } : {},
+      id,
+      name,
+      description
+    };
+    const relativePath = packageManifestPath(id);
+    await installNewJson2(snlDocRoot(workspaceRoot), relativePath, manifest);
+    const configRecord = config;
+    const currentActive = effectiveActivePackageIds(configRecord, packages);
+    const nextConfig = {
+      ...configRecord,
+      active_macro_packages: [.../* @__PURE__ */ new Set([...currentActive, id])].sort((left, right) => left.localeCompare(right))
+    };
+    try {
+      if (options.beforeConfigInstall) await options.beforeConfigInstall();
+      await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
+    } catch (error) {
+      const manifestFile = path6.join(snlDocRoot(workspaceRoot), relativePath);
+      try {
+        await removeJsonIfUnchanged(manifestFile, jsonText(manifest));
+      } catch (rollbackError) {
+        throw new Error(
+          `${error instanceof Error ? error.message : String(error)} Rollback of ${manifestFile} failed without deleting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`,
+          { cause: error }
+        );
+      }
+      throw error;
+    }
+    return { status: "created", entity: "package", id, path: relativePath, active: true };
+  });
+}
+
+// lib/entity-crud.ts
+var ENTITY_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
+var isRecord6 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
+var sha = (value) => createHash2("sha256").update(JSON.stringify(value)).digest("hex");
+var compare = (a3, b2) => a3.id.localeCompare(b2.id);
+function docRoot(root) {
+  return path7.join(path7.resolve(root), ".SNL_Doc");
+}
+async function assertWorkspace(root) {
+  const config = await readConfig(root);
+  if (!usesEntityStorage(config))
+    throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
+}
+async function canonicalWriteWorkspace(root) {
+  const resolved = path7.resolve(root);
+  const real = await fs5.realpath(resolved);
+  const stat = await fs5.lstat(resolved);
+  if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved)
+    throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
+  const doc = path7.join(resolved, ".SNL_Doc");
+  const docStat = await fs5.lstat(doc);
+  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await fs5.realpath(doc) !== path7.join(real, ".SNL_Doc"))
+    throw new Error(`${doc} must be a canonical, non-symlink directory.`);
+  return resolved;
+}
+async function readJson2(file) {
+  return JSON.parse(await fs5.readFile(file, "utf8"));
+}
+async function jsonFiles(directory) {
+  return (await fs5.readdir(directory, { withFileTypes: true })).filter((e) => e.isFile() && e.name.endsWith(".json")).map((e) => path7.join(directory, e.name)).sort();
+}
+function managed(type, id, value, revisionSource = value) {
+  return { type, id, revision: sha(revisionSource), value };
+}
+function requireRecord(value, label) {
+  if (!isRecord6(value))
+    throw new Error(`${label} must be a JSON object.`);
+  return value;
+}
+async function readDirectoryIdentity(directory) {
+  const stat = await fs5.lstat(directory);
+  if (stat.isSymbolicLink() || !stat.isDirectory())
+    throw new Error(`${directory} must be a regular, non-symlink directory.`);
+  return { dev: stat.dev, ino: stat.ino };
+}
+async function assertDirectoryIdentity(directory, expected) {
+  const observed = await readDirectoryIdentity(directory);
+  if (observed.dev !== expected.dev || observed.ino !== expected.ino)
+    throw new Error(`${directory} changed concurrently; refusing to access a replacement directory.`);
+}
+async function syncDirectoryDurably(directory, beforeSync, expected) {
+  await beforeSync?.();
+  if (expected) await assertDirectoryIdentity(directory, expected);
+  const handle = await fs5.open(directory, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
+  try {
+    const stat = await handle.stat();
+    if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
+      throw new Error(`${directory} changed concurrently before directory sync.`);
+    await handle.sync();
+    if (expected) await assertDirectoryIdentity(directory, expected);
+  } finally {
+    await handle.close();
+  }
+}
+async function captureDirectorySnapshot(directory) {
+  if (process.platform !== "linux")
+    throw new Error("Safe descriptor-relative Library snapshot is unavailable on this platform.");
+  const items = [];
+  const root = await fs5.open(directory, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
+  const walk = async (handle, relativeBase) => {
+    const pinned = `/proc/self/fd/${handle.fd}`;
+    const names = (await fs5.readdir(pinned)).sort((a3, b2) => a3.localeCompare(b2));
+    for (const name of names) {
+      const relativePath = relativeBase ? path7.join(relativeBase, name) : name;
+      const source = path7.join(pinned, name);
+      const before = await fs5.lstat(source);
+      if (before.isSymbolicLink()) throw new Error(`${relativePath} became a symlink during Library snapshot.`);
+      if (before.isDirectory()) {
+        const child = await fs5.open(source, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
+        try {
+          const observed = await child.stat();
+          if (observed.dev !== before.dev || observed.ino !== before.ino)
+            throw new Error(`${relativePath} changed during Library snapshot.`);
+          items.push({ kind: "directory", relativePath, mode: observed.mode });
+          await walk(child, relativePath);
+        } finally {
+          await child.close();
+        }
+        continue;
+      }
+      if (!before.isFile()) throw new Error(`${relativePath} is not a regular file or directory.`);
+      const file = await fs5.open(source, constants5.O_RDONLY | constants5.O_NOFOLLOW);
+      try {
+        const opened = await file.stat();
+        if (!opened.isFile() || opened.dev !== before.dev || opened.ino !== before.ino)
+          throw new Error(`${relativePath} changed during Library snapshot.`);
+        const bytes = await file.readFile();
+        const after = await file.stat();
+        if (after.dev !== opened.dev || after.ino !== opened.ino || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs)
+          throw new Error(`${relativePath} changed while its Library snapshot was read.`);
+        items.push({ kind: "file", relativePath, mode: opened.mode, bytes });
+      } finally {
+        await file.close();
+      }
+    }
+  };
+  try {
+    await walk(root, "");
+  } finally {
+    await root.close();
+  }
+  return items;
+}
+async function installDirectorySnapshot(targetHandle, snapshot) {
+  if (process.platform !== "linux")
+    throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
+  const pinned = `/proc/self/fd/${targetHandle.fd}`;
+  for (const item of snapshot.filter((item2) => item2.kind === "directory"))
+    await fs5.mkdir(path7.join(pinned, item.relativePath), { mode: item.mode });
+  for (const item of snapshot.filter((item2) => item2.kind === "file")) {
+    const destination = path7.join(pinned, item.relativePath);
+    const file = await fs5.open(destination, constants5.O_WRONLY | constants5.O_CREAT | constants5.O_EXCL | constants5.O_NOFOLLOW, item.mode);
+    try {
+      await file.writeFile(item.bytes);
+      await file.sync();
+    } finally {
+      await file.close();
+    }
+  }
+}
+async function restoreCapturedDirectory(captured, target, hooks = {}) {
+  const parent = path7.dirname(target);
+  const parentIdentity = await readDirectoryIdentity(parent);
+  try {
+    await fs5.mkdir(target);
+  } catch (error) {
+    throw new Error(`${target} could not be restored without overwriting a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+  }
+  const reservation = await readDirectoryIdentity(target);
+  await hooks.beforeInstall?.();
+  try {
+    await assertDirectoryIdentity(parent, parentIdentity);
+    await assertDirectoryIdentity(target, reservation);
+    const snapshot = await captureDirectorySnapshot(captured);
+    const targetHandle = await fs5.open(target, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
+    try {
+      const targetStat = await targetHandle.stat();
+      if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
+        throw new Error(`${target} changed concurrently before restoration copy.`);
+      await hooks.afterReservationCheckBeforeCopy?.();
+      await installDirectorySnapshot(targetHandle, snapshot);
+      await targetHandle.sync();
+    } finally {
+      await targetHandle.close();
+    }
+    await assertDirectoryIdentity(parent, parentIdentity);
+    await assertDirectoryIdentity(target, reservation);
+    await syncDirectoryDurably(parent, hooks.beforeSync, parentIdentity);
+    await assertDirectoryIdentity(parent, parentIdentity);
+    await assertDirectoryIdentity(target, reservation);
+  } catch (error) {
+    throw new Error(`${target} could not be restored without touching a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+  }
+}
+function requireId(value, field = "id") {
+  if (typeof value[field] !== "string" || !value[field])
+    throw new Error(`${field} must be a non-empty string.`);
+  return value[field];
+}
+async function packageRows(root, type) {
+  await readEntries(root);
+  const macroPackages = type === "macro-package" ? await readAllMacroPackages(root) : void 0;
+  const rows = [];
+  const doc = docRoot(root);
+  for (const file of await jsonFiles(path7.join(doc, "packages"))) {
+    const manifest = requireRecord(await readJson2(file), "Package manifest");
+    const id = requireId(manifest);
+    if (path7.relative(doc, file) !== packageManifestPath(id))
+      throw new Error(`${file} does not match Package identity ${id}.`);
+    if (type === "entry-package")
+      rows.push(managed(type, id, manifest));
+    else {
+      const authoritative = macroPackages?.[id];
+      if (!authoritative)
+        throw new Error(`Package ${JSON.stringify(id)} was not returned by the authoritative Macro reader.`);
+      rows.push(managed(type, id, { ...manifest, macros: authoritative.macros }));
+    }
+  }
+  return rows.sort(compare);
+}
+async function entryRows(root, options = {}) {
+  const rows = [];
+  const doc = docRoot(root);
+  const values = await readEntries(root);
+  await options.afterAuthoritativeRead?.("entry");
+  for (const value of values) {
+    const persisted = await readRegularText(path7.join(doc, entryEntityPath(value.package ?? "", value.id)));
+    const envelope = requireRecord(JSON.parse(persisted.text), "Entry envelope");
+    if (!isRecord6(envelope.entry) || sha(envelope.entry) !== sha(value))
+      throw new Error(`Entry ${JSON.stringify(value.id)} changed concurrently while listing; retry.`);
+    rows.push(managed("entry", value.id, value, envelope));
+  }
+  return rows.sort(compare);
+}
+async function macroRows(root, options = {}) {
+  const rows = [];
+  const doc = docRoot(root);
+  const packages = await readAllMacroPackages(root);
+  await options.afterAuthoritativeRead?.("macro");
+  for (const [pkg, macroPackage] of Object.entries(packages)) {
+    for (const [name, body] of Object.entries(macroPackage.macros)) {
+      const persisted = await readRegularText(path7.join(doc, macroEntityPath(pkg, name)));
+      const envelope = requireRecord(JSON.parse(persisted.text), "Macro envelope");
+      const persistedMacro = isRecord6(envelope.macro) ? envelope.macro : void 0;
+      const persistedBody = persistedMacro ? Object.fromEntries(Object.entries(persistedMacro).filter(([key]) => key !== "name")) : void 0;
+      if (envelope.package !== pkg || !persistedMacro || !persistedBody || persistedMacro.name !== name || sha(persistedBody) !== sha(body))
+        throw new Error(`Macro ${JSON.stringify(`${pkg}::${name}`)} changed concurrently while listing; retry.`);
+      rows.push(managed("macro", `${pkg}::${name}`, { package: pkg, name, ...body }, envelope));
+    }
+  }
+  return rows.sort(compare);
+}
+async function relationshipRows(root) {
+  const file = path7.join(docRoot(root), "relationships.json");
+  try {
+    const data = requireRecord(JSON.parse((await readRegularText(file)).text), "Relationships file");
+    if (!Array.isArray(data.relationships))
+      throw new Error("relationships.json#relationships must be an array.");
+    const ids = /* @__PURE__ */ new Set();
+    return data.relationships.map((v2) => {
+      const value = requireRecord(v2, "Relationship");
+      const id = requireId(value);
+      if (typeof value.from !== "string" || !value.from || typeof value.to !== "string" || !value.to || typeof value.label !== "string" || !value.label)
+        throw new Error(`Relationship ${JSON.stringify(id)} requires non-empty from/to/label strings.`);
+      if (ids.has(id)) throw new Error(`relationships.json contains duplicate id ${JSON.stringify(id)}.`);
+      ids.add(id);
+      return managed("relationship", id, value);
+    }).sort(compare);
+  } catch (e) {
+    if (e.code === "ENOENT")
+      return [];
+    throw e;
+  }
+}
+async function libraryExtraNames(dir) {
+  const owned = /* @__PURE__ */ new Set(["meta.json", "graph.json", "counters.json"]);
+  return (await fs5.readdir(dir)).filter((name) => !owned.has(name)).sort((a3, b2) => a3.localeCompare(b2));
+}
+async function readLibraryDirectoryValue(dir, slug) {
+  const meta = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "meta.json"))).text), "Library meta");
+  const graph = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "graph.json"))).text), "Library graph");
+  let counters = { counters: [] };
+  try {
+    counters = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "counters.json"))).text), "Library counters");
+  } catch (e) {
+    if (e.code !== "ENOENT") throw e;
+  }
+  return { slug, meta, graph, counters };
+}
+async function readLibraryRow(root, slug) {
+  if (slug === "" || path7.basename(slug) !== slug || slug === "." || slug === "..") return void 0;
+  const base = path7.join(docRoot(root), "libraries");
+  try {
+    await readDirectoryIdentity(base);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  const dir = path7.join(base, slug);
+  try {
+    await readDirectoryIdentity(dir);
+  } catch (error) {
+    if (error.code === "ENOENT") return void 0;
+    throw error;
+  }
+  return managed("library", slug, await readLibraryDirectoryValue(dir, slug));
+}
+async function libraryRows(root) {
+  const base = path7.join(docRoot(root), "libraries");
+  const rows = [];
+  let entries;
+  try {
+    const baseStat = await fs5.lstat(base);
+    if (!baseStat.isDirectory() || baseStat.isSymbolicLink())
+      throw new Error(`${base} must be a regular, non-symlink Library directory.`);
+    entries = await fs5.readdir(base, { withFileTypes: true });
+  } catch (e) {
+    if (e.code === "ENOENT")
+      return [];
+    throw e;
+  }
+  for (const entry of entries.sort((a3, b2) => a3.name.localeCompare(b2.name))) {
+    if (entry.isFile() && entry.name === ".gitkeep") continue;
+    if (entry.isSymbolicLink() || !entry.isDirectory())
+      throw new Error(`${path7.join(base, entry.name)} must be a regular, non-symlink Library directory.`);
+    const dir = path7.join(base, entry.name);
+    rows.push(managed("library", entry.name, await readLibraryDirectoryValue(dir, entry.name)));
+  }
+  return rows.sort(compare);
+}
+async function listManagedEntities(root, type, options = {}) {
+  await assertWorkspace(root);
+  if (type === "entry-kind" || type === "macro-kind") {
+    const config = await readConfig(root);
+    const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
+    const values = config[field];
+    if (!Array.isArray(values))
+      throw new Error(`config.json#${field} must be an array.`);
+    return values.map((v2) => {
+      const value = requireRecord(v2, type);
+      return managed(type, requireId(value), value);
+    }).sort(compare);
+  }
+  if (type === "entry-package" || type === "macro-package")
+    return packageRows(root, type);
+  if (type === "entry")
+    return entryRows(root, options);
+  if (type === "macro")
+    return macroRows(root, options);
+  if (type === "relationship")
+    return relationshipRows(root);
+  return libraryRows(root);
+}
+async function validateManagedWorkspace(root) {
+  const counts = /* @__PURE__ */ Object.create(null);
+  const rows = /* @__PURE__ */ new Map();
+  const issues = [];
+  for (const type of ENTITY_TYPES) {
+    try {
+      const entities = await listManagedEntities(root, type);
+      rows.set(type, entities);
+      counts[type] = entities.length;
+    } catch (error) {
+      rows.set(type, []);
+      counts[type] = 0;
+      issues.push({ severity: "error", code: `${type}.read-failed`, message: error instanceof Error ? error.message : String(error), path: type });
+    }
+  }
+  let entries = [];
+  try {
+    entries = await readEntries(root);
+  } catch (error) {
+    if (!issues.some((issue) => issue.code === "entry.read-failed"))
+      issues.push({ severity: "error", code: "entry.read-failed", message: error instanceof Error ? error.message : String(error), path: "entry" });
+  }
+  const entryIds = new Set(entries.map((entry) => entry.id));
+  for (const relationship of rows.get("relationship") ?? []) {
+    const from = relationship.value.from;
+    const to = relationship.value.to;
+    const label = relationship.value.label;
+    if (typeof from !== "string" || !from)
+      issues.push({ severity: "error", code: "relationship.invalid-from", message: `Relationship ${relationship.id} requires a non-empty from Entry id.`, path: `relationship:${relationship.id}.from` });
+    else if (!entryIds.has(from))
+      issues.push({ severity: "error", code: "relationship.dangling-from", message: `Relationship ${relationship.id} references missing Entry ${from}.`, path: `relationship:${relationship.id}.from` });
+    if (typeof to !== "string" || !to)
+      issues.push({ severity: "error", code: "relationship.invalid-to", message: `Relationship ${relationship.id} requires a non-empty to Entry id.`, path: `relationship:${relationship.id}.to` });
+    else if (!entryIds.has(to))
+      issues.push({ severity: "error", code: "relationship.dangling-to", message: `Relationship ${relationship.id} references missing Entry ${to}.`, path: `relationship:${relationship.id}.to` });
+    if (typeof label !== "string" || !label)
+      issues.push({ severity: "error", code: "relationship.invalid-label", message: `Relationship ${relationship.id} requires a non-empty label.`, path: `relationship:${relationship.id}.label` });
+  }
+  for (const library of rows.get("library") ?? []) {
+    for (const issue of lintGraph(library.value.graph, { poolEntries: entries }).issues) {
+      issues.push({ ...issue, path: `library:${library.id}/graph.json${issue.path ? `#${issue.path}` : ""}` });
+    }
+  }
+  return { valid: !issues.some((issue) => issue.severity === "error"), counts, issues };
+}
+async function getManagedEntity(root, type, id) {
+  if (type === "library") {
+    await assertWorkspace(root);
+    return readLibraryRow(root, id);
+  }
+  return (await listManagedEntities(root, type)).find((item) => item.id === id);
+}
+function invalid(message) {
+  return { status: "invalid", code: "entity.invalid", message };
+}
+function conflict(message) {
+  return { status: "conflict", code: "entity.revision-conflict", message };
+}
+function currentKindCatalogProblem(config, next) {
+  if (!usesCurrentEntitySchemas(config)) return void 0;
+  try {
+    assertCurrentKindCatalogs(next);
+    return void 0;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+}
+async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
+  return withWorkspaceDataLock(root, `${operation} ${type}`, async () => {
+    const file = path7.join(docRoot(root), "config.json");
+    const originalConfig = await readRegularText(file);
+    const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
+    if (!usesEntityStorage(config))
+      throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
+    const field = type === "entry-kind" ? "entry_kinds" : "macro_kinds";
+    const values = config[field];
+    if (!Array.isArray(values))
+      throw new Error(`config.json#${field} must be an array.`);
+    const index = values.findIndex((v2) => isRecord6(v2) && v2.id === id);
+    if (operation === "create") {
+      const value2 = requireRecord(input, type);
+      const problem2 = await validationMessage(root, type, value2);
+      if (problem2)
+        return invalid(problem2);
+      const newId = requireId(value2);
+      if (values.some((v2) => isRecord6(v2) && v2.id === newId))
+        return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(newId)} already exists.` };
+      const next2 = { ...config, [field]: [...values, value2] };
+      const catalogProblem2 = currentKindCatalogProblem(config, next2);
+      if (catalogProblem2) return invalid(catalogProblem2);
+      await replaceJsonIfUnchanged(file, originalConfig.text, next2);
+      return { status: "ok", operation, type, entity: managed(type, newId, value2) };
+    }
+    if (index < 0)
+      return { status: "not-found", code: "entity.not-found", message: `${type} ${JSON.stringify(id)} was not found.` };
+    const current = requireRecord(values[index], type);
+    const currentEntity = managed(type, id, current);
+    if (!ifMatch || ifMatch !== currentEntity.revision)
+      return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+    if (operation === "delete") {
+      if (type === "entry-kind" && (await readEntries(root)).some((entry) => entry.kind === id))
+        return { status: "conflict", code: "entity.referenced", message: `Entry Kind ${JSON.stringify(id)} is still used by Entries.` };
+      if (type === "macro-kind") {
+        const packages = await readAllMacroPackages(root);
+        if (Object.values(packages).some((pkg) => Object.values(pkg.macros).some((macro) => macro.kind === id)))
+          return { status: "conflict", code: "entity.referenced", message: `Macro Kind ${JSON.stringify(id)} is still used by Macros.` };
+      }
+      const nextValues2 = values.filter((_2, i4) => i4 !== index);
+      const next2 = { ...config, [field]: nextValues2 };
+      const catalogProblem2 = currentKindCatalogProblem(config, next2);
+      if (catalogProblem2) return invalid(catalogProblem2);
+      await replaceJsonIfUnchanged(file, originalConfig.text, next2);
+      return { status: "ok", operation, type, entity: currentEntity };
+    }
+    const value = requireRecord(input, type);
+    const problem = await validationMessage(root, type, value, id);
+    if (problem)
+      return invalid(problem);
+    if (requireId(value) !== id)
+      return invalid(`${type} identity is immutable: payload id must equal ${JSON.stringify(id)}.`);
+    const nextValues = [...values];
+    nextValues[index] = value;
+    const next = { ...config, [field]: nextValues };
+    const catalogProblem = currentKindCatalogProblem(config, next);
+    if (catalogProblem) return invalid(catalogProblem);
+    await replaceJsonIfUnchanged(file, originalConfig.text, next);
+    return { status: "ok", operation, type, entity: managed(type, id, value) };
+  });
+}
+async function validationMessage(root, type, value, currentId) {
+  const stringField = (field) => typeof value[field] === "string" && value[field] !== "";
+  if (type === "entry-kind") {
+    if (!stringField("id") || !(typeof value.name === "string" || isRecord6(value.name)) || !isRecord6(value.coloring) || typeof value.style !== "string")
+      return "Entry Kind requires non-empty id/name, coloring object, and string style.";
+  } else if (type === "macro-kind") {
+    if (!stringField("id") || !stringField("name") || typeof value.description !== "string" || !isRecord6(value.coloring))
+      return "Macro Kind requires non-empty id/name, string description, and coloring object.";
+  } else if (type === "entry-package" || type === "macro-package") {
+    if (!stringField("id") || !stringField("name") || typeof value.description !== "string")
+      return "Package requires non-empty id/name and string description.";
+  } else if (type === "entry") {
+    const issues = lintEntry(value, { entryKinds: await readEntryKinds(root), macros: await readActiveMacros(root), siblingEntries: (await readEntries(root)).filter((entry) => entry.id !== currentId) }).issues.filter((issue) => issue.severity === "error");
+    if (issues.length)
+      return issues.map((issue) => `${issue.code}: ${issue.message}`).join("; ");
+    const packages = await packageRows(root, "entry-package");
+    if (!packages.some((pkg) => pkg.id === value.package))
+      return `Entry Package ${JSON.stringify(value.package)} does not exist.`;
+  } else if (type === "macro") {
+    const pkg = typeof value.package === "string" ? value.package : "";
+    const name = typeof value.name === "string" ? value.name : "";
+    const body = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package" && key !== "name"));
+    const current = usesCurrentEntitySchemas(await readConfig(root));
+    const report = lintPackage({ version: current ? "11" : "8", name: pkg, description: "", macros: name ? { [name]: body } : {} }, { checkKatex: false });
+    const errors = report.issues.filter((issue) => issue.severity === "error");
+    if (!pkg || !name || errors.length)
+      return !pkg || !name ? "Macro requires non-empty package and name." : errors.map((issue) => `${issue.code}: ${issue.message}`).join("; ");
+    if (!(await packageRows(root, "macro-package")).some((row) => row.id === pkg))
+      return `Macro Package ${JSON.stringify(pkg)} does not exist.`;
+  } else if (type === "relationship") {
+    if (!stringField("id") || !stringField("from") || !stringField("to") || !stringField("label"))
+      return "Relationship requires non-empty id/from/to/label strings.";
+    const entryIds = new Set((await readEntries(root)).map((entry) => entry.id));
+    if (!entryIds.has(value.from) || !entryIds.has(value.to))
+      return `Relationship endpoints must resolve to existing Entries; got ${JSON.stringify(value.from)} -> ${JSON.stringify(value.to)}.`;
+  } else if (type === "library") {
+    if (!stringField("slug") || !isRecord6(value.meta) || !isRecord6(value.graph) || !Array.isArray(value.graph.nodes) || !Array.isArray(value.graph.relationships) || !isRecord6(value.counters) || !Array.isArray(value.counters.counters))
+      return "Library requires slug, meta, graph nodes/relationships, and counters.";
+    const errors = lintGraph(value.graph, { poolEntries: await readEntries(root) }).issues.filter((issue) => issue.severity === "error");
+    if (errors.length) return errors.map((issue) => `${issue.code}: ${issue.message}`).join("; ");
+  }
+  return void 0;
+}
+function identityFor(type, value) {
+  if (type === "macro") {
+    const pkg = typeof value.package === "string" ? value.package : "";
+    return `${pkg}::${requireId(value, "name")}`;
+  }
+  if (type === "library")
+    return requireId(value, "slug");
+  return requireId(value);
+}
+async function createDirect(root, type, input, options = {}) {
+  const value = requireRecord(input, type);
+  const problem = await validationMessage(root, type, value);
+  if (problem)
+    return invalid(problem);
+  const id = identityFor(type, value);
+  return withWorkspaceDataLock(root, `create ${type}`, async () => {
+    if (await getManagedEntity(root, type, id))
+      return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(id)} already exists.` };
+    if (type === "relationship") {
+      const file = path7.join(docRoot(root), "relationships.json");
+      let data = { version: 1, relationships: [] };
+      let original;
+      try {
+        original = await readRegularText(file);
+        data = requireRecord(JSON.parse(original.text), "relationships.json");
+      } catch (e) {
+        if (e.code !== "ENOENT")
+          throw e;
+      }
+      if (!Array.isArray(data.relationships))
+        throw new Error("relationships.json#relationships must be an array.");
+      const next = { ...data, relationships: [...data.relationships, value] };
+      if (original) await replaceJsonIfUnchanged(file, original.text, next);
+      else await installNewJson(file, next);
+    } else {
+      const librariesDir = path7.join(docRoot(root), "libraries");
+      const dir = path7.join(librariesDir, id);
+      if (path7.basename(id) !== id || id === "." || id === "..")
+        return invalid("Library slug must be one safe path segment.");
+      const docDirectoryIdentity = await readDirectoryIdentity(docRoot(root));
+      let librariesDirectoryIdentity;
+      try {
+        await fs5.mkdir(librariesDir);
+        await syncDirectoryDurably(docRoot(root), options.beforeLibraryCreateParentSync, docDirectoryIdentity);
+      } catch (error) {
+        if (error.code !== "EEXIST") {
+          throw error;
+        }
+        await readDirectoryIdentity(librariesDir);
+      }
+      librariesDirectoryIdentity = await readDirectoryIdentity(librariesDir);
+      await fs5.mkdir(dir, { recursive: false });
+      const directoryIdentity = await readDirectoryIdentity(dir);
+      const resources = [
+        { file: path7.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
+        { file: path7.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
+        { file: path7.join(dir, "counters.json"), value: requireRecord(value.counters, "Library counters") }
+      ];
+      const installed = [];
+      try {
+        for (const resource of resources) {
+          await options.beforeLibraryCreateResource?.(path7.basename(resource.file));
+          await assertDirectoryIdentity(dir, directoryIdentity);
+          await installNewJson(resource.file, resource.value);
+          installed.push(resource);
+        }
+        await syncDirectoryDurably(librariesDir, void 0, librariesDirectoryIdentity);
+      } catch (error) {
+        const cleanupErrors = [];
+        try {
+          await assertDirectoryIdentity(dir, directoryIdentity);
+        } catch (identityError) {
+          throw new Error(
+            `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; cleanup refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
+            { cause: error }
+          );
+        }
+        for (const resource of installed.reverse()) {
+          try {
+            await removeJsonIfUnchanged(resource.file, jsonText(resource.value));
+          } catch (cleanup) {
+            cleanupErrors.push(`${resource.file}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
+          }
+        }
+        try {
+          await options.beforeLibraryCreateCleanupCapture?.();
+          const recovery = path7.join(librariesDir, `.${id}.snl-entity-${process.pid}-${randomUUID3()}.create-failed`);
+          await fs5.rename(dir, recovery);
+          const capturedIdentity = await readDirectoryIdentity(recovery);
+          if (capturedIdentity.dev === directoryIdentity.dev && capturedIdentity.ino === directoryIdentity.ino) {
+            await fs5.rmdir(recovery);
+            await syncDirectoryDurably(librariesDir, void 0, librariesDirectoryIdentity);
+          } else {
+            cleanupErrors.push(`${dir} was replaced concurrently; the replacement is preserved at ${recovery}`);
+          }
+        } catch (cleanup) {
+          cleanupErrors.push(`${dir}: ${cleanup instanceof Error ? cleanup.message : String(cleanup)}`);
+        }
+        if (cleanupErrors.length) {
+          throw new Error(
+            `${error instanceof Error ? error.message : String(error)} Library creation cleanup preserved concurrent data: ${cleanupErrors.join("; ")}`,
+            { cause: error }
+          );
+        }
+        throw error;
+      }
+    }
+    const entity = await getManagedEntity(root, type, id);
+    if (!entity)
+      throw new Error(`Created ${type} could not be read back.`);
+    return { status: "ok", operation: "create", type, entity };
+  });
+}
+async function createManagedEntity(root, type, input, options = {}) {
+  root = await canonicalWriteWorkspace(root);
+  await assertWorkspace(root);
+  if (type === "entry-kind" || type === "macro-kind")
+    return mutateConfigEntity(root, type, "create", void 0, input);
+  if (type === "entry-package" || type === "macro-package") {
+    const result = await addPackageEntity(root, input);
+    if (result.status !== "created")
+      return result.status === "conflict" ? { status: "conflict", code: result.code, message: result.message } : invalid(result.issues.map((i4) => `${i4.code}: ${i4.message}`).join("; "));
+    const entity = await getManagedEntity(root, type, result.id);
+    if (!entity)
+      throw new Error("Created Package could not be read back.");
+    return { status: "ok", operation: "create", type, entity };
+  }
+  if (type === "entry") {
+    const result = await addEntryEntity(root, input);
+    if (result.status !== "created")
+      return result.status === "conflict" ? { status: "conflict", code: result.code, message: result.message } : invalid(result.issues.map((i4) => `${i4.code}: ${i4.message}`).join("; "));
+    const entity = await getManagedEntity(root, type, result.id);
+    if (!entity)
+      throw new Error("Created Entry could not be read back.");
+    return { status: "ok", operation: "create", type, entity };
+  }
+  if (type === "macro") {
+    const value = requireRecord(input, "Macro");
+    const pkg = typeof value.package === "string" ? value.package : "";
+    const draft = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
+    const result = await addMacroEntity(root, pkg, draft);
+    if (result.status !== "created")
+      return result.status === "conflict" ? { status: "conflict", code: result.code, message: result.message } : invalid(result.issues.map((i4) => `${i4.code}: ${i4.message}`).join("; "));
+    const id = `${pkg}::${result.name}`;
+    const entity = await getManagedEntity(root, type, id);
+    if (!entity)
+      throw new Error("Created Macro could not be read back.");
+    return { status: "ok", operation: "create", type, entity };
+  }
+  return createDirect(root, type, input, options);
+}
+async function locateFile(root, type, entity) {
+  const doc = docRoot(root);
+  if (type === "entry-package" || type === "macro-package")
+    return path7.join(doc, packageManifestPath(entity.id));
+  if (type === "entry") {
+    const pkg = typeof entity.value.package === "string" ? entity.value.package : "";
+    return path7.join(doc, entryEntityPath(pkg, entity.id));
+  }
+  if (type === "macro") {
+    const split = entity.id.indexOf("::");
+    return path7.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
+  }
+  throw new Error(`No entity file for ${type}.`);
+}
+async function mutateDirect(root, type, operation, id, input, ifMatch, options = {}) {
+  return withWorkspaceDataLock(root, `${operation} ${type}`, async () => {
+    const current = await getManagedEntity(root, type, id);
+    if (!current)
+      return { status: "not-found", code: "entity.not-found", message: `${type} ${JSON.stringify(id)} was not found.` };
+    if (current.revision !== ifMatch)
+      return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+    await options.afterRevisionCheck?.();
+    if (operation === "update") {
+      const value = requireRecord(input, type);
+      const problem = await validationMessage(root, type, value, id);
+      if (problem)
+        return invalid(problem);
+      if (identityFor(type, value) !== id)
+        return invalid(`${type} identity is immutable: payload identity must equal ${JSON.stringify(id)}.`);
+      if (type === "relationship") {
+        const file = path7.join(docRoot(root), "relationships.json");
+        const original = await readRegularText(file);
+        const data = requireRecord(JSON.parse(original.text), "relationships.json");
+        const values = data.relationships;
+        if (!Array.isArray(values))
+          throw new Error("relationships.json#relationships must be an array.");
+        const lockedRelationship = values.find((row) => isRecord6(row) && row.id === id);
+        if (!isRecord6(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
+          return conflict(`relationship ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+        await options.beforeEntityInstall?.();
+        await replaceJsonIfUnchanged(file, original.text, {
+          ...data,
+          relationships: values.map((row) => isRecord6(row) && row.id === id ? value : row)
+        });
+      } else if (type === "library") {
+        const dir = path7.join(docRoot(root), "libraries", id);
+        const directoryIdentity = await readDirectoryIdentity(dir);
+        const resources = [
+          { file: path7.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
+          { file: path7.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
+          { file: path7.join(dir, "counters.json"), next: requireRecord(value.counters, "Library counters") }
+        ];
+        const originals = await Promise.all(resources.map(async (resource) => {
+          try {
+            return { ...resource, original: await readRegularText(resource.file) };
+          } catch (error) {
+            if (path7.basename(resource.file) === "counters.json" && error.code === "ENOENT")
+              return { ...resource, original: void 0 };
+            throw error;
+          }
+        }));
+        const lockedLibrary = {
+          slug: id,
+          meta: JSON.parse(originals[0].original.text),
+          graph: JSON.parse(originals[1].original.text),
+          counters: originals[2].original ? JSON.parse(originals[2].original.text) : { counters: [] }
+        };
+        if (sha(lockedLibrary) !== ifMatch)
+          return conflict(`library ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+        const installed = [];
+        try {
+          await options.beforeEntityInstall?.();
+          await assertDirectoryIdentity(dir, directoryIdentity);
+          for (const resource of originals) {
+            await assertDirectoryIdentity(dir, directoryIdentity);
+            if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
+            else await installNewJson(resource.file, resource.next);
+            installed.push(resource);
+          }
+        } catch (error) {
+          const rollbackErrors = [];
+          try {
+            await assertDirectoryIdentity(dir, directoryIdentity);
+          } catch (identityError) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; rollback refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
+              { cause: error }
+            );
+          }
+          for (const resource of installed.reverse()) {
+            try {
+              if (resource.original) {
+                await replaceJsonIfUnchanged(
+                  resource.file,
+                  jsonText(resource.next),
+                  JSON.parse(resource.original.text)
+                );
+              } else await removeJsonIfUnchanged(resource.file, jsonText(resource.next));
+            } catch (rollbackError) {
+              rollbackErrors.push(`${resource.file}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`);
+            }
+          }
+          if (rollbackErrors.length) {
+            throw new Error(
+              `${error instanceof Error ? error.message : String(error)} Library rollback failed without overwriting concurrent replacements: ${rollbackErrors.join("; ")}`,
+              { cause: error }
+            );
+          }
+          throw error;
+        }
+      } else {
+        const file = await locateFile(root, type, current);
+        if (type === "entry-package" || type === "macro-package") {
+          const originalManifest = await readRegularText(file);
+          const lockedManifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
+          const lockedPackageValue = type === "macro-package" ? { ...lockedManifest, macros: (await readAllMacroPackages(root))[id]?.macros } : lockedManifest;
+          if (sha(lockedPackageValue) !== ifMatch)
+            return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          if (currentSchema && JSON.stringify(value.entry_ids) !== JSON.stringify(current.value.entry_ids))
+            return invalid("Package entry_ids is derived from owned Entries and cannot be changed directly.");
+          if (type === "macro-package" && Object.hasOwn(value, "macros") && JSON.stringify(value.macros) !== JSON.stringify(current.value.macros))
+            return invalid("Macro Package macros are derived from owned Macros and cannot be changed directly.");
+          const manifest = {
+            ...value,
+            format: "snl-package",
+            version: PACKAGE_STORAGE_VERSION,
+            ...currentSchema ? {
+              schema_version: CURRENT_PACKAGE_SCHEMA_VERSION,
+              entry_ids: current.value.entry_ids
+            } : {}
+          };
+          delete manifest.macros;
+          await options.beforeEntityInstall?.();
+          await replaceJsonIfUnchanged(file, originalManifest.text, manifest);
+        } else if (type === "entry") {
+          const originalEntity = await readRegularText(file);
+          if (sha(JSON.parse(originalEntity.text)) !== ifMatch)
+            return conflict(`entry ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+          const envelope = requireRecord(JSON.parse(originalEntity.text), "Entry envelope");
+          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          const nextEnvelope = {
+            ...envelope,
+            format: "snl-entry",
+            version: ENTRY_STORAGE_VERSION,
+            ...currentSchema ? { schema_version: CURRENT_ENTRY_SCHEMA_VERSION } : {},
+            package: value.package,
+            entry: value
+          };
+          const oldPackage = typeof current.value.package === "string" ? current.value.package : "";
+          const newPackage = typeof value.package === "string" ? value.package : "";
+          if (oldPackage === newPackage) {
+            await options.beforeEntityInstall?.();
+            await replaceJsonIfUnchanged(file, originalEntity.text, nextEnvelope);
+          } else {
+            const destinationFile = path7.join(docRoot(root), entryEntityPath(newPackage, id));
+            if (!currentSchema) {
+              let installed = false;
+              try {
+                await installNewJson(destinationFile, nextEnvelope);
+                installed = true;
+                await removeJsonIfUnchanged(file, originalEntity.text);
+              } catch (error) {
+                if (installed) {
+                  try {
+                    await removeJsonIfUnchanged(destinationFile, jsonText(nextEnvelope));
+                  } catch (rollback) {
+                    throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of legacy destination Entry failed: ${rollback instanceof Error ? rollback.message : String(rollback)}.`, { cause: error });
+                  }
+                }
+                throw error;
+              }
+            } else {
+              const sourceManifestFile = path7.join(docRoot(root), packageManifestPath(oldPackage));
+              const destinationManifestFile = path7.join(docRoot(root), packageManifestPath(newPackage));
+              const sourceOriginal = await readRegularText(sourceManifestFile);
+              const destinationOriginal = await readRegularText(destinationManifestFile);
+              const sourceManifest = requireRecord(JSON.parse(sourceOriginal.text), "Source Package manifest");
+              const destinationManifest = requireRecord(JSON.parse(destinationOriginal.text), "Destination Package manifest");
+              if (!Array.isArray(sourceManifest.entry_ids) || sourceManifest.entry_ids.filter((v2) => v2 === id).length !== 1)
+                throw new Error(`Source Package ${JSON.stringify(oldPackage)} must contain Entry ${JSON.stringify(id)} exactly once.`);
+              if (!Array.isArray(destinationManifest.entry_ids) || destinationManifest.entry_ids.includes(id))
+                throw new Error(`Destination Package ${JSON.stringify(newPackage)} already contains Entry ${JSON.stringify(id)}.`);
+              const sourceNext = { ...sourceManifest, entry_ids: sourceManifest.entry_ids.filter((v2) => v2 !== id) };
+              const destinationNext = {
+                ...destinationManifest,
+                entry_ids: [...destinationManifest.entry_ids, id].sort((left, right) => String(left).localeCompare(String(right)))
+              };
+              let installed = false;
+              let destinationUpdated = false;
+              let sourceUpdated = false;
+              try {
+                await installNewJson(destinationFile, nextEnvelope);
+                installed = true;
+                await replaceJsonIfUnchanged(destinationManifestFile, destinationOriginal.text, destinationNext);
+                destinationUpdated = true;
+                await replaceJsonIfUnchanged(sourceManifestFile, sourceOriginal.text, sourceNext);
+                sourceUpdated = true;
+                await removeJsonIfUnchanged(file, originalEntity.text);
+              } catch (error) {
+                const rollbackErrors = [];
+                if (sourceUpdated) {
+                  try {
+                    await replaceJsonIfUnchanged(sourceManifestFile, jsonText(sourceNext), sourceManifest);
+                  } catch (rollback) {
+                    rollbackErrors.push(`source membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
+                  }
+                }
+                if (destinationUpdated) {
+                  try {
+                    await replaceJsonIfUnchanged(destinationManifestFile, jsonText(destinationNext), destinationManifest);
+                  } catch (rollback) {
+                    rollbackErrors.push(`destination membership: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
+                  }
+                }
+                if (installed) {
+                  try {
+                    await removeJsonIfUnchanged(destinationFile, jsonText(nextEnvelope));
+                  } catch (rollback) {
+                    rollbackErrors.push(`destination Entry: ${rollback instanceof Error ? rollback.message : String(rollback)}`);
+                  }
+                }
+                if (rollbackErrors.length)
+                  throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback failed: ${rollbackErrors.join("; ")}.`, { cause: error });
+                throw error;
+              }
+            }
+          }
+        } else {
+          const split = id.indexOf("::");
+          const pkg = id.slice(0, split);
+          const macro = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
+          const originalMacro = await readRegularText(file);
+          if (sha(JSON.parse(originalMacro.text)) !== ifMatch)
+            return conflict(`macro ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+          const envelope = requireRecord(JSON.parse(originalMacro.text), "Macro envelope");
+          const currentSchema = usesCurrentEntitySchemas(await readConfig(root));
+          const nextEnvelope = {
+            ...envelope,
+            format: "snl-macro",
+            version: MACRO_STORAGE_VERSION,
+            ...currentSchema ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
+            package: pkg,
+            macro
+          };
+          await options.beforeEntityInstall?.();
+          await replaceJsonIfUnchanged(file, originalMacro.text, nextEnvelope);
+        }
+      }
+      const entity = await getManagedEntity(root, type, id);
+      if (!entity)
+        throw new Error(`Updated ${type} could not be read back.`);
+      return { status: "ok", operation, type, entity };
+    }
+    if (type === "entry") {
+      const references = (await findEntityReferences(root, "entry", id)).filter((occurrence2) => occurrence2.role === "reference" && occurrence2.category !== "package-membership");
+      if (references.length)
+        return { status: "conflict", code: "entity.referenced", message: `Entry ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
+      const entityFile = await locateFile(root, type, current);
+      const originalEntity = await readRegularText(entityFile);
+      if (sha(JSON.parse(originalEntity.text)) !== ifMatch)
+        return conflict(`entry ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+      if (!usesCurrentEntitySchemas(await readConfig(root))) {
+        await removeJsonIfUnchanged(entityFile, originalEntity.text);
+        return { status: "ok", operation, type, entity: current };
+      }
+      const packageId = typeof current.value.package === "string" ? current.value.package : "";
+      const manifestFile = path7.join(docRoot(root), packageManifestPath(packageId));
+      const originalManifest = await readRegularText(manifestFile);
+      const manifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
+      const entryIds = manifest.entry_ids;
+      if (!Array.isArray(entryIds) || entryIds.filter((value) => value === id).length !== 1)
+        throw new Error(`Package ${JSON.stringify(packageId)} does not contain Entry ${JSON.stringify(id)} exactly once.`);
+      const nextManifest = { ...manifest, entry_ids: entryIds.filter((value) => value !== id) };
+      await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
+      try {
+        await removeJsonIfUnchanged(entityFile, originalEntity.text);
+      } catch (error) {
+        try {
+          await replaceJsonIfUnchanged(manifestFile, jsonText(nextManifest), manifest);
+        } catch (rollbackError) {
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of Package membership failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
+        }
+        throw error;
+      }
+    } else if (type === "macro") {
+      const name = id.slice(id.indexOf("::") + 2);
+      const references = (await findEntityReferences(root, "macro", name)).filter((occurrence2) => occurrence2.role === "reference");
+      if (references.length)
+        return { status: "conflict", code: "entity.referenced", message: `Macro ${JSON.stringify(id)} still has ${references.length} structured reference(s).` };
+      const file = await locateFile(root, type, current);
+      const original = await readRegularText(file);
+      if (sha(JSON.parse(original.text)) !== ifMatch)
+        return conflict(`macro ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+      await options.beforeEntityDelete?.();
+      await removeJsonIfUnchanged(file, original.text);
+    } else if (type === "relationship") {
+      const file = path7.join(docRoot(root), "relationships.json");
+      const original = await readRegularText(file);
+      const data = requireRecord(JSON.parse(original.text), "relationships.json");
+      const values = data.relationships;
+      if (!Array.isArray(values))
+        throw new Error("relationships.json#relationships must be an array.");
+      const lockedRelationship = values.find((row) => isRecord6(row) && row.id === id);
+      if (!isRecord6(lockedRelationship) || sha(lockedRelationship) !== ifMatch)
+        return conflict(`relationship ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+      await options.beforeEntityDelete?.();
+      await replaceJsonIfUnchanged(file, original.text, {
+        ...data,
+        relationships: values.filter((row) => !(isRecord6(row) && row.id === id))
+      });
+    } else if (type === "library") {
+      const dir = path7.join(docRoot(root), "libraries", id);
+      const librariesDirectoryIdentity = await readDirectoryIdentity(path7.dirname(dir));
+      const originalDirectoryIdentity = await readDirectoryIdentity(dir);
+      const extras = await libraryExtraNames(dir);
+      if (extras.length) {
+        return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
+      }
+      const tomb = path7.join(path7.dirname(dir), `.${id}.snl-entity-${randomUUID3()}.deleted`);
+      await options.beforeEntityDelete?.();
+      await fs5.rename(dir, tomb);
+      try {
+        await syncDirectoryDurably(path7.dirname(dir), options.beforeLibraryCaptureSync, librariesDirectoryIdentity);
+      } catch (error) {
+        try {
+          await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        } catch (restoreError) {
+          throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
+        }
+        throw error;
+      }
+      const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
+      if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
+        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
+      }
+      let captured;
+      try {
+        captured = await readLibraryDirectoryValue(tomb, id);
+      } catch (error) {
+        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        throw new Error(
+          `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
+          { cause: error }
+        );
+      }
+      const capturedExtras = await libraryExtraNames(tomb);
+      if (sha(captured) !== current.revision || capturedExtras.length) {
+        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
+      }
+      await options.beforeLibraryDirectoryRemove?.(tomb);
+      const fileCaptures = [];
+      try {
+        for (const name of ["meta.json", "graph.json", "counters.json"]) {
+          const source = path7.join(tomb, name);
+          let identity;
+          try {
+            const original = await readRegularText(source);
+            identity = { dev: original.dev, ino: original.ino };
+          } catch (error) {
+            if (name === "counters.json" && error.code === "ENOENT") continue;
+            throw error;
+          }
+          const capturedFile = path7.join(path7.dirname(tomb), `${path7.basename(tomb)}.${name}.${randomUUID3()}.captured`);
+          await fs5.rename(source, capturedFile);
+          fileCaptures.push({ name, captured: capturedFile, identity });
+          const observed = await readRegularText(capturedFile);
+          if (observed.dev !== identity.dev || observed.ino !== identity.ino)
+            throw new Error(`${source} changed while Library deletion was in flight.`);
+        }
+        await fs5.rmdir(tomb);
+        await syncDirectoryDurably(path7.dirname(tomb), options.beforeLibraryDeleteCommitSync, librariesDirectoryIdentity);
+      } catch (error) {
+        const recoveryErrors = [];
+        try {
+          await fs5.mkdir(tomb);
+        } catch (mkdirError) {
+          if (mkdirError.code !== "EEXIST")
+            recoveryErrors.push(`recreate tomb: ${mkdirError instanceof Error ? mkdirError.message : String(mkdirError)}`);
+        }
+        for (const item of fileCaptures.reverse()) {
+          try {
+            await fs5.rename(item.captured, path7.join(tomb, item.name));
+          } catch (restoreError) {
+            recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+          }
+        }
+        try {
+          await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        } catch (restoreError) {
+          recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+        }
+        if (recoveryErrors.length)
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });
+        throw new Error(`${dir} changed while deletion was in flight; its directory was restored.`, { cause: error });
+      }
+      for (const item of fileCaptures) await fs5.rm(item.captured).catch(() => void 0);
+    } else if (type === "entry-package" || type === "macro-package") {
+      if (id === "_unpackaged")
+        return invalid("The system _unpackaged Package cannot be deleted.");
+      const entries = await entryRows(root);
+      const macros2 = await macroRows(root);
+      if (entries.some((e) => e.value.package === id) || macros2.some((m3) => m3.value.package === id))
+        return { status: "conflict", code: "package.not-empty", message: `Package ${JSON.stringify(id)} still contains entities.` };
+      const file = await locateFile(root, type, current);
+      const originalManifest = await readRegularText(file);
+      const lockedManifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
+      const lockedPackageValue = type === "macro-package" ? { ...lockedManifest, macros: (await readAllMacroPackages(root))[id]?.macros } : lockedManifest;
+      if (sha(lockedPackageValue) !== ifMatch)
+        return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
+      const configFile = path7.join(docRoot(root), "config.json");
+      const originalConfig = await readRegularText(configFile);
+      const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
+      const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId) => packageId !== "_unpackaged");
+      const nextConfig = {
+        ...config,
+        active_macro_packages: [...new Set(active.filter((value) => value !== id))].sort((left, right) => left.localeCompare(right))
+      };
+      await options.beforeConfigInstall?.();
+      await replaceJsonIfUnchanged(configFile, originalConfig.text, nextConfig);
+      try {
+        await options.beforeManifestDelete?.();
+        await removeJsonIfUnchanged(file, originalManifest.text);
+      } catch (error) {
+        try {
+          await replaceJsonIfUnchanged(configFile, jsonText(nextConfig), config);
+        } catch (rollbackError) {
+          throw new Error(`${error instanceof Error ? error.message : String(error)} Rollback of config failed without overwriting a concurrent replacement: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}.`, { cause: error });
+        }
+        throw error;
+      }
+    } else
+      await fs5.unlink(await locateFile(root, type, current));
+    return { status: "ok", operation, type, entity: current };
+  });
+}
+async function updateManagedEntity(root, type, id, input, ifMatch, options = {}) {
+  root = await canonicalWriteWorkspace(root);
+  await assertWorkspace(root);
+  if (type === "entry-kind" || type === "macro-kind")
+    return mutateConfigEntity(root, type, "update", id, input, ifMatch);
+  return mutateDirect(root, type, "update", id, input, ifMatch, options);
+}
+async function deleteManagedEntity(root, type, id, ifMatch, options = {}) {
+  root = await canonicalWriteWorkspace(root);
+  await assertWorkspace(root);
+  if (type === "entry-kind" || type === "macro-kind")
+    return mutateConfigEntity(root, type, "delete", id, void 0, ifMatch);
+  return mutateDirect(root, type, "delete", id, void 0, ifMatch, options);
+}
+
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/fuse.js/dist/fuse.mjs
+function isArray(value) {
+  return !Array.isArray ? getTag(value) === "[object Array]" : Array.isArray(value);
+}
+function baseToString(value) {
+  if (typeof value == "string") return value;
+  if (typeof value === "bigint") return value.toString();
+  const result = value + "";
+  return result == "0" && 1 / value == -Infinity ? "-0" : result;
+}
+function toString(value) {
+  return value == null ? "" : baseToString(value);
+}
+function isString(value) {
+  return typeof value === "string";
+}
+function isNumber(value) {
+  return typeof value === "number";
+}
+function isBoolean(value) {
+  return value === true || value === false || isObjectLike(value) && getTag(value) == "[object Boolean]";
+}
+function isObject(value) {
+  return typeof value === "object";
+}
+function isObjectLike(value) {
+  return isObject(value) && value !== null;
+}
+function isDefined(value) {
+  return value !== void 0 && value !== null;
+}
+function isBlank(value) {
+  return !value.trim().length;
+}
+function getTag(value) {
+  return value == null ? value === void 0 ? "[object Undefined]" : "[object Null]" : Object.prototype.toString.call(value);
+}
+var INCORRECT_INDEX_TYPE = "Incorrect 'index' type";
+var INVALID_DOC_INDEX = "Invalid doc index: must be a non-negative integer within the bounds of the docs array";
+var LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY = (key) => `Invalid value for key ${key}`;
+var PATTERN_LENGTH_TOO_LARGE = (max) => `Pattern length exceeds max of ${max}.`;
+var MISSING_KEY_PROPERTY = (name) => `Missing ${name} property in key`;
+var INVALID_KEY_WEIGHT_VALUE = (key) => `Property 'weight' in key '${key}' must be a positive integer`;
+var FUSE_MATCH_TOKEN_SEARCH_UNSUPPORTED = "Fuse.match does not support useTokenSearch: token search requires corpus-level statistics (df, fieldCount) that a one-off string comparison does not have. Use new Fuse(...).search(...) instead.";
+var hasOwn = Object.prototype.hasOwnProperty;
+var KeyStore = class {
+  constructor(keys) {
+    this._keys = [];
+    this._keyMap = {};
+    let totalWeight = 0;
+    keys.forEach((key) => {
+      const obj = createKey(key);
+      this._keys.push(obj);
+      this._keyMap[obj.id] = obj;
+      totalWeight += obj.weight;
+    });
+    this._keys.forEach((key) => {
+      key.weight /= totalWeight;
+    });
+  }
+  get(keyId) {
+    return this._keyMap[keyId];
+  }
+  keys() {
+    return this._keys;
+  }
+  toJSON() {
+    return JSON.stringify(this._keys);
+  }
+};
+function createKey(key) {
+  let path10 = null;
+  let id = null;
+  let src = null;
+  let weight = 1;
+  let getFn = null;
+  if (isString(key) || isArray(key)) {
+    src = key;
+    path10 = createKeyPath(key);
+    id = createKeyId(key);
+  } else {
+    if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
+    const name = key.name;
+    src = name;
+    if (hasOwn.call(key, "weight") && key.weight !== void 0) {
+      weight = key.weight;
+      if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name)));
+    }
+    path10 = createKeyPath(name);
+    id = createKeyId(name);
+    getFn = key.getFn ?? null;
+  }
+  return {
+    path: path10,
+    id,
+    weight,
+    src,
+    getFn
+  };
+}
+function createKeyPath(key) {
+  return isArray(key) ? key : key.split(".");
+}
+function createKeyId(key) {
+  return isArray(key) ? key.join(".") : key;
+}
+function get(obj, path10) {
+  const list = [];
+  let arr = false;
+  const deepGet = (obj2, path11, index, arrayIndex) => {
+    if (!isDefined(obj2)) return;
+    if (!path11[index]) list.push(arrayIndex !== void 0 ? {
+      v: obj2,
+      i: arrayIndex
+    } : obj2);
+    else {
+      const value = obj2[path11[index]];
+      if (!isDefined(value)) return;
+      if (index === path11.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+        v: toString(value),
+        i: arrayIndex
+      } : toString(value));
+      else if (isArray(value)) {
+        arr = true;
+        for (let i4 = 0, len = value.length; i4 < len; i4 += 1) deepGet(value[i4], path11, index + 1, i4);
+      } else if (path11.length) deepGet(value, path11, index + 1, arrayIndex);
+    }
+  };
+  deepGet(obj, isString(path10) ? path10.split(".") : path10, 0);
+  return arr ? list : list[0];
+}
+var MatchOptions = {
+  includeMatches: false,
+  findAllMatches: false,
+  minMatchCharLength: 1
+};
+var BasicOptions = {
+  isCaseSensitive: false,
+  ignoreDiacritics: false,
+  includeScore: false,
+  keys: [],
+  shouldSort: true,
+  sortFn: (a3, b2) => a3.score === b2.score ? a3.idx < b2.idx ? -1 : 1 : a3.score < b2.score ? -1 : 1
+};
+var FuzzyOptions = {
+  location: 0,
+  threshold: 0.6,
+  distance: 100
+};
+var AdvancedOptions = {
+  useExtendedSearch: false,
+  useTokenSearch: false,
+  tokenize: void 0,
+  tokenMatch: "any",
+  getFn: get,
+  ignoreLocation: false,
+  ignoreFieldNorm: false,
+  fieldNormWeight: 1
+};
+var Config = Object.freeze({
+  ...BasicOptions,
+  ...MatchOptions,
+  ...FuzzyOptions,
+  ...AdvancedOptions
+});
+function isWordSeparator(code) {
+  return code >= 9 && code <= 13 || code === 32 || code === 160;
+}
+function norm(weight = 1, mantissa = 3) {
+  const cache = /* @__PURE__ */ new Map();
+  const m3 = Math.pow(10, mantissa);
+  return {
+    get(value) {
+      let numTokens = 0;
+      let inWord = false;
+      for (let i4 = 0; i4 < value.length; i4++) if (!isWordSeparator(value.charCodeAt(i4))) {
+        if (!inWord) {
+          numTokens++;
+          inWord = true;
+        }
+      } else inWord = false;
+      if (numTokens === 0) numTokens = 1;
+      if (cache.has(numTokens)) return cache.get(numTokens);
+      const n3 = Math.round(m3 / Math.pow(numTokens, 0.5 * weight)) / m3;
+      cache.set(numTokens, n3);
+      return n3;
+    },
+    clear() {
+      cache.clear();
+    }
+  };
+}
+var FuseIndex = class {
+  constructor({ getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
+    this.norm = norm(fieldNormWeight, 3);
+    this.getFn = getFn;
+    this.isCreated = false;
+    this.docs = [];
+    this.keys = [];
+    this._keysMap = {};
+    this.setIndexRecords();
+  }
+  setSources(docs = []) {
+    this.docs = docs;
+  }
+  setIndexRecords(records = []) {
+    this.records = records;
+  }
+  setKeys(keys = []) {
+    this.keys = keys;
+    this._keysMap = {};
+    keys.forEach((key, idx) => {
+      this._keysMap[key.id] = idx;
+    });
+  }
+  create() {
+    if (this.isCreated || !this.docs.length) return;
+    this.isCreated = true;
+    const len = this.docs.length;
+    this.records = new Array(len);
+    let recordCount = 0;
+    if (isString(this.docs[0])) for (let i4 = 0; i4 < len; i4++) {
+      const record = this._createStringRecord(this.docs[i4], i4);
+      if (record) this.records[recordCount++] = record;
+    }
+    else for (let i4 = 0; i4 < len; i4++) this.records[recordCount++] = this._createObjectRecord(this.docs[i4], i4);
+    this.records.length = recordCount;
+    this.norm.clear();
+  }
+  add(doc, docIndex) {
+    if (!Number.isInteger(docIndex) || docIndex < 0) throw new Error(INVALID_DOC_INDEX);
+    if (isString(doc)) {
+      const record2 = this._createStringRecord(doc, docIndex);
+      if (record2) this.records.push(record2);
+      return record2;
+    }
+    const record = this._createObjectRecord(doc, docIndex);
+    this.records.push(record);
+    return record;
+  }
+  removeAt(idx) {
+    if (!Number.isInteger(idx) || idx < 0) throw new Error(INVALID_DOC_INDEX);
+    for (let i4 = 0, len = this.records.length; i4 < len; i4 += 1) if (this.records[i4].i === idx) {
+      this.records.splice(i4, 1);
+      break;
+    }
+    for (let i4 = 0, len = this.records.length; i4 < len; i4 += 1) if (this.records[i4].i > idx) this.records[i4].i -= 1;
+  }
+  removeAll(indices) {
+    const toRemove = /* @__PURE__ */ new Set();
+    for (const v2 of indices) if (Number.isInteger(v2) && v2 >= 0) toRemove.add(v2);
+    if (toRemove.size === 0) return;
+    this.records = this.records.filter((r3) => !toRemove.has(r3.i));
+    const sorted = Array.from(toRemove).sort((a3, b2) => a3 - b2);
+    for (const record of this.records) {
+      let lo = 0;
+      let hi = sorted.length;
+      while (lo < hi) {
+        const mid = lo + hi >>> 1;
+        if (sorted[mid] < record.i) lo = mid + 1;
+        else hi = mid;
+      }
+      record.i -= lo;
+    }
+  }
+  getValueForItemAtKeyId(item, keyId) {
+    return item[this._keysMap[keyId]];
+  }
+  size() {
+    return this.records.length;
+  }
+  _createStringRecord(doc, docIndex) {
+    if (!isDefined(doc) || isBlank(doc)) return null;
+    return {
+      v: doc,
+      i: docIndex,
+      n: this.norm.get(doc)
+    };
+  }
+  _createObjectRecord(doc, docIndex) {
+    const record = {
+      i: docIndex,
+      $: {}
+    };
+    for (let keyIndex = 0, keyLen = this.keys.length; keyIndex < keyLen; keyIndex++) {
+      const key = this.keys[keyIndex];
+      const value = key.getFn ? key.getFn(doc) : this.getFn(doc, key.path);
+      if (!isDefined(value)) continue;
+      if (isArray(value)) {
+        const subRecords = [];
+        for (let i4 = 0, len = value.length; i4 < len; i4 += 1) {
+          const item = value[i4];
+          if (!isDefined(item)) continue;
+          if (isString(item)) {
+            if (!isBlank(item)) {
+              const subRecord = {
+                v: item,
+                i: i4,
+                n: this.norm.get(item)
+              };
+              subRecords.push(subRecord);
+            }
+          } else if (isDefined(item.v)) {
+            const text2 = isString(item.v) ? item.v : toString(item.v);
+            if (!isBlank(text2)) {
+              const subRecord = {
+                v: text2,
+                i: item.i,
+                n: this.norm.get(text2)
+              };
+              subRecords.push(subRecord);
+            }
+          }
+        }
+        record.$[keyIndex] = subRecords;
+      } else if (isString(value) && !isBlank(value)) {
+        const subRecord = {
+          v: value,
+          n: this.norm.get(value)
+        };
+        record.$[keyIndex] = subRecord;
+      }
+    }
+    return record;
+  }
+  toJSON() {
+    return {
+      keys: this.keys.map(({ getFn, ...key }) => key),
+      records: this.records
+    };
+  }
+};
+function createIndex(keys, docs, { getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
+  const myIndex = new FuseIndex({
+    getFn,
+    fieldNormWeight
+  });
+  myIndex.setKeys(keys.map(createKey));
+  myIndex.setSources(docs);
+  myIndex.create();
+  return myIndex;
+}
+function parseIndex(data, { getFn = Config.getFn, fieldNormWeight = Config.fieldNormWeight } = {}) {
+  const { keys, records } = data;
+  const myIndex = new FuseIndex({
+    getFn,
+    fieldNormWeight
+  });
+  myIndex.setKeys(keys);
+  myIndex.setIndexRecords(records);
+  return myIndex;
+}
+function convertMaskToIndices(matchmask = [], minMatchCharLength = Config.minMatchCharLength) {
+  const indices = [];
+  let start = -1;
+  let end = -1;
+  let i4 = 0;
+  for (let len = matchmask.length; i4 < len; i4 += 1) {
+    const match = matchmask[i4];
+    if (match && start === -1) start = i4;
+    else if (!match && start !== -1) {
+      end = i4 - 1;
+      if (end - start + 1 >= minMatchCharLength) indices.push([start, end]);
+      start = -1;
+    }
+  }
+  if (matchmask[i4 - 1] && i4 - start >= minMatchCharLength) indices.push([start, i4 - 1]);
+  return indices;
+}
+function search(text2, pattern, patternAlphabet, { location = Config.location, distance = Config.distance, threshold = Config.threshold, findAllMatches = Config.findAllMatches, minMatchCharLength = Config.minMatchCharLength, includeMatches = Config.includeMatches, ignoreLocation = Config.ignoreLocation } = {}) {
+  if (pattern.length > 32) throw new Error(PATTERN_LENGTH_TOO_LARGE(32));
+  const patternLen = pattern.length;
+  const textLen = text2.length;
+  const expectedLocation = Math.max(0, Math.min(location, textLen));
+  let currentThreshold = threshold;
+  let bestLocation = expectedLocation;
+  const calcScore = (errors, currentLocation) => {
+    const accuracy = errors / patternLen;
+    if (ignoreLocation) return accuracy;
+    const proximity = Math.abs(expectedLocation - currentLocation);
+    if (!distance) return proximity ? 1 : accuracy;
+    return accuracy + proximity / distance;
+  };
+  const computeMatches = minMatchCharLength > 1 || includeMatches;
+  const matchMask = computeMatches ? Array(textLen) : [];
+  let index;
+  while ((index = text2.indexOf(pattern, bestLocation)) > -1) {
+    const score = calcScore(0, index);
+    currentThreshold = Math.min(score, currentThreshold);
+    bestLocation = index + patternLen;
+    if (computeMatches) {
+      let i4 = 0;
+      while (i4 < patternLen) {
+        matchMask[index + i4] = 1;
+        i4 += 1;
+      }
+    }
+  }
+  bestLocation = -1;
+  let lastBitArr = [];
+  let finalScore = 1;
+  let bestErrors = 0;
+  let binMax = patternLen + textLen;
+  const mask = 1 << patternLen - 1;
+  for (let i4 = 0; i4 < patternLen; i4 += 1) {
+    let binMin = 0;
+    let binMid = binMax;
+    while (binMin < binMid) {
+      if (calcScore(i4, expectedLocation + binMid) <= currentThreshold) binMin = binMid;
+      else binMax = binMid;
+      binMid = Math.floor((binMax - binMin) / 2 + binMin);
+    }
+    binMax = binMid;
+    let start = Math.max(1, expectedLocation - binMid + 1);
+    const finish = findAllMatches ? textLen : Math.min(expectedLocation + binMid, textLen) + patternLen;
+    const bitArr = Array(finish + 2);
+    bitArr[finish + 1] = (1 << i4) - 1;
+    for (let j2 = finish; j2 >= start; j2 -= 1) {
+      const currentLocation = j2 - 1;
+      const charMatch = patternAlphabet[text2[currentLocation]];
+      bitArr[j2] = (bitArr[j2 + 1] << 1 | 1) & charMatch;
+      if (i4) bitArr[j2] |= (lastBitArr[j2 + 1] | lastBitArr[j2]) << 1 | 1 | lastBitArr[j2 + 1];
+      if (bitArr[j2] & mask) {
+        finalScore = calcScore(i4, currentLocation);
+        if (finalScore <= currentThreshold) {
+          currentThreshold = finalScore;
+          bestLocation = currentLocation;
+          bestErrors = i4;
+          if (bestLocation <= expectedLocation) break;
+          start = Math.max(1, 2 * expectedLocation - bestLocation);
+        }
+      }
+    }
+    if (calcScore(i4 + 1, expectedLocation) > currentThreshold) break;
+    lastBitArr = bitArr;
+  }
+  if (computeMatches && bestLocation >= 0) {
+    const matchEnd = Math.min(textLen - 1, bestLocation + patternLen - 1 + bestErrors);
+    for (let k2 = bestLocation; k2 <= matchEnd; k2 += 1) if (patternAlphabet[text2[k2]]) matchMask[k2] = 1;
+  }
+  const result = {
+    isMatch: bestLocation >= 0,
+    score: Math.max(1e-3, finalScore)
+  };
+  if (computeMatches) {
+    const indices = convertMaskToIndices(matchMask, minMatchCharLength);
+    if (!indices.length) result.isMatch = false;
+    else if (includeMatches) result.indices = indices;
+  }
+  return result;
+}
+function createPatternAlphabet(pattern) {
+  const mask = {};
+  for (let i4 = 0, len = pattern.length; i4 < len; i4 += 1) {
+    const char = pattern.charAt(i4);
+    mask[char] = (mask[char] || 0) | 1 << len - i4 - 1;
+  }
+  return mask;
+}
+function mergeIndices(indices) {
+  if (indices.length <= 1) return indices;
+  indices.sort((a3, b2) => a3[0] - b2[0] || a3[1] - b2[1]);
+  const merged = [indices[0]];
+  for (let i4 = 1, len = indices.length; i4 < len; i4 += 1) {
+    const last = merged[merged.length - 1];
+    const curr = indices[i4];
+    if (curr[0] <= last[1] + 1) last[1] = Math.max(last[1], curr[1]);
+    else merged.push(curr);
+  }
+  return merged;
+}
+var NON_DECOMPOSABLE_MAP = {
+  "\u0142": "l",
+  "\u0141": "L",
+  "\u0111": "d",
+  "\u0110": "D",
+  "\xF8": "o",
+  "\xD8": "O",
+  "\u0127": "h",
+  "\u0126": "H",
+  "\u0167": "t",
+  "\u0166": "T",
+  "\u0131": "i",
+  "\xDF": "ss"
+};
+var NON_DECOMPOSABLE_RE = new RegExp("[" + Object.keys(NON_DECOMPOSABLE_MAP).join("") + "]", "g");
+var stripDiacritics = typeof String.prototype.normalize === "function" ? (str) => str.normalize("NFD").replace(/[\u0300-\u036F\u0483-\u0489\u0591-\u05BD\u05BF\u05C1\u05C2\u05C4\u05C5\u05C7\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0711\u0730-\u074A\u07A6-\u07B0\u07EB-\u07F3\u07FD\u0816-\u0819\u081B-\u0823\u0825-\u0827\u0829-\u082D\u0859-\u085B\u08D3-\u08E1\u08E3-\u0903\u093A-\u093C\u093E-\u094F\u0951-\u0957\u0962\u0963\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09FE\u0A01-\u0A03\u0A3C\u0A3E-\u0A42\u0A47\u0A48\u0A4B-\u0A4D\u0A51\u0A70\u0A71\u0A75\u0A81-\u0A83\u0ABC\u0ABE-\u0AC5\u0AC7-\u0AC9\u0ACB-\u0ACD\u0AE2\u0AE3\u0AFA-\u0AFF\u0B01-\u0B03\u0B3C\u0B3E-\u0B44\u0B47\u0B48\u0B4B-\u0B4D\u0B56\u0B57\u0B62\u0B63\u0B82\u0BBE-\u0BC2\u0BC6-\u0BC8\u0BCA-\u0BCD\u0BD7\u0C00-\u0C04\u0C3E-\u0C44\u0C46-\u0C48\u0C4A-\u0C4D\u0C55\u0C56\u0C62\u0C63\u0C81-\u0C83\u0CBC\u0CBE-\u0CC4\u0CC6-\u0CC8\u0CCA-\u0CCD\u0CD5\u0CD6\u0CE2\u0CE3\u0D00-\u0D03\u0D3B\u0D3C\u0D3E-\u0D44\u0D46-\u0D48\u0D4A-\u0D4D\u0D57\u0D62\u0D63\u0D82\u0D83\u0DCA\u0DCF-\u0DD4\u0DD6\u0DD8-\u0DDF\u0DF2\u0DF3\u0E31\u0E34-\u0E3A\u0E47-\u0E4E\u0EB1\u0EB4-\u0EB9\u0EBB\u0EBC\u0EC8-\u0ECD\u0F18\u0F19\u0F35\u0F37\u0F39\u0F3E\u0F3F\u0F71-\u0F84\u0F86\u0F87\u0F8D-\u0F97\u0F99-\u0FBC\u0FC6\u102B-\u103E\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074\u1082-\u108D\u108F\u109A-\u109D\u135D-\u135F\u1712-\u1714\u1732-\u1734\u1752\u1753\u1772\u1773\u17B4-\u17D3\u17DD\u180B-\u180D\u1885\u1886\u18A9\u1920-\u192B\u1930-\u193B\u1A17-\u1A1B\u1A55-\u1A5E\u1A60-\u1A7C\u1A7F\u1AB0-\u1ABE\u1B00-\u1B04\u1B34-\u1B44\u1B6B-\u1B73\u1B80-\u1B82\u1BA1-\u1BAD\u1BE6-\u1BF3\u1C24-\u1C37\u1CD0-\u1CD2\u1CD4-\u1CE8\u1CED\u1CF2-\u1CF4\u1CF7-\u1CF9\u1DC0-\u1DF9\u1DFB-\u1DFF\u20D0-\u20F0\u2CEF-\u2CF1\u2D7F\u2DE0-\u2DFF\u302A-\u302F\u3099\u309A\uA66F-\uA672\uA674-\uA67D\uA69E\uA69F\uA6F0\uA6F1\uA802\uA806\uA80B\uA823-\uA827\uA880\uA881\uA8B4-\uA8C5\uA8E0-\uA8F1\uA8FF\uA926-\uA92D\uA947-\uA953\uA980-\uA983\uA9B3-\uA9C0\uA9E5\uAA29-\uAA36\uAA43\uAA4C\uAA4D\uAA7B-\uAA7D\uAAB0\uAAB2-\uAAB4\uAAB7\uAAB8\uAABE\uAABF\uAAC1\uAAEB-\uAAEF\uAAF5\uAAF6\uABE3-\uABEA\uABEC\uABED\uFB1E\uFE00-\uFE0F\uFE20-\uFE2F]/g, "").replace(NON_DECOMPOSABLE_RE, (ch2) => NON_DECOMPOSABLE_MAP[ch2]) : (str) => str;
+var BitapSearch = class {
+  constructor(pattern, { location = Config.location, threshold = Config.threshold, distance = Config.distance, includeMatches = Config.includeMatches, findAllMatches = Config.findAllMatches, minMatchCharLength = Config.minMatchCharLength, isCaseSensitive = Config.isCaseSensitive, ignoreDiacritics = Config.ignoreDiacritics, ignoreLocation = Config.ignoreLocation } = {}) {
+    this.options = {
+      location,
+      threshold,
+      distance,
+      includeMatches,
+      findAllMatches,
+      minMatchCharLength,
+      isCaseSensitive,
+      ignoreDiacritics,
+      ignoreLocation
+    };
+    pattern = isCaseSensitive ? pattern : pattern.toLowerCase();
+    pattern = ignoreDiacritics ? stripDiacritics(pattern) : pattern;
+    this.pattern = pattern;
+    this.chunks = [];
+    if (!this.pattern.length) return;
+    const addChunk = (pattern2, startIndex) => {
+      this.chunks.push({
+        pattern: pattern2,
+        alphabet: createPatternAlphabet(pattern2),
+        startIndex
+      });
+    };
+    const len = this.pattern.length;
+    if (len > 32) {
+      let i4 = 0;
+      const remainder = len % 32;
+      const end = len - remainder;
+      while (i4 < end) {
+        addChunk(this.pattern.substr(i4, 32), i4);
+        i4 += 32;
+      }
+      if (remainder) {
+        const startIndex = len - 32;
+        addChunk(this.pattern.substr(startIndex), startIndex);
+      }
+    } else addChunk(this.pattern, 0);
+  }
+  searchIn(text2) {
+    const { isCaseSensitive, ignoreDiacritics, includeMatches } = this.options;
+    text2 = isCaseSensitive ? text2 : text2.toLowerCase();
+    text2 = ignoreDiacritics ? stripDiacritics(text2) : text2;
+    if (this.pattern === text2) {
+      if (text2.length < this.options.minMatchCharLength) return {
+        isMatch: false,
+        score: 1
+      };
+      const result2 = {
+        isMatch: true,
+        score: 0
+      };
+      if (includeMatches) result2.indices = [[0, text2.length - 1]];
+      return result2;
+    }
+    const { location, distance, threshold, findAllMatches, minMatchCharLength, ignoreLocation } = this.options;
+    const allIndices = [];
+    let totalScore = 0;
+    let hasMatches = false;
+    this.chunks.forEach(({ pattern, alphabet, startIndex }) => {
+      const { isMatch, score, indices } = search(text2, pattern, alphabet, {
+        location: location + startIndex,
+        distance,
+        threshold,
+        findAllMatches,
+        minMatchCharLength,
+        includeMatches,
+        ignoreLocation
+      });
+      if (isMatch) hasMatches = true;
+      totalScore += score;
+      if (isMatch && indices) allIndices.push(...indices);
+    });
+    const result = {
+      isMatch: hasMatches,
+      score: hasMatches ? totalScore / this.chunks.length : 1
+    };
+    if (hasMatches && includeMatches) result.indices = mergeIndices(allIndices);
+    return result;
+  }
+};
+var MULTI_MATCH_TYPES = /* @__PURE__ */ new Set(["fuzzy", "include"]);
+function isInverse(type) {
+  return type.startsWith("inverse");
+}
+var matchers = [
+  {
+    type: "exact",
+    multiRegex: /^="(.*)"$/,
+    singleRegex: /^=(.*)$/,
+    create: (pattern) => ({
+      type: "exact",
+      search(text2) {
+        const isMatch = text2 === pattern;
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices: [0, pattern.length - 1]
+        };
+      }
+    })
+  },
+  {
+    type: "include",
+    multiRegex: /^'"(.*)"$/,
+    singleRegex: /^'(.*)$/,
+    create: (pattern) => ({
+      type: "include",
+      search(text2) {
+        let location = 0;
+        let index;
+        const indices = [];
+        const patternLen = pattern.length;
+        while ((index = text2.indexOf(pattern, location)) > -1) {
+          location = index + patternLen;
+          indices.push([index, location - 1]);
+        }
+        const isMatch = !!indices.length;
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices
+        };
+      }
+    })
+  },
+  {
+    type: "prefix-exact",
+    multiRegex: /^\^"(.*)"$/,
+    singleRegex: /^\^(.*)$/,
+    create: (pattern) => ({
+      type: "prefix-exact",
+      search(text2) {
+        const isMatch = text2.startsWith(pattern);
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices: [0, pattern.length - 1]
+        };
+      }
+    })
+  },
+  {
+    type: "inverse-prefix-exact",
+    multiRegex: /^!\^"(.*)"$/,
+    singleRegex: /^!\^(.*)$/,
+    create: (pattern) => ({
+      type: "inverse-prefix-exact",
+      search(text2) {
+        const isMatch = !text2.startsWith(pattern);
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices: [0, text2.length - 1]
+        };
+      }
+    })
+  },
+  {
+    type: "inverse-suffix-exact",
+    multiRegex: /^!"(.*)"\$$/,
+    singleRegex: /^!(.*)\$$/,
+    create: (pattern) => ({
+      type: "inverse-suffix-exact",
+      search(text2) {
+        const isMatch = !text2.endsWith(pattern);
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices: [0, text2.length - 1]
+        };
+      }
+    })
+  },
+  {
+    type: "suffix-exact",
+    multiRegex: /^"(.*)"\$$/,
+    singleRegex: /^(.*)\$$/,
+    create: (pattern) => ({
+      type: "suffix-exact",
+      search(text2) {
+        const isMatch = text2.endsWith(pattern);
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices: [text2.length - pattern.length, text2.length - 1]
+        };
+      }
+    })
+  },
+  {
+    type: "inverse-exact",
+    multiRegex: /^!"(.*)"$/,
+    singleRegex: /^!(.*)$/,
+    create: (pattern) => ({
+      type: "inverse-exact",
+      search(text2) {
+        const isMatch = text2.indexOf(pattern) === -1;
+        return {
+          isMatch,
+          score: isMatch ? 0 : 1,
+          indices: [0, text2.length - 1]
+        };
+      }
+    })
+  },
+  {
+    type: "fuzzy",
+    multiRegex: /^"(.*)"$/,
+    singleRegex: /^(.*)$/,
+    create: (pattern, options = {}) => {
+      const bitap = new BitapSearch(pattern, {
+        location: options.location ?? Config.location,
+        threshold: options.threshold ?? Config.threshold,
+        distance: options.distance ?? Config.distance,
+        includeMatches: options.includeMatches ?? Config.includeMatches,
+        findAllMatches: options.findAllMatches ?? Config.findAllMatches,
+        minMatchCharLength: options.minMatchCharLength ?? Config.minMatchCharLength,
+        isCaseSensitive: options.isCaseSensitive ?? Config.isCaseSensitive,
+        ignoreDiacritics: options.ignoreDiacritics ?? Config.ignoreDiacritics,
+        ignoreLocation: options.ignoreLocation ?? Config.ignoreLocation
+      });
+      return {
+        type: "fuzzy",
+        search(text2) {
+          return bitap.searchIn(text2);
+        }
+      };
+    }
+  }
+];
+var matchersLen = matchers.length;
+var ESCAPED_PIPE = "\0";
+var OR_TOKEN = "|";
+function tokenize(pattern) {
+  const tokens = [];
+  const len = pattern.length;
+  let i4 = 0;
+  while (i4 < len) {
+    while (i4 < len && pattern[i4] === " ") i4++;
+    if (i4 >= len) break;
+    let j2 = i4;
+    while (j2 < len && pattern[j2] !== " " && pattern[j2] !== '"') j2++;
+    if (j2 < len && pattern[j2] === '"') {
+      j2++;
+      while (j2 < len) {
+        if (pattern[j2] === '"') {
+          const next = j2 + 1;
+          if (next >= len || pattern[next] === " ") {
+            j2++;
+            break;
+          }
+          if (pattern[next] === "$" && (next + 1 >= len || pattern[next + 1] === " ")) {
+            j2 += 2;
+            break;
+          }
+        }
+        j2++;
+      }
+      tokens.push(pattern.substring(i4, j2));
+      i4 = j2;
+    } else {
+      while (j2 < len && pattern[j2] !== " ") j2++;
+      tokens.push(pattern.substring(i4, j2));
+      i4 = j2;
+    }
+  }
+  return tokens;
+}
+function getMatch(pattern, exp) {
+  const matches = pattern.match(exp);
+  return matches ? matches[1] : null;
+}
+function parseQuery(pattern, options = {}) {
+  return pattern.replace(/\\\|/g, ESCAPED_PIPE).split(OR_TOKEN).map((item) => {
+    const query = tokenize(item.replace(/\u0000/g, "|").trim()).filter((item2) => item2 && !!item2.trim());
+    const results = [];
+    for (let i4 = 0, len = query.length; i4 < len; i4 += 1) {
+      const queryItem = query[i4];
+      let found = false;
+      let idx = -1;
+      while (!found && ++idx < matchersLen) {
+        const def = matchers[idx];
+        const token = getMatch(queryItem, def.multiRegex);
+        if (token) {
+          results.push(def.create(token, options));
+          found = true;
+        }
+      }
+      if (found) continue;
+      idx = -1;
+      while (++idx < matchersLen) {
+        const def = matchers[idx];
+        const token = getMatch(queryItem, def.singleRegex);
+        if (token) {
+          results.push(def.create(token, options));
+          break;
+        }
+      }
+    }
+    return results;
+  });
+}
+var ExtendedSearch = class {
+  constructor(pattern, { isCaseSensitive = Config.isCaseSensitive, ignoreDiacritics = Config.ignoreDiacritics, includeMatches = Config.includeMatches, minMatchCharLength = Config.minMatchCharLength, ignoreLocation = Config.ignoreLocation, findAllMatches = Config.findAllMatches, location = Config.location, threshold = Config.threshold, distance = Config.distance } = {}) {
+    this.query = null;
+    this.options = {
+      isCaseSensitive,
+      ignoreDiacritics,
+      includeMatches,
+      minMatchCharLength,
+      findAllMatches,
+      ignoreLocation,
+      location,
+      threshold,
+      distance
+    };
+    pattern = isCaseSensitive ? pattern : pattern.toLowerCase();
+    pattern = ignoreDiacritics ? stripDiacritics(pattern) : pattern;
+    this.pattern = pattern;
+    this.query = parseQuery(this.pattern, this.options);
+  }
+  static condition(_2, options) {
+    return options.useExtendedSearch;
+  }
+  searchIn(text2) {
+    const query = this.query;
+    if (!query) return {
+      isMatch: false,
+      score: 1
+    };
+    const { includeMatches, isCaseSensitive, ignoreDiacritics } = this.options;
+    text2 = isCaseSensitive ? text2 : text2.toLowerCase();
+    text2 = ignoreDiacritics ? stripDiacritics(text2) : text2;
+    let numMatches = 0;
+    const allIndices = [];
+    let totalScore = 0;
+    let hasInverse = false;
+    for (let i4 = 0, qLen = query.length; i4 < qLen; i4 += 1) {
+      const searchers = query[i4];
+      allIndices.length = 0;
+      numMatches = 0;
+      hasInverse = false;
+      for (let j2 = 0, pLen = searchers.length; j2 < pLen; j2 += 1) {
+        const matcher = searchers[j2];
+        const { isMatch, indices, score } = matcher.search(text2);
+        if (isMatch) {
+          numMatches += 1;
+          totalScore += score;
+          if (isInverse(matcher.type)) hasInverse = true;
+          if (includeMatches) if (MULTI_MATCH_TYPES.has(matcher.type)) allIndices.push(...indices);
+          else allIndices.push(indices);
+        } else {
+          totalScore = 0;
+          numMatches = 0;
+          allIndices.length = 0;
+          hasInverse = false;
+          break;
+        }
+      }
+      if (numMatches) {
+        const result = {
+          isMatch: true,
+          score: totalScore / numMatches
+        };
+        if (hasInverse) result.hasInverse = true;
+        if (includeMatches) result.indices = mergeIndices(allIndices);
+        return result;
+      }
+    }
+    return {
+      isMatch: false,
+      score: 1
+    };
+  }
+};
+var registeredSearchers = [];
+function register(...args) {
+  registeredSearchers.push(...args);
+}
+function createSearcher(pattern, options) {
+  for (let i4 = 0, len = registeredSearchers.length; i4 < len; i4 += 1) {
+    const searcherClass = registeredSearchers[i4];
+    if (searcherClass.condition(pattern, options)) return new searcherClass(pattern, options);
+  }
+  return new BitapSearch(pattern, options);
+}
+var LogicalOperator = {
+  AND: "$and",
+  OR: "$or"
+};
+var KeyType = {
+  PATH: "$path",
+  PATTERN: "$val"
+};
+var isExpression = (query) => !!(query[LogicalOperator.AND] || query[LogicalOperator.OR]);
+var isPath = (query) => !!query[KeyType.PATH];
+var isLeaf = (query) => !isArray(query) && isObject(query) && !isExpression(query);
+var convertToExplicit = (query) => ({ [LogicalOperator.AND]: Object.keys(query).map((key) => ({ [key]: query[key] })) });
+function parse2(query, options, { auto = true } = {}) {
+  const next = (query2) => {
+    if (isString(query2)) {
+      const obj = {
+        keyId: null,
+        pattern: query2
+      };
+      if (auto) obj.searcher = createSearcher(query2, options);
+      return obj;
+    }
+    const keys = Object.keys(query2);
+    const isQueryPath = isPath(query2);
+    if (!isQueryPath && keys.length > 1 && !isExpression(query2)) return next(convertToExplicit(query2));
+    if (isLeaf(query2)) {
+      const key = isQueryPath ? query2[KeyType.PATH] : keys[0];
+      const pattern = isQueryPath ? query2[KeyType.PATTERN] : query2[key];
+      if (!isString(pattern)) throw new Error(LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY(key));
+      const obj = {
+        keyId: createKeyId(key),
+        pattern
+      };
+      if (auto) obj.searcher = createSearcher(pattern, options);
+      return obj;
+    }
+    const node = {
+      children: [],
+      operator: keys[0]
+    };
+    keys.forEach((key) => {
+      const value = query2[key];
+      if (isArray(value)) value.forEach((item) => {
+        node.children.push(next(item));
+      });
+    });
+    return node;
+  };
+  if (!isExpression(query)) query = convertToExplicit(query);
+  return next(query);
+}
+function computeScoreSingle(matches, { ignoreFieldNorm = Config.ignoreFieldNorm }) {
+  let totalScore = 1;
+  matches.forEach(({ key, norm: norm2, score }) => {
+    const weight = key ? key.weight : null;
+    totalScore *= Math.pow(score === 0 && weight ? Number.EPSILON : score, (weight || 1) * (ignoreFieldNorm ? 1 : norm2));
+  });
+  return totalScore;
+}
+function computeScore(results, { ignoreFieldNorm = Config.ignoreFieldNorm }) {
+  results.forEach((result) => {
+    result.score = computeScoreSingle(result.matches, { ignoreFieldNorm });
+  });
+}
+var MaxHeap = class {
+  constructor(limit, comparator) {
+    this.limit = limit;
+    this.heap = [];
+    this.comparator = comparator;
+  }
+  get size() {
+    return this.heap.length;
+  }
+  insert(item) {
+    if (this.size < this.limit) {
+      this.heap.push(item);
+      this._bubbleUp(this.size - 1);
+    } else if (this.comparator(item, this.heap[0]) < 0) {
+      this.heap[0] = item;
+      this._sinkDown(0);
+    }
+  }
+  extractSorted() {
+    return this.heap.sort(this.comparator);
+  }
+  _bubbleUp(i4) {
+    const heap = this.heap;
+    while (i4 > 0) {
+      const parent = i4 - 1 >> 1;
+      if (this.comparator(heap[i4], heap[parent]) <= 0) break;
+      const tmp = heap[i4];
+      heap[i4] = heap[parent];
+      heap[parent] = tmp;
+      i4 = parent;
+    }
+  }
+  _sinkDown(i4) {
+    const heap = this.heap;
+    const len = heap.length;
+    let largest = i4;
+    do {
+      i4 = largest;
+      const left = 2 * i4 + 1;
+      const right = 2 * i4 + 2;
+      if (left < len && this.comparator(heap[left], heap[largest]) > 0) largest = left;
+      if (right < len && this.comparator(heap[right], heap[largest]) > 0) largest = right;
+      if (largest !== i4) {
+        const tmp = heap[i4];
+        heap[i4] = heap[largest];
+        heap[largest] = tmp;
+      }
+    } while (largest !== i4);
+  }
+};
+function formatMatches(result) {
+  const matches = [];
+  result.matches.forEach((match) => {
+    if (!isDefined(match.indices) || !match.indices.length) return;
+    const obj = {
+      indices: match.indices,
+      value: match.value
+    };
+    if (match.key) obj.key = match.key.id;
+    if (match.idx > -1) obj.refIndex = match.idx;
+    matches.push(obj);
+  });
+  return matches;
+}
+function format2(results, docs, { includeMatches = Config.includeMatches, includeScore = Config.includeScore } = {}) {
+  return results.map((result) => {
+    const { idx } = result;
+    const data = {
+      item: docs[idx],
+      refIndex: idx
+    };
+    if (includeMatches) data.matches = formatMatches(result);
+    if (includeScore) data.score = result.score;
+    return data;
+  });
+}
+var DEFAULT_TOKEN = /[\p{L}\p{M}\p{N}_]+/gu;
+var warned = /* @__PURE__ */ new WeakSet();
+function warnNonGlobal(regex) {
+  if (!warned.has(regex)) {
+    warned.add(regex);
+    console.warn(`[Fuse] tokenize regex ${regex} lacks the global flag; only the first match per text will be returned. Add the 'g' flag.`);
+  }
+}
+function resolveTokenize(tokenize2) {
+  if (typeof tokenize2 === "function") {
+    let validated = false;
+    return (text2) => {
+      const result = tokenize2(text2);
+      if (!validated) {
+        validated = true;
+        if (!Array.isArray(result) || result.some((t3) => typeof t3 !== "string")) throw new Error(`[Fuse] tokenize function must return string[]; received ${Array.isArray(result) ? "array containing non-strings" : typeof result}.`);
+      }
+      return result;
+    };
+  }
+  if (tokenize2 instanceof RegExp) {
+    if (!tokenize2.global) warnNonGlobal(tokenize2);
+    return (text2) => text2.match(tokenize2) || [];
+  }
+  return (text2) => text2.match(DEFAULT_TOKEN) || [];
+}
+function createAnalyzer({ isCaseSensitive = false, ignoreDiacritics = false, tokenize: tokenize2 } = {}) {
+  const tokenizeFn = resolveTokenize(tokenize2);
+  return { tokenize(text2) {
+    if (!isCaseSensitive) text2 = text2.toLowerCase();
+    if (ignoreDiacritics) text2 = stripDiacritics(text2);
+    return tokenizeFn(text2);
+  } };
+}
+var TokenSearch = class {
+  static condition(_2, options) {
+    return options.useTokenSearch;
+  }
+  constructor(pattern, options) {
+    this.options = options;
+    this.analyzer = createAnalyzer({
+      isCaseSensitive: options.isCaseSensitive,
+      ignoreDiacritics: options.ignoreDiacritics,
+      tokenize: options.tokenize
+    });
+    const queryTerms = this.analyzer.tokenize(pattern);
+    const { df, fieldCount } = options._invertedIndex;
+    this.termSearchers = [];
+    this.idfWeights = [];
+    for (const term of queryTerms) {
+      this.termSearchers.push(new BitapSearch(term, {
+        location: options.location,
+        threshold: options.threshold,
+        distance: options.distance,
+        includeMatches: options.includeMatches,
+        findAllMatches: options.findAllMatches,
+        minMatchCharLength: options.minMatchCharLength,
+        isCaseSensitive: options.isCaseSensitive,
+        ignoreDiacritics: options.ignoreDiacritics,
+        ignoreLocation: true
+      }));
+      const docFreq = df.get(term) || 0;
+      const idf = Math.log(1 + (fieldCount - docFreq + 0.5) / (docFreq + 0.5));
+      this.idfWeights.push(idf);
+    }
+    this.combineAll = options.tokenMatch === "all";
+    this.numTerms = this.termSearchers.length;
+    this.useMask = this.numTerms <= 31;
+  }
+  searchIn(text2) {
+    if (!this.termSearchers.length) return {
+      isMatch: false,
+      score: 1
+    };
+    const allIndices = [];
+    let weightedScore = 0;
+    let maxPossibleScore = 0;
+    let matchedCount = 0;
+    let matchedMask = 0;
+    const matchedTerms = this.combineAll && !this.useMask ? /* @__PURE__ */ new Set() : null;
+    for (let i4 = 0; i4 < this.termSearchers.length; i4++) {
+      const result = this.termSearchers[i4].searchIn(text2);
+      const idf = this.idfWeights[i4];
+      maxPossibleScore += idf;
+      if (result.isMatch) {
+        matchedCount++;
+        weightedScore += idf * (1 - result.score);
+        if (result.indices) allIndices.push(...result.indices);
+        if (this.combineAll) if (this.useMask) matchedMask |= 1 << i4;
+        else matchedTerms.add(i4);
+      }
+    }
+    if (matchedCount === 0) return {
+      isMatch: false,
+      score: 1
+    };
+    const normalized = maxPossibleScore > 0 ? 1 - weightedScore / maxPossibleScore : 0;
+    const searchResult = {
+      isMatch: true,
+      score: Math.max(1e-3, normalized)
+    };
+    if (this.options.includeMatches && allIndices.length) searchResult.indices = mergeIndices(allIndices);
+    if (this.combineAll) {
+      if (this.useMask) searchResult.matchedMask = matchedMask;
+      else searchResult.matchedTerms = matchedTerms;
+      searchResult.termCount = this.numTerms;
+    }
+    return searchResult;
+  }
+};
+function addField(index, text2, docIdx, analyzer) {
+  const tokens = analyzer.tokenize(text2);
+  if (!tokens.length) return;
+  index.fieldCount++;
+  index.docFieldCount.set(docIdx, (index.docFieldCount.get(docIdx) || 0) + 1);
+  const distinctTerms = new Set(tokens);
+  let perDocTerms = index.docTermFieldHits.get(docIdx);
+  if (!perDocTerms) {
+    perDocTerms = /* @__PURE__ */ new Map();
+    index.docTermFieldHits.set(docIdx, perDocTerms);
+  }
+  for (const term of distinctTerms) {
+    perDocTerms.set(term, (perDocTerms.get(term) || 0) + 1);
+    index.df.set(term, (index.df.get(term) || 0) + 1);
+  }
+}
+function ingestRecord(index, record, keyCount, analyzer) {
+  const { i: docIdx, v: v2, $: fields } = record;
+  if (v2 !== void 0) {
+    addField(index, v2, docIdx, analyzer);
+    return;
+  }
+  if (!fields) return;
+  for (let keyIdx = 0; keyIdx < keyCount; keyIdx++) {
+    const value = fields[keyIdx];
+    if (!value) continue;
+    if (Array.isArray(value)) for (const sub2 of value) addField(index, sub2.v, docIdx, analyzer);
+    else addField(index, value.v, docIdx, analyzer);
+  }
+}
+function buildInvertedIndex(records, keyCount, analyzer) {
+  const index = {
+    fieldCount: 0,
+    df: /* @__PURE__ */ new Map(),
+    docFieldCount: /* @__PURE__ */ new Map(),
+    docTermFieldHits: /* @__PURE__ */ new Map()
+  };
+  for (const record of records) ingestRecord(index, record, keyCount, analyzer);
+  return index;
+}
+function addToInvertedIndex(index, record, keyCount, analyzer) {
+  ingestRecord(index, record, keyCount, analyzer);
+}
+function removeFromInvertedIndex(index, docIdx) {
+  const fieldCount = index.docFieldCount.get(docIdx);
+  if (fieldCount === void 0) return;
+  index.fieldCount -= fieldCount;
+  index.docFieldCount.delete(docIdx);
+  const perDocTerms = index.docTermFieldHits.get(docIdx);
+  if (!perDocTerms) return;
+  for (const [term, hits] of perDocTerms) {
+    const next = (index.df.get(term) || 0) - hits;
+    if (next <= 0) index.df.delete(term);
+    else index.df.set(term, next);
+  }
+  index.docTermFieldHits.delete(docIdx);
+}
+function removeAndShiftInvertedIndex(index, removedIndices) {
+  if (removedIndices.length === 0) return;
+  const sorted = Array.from(new Set(removedIndices)).sort((a3, b2) => a3 - b2);
+  for (const idx of sorted) removeFromInvertedIndex(index, idx);
+  const shift = (oldIdx) => {
+    let lo = 0;
+    let hi = sorted.length;
+    while (lo < hi) {
+      const mid = lo + hi >>> 1;
+      if (sorted[mid] < oldIdx) lo = mid + 1;
+      else hi = mid;
+    }
+    return oldIdx - lo;
+  };
+  const firstRemoved = sorted[0];
+  const shiftedDocFieldCount = /* @__PURE__ */ new Map();
+  for (const [oldKey, count] of index.docFieldCount) shiftedDocFieldCount.set(oldKey > firstRemoved ? shift(oldKey) : oldKey, count);
+  index.docFieldCount = shiftedDocFieldCount;
+  const shiftedDocTermFieldHits = /* @__PURE__ */ new Map();
+  for (const [oldKey, terms] of index.docTermFieldHits) shiftedDocTermFieldHits.set(oldKey > firstRemoved ? shift(oldKey) : oldKey, terms);
+  index.docTermFieldHits = shiftedDocTermFieldHits;
+}
+var Fuse = class {
+  constructor(docs, options, index) {
+    this.options = {
+      ...Config,
+      ...options
+    };
+    if (this.options.useExtendedSearch && false) ;
+    if (this.options.useTokenSearch && false) ;
+    this._keyStore = new KeyStore(this.options.keys);
+    this._docs = docs;
+    this._myIndex = null;
+    this._invertedIndex = null;
+    this.setCollection(docs, index);
+    this._lastQuery = null;
+    this._lastSearcher = null;
+  }
+  _getSearcher(query) {
+    if (this._lastQuery === query) return this._lastSearcher;
+    const searcher = createSearcher(query, this._invertedIndex ? {
+      ...this.options,
+      _invertedIndex: this._invertedIndex
+    } : this.options);
+    this._lastQuery = query;
+    this._lastSearcher = searcher;
+    return searcher;
+  }
+  setCollection(docs, index) {
+    this._docs = docs;
+    if (index && !(index instanceof FuseIndex)) throw new Error(INCORRECT_INDEX_TYPE);
+    this._myIndex = index || createIndex(this.options.keys, this._docs, {
+      getFn: this.options.getFn,
+      fieldNormWeight: this.options.fieldNormWeight
+    });
+    if (this.options.useTokenSearch) {
+      const analyzer = createAnalyzer({
+        isCaseSensitive: this.options.isCaseSensitive,
+        ignoreDiacritics: this.options.ignoreDiacritics,
+        tokenize: this.options.tokenize
+      });
+      this._invertedIndex = buildInvertedIndex(this._myIndex.records, this._myIndex.keys.length, analyzer);
+    }
+    this._invalidateSearcherCache();
+  }
+  add(doc) {
+    if (!isDefined(doc)) return;
+    this._docs.push(doc);
+    const record = this._myIndex.add(doc, this._docs.length - 1);
+    if (this._invertedIndex && record) {
+      const analyzer = createAnalyzer({
+        isCaseSensitive: this.options.isCaseSensitive,
+        ignoreDiacritics: this.options.ignoreDiacritics,
+        tokenize: this.options.tokenize
+      });
+      addToInvertedIndex(this._invertedIndex, record, this._myIndex.keys.length, analyzer);
+    }
+    this._invalidateSearcherCache();
+  }
+  remove(predicate = () => false) {
+    const results = [];
+    const indicesToRemove = [];
+    for (let i4 = 0, len = this._docs.length; i4 < len; i4 += 1) if (predicate(this._docs[i4], i4)) {
+      results.push(this._docs[i4]);
+      indicesToRemove.push(i4);
+    }
+    if (indicesToRemove.length) {
+      if (this._invertedIndex) removeAndShiftInvertedIndex(this._invertedIndex, indicesToRemove);
+      const toRemove = new Set(indicesToRemove);
+      this._docs = this._docs.filter((_2, i4) => !toRemove.has(i4));
+      this._myIndex.removeAll(indicesToRemove);
+      this._invalidateSearcherCache();
+    }
+    return results;
+  }
+  removeAt(idx) {
+    if (!Number.isInteger(idx) || idx < 0 || idx >= this._docs.length) throw new Error(INVALID_DOC_INDEX);
+    if (this._invertedIndex) removeAndShiftInvertedIndex(this._invertedIndex, [idx]);
+    const doc = this._docs.splice(idx, 1)[0];
+    this._myIndex.removeAt(idx);
+    this._invalidateSearcherCache();
+    return doc;
+  }
+  _invalidateSearcherCache() {
+    this._lastQuery = null;
+    this._lastSearcher = null;
+  }
+  getIndex() {
+    return this._myIndex;
+  }
+  _normalizedKeys() {
+    return this._myIndex.keys.map((key) => this._keyStore.get(key.id) || key);
+  }
+  search(query, options) {
+    const { limit = -1 } = options || {};
+    const { includeMatches, includeScore, shouldSort, sortFn, ignoreFieldNorm } = this.options;
+    if (isString(query) && !query.trim()) {
+      let docs = this._docs.map((item, idx) => ({
+        item,
+        refIndex: idx
+      }));
+      if (isNumber(limit) && limit > -1) docs = docs.slice(0, limit);
+      return docs;
+    }
+    const useHeap = shouldSort && isNumber(limit) && limit > 0 && isString(query);
+    const comparator = sortFn;
+    const stable = (a3, b2) => comparator(a3, b2) || a3.idx - b2.idx;
+    let results;
+    if (useHeap) {
+      const heap = new MaxHeap(limit, stable);
+      if (isString(this._docs[0])) this._searchStringList(query, {
+        heap,
+        ignoreFieldNorm
+      });
+      else this._searchObjectList(query, {
+        heap,
+        ignoreFieldNorm
+      });
+      results = heap.extractSorted();
+    } else {
+      results = isString(query) ? isString(this._docs[0]) ? this._searchStringList(query) : this._searchObjectList(query) : this._searchLogical(query);
+      computeScore(results, { ignoreFieldNorm });
+      if (shouldSort) results.sort(isString(query) ? stable : comparator);
+      if (isNumber(limit) && limit > -1) results = results.slice(0, limit);
+    }
+    return format2(results, this._docs, {
+      includeMatches,
+      includeScore
+    });
+  }
+  _searchStringList(query, { heap, ignoreFieldNorm } = {}) {
+    const searcher = this._getSearcher(query);
+    const requireAllTokens = this.options.useTokenSearch && this.options.tokenMatch === "all";
+    const { records } = this._myIndex;
+    const results = heap ? null : [];
+    records.forEach(({ v: text2, i: idx, n: norm2 }) => {
+      if (!isDefined(text2)) return;
+      const searchResult = searcher.searchIn(text2);
+      if (searchResult.isMatch) {
+        const match = {
+          score: searchResult.score,
+          value: text2,
+          norm: norm2,
+          indices: searchResult.indices
+        };
+        if (requireAllTokens) {
+          match.matchedMask = searchResult.matchedMask;
+          match.matchedTerms = searchResult.matchedTerms;
+          match.termCount = searchResult.termCount;
+        }
+        const matches = [match];
+        if (!requireAllTokens || this._coversAllTokens(matches)) {
+          const result = {
+            item: text2,
+            idx,
+            matches
+          };
+          if (heap) {
+            result.score = computeScoreSingle(result.matches, { ignoreFieldNorm });
+            heap.insert(result);
+          } else results.push(result);
+        }
+      }
+    });
+    return results;
+  }
+  _searchLogical(query) {
+    const expression = parse2(query, this.options);
+    const keys = this._normalizedKeys();
+    const evaluate = (node, item, idx) => {
+      if (!("children" in node)) {
+        const { keyId, searcher } = node;
+        let matches;
+        if (keyId === null) {
+          matches = [];
+          keys.forEach((key, keyIndex) => {
+            matches.push(...this._findMatches({
+              key,
+              value: item[keyIndex],
+              searcher
+            }));
+          });
+        } else matches = this._findMatches({
+          key: this._keyStore.get(keyId),
+          value: this._myIndex.getValueForItemAtKeyId(item, keyId),
+          searcher
+        });
+        if (matches && matches.length) return [{
+          idx,
+          item,
+          matches
+        }];
+        return [];
+      }
+      const { children, operator } = node;
+      const res = [];
+      for (let i4 = 0, len = children.length; i4 < len; i4 += 1) {
+        const child = children[i4];
+        const result = evaluate(child, item, idx);
+        if (result.length) res.push(...result);
+        else if (operator === LogicalOperator.AND) return [];
+      }
+      return res;
+    };
+    const records = this._myIndex.records;
+    const resultMap = /* @__PURE__ */ new Map();
+    const results = [];
+    records.forEach(({ $: item, i: idx }) => {
+      if (isDefined(item)) {
+        const expResults = evaluate(expression, item, idx);
+        if (expResults.length) {
+          if (!resultMap.has(idx)) {
+            resultMap.set(idx, {
+              idx,
+              item,
+              matches: []
+            });
+            results.push(resultMap.get(idx));
+          }
+          expResults.forEach(({ matches }) => {
+            resultMap.get(idx).matches.push(...matches);
+          });
+        }
+      }
+    });
+    return results;
+  }
+  _searchObjectList(query, { heap, ignoreFieldNorm } = {}) {
+    const searcher = this._getSearcher(query);
+    const requireAllTokens = this.options.useTokenSearch && this.options.tokenMatch === "all";
+    const { records } = this._myIndex;
+    const keys = this._normalizedKeys();
+    const results = heap ? null : [];
+    records.forEach(({ $: item, i: idx }) => {
+      if (!isDefined(item)) return;
+      const matches = [];
+      let anyKeyFailed = false;
+      let hasInverse = false;
+      keys.forEach((key, keyIndex) => {
+        const keyMatches = this._findMatches({
+          key,
+          value: item[keyIndex],
+          searcher
+        });
+        if (keyMatches.length) {
+          matches.push(...keyMatches);
+          if (keyMatches[0].hasInverse) hasInverse = true;
+        } else anyKeyFailed = true;
+      });
+      if (hasInverse && anyKeyFailed) return;
+      if (matches.length && (!requireAllTokens || this._coversAllTokens(matches))) {
+        const result = {
+          idx,
+          item,
+          matches
+        };
+        if (heap) {
+          result.score = computeScoreSingle(result.matches, { ignoreFieldNorm });
+          heap.insert(result);
+        } else results.push(result);
+      }
+    });
+    return results;
+  }
+  _findMatches({ key, value, searcher }) {
+    if (!isDefined(value)) return [];
+    const matches = [];
+    if (isArray(value)) value.forEach(({ v: text2, i: idx, n: norm2 }) => {
+      if (!isDefined(text2)) return;
+      const searchResult = searcher.searchIn(text2);
+      if (searchResult.isMatch) {
+        const match = {
+          score: searchResult.score,
+          key,
+          value: text2,
+          idx,
+          norm: norm2,
+          indices: searchResult.indices,
+          hasInverse: searchResult.hasInverse
+        };
+        if (searchResult.termCount !== void 0) {
+          match.matchedMask = searchResult.matchedMask;
+          match.matchedTerms = searchResult.matchedTerms;
+          match.termCount = searchResult.termCount;
+        }
+        matches.push(match);
+      }
+    });
+    else {
+      const { v: text2, n: norm2 } = value;
+      const searchResult = searcher.searchIn(text2);
+      if (searchResult.isMatch) {
+        const match = {
+          score: searchResult.score,
+          key,
+          value: text2,
+          norm: norm2,
+          indices: searchResult.indices,
+          hasInverse: searchResult.hasInverse
+        };
+        if (searchResult.termCount !== void 0) {
+          match.matchedMask = searchResult.matchedMask;
+          match.matchedTerms = searchResult.matchedTerms;
+          match.termCount = searchResult.termCount;
+        }
+        matches.push(match);
+      }
+    }
+    return matches;
+  }
+  _coversAllTokens(matches) {
+    const termCount = matches.length ? matches[0].termCount : void 0;
+    if (termCount === void 0) return true;
+    if (termCount <= 31) {
+      let coverage2 = 0;
+      for (let i4 = 0; i4 < matches.length; i4++) coverage2 |= matches[i4].matchedMask || 0;
+      return coverage2 === 2 ** termCount - 1;
+    }
+    const coverage = /* @__PURE__ */ new Set();
+    for (let i4 = 0; i4 < matches.length; i4++) {
+      const terms = matches[i4].matchedTerms;
+      if (terms) for (const t3 of terms) coverage.add(t3);
+    }
+    return coverage.size === termCount;
+  }
+};
+Fuse.version = "7.5.0";
+Fuse.createIndex = createIndex;
+Fuse.parseIndex = parseIndex;
+Fuse.config = Config;
+Fuse.match = function(pattern, text2, options) {
+  if (options && options.useTokenSearch) throw new Error(FUSE_MATCH_TOKEN_SEARCH_UNSUPPORTED);
+  return createSearcher(pattern, {
+    ...Config,
+    ...options
+  }).searchIn(text2);
+};
+Fuse.parseQuery = parse2;
+register(ExtendedSearch);
+register(TokenSearch);
+Fuse.use = function(...plugins) {
+  plugins.forEach((plugin) => register(plugin));
+};
+var entry_default = Fuse;
+
+// lib/snoogle-query.ts
+var FIELD_WEIGHTS = {
+  primary: 1,
+  secondary: 0.85,
+  tertiary: 0.65
+};
+var ALL_TIERS = ["primary", "secondary", "tertiary"];
+var TAIL_TIERS = ["primary", "secondary"];
+var MIDDLE_TIERS = ["tertiary"];
+function tokenizeSnoogleQuery(query) {
+  return query.trim().split(/\s+/u).filter(Boolean);
+}
+function expandSnoogleToken(token) {
+  if (!token.includes(".")) return [{ text: token, tiers: ALL_TIERS }];
+  const segments = token.split(".").map((segment) => segment.trim()).filter(Boolean);
+  if (segments.length <= 1) return segments.length === 0 ? [] : [{ text: segments[0], tiers: ALL_TIERS }];
+  return [
+    { text: segments.at(-1), tiers: TAIL_TIERS },
+    ...segments.slice(0, -1).map((text2) => ({ text: text2, tiers: MIDDLE_TIERS }))
+  ];
+}
+function exactnessFactor(needle, fieldText) {
+  const field = fieldText.toLowerCase();
+  if (needle === field) return 1;
+  if (field.length === 0) return 0.85;
+  const coverage = Math.min(1, needle.length / field.length);
+  return (field.startsWith(needle) ? 0.9 : 0.85) * (0.6 + 0.4 * coverage);
+}
+var SnoogleSearchIndex = class {
+  documents;
+  weights;
+  minTokenScore;
+  fuse;
+  hasFields;
+  constructor(documents, options = {}) {
+    this.documents = documents;
+    this.weights = {
+      primary: options.fieldWeights?.primary ?? FIELD_WEIGHTS.primary,
+      secondary: options.fieldWeights?.secondary ?? FIELD_WEIGHTS.secondary,
+      tertiary: options.fieldWeights?.tertiary ?? FIELD_WEIGHTS.tertiary
+    };
+    this.minTokenScore = options.minTokenScore ?? 0.2;
+    const indexedFields = [];
+    documents.forEach((document2, documentIndex) => {
+      Object.keys(FIELD_WEIGHTS).forEach((tier) => {
+        for (const rawText of document2.fields[tier]) {
+          const text2 = rawText.trim();
+          if (text2) indexedFields.push({ documentIndex, text: text2, tier });
+        }
+      });
+    });
+    this.hasFields = indexedFields.length > 0;
+    this.fuse = new entry_default(indexedFields, {
+      keys: ["text"],
+      includeScore: true,
+      ignoreLocation: true,
+      threshold: options.fuseThreshold ?? 0.72,
+      minMatchCharLength: 1,
+      shouldSort: false
+    });
+  }
+  search(query) {
+    const tokens = tokenizeSnoogleQuery(query);
+    if (tokens.length === 0) {
+      return [...this.documents].sort((a3, b2) => a3.id.localeCompare(b2.id)).map((document2) => ({ value: document2.value, score: 0, tokenScores: [] }));
+    }
+    if (!this.hasFields) return [];
+    const scoresByDocument = this.documents.map(() => []);
+    for (const token of tokens) {
+      const probes = expandSnoogleToken(token);
+      if (probes.length === 0) continue;
+      const probeScores = probes.map((probe) => {
+        const needle = probe.text.toLowerCase();
+        const best = new Array(this.documents.length).fill(0);
+        for (const result of this.fuse.search(probe.text)) {
+          if (!probe.tiers.includes(result.item.tier)) continue;
+          const score = Math.max(0, 1 - (result.score ?? 1)) * this.weights[result.item.tier] * exactnessFactor(needle, result.item.text);
+          best[result.item.documentIndex] = Math.max(best[result.item.documentIndex], score);
+        }
+        return best;
+      });
+      for (let index = 0; index < this.documents.length; index += 1) {
+        const parts = probeScores.map((scores) => scores[index]);
+        scoresByDocument[index].push(parts.some((score) => score <= 0) ? 0 : Math.exp(parts.reduce((sum, score) => sum + Math.log(score), 0) / parts.length));
+      }
+    }
+    const ranked = [];
+    this.documents.forEach((document2, index) => {
+      const tokenScores = scoresByDocument[index];
+      if (tokenScores.length !== tokens.length || tokenScores.some((score2) => score2 < this.minTokenScore)) return;
+      const score = Math.exp(tokenScores.reduce((sum, value) => sum + Math.log(value), 0) / tokenScores.length);
+      ranked.push({ id: document2.id, value: document2.value, score, tokenScores });
+    });
+    ranked.sort((a3, b2) => b2.score - a3.score || a3.id.localeCompare(b2.id));
+    return ranked.map(({ id: _id, ...result }) => result);
+  }
+};
+function splitSnoogleNamespace(id) {
+  const segments = id.split(".").map((segment) => segment.trim()).filter(Boolean);
+  return { tail: segments.at(-1) ?? id, middle: segments.slice(0, -1) };
+}
+function createSnoogleSearchDocument({ id, value, labels = [] }) {
+  const namespace = splitSnoogleNamespace(id);
+  return { id, value, fields: { primary: [namespace.tail], secondary: labels, tertiary: namespace.middle } };
+}
+function rankSnoogleDocuments(query, documents, options = {}) {
+  return new SnoogleSearchIndex(documents, options).search(query);
+}
+async function querySnoogl(workspaceRoot, mode, query) {
+  if (mode === "entry") {
+    const entries = await readEntries(workspaceRoot);
+    const hits2 = entries.map((entry) => ({
+      kind: "entry",
+      id: entry.id,
+      title: localizedText(entry.title),
+      entryKind: entry.kind ?? null,
+      score: 0
+    }));
+    const results2 = rankSnoogleDocuments(query.trim().toLowerCase(), hits2.map((hit) => createSnoogleSearchDocument({ id: hit.id, value: hit, labels: hit.title ? [hit.title] : [] }))).map((result) => ({ ...result.value, score: result.score }));
+    return { schemaVersion: 1, mode, query, results: results2 };
+  }
+  function localizedText(value) {
+    if (typeof value === "string") return value;
+    return value.values[value.default_language] ?? value.values.en ?? Object.values(value.values)[0] ?? "";
+  }
+  const [config, packages] = await Promise.all([readConfig(workspaceRoot), readAllMacroPackages(workspaceRoot)]);
+  const active = config.active_macro_packages === void 0 ? null : new Set(config.active_macro_packages);
+  const hits = [];
+  for (const packageId of Object.keys(packages).sort((a3, b2) => a3.localeCompare(b2))) {
+    if (active && !active.has(packageId)) continue;
+    const pkg = packages[packageId];
+    for (const [id, macro] of Object.entries(pkg.macros)) {
+      hits.push({
+        kind: "macro",
+        id,
+        packageId,
+        packageName: pkg.name,
+        macroKind: typeof macro.kind === "string" && macro.kind ? macro.kind : null,
+        tags: Array.isArray(macro.tags) ? [...macro.tags] : [],
+        sourceEntries: Array.isArray(macro.source?.entries) ? [...macro.source.entries] : [],
+        score: 0
+      });
+    }
+  }
+  const results = rankSnoogleDocuments(query.trim().toLowerCase(), hits.map((hit) => createSnoogleSearchDocument({ id: hit.id, value: hit, labels: hit.tags }))).map((result) => ({ ...result.value, score: result.score }));
+  return { schemaVersion: 1, mode, query, results };
+}
+
+// lib/snl-render.ts
+var LATEX_TO_TEXT_CHARS = {
+  // Set operations
+  "\\cup": "\u222A",
+  "\\cap": "\u2229",
+  "\\setminus": "\u2216",
+  "\\emptyset": "\u2205",
+  "\\subseteq": "\u2286",
+  "\\subset": "\u2282",
+  "\\supseteq": "\u2287",
+  "\\supset": "\u2283",
+  "\\in": "\u2208",
+  "\\notin": "\u2209",
+  "\\ni": "\u220B",
+  // Logic
+  "\\land": "\u2227",
+  "\\wedge": "\u2227",
+  "\\lor": "\u2228",
+  "\\vee": "\u2228",
+  "\\lnot": "\xAC",
+  "\\neg": "\xAC",
+  "\\implies": "\u21D2",
+  "\\Rightarrow": "\u21D2",
+  "\\Leftrightarrow": "\u21D4",
+  "\\iff": "\u21D4",
+  "\\forall": "\u2200",
+  "\\exists": "\u2203",
+  "\\top": "\u22A4",
+  "\\bot": "\u22A5",
+  // Relations
+  "\\leq": "\u2264",
+  "\\le": "\u2264",
+  "\\geq": "\u2265",
+  "\\ge": "\u2265",
+  "\\neq": "\u2260",
+  "\\ne": "\u2260",
+  "\\approx": "\u2248",
+  "\\equiv": "\u2261",
+  "\\sim": "\u223C",
+  "\\cong": "\u2245",
+  "\\mapsto": "\u21A6",
+  "\\to": "\u2192",
+  "\\rightarrow": "\u2192",
+  "\\leftarrow": "\u2190",
+  "\\leftrightarrow": "\u2194",
+  // Arithmetic / operators
+  "\\times": "\xD7",
+  "\\div": "\xF7",
+  "\\pm": "\xB1",
+  "\\mp": "\u2213",
+  "\\cdot": "\xB7",
+  "\\ast": "\u2217",
+  "\\star": "\u22C6",
+  "\\circ": "\u2218",
+  "\\bullet": "\u2022",
+  "\\oplus": "\u2295",
+  "\\otimes": "\u2297",
+  "\\odot": "\u2299",
+  "\\ominus": "\u2296",
+  // Big operators
+  "\\sum": "\u2211",
+  "\\prod": "\u220F",
+  "\\coprod": "\u2210",
+  "\\int": "\u222B",
+  "\\iint": "\u222C",
+  "\\iiint": "\u222D",
+  "\\oint": "\u222E",
+  "\\bigcup": "\u22C3",
+  "\\bigcap": "\u22C2",
+  "\\bigoplus": "\u2295",
+  "\\bigotimes": "\u2297",
+  // Common symbols
+  "\\infty": "\u221E",
+  "\\partial": "\u2202",
+  "\\nabla": "\u2207",
+  "\\hbar": "\u210F",
+  "\\ell": "\u2113",
+  "\\Re": "\u211C",
+  "\\Im": "\u2111",
+  "\\aleph": "\u2135",
+  "\\wp": "\u2118",
+  // Number sets
+  "\\mathbb{N}": "\u2115",
+  "\\mathbb{Z}": "\u2124",
+  "\\mathbb{Q}": "\u211A",
+  "\\mathbb{R}": "\u211D",
+  "\\mathbb{C}": "\u2102",
+  "\\mathbb{F}": "\u{1D53D}",
+  "\\mathbb{P}": "\u2119",
+  "\\mathbb{H}": "\u210D",
+  // Lowercase greek
+  "\\alpha": "\u03B1",
+  "\\beta": "\u03B2",
+  "\\gamma": "\u03B3",
+  "\\delta": "\u03B4",
+  "\\epsilon": "\u03B5",
+  "\\varepsilon": "\u03B5",
+  "\\zeta": "\u03B6",
+  "\\eta": "\u03B7",
+  "\\theta": "\u03B8",
+  "\\vartheta": "\u03D1",
+  "\\iota": "\u03B9",
+  "\\kappa": "\u03BA",
+  "\\lambda": "\u03BB",
+  "\\mu": "\u03BC",
+  "\\nu": "\u03BD",
+  "\\xi": "\u03BE",
+  "\\pi": "\u03C0",
+  "\\varpi": "\u03D6",
+  "\\rho": "\u03C1",
+  "\\varrho": "\u03F1",
+  "\\sigma": "\u03C3",
+  "\\varsigma": "\u03C2",
+  "\\tau": "\u03C4",
+  "\\upsilon": "\u03C5",
+  "\\phi": "\u03C6",
+  "\\varphi": "\u03D5",
+  "\\chi": "\u03C7",
+  "\\psi": "\u03C8",
+  "\\omega": "\u03C9",
+  // Uppercase greek (only the visually-distinct ones)
+  "\\Gamma": "\u0393",
+  "\\Delta": "\u0394",
+  "\\Theta": "\u0398",
+  "\\Lambda": "\u039B",
+  "\\Xi": "\u039E",
+  "\\Pi": "\u03A0",
+  "\\Sigma": "\u03A3",
+  "\\Upsilon": "\u03A5",
+  "\\Phi": "\u03A6",
+  "\\Psi": "\u03A8",
+  "\\Omega": "\u03A9",
+  // Spacing / whitespace
+  "\\,": " ",
+  "\\;": " ",
+  "\\!": "",
+  "\\ ": " ",
+  "\\quad": "  ",
+  "\\qquad": "    ",
+  // Ellipsis
+  "\\ldots": "\u2026",
+  "\\cdots": "\u22EF",
+  "\\dots": "\u2026",
+  "\\vdots": "\u22EE",
+  "\\ddots": "\u22F1",
+  // Delimiters (leave the char as-is; drop the \left/\right sizing)
+  "\\left": "",
+  "\\right": "",
+  "\\lVert": "\u2016",
+  "\\rVert": "\u2016",
+  "\\|": "\u2016",
+  "\\lvert": "|",
+  "\\rvert": "|",
+  "\\langle": "\u27E8",
+  "\\rangle": "\u27E9",
+  "\\lceil": "\u2308",
+  "\\rceil": "\u2309",
+  "\\lfloor": "\u230A",
+  "\\rfloor": "\u230B"
+};
+function latexToText(input, notes) {
+  let s2 = input;
+  const wrappers = [
+    "mathrm",
+    "mathbf",
+    "mathit",
+    "mathsf",
+    "mathtt",
+    "mathcal",
+    "mathscr",
+    "mathfrak",
+    "text",
+    "textrm",
+    "textbf",
+    "textit",
+    "textsf",
+    "texttt",
+    "operatorname",
+    "boldsymbol",
+    "bm"
+  ];
+  const wrapperRe = new RegExp(
+    `\\\\(?:${wrappers.join("|")})\\s*\\{([^{}]*)\\}`,
+    "g"
   );
+  for (let i4 = 0; i4 < 5; i4++) {
+    const next = s2.replace(wrapperRe, (_2, inner2) => inner2);
+    if (next === s2) break;
+    s2 = next;
+  }
+  const fracRe = /\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g;
+  for (let i4 = 0; i4 < 5; i4++) {
+    const next = s2.replace(fracRe, (_2, a3, b2) => `(${a3})/(${b2})`);
+    if (next === s2) break;
+    s2 = next;
+  }
+  s2 = s2.replace(
+    /\\sqrt(?:\[([^\]]*)\])?\s*\{([^{}]*)\}/g,
+    (_2, n3, x3) => n3 ? `${n3}\u221A(${x3})` : `\u221A(${x3})`
+  );
+  const mapped = Object.entries(LATEX_TO_TEXT_CHARS).sort(
+    (a3, b2) => b2[0].length - a3[0].length
+  );
+  for (const [cmd, glyph] of mapped) {
+    if (!s2.includes(cmd)) continue;
+    const re = new RegExp(
+      cmd.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+      "g"
+    );
+    s2 = s2.replace(re, glyph);
+  }
+  const survivorRe = /\\[A-Za-z]+/g;
+  const survivors = /* @__PURE__ */ new Set();
+  let m3;
+  while ((m3 = survivorRe.exec(s2)) !== null) survivors.add(m3[0]);
+  for (const cmd of survivors) {
+    notes.push(
+      `Unmapped LaTeX command in text synth: \`${cmd}\` (survived as-is).`
+    );
+  }
+  s2 = s2.replace(/_\{([^{}]*)\}/g, "_$1").replace(/\^\{([^{}]*)\}/g, "^$1");
+  s2 = s2.replace(/[{}]/g, "");
+  return s2;
 }
-main2().then((code) => process.exit(code));
+function joinVariadic(template, rendered) {
+  const defaultSep = template.mode === "text" ? "" : ", ";
+  return rendered.join(template.separator ?? defaultSep);
+}
+function fillTemplate(template, values) {
+  const ESCAPED = "HASH";
+  let out = template.replace(/\\#/g, ESCAPED);
+  out = out.replace(/#(\d{1,2})/g, (_2, d2) => {
+    const v2 = values[`child${Number(d2)}`];
+    return v2 === void 0 ? `#${d2}` : v2;
+  });
+  out = out.replace(/#\*/g, () => {
+    const j2 = values["children_joined"];
+    return j2 === void 0 ? "#*" : j2;
+  });
+  return out.split(ESCAPED).join("\\#");
+}
+function isRecord7(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function projectTemplate(value) {
+  let candidate = value;
+  if (isRecord7(candidate) && candidate.type === "i18n" && typeof candidate.default_language === "string" && isRecord7(candidate.values)) {
+    candidate = candidate.values[candidate.default_language] ?? candidate.values.en ?? Object.values(candidate.values)[0];
+  }
+  if (!isRecord7(candidate) || typeof candidate.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(candidate.mode) || typeof candidate.body !== "string") {
+    return void 0;
+  }
+  return candidate;
+}
+function normalizeStyle(value) {
+  if (!isRecord7(value) || typeof value.style_name !== "string") return void 0;
+  const current = projectTemplate(value.template);
+  if (current) return { style_name: value.style_name, template: current };
+  if (typeof value.mode !== "string" || !["formula_inline", "formula_display", "text", "block"].includes(value.mode) || typeof value.template !== "string") {
+    return void 0;
+  }
+  return {
+    style_name: value.style_name,
+    template: {
+      mode: value.mode,
+      body: value.template,
+      ...typeof value.separator === "string" ? { separator: value.separator } : {},
+      ...isRecord7(value.latex) ? { latex: value.latex } : {},
+      ...typeof value.text === "string" ? { text: value.text } : {}
+    }
+  };
+}
+function pickStyle(macro, node) {
+  if (macro.styles.length === 0) return void 0;
+  const requested = node.style_name;
+  const legacyDefault = macro.default_style;
+  const defaultName = typeof legacyDefault === "string" ? legacyDefault : legacyDefault?.en;
+  const selectedName = requested ?? defaultName;
+  const selected = selectedName ? macro.styles.find((style) => style.style_name === selectedName) : macro.styles[0];
+  if (!selected && requested) {
+    throw new Error(`Unknown style "${requested}" for macro "${macro.name}".`);
+  }
+  return normalizeStyle(selected);
+}
+function escapeTemporaryText(value) {
+  return value.replace(/([\\{}%$#&_])/g, "\\$1").replace(/~/g, "\\textasciitilde{}").replace(/\^/g, "\\textasciicircum{}");
+}
+function escapeIdent(name) {
+  return name.replace(/_/g, "\\_");
+}
+function ownMacro(macros2, name) {
+  return Object.hasOwn(macros2, name) ? macros2[name] : void 0;
+}
+function wrapForParent(child, parentMode) {
+  const childText = child.mode === "text";
+  const parentText = parentMode === "text";
+  if (!parentText && childText) return `\\text{${child.output}}`;
+  if (parentText && !childText && child.mode !== "block") return `$${child.output}$`;
+  return child.output;
+}
+function renderNode(node, mode, macros2, notes) {
+  const envMode = node.env_mode;
+  if (typeof envMode === "string" && envMode.length > 0) {
+    const raw = node.temporary_source ?? node.macro_name;
+    if (node.temporary_format === "texttt") {
+      return { output: mode === "latex" ? `\\texttt{${escapeTemporaryText(raw)}}` : raw, mode: "formula_inline" };
+    }
+    if (envMode === "text") {
+      return { output: mode === "latex" ? escapeTemporaryText(raw) : raw, mode: "text" };
+    }
+    if (mode === "latex") {
+      return { output: raw, mode: envMode };
+    }
+    return { output: `$${latexToText(raw, notes)}$`, mode: envMode };
+  }
+  const name = node.macro_name;
+  const children = Array.isArray(node.children) ? node.children : [];
+  const macro = ownMacro(macros2, name);
+  if (!macro && children.length === 0) {
+    return { output: mode === "latex" ? escapeIdent(name) : name, mode: "formula_inline" };
+  }
+  if (!macro) {
+    const renderedChildren2 = children.map((c3) => renderNode(c3, mode, macros2, notes));
+    notes.push(
+      `Unregistered macro '${name}' \u2014 emitted as \`${name}(...)\` fallback.`
+    );
+    return { output: `${name}(${renderedChildren2.map((child) => child.output).join(", ")})`, mode: "formula_inline" };
+  }
+  const style = pickStyle(macro, node);
+  if (!style) {
+    const renderedChildren2 = children.map((c3) => renderNode(c3, mode, macros2, notes));
+    notes.push(
+      `Macro '${name}' has no styles \u2014 emitted as \`${name}(...)\` fallback.`
+    );
+    return { output: `${name}(${renderedChildren2.map((child) => child.output).join(", ")})`, mode: "formula_inline" };
+  }
+  const template = style.template;
+  const renderedChildren = children.map((c3) => renderNode(c3, mode, macros2, notes));
+  if (template.mode === "block") {
+    return {
+      output: `${name}(${renderedChildren.map((child) => child.output).join(", ")})`,
+      mode: "block"
+    };
+  }
+  const wrappedChildren = mode === "latex" ? renderedChildren.map((child) => wrapForParent(child, template.mode)) : renderedChildren.map((child) => child.output);
+  const values = {};
+  wrappedChildren.forEach((v2, i4) => {
+    values[`child${i4}`] = v2;
+  });
+  if (macro.dynamic_arity) {
+    if (!template.body.includes("#*")) {
+      throw new Error(`Dynamic macro '${name}' style '${style.style_name}' requires #* in its template.`);
+    }
+    values["children_joined"] = joinVariadic(template, wrappedChildren);
+  }
+  if (mode === "latex") {
+    const explicit = template.latex?.synthesis?.macro;
+    const src = typeof explicit === "string" && explicit.length > 0 ? explicit : template.body;
+    return { output: fillTemplate(src, values), mode: template.mode };
+  }
+  const explicitText = template.text;
+  if (typeof explicitText === "string" && explicitText.length > 0) {
+    return { output: fillTemplate(explicitText, values), mode: template.mode };
+  }
+  const converted = latexToText(template.body, notes);
+  return { output: fillTemplate(converted, values), mode: template.mode };
+}
+function renderTreeAsLatex(tree, macros2) {
+  const notes = [];
+  const output = renderNode(tree, "latex", macros2, notes).output;
+  return { output, notes: dedupe(notes) };
+}
+function dedupe(a3) {
+  return [...new Set(a3)];
+}
+
+// lib/entry-analysis.ts
+var EntryAnalysisError = class extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+    this.name = "EntryAnalysisError";
+  }
+  code;
+};
+async function loadEntry(root, id) {
+  const [entries, macros2] = await Promise.all([readEntries(root), readActiveMacros(root)]);
+  const entry = entries.find((candidate) => candidate.id === id);
+  if (!entry) throw new EntryAnalysisError("entry.not-found", `Entry not found: ${id}`);
+  return { entry, entries, macros: macros2 };
+}
+function parseEntry(entry, macros2) {
+  const snl = entry.content?.snl;
+  if (typeof snl !== "string" || !snl.trim()) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} has no SNL content.`);
+  const parsed = x(snl);
+  if (!parsed.ok) throw new EntryAnalysisError("entry.invalid", `Entry ${entry.id} SNL parse failed: ${parsed.error}`);
+  return O(
+    parsed.tree,
+    macros2
+  ).tree;
+}
+async function computeEntryBareLatex(root, id) {
+  const { entry, macros: macros2 } = await loadEntry(root, id);
+  try {
+    const rendered = renderTreeAsLatex(parseEntry(entry, macros2), macros2);
+    if (rendered.output.includes("\\htmlData")) {
+      throw new EntryAnalysisError(
+        "entry.invalid",
+        `Entry ${entry.id} bare LaTeX synthesis produced forbidden \\htmlData.`
+      );
+    }
+    return rendered;
+  } catch (error) {
+    if (error instanceof EntryAnalysisError) throw error;
+    throw new EntryAnalysisError(
+      "entry.invalid",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}
+
+// src/cli/operation.ts
+var OPERATION_PROTOCOL = "snl.operation/v1";
+var RESULT_PROTOCOL = "snl.result/v1";
+var ENTITY_DOMAINS = Object.freeze({
+  entry: "entry",
+  macro: "macro",
+  "entry-kind": "entry-kind",
+  "macro-kind": "macro-kind",
+  "entry-package": "entry-package",
+  "macro-package": "macro-package",
+  relationship: "relationship",
+  library: "library"
+});
+var ENTITY_ACTIONS = ["list", "get", "create", "update", "delete"];
+var COMMAND_PATHS = Object.freeze([
+  "help",
+  "info",
+  "validate",
+  ...Object.keys(ENTITY_DOMAINS).flatMap((domain) => [domain, ...ENTITY_ACTIONS.map((action) => `${domain}/${action}`)]),
+  "snoogl",
+  "entry/latex",
+  "entry/references",
+  "macro/usages"
+]);
+var own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
+var operationFailure = (command, exitCode, code, message, details) => ({
+  exitCode,
+  response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...details === void 0 ? {} : { details }, retryable: code.endsWith("revision-conflict") || code.endsWith("locked") } }
+});
+var succeed = (command, data) => ({ exitCode: 0, response: { protocol: RESULT_PROTOCOL, ok: true, command, data, diagnostics: [] } });
+function stringArg(args, name, required = true) {
+  const value = args[name];
+  if (value === void 0 && !required) return void 0;
+  if (typeof value !== "string" || required && value.length === 0) throw new TypeError(`${name} must be ${required ? "a non-empty" : "a"} string.`);
+  return value;
+}
+function exactArguments(args, allowed) {
+  const unknown = Object.keys(args).filter((key) => !allowed.includes(key));
+  if (unknown.length) throw new TypeError(`Unknown argument key(s): ${unknown.join(", ")}.`);
+}
+async function executeOperation(request) {
+  const command = request.command;
+  try {
+    if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
+      return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
+    if (!path8.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    const tokens = command.split("/");
+    if (tokens.length === 1 && command === "help") {
+      exactArguments(request.arguments, []);
+      return succeed(command, { operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL, commands: COMMAND_PATHS.filter((path10) => path10 !== "help") });
+    }
+    if (tokens.length === 1 && command === "validate") {
+      exactArguments(request.arguments, []);
+      const validation = await validateManagedWorkspace(request.root);
+      return validation.valid ? succeed(command, validation) : operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
+    }
+    if (tokens.length === 1 && command === "info") {
+      exactArguments(request.arguments, []);
+      const [config, validation] = await Promise.all([readConfig(request.root), validateManagedWorkspace(request.root)]);
+      return succeed(command, { root: path8.resolve(request.root), version: config.version, counts: validation.counts, valid: validation.valid, protocol: OPERATION_PROTOCOL });
+    }
+    if (command === "snoogl") {
+      exactArguments(request.arguments, ["mode", "query"]);
+      const mode = stringArg(request.arguments, "mode");
+      if (mode !== "entry" && mode !== "macro") throw new TypeError("mode must be entry or macro.");
+      return succeed(command, await querySnoogl(request.root, mode, stringArg(request.arguments, "query")));
+    }
+    if (command === "entry/latex") {
+      exactArguments(request.arguments, ["id"]);
+      const rendered = await computeEntryBareLatex(request.root, stringArg(request.arguments, "id"));
+      return succeed(command, { latex: rendered.output, notes: rendered.notes });
+    }
+    if (command === "entry/references" || command === "macro/usages") {
+      exactArguments(request.arguments, ["id"]);
+      const entityType = command.startsWith("entry/") ? "entry" : "macro";
+      return succeed(command, { items: await findEntityReferences(request.root, entityType, stringArg(request.arguments, "id")) });
+    }
+    const type = ENTITY_DOMAINS[tokens[0]];
+    if (!type || tokens.length > 2) return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
+    if (tokens.length === 1) {
+      exactArguments(request.arguments, []);
+      return succeed(command, { commands: ["list", "get", "create", "update", "delete"].map((action2) => `${command}/${action2}`) });
+    }
+    const action = tokens[1];
+    const args = request.arguments;
+    if (action === "list") {
+      exactArguments(args, ["query", "limit", "cursor"]);
+      const query = stringArg(args, "query", false)?.toLocaleLowerCase();
+      const cursor = stringArg(args, "cursor", false);
+      const rawLimit = args.limit ?? 100;
+      if (!Number.isInteger(rawLimit) || Number(rawLimit) < 1 || Number(rawLimit) > 1e3) throw new TypeError("limit must be an integer from 1 to 1000.");
+      let entities = await listManagedEntities(request.root, type);
+      if (query) entities = entities.filter((entity) => entity.id.toLocaleLowerCase().includes(query) || JSON.stringify(entity.value).toLocaleLowerCase().includes(query));
+      if (cursor) entities = entities.filter((entity) => entity.id.localeCompare(cursor) > 0);
+      const page = entities.slice(0, Number(rawLimit));
+      return succeed(command, { entities: page, nextCursor: entities.length > page.length ? page.at(-1)?.id ?? null : null });
+    }
+    if (action === "get") {
+      exactArguments(args, ["id"]);
+      const id = stringArg(args, "id");
+      const entity = await getManagedEntity(request.root, type, id);
+      return entity ? succeed(command, { entity }) : operationFailure(command, 1, "entity.not-found", `${type} ${JSON.stringify(id)} does not exist.`);
+    }
+    if (action === "create") {
+      exactArguments(args, ["value"]);
+      if (!own(args, "value")) throw new TypeError("value is required.");
+      const result = await createManagedEntity(request.root, type, args.value);
+      return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+    }
+    if (action === "update") {
+      exactArguments(args, ["id", "value", "expectedRevision"]);
+      const id = stringArg(args, "id");
+      const revision = stringArg(args, "expectedRevision");
+      if (!own(args, "value")) throw new TypeError("value is required.");
+      const result = await updateManagedEntity(request.root, type, id, args.value, revision);
+      return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
+    }
+    if (action === "delete") {
+      exactArguments(args, ["id", "expectedRevision"]);
+      const id = stringArg(args, "id");
+      const revision = stringArg(args, "expectedRevision");
+      const result = await deleteManagedEntity(request.root, type, id, revision);
+      return result.status === "ok" ? succeed(command, { deleted: { type, id, revision: result.entity.revision } }) : operationFailure(command, 1, result.code, result.message);
+    }
+    return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (error instanceof TypeError) return operationFailure(command, 2, "operation.invalid-arguments", message);
+    return operationFailure(command, 2, "workspace.operation-failed", message);
+  }
+}
+
+// src/cli/snl.ts
+function parseCli(argv) {
+  let root = ".";
+  let json = false;
+  let help = false;
+  const positional = [];
+  const args = {};
+  const valueFlags = { "--root": "root", "-r": "root", "--input": "input", "-i": "input", "--if-match": "expectedRevision", "--limit": "limit", "--cursor": "cursor", "--query": "query", "--mode": "mode" };
+  for (let i4 = 0; i4 < argv.length; i4++) {
+    const token = argv[i4];
+    if (token === "--json") {
+      json = true;
+      continue;
+    }
+    if (token === "--help" || token === "-h") {
+      help = true;
+      continue;
+    }
+    const key = valueFlags[token];
+    if (key) {
+      const value = argv[++i4];
+      if (value === void 0) return { json, error: `${token} requires a value.` };
+      if (key === "root") root = value;
+      else if (key === "limit") args.limit = Number(value);
+      else args[key] = value;
+      continue;
+    }
+    if (token.startsWith("-")) return { json, error: `Unknown flag ${token}.` };
+    positional.push(token);
+  }
+  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path9.resolve(root), arguments: {} } };
+  const [domain, action, ...rest] = positional;
+  if (!domain) return { json, error: "Expected a command domain." };
+  const command = action ? `${domain}/${action}` : domain;
+  const knownActions = /* @__PURE__ */ new Set(["list", "get", "create", "update", "delete"]);
+  const singleIdentityActions = /* @__PURE__ */ new Set(["latex", "references", "usages"]);
+  if (action && knownActions.has(action)) {
+    if (action === "list" || action === "create") {
+      if (rest.length) return { json, error: `${action} accepts no identity positional.` };
+    } else {
+      if (rest.length !== 1) return { json, error: `${command} requires one exact identity.` };
+      args.id = rest[0];
+    }
+  } else if (action && singleIdentityActions.has(action)) {
+    if (rest.length !== 1) return { json, error: `${command} requires one exact identity.` };
+    args.id = rest[0];
+  } else if (rest.length) return { json, error: `${command} does not accept identity positionals.` };
+  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path9.resolve(root), arguments: args } };
+}
+async function readInput(file) {
+  const text2 = file === "-" ? await new Promise((resolve4, reject) => {
+    let data = "";
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (c3) => data += c3);
+    process.stdin.on("end", () => resolve4(data));
+    process.stdin.on("error", reject);
+  }) : await fs6.readFile(path9.resolve(file), "utf8");
+  return JSON.parse(text2);
+}
+async function main2(argv = process.argv.slice(2)) {
+  const parsed = parseCli(argv);
+  if (!parsed.request) {
+    const r3 = operationFailure("unknown", 2, "usage.invalid", parsed.error ?? "Invalid invocation.");
+    process.stdout.write(`${JSON.stringify(r3.response)}
+`);
+    return r3.exitCode;
+  }
+  try {
+    const input = parsed.request.arguments.input;
+    if (typeof input === "string") {
+      parsed.request.arguments.value = await readInput(input);
+      delete parsed.request.arguments.input;
+    }
+  } catch (error) {
+    const code = error instanceof SyntaxError ? "input.invalid-json" : "input.read-failed";
+    const r3 = operationFailure(parsed.request.command, 2, code, error instanceof Error ? error.message : String(error));
+    process.stdout.write(`${JSON.stringify(r3.response)}
+`);
+    return r3.exitCode;
+  }
+  const result = await executeOperation(parsed.request);
+  process.stdout.write(`${JSON.stringify(result.response)}
+`);
+  return result.exitCode;
+}
+if (process.argv[1] && import.meta.url === pathToFileURL(path9.resolve(process.argv[1])).href) main2().then((code) => {
+  process.exitCode = code;
+});
+export {
+  OPERATION_PROTOCOL,
+  executeOperation,
+  main2 as main
+};

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// bin/impl/add-macro.ts
+// src/cli/add-macro.ts
 import * as path6 from "node:path";
 
 // lib/cli-args.ts
@@ -184,7 +184,7 @@ function assertCompatibleSchemaMarker(value, current, label, required = false) {
   }
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t2) {
   return {
     macro_name: e,
@@ -475,7 +475,7 @@ function b(e, t2 = []) {
   e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n2) => b(e2, [...t2, n2]));
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t2 = e;
@@ -643,7 +643,7 @@ ${" ".repeat(this.indentSpaces * t2)})`;
 };
 var J = new q(0, 2 ** 53 - 1);
 
-// node_modules/katex/dist/katex.mjs
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/katex/dist/katex.mjs
 var ParseError = class _ParseError extends Error {
   // The underlying error message without any context added.
   constructor(message, token) {
@@ -16265,7 +16265,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
   });
 }
 
-// bin/impl/add-cli-common.ts
+// src/cli/add-cli-common.ts
 import { promises as fs4 } from "node:fs";
 var DraftReadError = class extends Error {
   constructor(message, options) {
@@ -16331,7 +16331,7 @@ ${usageText}` : ""}
 `);
 }
 
-// bin/impl/add-macro.ts
+// src/cli/add-macro.ts
 var PACKAGE_FLAG = {
   name: "package",
   short: "p",

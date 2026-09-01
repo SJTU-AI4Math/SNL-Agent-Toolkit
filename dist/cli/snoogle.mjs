@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-// bin/impl/snoogle.ts
+// src/cli/snoogle.ts
 import * as path3 from "node:path";
 
-// node_modules/fuse.js/dist/fuse.mjs
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/fuse.js/dist/fuse.mjs
 function isArray(value) {
   return !Array.isArray ? getTag(value) === "[object Array]" : Array.isArray(value);
 }
@@ -1598,7 +1598,7 @@ async function readRegularText(file) {
   }
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BQc3L6kb.js
 function t(e, t2) {
   return {
     macro_name: e,
@@ -1889,7 +1889,7 @@ function b(e, t2 = []) {
   e.env_mode && (e.temporary_source = e.macro_name, e.macro_name = t2.length === 0 ? "#" : `#${t2.join(".")}`), e.binder_explicit && e.binder_name === void 0 && (e.binder_name = e.temporary_source ?? e.macro_name), e.children.forEach((e2, n2) => b(e2, [...t2, n2]));
 }
 
-// node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
+// ../../.hermes/vendor/snl-agent-toolkit/node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/source-metrics-B3zTv7qs.js
 function r(e) {
   if (!e || typeof e != "object" || Array.isArray(e)) return false;
   let t2 = e;
@@ -2825,7 +2825,7 @@ var HELP_FLAG = {
   help: "Show usage and exit."
 };
 
-// bin/impl/snoogle.ts
+// src/cli/snoogle.ts
 var MACRO_FLAG = { name: "macro", hasValue: true, help: "Search the Macro catalog with one free-form query." };
 var ENTRY_FLAG = { name: "entry", hasValue: true, help: "Search the Entry catalog with one free-form query." };
 var SPECS = [ROOT_FLAG, MACRO_FLAG, ENTRY_FLAG, JSON_FLAG, HELP_FLAG];

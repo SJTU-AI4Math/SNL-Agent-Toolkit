@@ -10,6 +10,7 @@ import {
   type ManagedEntityType,
 } from '../lib/entity-crud.ts';
 import { renderLibraryEntryTree, LibraryEntryTreeError } from '../lib/library-entry-tree.ts';
+import { executeOperation } from '../src/cli/operation.ts';
 import type {
   EntityAdapter,
   EntityApplyRequest,
@@ -107,6 +108,10 @@ export function createEntityAdapter(): EntityAdapter {
 
     async validate({ root }: { root: string }) {
       return validateManagedWorkspace(root);
+    },
+
+    async executeOperation(request) {
+      return (await executeOperation(request)).response;
     },
   };
 }

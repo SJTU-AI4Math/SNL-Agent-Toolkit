@@ -14,7 +14,8 @@
   },
   "include": [
     "lib/**/*.ts",
-    "bin/**/*.ts",
+    "src/cli/**/*.ts",
+    "plugin-src/**/*.ts",
     "CLI_Scripts/**/*.ts"
   ],
   "exclude": [
