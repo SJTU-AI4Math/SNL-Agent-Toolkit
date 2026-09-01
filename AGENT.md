@@ -8,10 +8,9 @@
 
 ## Start
 
-1. Load [`SNL Ecosystem`](Skills/SNL%20Ecosystem/SKILL.md) for the data model and DSL.
-2. Choose the workflow Skill matching the task: [`Initialize`](Skills/Initialize/SKILL.md), [`Plan`](Skills/Plan/SKILL.md), [`Author`](Skills/Author/SKILL.md), [`Read`](Skills/Read/SKILL.md), or [`Maintain`](Skills/Maintain/SKILL.md).
-3. Load [`CLI Tools`](Skills/CLI%20Tools/SKILL.md) before invoking Toolkit commands.
-4. Use [`RefineNL2SNL`](Skills/RefineNL2SNL/SKILL.md) for NL→SNL refinement and [`Verify and Fix`](Skills/Verify%20and%20Fix/SKILL.md) for final validation or repair.
+1. Load [`CLI Tools`](<Skills/CLI Tools/SKILL.md>) before invoking Toolkit commands. Treat machine-readable `snl --help` as the current implementation boundary.
+2. Load [`RefineNL2SNL`](Skills/RefineNL2SNL/SKILL.md) when refining natural-language material into SNL.
+3. For workflows whose physical Skill is still empty, read the owning `.SNL_Doc` Library/Entries directly; an empty `SKILL.md` is not usable guidance and is not routed here.
 
 ## Non-negotiable rules
 

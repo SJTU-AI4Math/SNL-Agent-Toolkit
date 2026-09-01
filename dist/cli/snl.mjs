@@ -22052,9 +22052,10 @@ async function executeOperation(request) {
     }
     if (tokens.length === 1 && command === "info") {
       exactArguments(request.arguments, []);
-      const [config, validation] = await Promise.all([readConfig(request.root), validateManagedWorkspace(request.root)]);
+      const validation = await validateManagedWorkspace(request.root);
       if (validation.issues.some((issue) => isUnsupportedSchemaMessage(issue.message))) return operationFailure(command, 2, "workspace.unsupported-schema", "Workspace or entity schema is not supported by this Toolkit.", validation);
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
+      const config = await readConfig(request.root);
       return succeed(command, {
         root: path8.resolve(request.root),
         version: config.version,
@@ -22103,7 +22104,7 @@ async function executeOperation(request) {
       const items = occurrences.filter((item) => item.role === "definition" ? item.file === definitionFile : winner?.id === id).map((item) => ({ ...item, id }));
       return succeed(command, { items });
     }
-    const type = ENTITY_DOMAINS[tokens[0]];
+    const type = own(ENTITY_DOMAINS, tokens[0]) ? ENTITY_DOMAINS[tokens[0]] : void 0;
     if (!type || tokens.length > 2) return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
     if (tokens.length === 1) {
       exactArguments(request.arguments, []);

@@ -87,11 +87,25 @@ test('published agent routing targets current packaged Skill documents', async (
     const text = await readFile(resolve(root, document), 'utf8');
     assert.doesNotMatch(text, /\]\([^)]*__deprecated__|Skills\/(?:Basics|HowToRead|HowToBuild|HowToMaintain)/);
     for (const match of text.matchAll(/\[[^\]]+\]\(([^)#]+)(?:#[^)]+)?\)/g)) {
-      const target = match[1];
+      const rawTarget = match[1];
+      const target = rawTarget.startsWith('<') && rawTarget.endsWith('>') ? rawTarget.slice(1, -1) : rawTarget;
       if (/^[a-z]+:/i.test(target)) continue;
-      await access(resolve(root, decodeURIComponent(document === 'AGENT.md' ? target : `Skills/${target}`)));
+      assert.doesNotMatch(target, /%20/i, 'Agent file routing must use literal workspace paths, not URL encoding');
+      const resolvedTarget = resolve(root, document === 'AGENT.md' ? target : `Skills/${target}`);
+      await access(resolvedTarget);
+      assert.ok((await stat(resolvedTarget)).size > 0, `Agent routing target must be non-empty: ${target}`);
     }
   }
+});
+
+test('published CLI guidance matches the implemented snoogl adapter and marks aspirational commands', async () => {
+  const manual = await readFile(resolve(root, 'Skills/CLI Tools/SKILL.md'), 'utf8');
+  assert.match(manual, /normative CLI product surface/);
+  assert.match(manual, /machine-readable `snl --help`/);
+  const snoogl = manual.match(/## `snl snoogl`([\s\S]*?)(?=\n## )/)?.[1] ?? '';
+  assert.match(snoogl, /--query <text>/);
+  assert.match(snoogl, /--mode <entry\|macro>/);
+  assert.doesNotMatch(snoogl, /--type|--kind|--limit|\* `<query>`/);
 });
 
 test('generated bundles do not embed machine-specific dependency paths', async () => {

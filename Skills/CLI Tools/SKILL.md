@@ -1,5 +1,7 @@
 # SNL CLI Manual
 
+This manual records the normative CLI product surface. A command is currently implemented only when its canonical path appears in machine-readable `snl --help`; absent commands are planned contracts and must not be emulated with a different operation.
+
 ## `snl init`
 
 * `--root <path>`
@@ -29,11 +31,9 @@
 
 ## `snl snoogl`
 
-* `<query>`
+* `--query <text>`
 * `--root <path>`
-* `--type <entry|macro>`
-* `--kind <kind-id>`
-* `--limit <number>`
+* `--mode <entry|macro>`
 * `--json`
 
 ## `snl entry`

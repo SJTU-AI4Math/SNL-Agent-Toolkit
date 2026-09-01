@@ -59,7 +59,7 @@ refuse malformed/current-future-incompatible workspaces. `--json` gives stable
 agent-facing `created`, `invalid`, `conflict`, or `error` output. They never edit
 migration receipts or frozen legacy backups.
 
-See [`Skills/CLI Tools/SKILL.md`](Skills/CLI%20Tools/SKILL.md) for the current command inventory and machine-facing invocation contracts.
+See [`Skills/CLI Tools/SKILL.md`](<Skills/CLI Tools/SKILL.md>) for the current command inventory and machine-facing invocation contracts.
 
 ## Schema ownership
 

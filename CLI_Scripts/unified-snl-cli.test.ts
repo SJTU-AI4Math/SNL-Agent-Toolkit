@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,6 +35,12 @@ describe('unified snl command',()=>{
    const response=await executeOperation({protocol:OPERATION_PROTOCOL,command:`${domain}/list`,root,arguments:{limit:1}});
    assert.equal(response.exitCode,0,JSON.stringify(response.response));assert.equal(response.response.ok,true);
   }
+ });
+ it('rejects inherited object names outside the registered command allowlist',async()=>{
+  const root=await workspace();
+  const operation=await executeOperation({protocol:OPERATION_PROTOCOL,command:'constructor/create',root,arguments:{value:{slug:'unexpected',title:'Unexpected',graph:{}}}});
+  assert.equal(operation.exitCode,2);assert.equal(operation.response.ok,false);if(!operation.response.ok)assert.equal(operation.response.error.code,'command.unknown');
+  await assert.rejects(access(path.join(root,'.SNL_Doc','libraries','unexpected')));
  });
  it('routes noun-first entry list/get through the v1 operation envelope',async()=>{
   const root=await workspace();
@@ -81,7 +87,11 @@ describe('unified snl command',()=>{
   await json(path.join(root,'.SNL_Doc','relationships.json'),{version:1,relationships:'broken'});
   call=run(root,['info']);assert.equal(call.status,1);assert.equal(result(call).error.code,'workspace.invalid');
  });
- it('classifies unsupported workspace schemas as infrastructure failures',async()=>{
+ it('classifies malformed data as domain-invalid and unsupported schemas as infrastructure failures',async()=>{
+  const malformedRoot=await workspace();
+  await json(path.join(malformedRoot,'.SNL_Doc','config.json'),{version:'0.1.0',entry_kinds:'broken',macro_kinds:[],active_macro_packages:[]});
+  for(const command of ['validate','info']){const call=run(malformedRoot,[command]);assert.equal(call.status,1,call.stderr||call.stdout);assert.equal(result(call).error.code,'workspace.invalid');}
+
   const root=await workspace();
   await json(path.join(root,'.SNL_Doc','config.json'),{version:'9.9.9',entry_kinds:[],macro_kinds:[],active_macro_packages:[]});
   for(const command of ['validate','info']){const call=run(root,[command]);assert.equal(call.status,2,call.stderr||call.stdout);assert.equal(result(call).error.code,'workspace.unsupported-schema');}
