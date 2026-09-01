@@ -24,7 +24,7 @@
     "generate:plugin": "node scripts/generate-plugin-metadata.mjs",
     "build:cli": "node scripts/build-cli.mjs",
     "build:plugin": "npm run generate:plugin && node scripts/build-plugin.mjs",
-    "test": "tsx --test --test-concurrency=4 CLI_Scripts/*.test.ts",
+    "test": "tsx --test --test-concurrency=1 CLI_Scripts/*.test.ts",
     "lint-types": "tsc --noEmit",
     "prepack": "npm run build:plugin && npm test && npm run lint-types"
   },

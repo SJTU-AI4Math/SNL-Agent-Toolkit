@@ -64,6 +64,22 @@ test('generic toolkit surface covers all eight entity types through one adapter 
   });
 });
 
+test('every strict MCP tool rejects unknown top-level arguments at runtime', async () => {
+  const tools = createToolkitTools(fixtureAdapter([]));
+  const validInputs: Record<string, Record<string, unknown>> = {
+    snl_entities_list: { root, entityType: 'entry' },
+    snl_entity_get: { root, entityType: 'entry', id: 'demo' },
+    snl_entry_latex: { root, id: 'demo' },
+    snl_library_entry_tree: { root, librarySlug: 'demo' },
+    snl_entity_apply: { root, entityType: 'entry', action: 'delete', id: 'demo', expectedRevision: 'rev' },
+    snl_workspace_validate: { root },
+    snl_execute: { root, command: 'entry/get', arguments: { id: 'demo' } },
+  };
+  for (const tool of tools) {
+    await assert.rejects(() => tool.execute({ ...validInputs[tool.name], unexpected: true }), /unknown tool input/i, tool.name);
+  }
+});
+
 test('structured snl_execute tool forwards one strict operation object', async () => {
   const calls: Array<{ method: string; request: unknown }> = [];
   const tool = createToolkitTools(fixtureAdapter(calls)).find(candidate => candidate.name === 'snl_execute');

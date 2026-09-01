@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -85,6 +85,16 @@ describe('unified snl command',()=>{
   const root=await workspace();
   await json(path.join(root,'.SNL_Doc','config.json'),{version:'9.9.9',entry_kinds:[],macro_kinds:[],active_macro_packages:[]});
   for(const command of ['validate','info']){const call=run(root,[command]);assert.equal(call.status,2,call.stderr||call.stdout);assert.equal(result(call).error.code,'workspace.unsupported-schema');}
+
+  const storageRoot=await workspace();
+  await json(path.join(storageRoot,'.SNL_Doc','config.json'),{version:'0.1.0',entry_kinds:[],macro_kinds:[],active_macro_packages:[],entity_storage:{version:2}});
+  let call=run(storageRoot,['validate']);assert.equal(call.status,2,call.stderr||call.stdout);assert.equal(result(call).error.code,'workspace.unsupported-schema');
+
+  const packageRoot=await mkdtemp(path.join(tmpdir(),'snl-unified-future-package-'));roots.push(packageRoot);
+  await cp(path.resolve(path.dirname(fileURLToPath(import.meta.url)),'fixtures/workspace-v0.1.0'),packageRoot,{recursive:true});
+  const manifest=path.join(packageRoot,'.SNL_Doc','packages','Logic-277a664e3d2332d369d7.json');
+  const value=JSON.parse(await readFile(manifest,'utf8'));value.schema_version=99;await json(manifest,value);
+  call=run(packageRoot,['validate']);assert.equal(call.status,2,call.stderr||call.stdout);assert.equal(result(call).error.code,'workspace.unsupported-schema');
  });
  it('maps command domain failures without losing identity or retry semantics',async()=>{
   const root=await workspace();

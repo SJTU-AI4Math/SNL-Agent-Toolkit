@@ -79,6 +79,7 @@ function createToolkitTools(adapter) {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ["root", "entityType", "query", "cursor", "limit"]);
         const request = {
           root: requiredString(input.root, "root"),
           entityType: entityType(input.entityType),
@@ -103,6 +104,7 @@ function createToolkitTools(adapter) {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ["root", "entityType", "id"]);
         return adapter.get({
           root: requiredString(input.root, "root"),
           entityType: entityType(input.entityType),
@@ -121,6 +123,7 @@ function createToolkitTools(adapter) {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ["root", "id"]);
         if (!adapter.renderEntry) {
           return {
             status: "unsupported",
@@ -154,6 +157,7 @@ function createToolkitTools(adapter) {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ["root", "librarySlug", "language", "includeEntryKind", "includeNumber", "includeTitle", "includeEntryId", "includeCounterId"]);
         if (!adapter.renderLibraryTree) {
           return {
             status: "unsupported",
@@ -190,6 +194,7 @@ function createToolkitTools(adapter) {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ["root", "entityType", "action", "id", "value", "expectedRevision"]);
         if (!["create", "update", "delete"].includes(input.action)) {
           throw new TypeError("action must be create, update, or delete");
         }
@@ -214,6 +219,7 @@ function createToolkitTools(adapter) {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ["root"]);
         return adapter.validate({ root: requiredString(input.root, "root") });
       }
     },
@@ -22616,7 +22622,7 @@ function describeCommand(command) {
 }
 var own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 var isRecord8 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-var isUnsupportedSchemaMessage = (message) => /unsupported (?:future )?(?:workspace|schema)|newer than this Toolkit supports|no registered migration/i.test(message);
+var isUnsupportedSchemaMessage = (message) => /unsupported (?:future )?(?:workspace|schema|entity_storage)|newer than this Toolkit supports|no registered migration|must carry current Package manifest schema_version/i.test(message);
 var operationFailure = (command, exitCode, code, message, details) => ({
   exitCode,
   response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...details === void 0 ? {} : { details }, retryable: code.endsWith("locked") } }

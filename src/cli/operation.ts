@@ -48,7 +48,7 @@ function describeCommand(command: string): CommandDescriptor {
 }
 const own = (value: object, key: string) => Object.prototype.hasOwnProperty.call(value, key);
 const isRecord = (value: unknown): value is JsonObject => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-const isUnsupportedSchemaMessage = (message: string) => /unsupported (?:future )?(?:workspace|schema)|newer than this Toolkit supports|no registered migration/i.test(message);
+const isUnsupportedSchemaMessage = (message: string) => /unsupported (?:future )?(?:workspace|schema|entity_storage)|newer than this Toolkit supports|no registered migration|must carry current Package manifest schema_version/i.test(message);
 export const operationFailure = (command: string, exitCode: 1 | 2, code: string, message: string, details?: unknown): ExecutedOperation => ({
   exitCode,
   response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...(details === undefined ? {} : { details }), retryable: code.endsWith('locked') } },

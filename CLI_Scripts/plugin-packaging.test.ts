@@ -57,6 +57,7 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   assert.equal(packageJson.version, '0.1.0');
   assert.deepEqual(packageJson.publishConfig, { access: 'public' });
   assert.deepEqual(packageJson.dsh, { bundle: { patch: './cordis.patch.yml' } });
+  assert.equal((packageJson.scripts as Record<string,string>).test, 'tsx --test --test-concurrency=1 CLI_Scripts/*.test.ts');
   const dependencies = (packageJson.dependencies ?? {}) as Record<string, string>;
   const devDependencies = packageJson.devDependencies as Record<string, string>;
   assert.equal(dependencies.tsx, undefined, 'published runtime must not install tsx/esbuild');

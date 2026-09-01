@@ -119,6 +119,7 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ['root', 'entityType', 'query', 'cursor', 'limit']);
         const request: EntityListRequest = {
           root: requiredString(input.root, 'root'), entityType: entityType(input.entityType),
           ...(input.query !== undefined ? { query: requiredString(input.query, 'query') } : {}),
@@ -140,6 +141,7 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ['root', 'entityType', 'id']);
         return adapter.get({
           root: requiredString(input.root, 'root'), entityType: entityType(input.entityType),
           id: requiredString(input.id, 'id'),
@@ -155,6 +157,7 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ['root', 'id']);
         if (!adapter.renderEntry) {
           return {
             status: 'unsupported', code: 'entry.render-unsupported',
@@ -184,6 +187,7 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ['root', 'librarySlug', 'language', 'includeEntryKind', 'includeNumber', 'includeTitle', 'includeEntryId', 'includeCounterId']);
         if (!adapter.renderLibraryTree) {
           return {
             status: 'unsupported', code: 'library.tree-unsupported',
@@ -215,6 +219,7 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ['root', 'entityType', 'action', 'id', 'value', 'expectedRevision']);
         if (!['create', 'update', 'delete'].includes(input.action as string)) {
           throw new TypeError('action must be create, update, or delete');
         }
@@ -236,6 +241,7 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
       },
       async execute(raw) {
         const input = object(raw);
+        exactToolKeys(input, ['root']);
         return adapter.validate({ root: requiredString(input.root, 'root') });
       },
     },
