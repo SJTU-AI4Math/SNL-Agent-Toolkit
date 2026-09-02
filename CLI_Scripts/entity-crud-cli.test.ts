@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
 import { entryEntityPath, macroEntityPath, makeEntityStorageReceipt, packageManifestPath } from '../lib/entity-storage.ts';
+import { readLibraryMeta } from '../lib/snl-doc.ts';
 
 const roots: string[] = [];
 afterEach(async () => Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true }))));
@@ -92,6 +93,34 @@ describe('unified entity CLI', () => {
       result=run(root,['delete','--type',item.type,'--if-match',created.revision,item.id]);
       assert.equal(result.status,0,`${item.type}: ${result.stderr||result.stdout}`);
       assert.equal(run(root,['get','--type',item.type,item.id]).status,1);
+    }
+  });
+
+  it('rejects Library metadata that the canonical reader cannot consume', async () => {
+    const { root, doc } = await workspace();
+    const malformed = { type: 'i18n', default_language: 'en', values: { en: 'Demo', zh: '示例' } };
+    for (const field of ['title', 'description'] as const) {
+      const slug = `localized-${field}`;
+      const unreadable = path.join(doc, 'libraries', `unreadable-${field}`);
+      await json(path.join(unreadable, 'meta.json'), { [field]: malformed });
+      await json(path.join(unreadable, 'graph.json'), { nodes: [], relationships: [] });
+      await json(path.join(unreadable, 'counters.json'), { counters: [] });
+      await assert.rejects(readLibraryMeta(root, `unreadable-${field}`), /not a valid Library metadata shape/);
+      await rm(unreadable, { recursive: true });
+
+      const draft = path.join(root, `${slug}.json`);
+      await json(draft, {
+        slug,
+        meta: { [field]: malformed },
+        graph: { nodes: [], relationships: [] },
+        counters: { counters: [] },
+      });
+      const result = run(root, ['create', '--type', 'library', '--input', draft]);
+      assert.equal(result.status, 1, result.stderr || result.stdout);
+      const payload = JSON.parse(result.stdout);
+      assert.equal(payload.status, 'invalid');
+      assert.match(payload.message, new RegExp(`Library meta ${field} must be a string`));
+      await assert.rejects(stat(path.join(doc, 'libraries', slug)), { code: 'ENOENT' });
     }
   });
 

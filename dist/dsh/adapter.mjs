@@ -20744,6 +20744,11 @@ async function validationMessage(root, type, value, currentId) {
   } else if (type === "library") {
     if (!stringField("slug") || !isRecord7(value.meta) || !isRecord7(value.graph) || !Array.isArray(value.graph.nodes) || !Array.isArray(value.graph.relationships) || !isRecord7(value.counters) || !Array.isArray(value.counters.counters))
       return "Library requires slug, meta, graph nodes/relationships, and counters.";
+    const meta = value.meta;
+    if (meta.title !== void 0 && typeof meta.title !== "string")
+      return "Library meta title must be a string when present.";
+    if (meta.description !== void 0 && typeof meta.description !== "string")
+      return "Library meta description must be a string when present.";
     const errors = lintGraph(value.graph, { poolEntries: await readEntries(root) }).issues.filter((issue) => issue.severity === "error");
     if (errors.length) return errors.map((issue) => `${issue.code}: ${issue.message}`).join("; ");
   }

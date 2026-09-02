@@ -481,6 +481,11 @@ async function validationMessage(root: string, type: ManagedEntityType, value: R
     else if (type === "library") {
         if (!stringField("slug") || !isRecord(value.meta) || !isRecord(value.graph) || !Array.isArray((value.graph as RecordJson).nodes) || !Array.isArray((value.graph as RecordJson).relationships) || !isRecord(value.counters) || !Array.isArray((value.counters as RecordJson).counters))
             return "Library requires slug, meta, graph nodes/relationships, and counters.";
+        const meta = value.meta as RecordJson;
+        if (meta.title !== undefined && typeof meta.title !== "string")
+            return "Library meta title must be a string when present.";
+        if (meta.description !== undefined && typeof meta.description !== "string")
+            return "Library meta description must be a string when present.";
         const errors = lintGraph(value.graph, { poolEntries: await readEntries(root) }).issues.filter(issue => issue.severity === "error");
         if (errors.length) return errors.map(issue => `${issue.code}: ${issue.message}`).join("; ");
     }
