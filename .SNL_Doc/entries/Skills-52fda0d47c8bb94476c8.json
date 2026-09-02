@@ -12,6 +12,10 @@
       "snl": "%Since SNL term macros are designed to have a fixed arity $\\geq 0$ or a dynamic arity and don't necessarily undergo Currying, terms are not always mono-arity functions as in Untyped $\\lambda$-Calculus. This can lead to a variety of reasonable syntax trees for a single sentence:\n#0\nThis indicates that by Currying macros and making asbtractions, there can be multiple ways of deciding what the macro should be. \nThe core idea is to choose the one that builds the most natural syntax tree:\n#1%(__enum__[dot](%In sentence “#0”, we can either: #1%(%Cats eat fish.%,__enum__(%Treat the SVO grammar structure as a 3-arity macro while considering “Cats”, “eat” and “fish” all being atomic concepts. This leads to a syntax tree like #0;%(`SVO(Cats, eat, fish)`),%Treat “Cats” and “fish” as atomic concepts, while considering “A eat B” as a 2-arity macro. This leads to a syntax tree like #0;%(`eat(Cats, fish)`),%Treat both VO grammar and SV grammar structure as 2-arity macros while considering “Cats”, “eat” and “fish” all being atomic concepts. This leads to a syntax tree like #0.%(`SV(Cats, VO(eat, fish))`)))),__enum__[dot](%In sentence “#0”, the best syntax tree depends on the context: #1%(%Cats eat fish.%,__enum__(%If the topic is to analyze grammar structure of English, then it's natural to consider SVO as the root macro, because abstracting subjects and objects offers us greater freedom of application in other contexts.%,%If the topic is to analyze how food chains work in biology, then it's natural to consider “A eat B” as the root macro, because grammar structures don't matter here -- the concept of “eating” is the only thing matters, further decomposition merely complicates the syntax tree and does not contribute to language clarity.%))))"
     },
     "contribution_info": null,
-    "pointer": null
+    "pointer": {
+      "file": "Skills/RefineNL2SNL/SKILL.md",
+      "mode": "lines",
+      "line": 58
+    }
   }
 }
