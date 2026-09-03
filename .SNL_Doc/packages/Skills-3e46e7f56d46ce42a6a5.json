@@ -7,6 +7,7 @@
   "description": "",
   "entry_ids": [
     "Skill.Author",
+    "Skill.Author.sec.EntryKind",
     "Skill.Author.sec.Library",
     "Skill.Author.sec.Macro",
     "Skill.checklist.md-Refinery",

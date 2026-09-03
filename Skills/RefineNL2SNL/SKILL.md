@@ -74,7 +74,21 @@ The ultimate goal of library-level refinement is to transform an ill-structured 
        1. If the topic is to analyze grammar structure of English, then it's natural to consider SVO as the root macro, because abstracting subjects and objects offers us greater freedom of application in other contexts.
        2. If the topic is to analyze how food chains work in biology, then it's natural to consider “A eat B” as the root macro, because grammar structures don't matter here -- the concept of “eating” is the only thing matters, further decomposition merely complicates the syntax tree and does not contribute to language clarity.
 
-3. **Counter Examples**
+3. **Mathematical notation, Contexts, Macros, and Counters**
+
+    Mathematical authoring must preserve the notation the reader should actually see. Do not assume ASCII identifier names are prettified by a later renderer.
+
+    * Write Greek letters as formula tokens: `$\alpha$`, `$\beta$`, `$\gamma$`, and so on. In SNL binder/source syntax, use forms such as `@$\alpha$` and `$\alpha$@Project.ctxt.family`; bare `alpha` renders as the Latin word `alpha`.
+    * Prefer the project's conventional mathematical notation when it is known. For finite index sets, `[n]` may be clearer than `Fin(n)`; a field convention such as `$\mathbb{K}$` must be represented directly rather than left as bare `K`.
+    * Give each mathematical operation its own Macro. For example, addition and scalar multiplication should be binary Macros such as `Add(x,y)` and `Smul(k,v)`. Do not encode an operator as another child and render it with operator-as-argument templates such as `#1 #0 #2`; SNL is not reproducing Lean's `SMul` plumbing.
+    * Keep predicate Macros compact. Prefer forms such as `#0 线性相关` or `#0 在 #1 中线性相关` over restating carrier, field, length, and every ambient parameter already fixed by the Context.
+    * Use a dynamic block Macro backed by `block_template_name: enumerate` as the root of a multiline Context Entry. Give it a newline separator. Context Entries contain only declarations shared by their consumers; bind one-off variables such as a represented vector locally in the Entry that uses them instead of repeating them through every Context consumer.
+    * Prefer symbolic formulas over redundant text predicates. If zero-vector claims can be expressed as `v = \mathbf{0}_V`, define the symbolic zero Macro and use equality; do not also create a prose-only “is the zero vector” Macro.
+    * Counter design is part of Library authoring, not optional polish. Define the Library Counter tree, assign every intended numbered graph occurrence a real `props.counterId`, and render the Library tree with numbers before delivery. A nonempty `counters.json` whose nodes never reference its Counters is unfinished.
+
+    Completion criteria: representative Entry rendering shows the intended Greek, field, finite-index, operation, and compact-predicate notation; Context roots render as multiline enumerations; every Library `counterId` resolves and the numbered tree contains no unintentionally unnumbered occurrence.
+
+4. **Counter Examples**
 
     Here are some bad examples that prevail when inexperienced AI Agents handle SNL authoring. Avoid these problems as possible:
 
