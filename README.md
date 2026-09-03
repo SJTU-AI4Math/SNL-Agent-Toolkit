@@ -37,6 +37,9 @@ Invoke the unified CLI from a checkout or as the installed `snl` bin. Legacy
 `bin/snl-*.mjs` shims remain checkout-only compatibility entry points:
 
 ```bash
+./dist/cli/snl.mjs --root /path/to/project --json init
+./dist/cli/snl.mjs --root /path/to/project --json init --preset lean4-document
+./dist/cli/snl.mjs --root /path/to/project --json init --input preset.json
 ./dist/cli/snl.mjs --root /path/to/project --json entry list --limit 50
 ./dist/cli/snl.mjs --root /path/to/project --json entry get algebra.def.group
 ./dist/cli/snl.mjs --root /path/to/project --json validate
@@ -66,7 +69,7 @@ See [`Skills/CLI Tools/SKILL.md`](<Skills/CLI Tools/SKILL.md>) for the current c
 The authoritative product and data contracts live in `.SNL_Doc`; Toolkit compatibility types live in `lib/snl-doc-schema.ts`. The on-disk schema implementation is shared with `SNL-Doc-Extension` and must fail closed on unsupported versions.
 
 Toolkit currently targets workspace data `0.1.0`, Package schema 2,
-Entry/Macro schema 1, and Macro v11 from SNL-Basics 0.2.4. It retains
+Entry/Macro schema 1, and Macro v11 from SNL-Basics 0.3.3. It retains
 read/maintenance compatibility for `0.0.6` and older aggregate workspaces, never
 merges frozen aggregate backups into current live entities, and rejects unknown
 future workspace or entity schema versions instead of guessing.

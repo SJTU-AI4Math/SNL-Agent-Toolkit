@@ -14,19 +14,22 @@ declare const __SNL_CLI_EXECUTABLE__: boolean | undefined;
 interface ParsedCli { request?: OperationRequest; json: boolean; error?: string }
 function parseCli(argv: string[]): ParsedCli {
   let root = '.'; let json = false; let help = false; const positional: string[] = []; const args: JsonObject = {};
-  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--if-match': 'expectedRevision', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope' };
+  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--preset': 'preset', '--if-match': 'expectedRevision', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope' };
   for (let i=0;i<argv.length;i++) {
     const token=argv[i];
     if (token==='--json') { json=true; continue; }
     if (token==='--help' || token==='-h') { help=true; continue; }
-    const key=valueFlags[token];
+    const key=Object.hasOwn(valueFlags, token) ? valueFlags[token] : undefined;
     if (key) { const value=argv[++i]; if(value===undefined)return{json,error:`${token} requires a value.`}; if(key==='root')root=value; else if(key==='limit')args.limit=Number(value); else args[key]=value; continue; }
     if (token.startsWith('-')) return {json,error:`Unknown flag ${token}.`};
     positional.push(token);
   }
   if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: 'help', root: path.resolve(root), arguments: {} } };
   const [domain,action,...rest]=positional; if(!domain)return{json,error:'Expected a command domain.'};
-  const command=action?`${domain}/${action}`:domain;
+  const command=domain==='init'?'init':action?`${domain}/${action}`:domain;
+  if (domain === 'init') {
+    if (action || rest.length) return {json,error:'init accepts no identity positional; use --preset <id> or --input <file|->.'};
+  }
   if (command === 'validate' && args.scope === undefined) args.scope = 'workspace';
   const knownActions = new Set(['list','get','create','update','delete']);
   const singleIdentityActions = new Set(['latex','references','usages']);

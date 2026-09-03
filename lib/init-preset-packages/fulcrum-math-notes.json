@@ -1,0 +1,540 @@
+{
+  "schema": "snl.init-preset",
+  "version": 1,
+  "id": "fulcrum-math-notes",
+  "entryKinds": [
+    {
+      "id": "chapter",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Chapter",
+          "zh-CN": "章"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#5F5F5F",
+          "background": "#F0F0F0"
+        },
+        "dark": {
+          "stroke": "#E5E7EB",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "chapter",
+      "style": "section",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "A top-level chapter of the document.",
+          "zh-CN": "文档中的顶层章节。"
+        }
+      }
+    },
+    {
+      "id": "section",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Section",
+          "zh-CN": "节"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#5F5F5F",
+          "background": "#F0F0F0"
+        },
+        "dark": {
+          "stroke": "#CBD5E1",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "section",
+      "style": "section",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "A section that organizes related entries.",
+          "zh-CN": "用于组织相关条目的章节。"
+        }
+      }
+    },
+    {
+      "id": "subsection",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Subsection",
+          "zh-CN": "小节"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#5F5F5F",
+          "background": "#F0F0F0"
+        },
+        "dark": {
+          "stroke": "#94A3B8",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "subsection",
+      "style": "section",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "A subsection within a section.",
+          "zh-CN": "章节中的子章节。"
+        }
+      }
+    },
+    {
+      "id": "definition",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Definition",
+          "zh-CN": "定义"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#00651B",
+          "background": "#D6FEE0"
+        },
+        "dark": {
+          "stroke": "#4ADE80",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "definition",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Introduces a term or mathematical object.",
+          "zh-CN": "引入一个术语或数学对象。"
+        }
+      }
+    },
+    {
+      "id": "axiom",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Axiom",
+          "zh-CN": "公理"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#6B6B00",
+          "background": "#FFFFAC"
+        },
+        "dark": {
+          "stroke": "#FACC15",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "axiom",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "States an assumed foundational proposition.",
+          "zh-CN": "陈述一个作为基础假设的命题。"
+        }
+      }
+    },
+    {
+      "id": "lemma",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Lemma",
+          "zh-CN": "引理"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#005B9C",
+          "background": "#DAF0FF"
+        },
+        "dark": {
+          "stroke": "#93C5FD",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "lemma",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "States an auxiliary proved result.",
+          "zh-CN": "陈述一个辅助性的已证明结果。"
+        }
+      }
+    },
+    {
+      "id": "theorem",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Theorem",
+          "zh-CN": "定理"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#005B9C",
+          "background": "#DAF0FF"
+        },
+        "dark": {
+          "stroke": "#60A5FA",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "theorem",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "States a principal proved result.",
+          "zh-CN": "陈述一个主要的已证明结果。"
+        }
+      }
+    },
+    {
+      "id": "corollary",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Corollary",
+          "zh-CN": "推论"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#005B9C",
+          "background": "#DAF0FF"
+        },
+        "dark": {
+          "stroke": "#7DD3FC",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "corollary",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "States a direct consequence of another result.",
+          "zh-CN": "陈述由其他结果直接推出的结论。"
+        }
+      }
+    },
+    {
+      "id": "property",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Property",
+          "zh-CN": "性质"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#AC00AF",
+          "background": "#FFEDFF"
+        },
+        "dark": {
+          "stroke": "#E879F9",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "property",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Records a property of an object or construction.",
+          "zh-CN": "记录对象或构造所具有的性质。"
+        }
+      }
+    },
+    {
+      "id": "remark",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Remark",
+          "zh-CN": "备注"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#9A4D00",
+          "background": "#FFEBD2"
+        },
+        "dark": {
+          "stroke": "#FB923C",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "remark",
+      "style": "remark",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Adds explanatory or contextual commentary.",
+          "zh-CN": "补充解释或背景说明。"
+        }
+      }
+    },
+    {
+      "id": "example",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Example",
+          "zh-CN": "示例"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#7700E4",
+          "background": "#EFDFFF"
+        },
+        "dark": {
+          "stroke": "#C084FC",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "example",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Provides an illustrative example.",
+          "zh-CN": "给出一个用于说明的示例。"
+        }
+      }
+    },
+    {
+      "id": "counterexample",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Counterexample",
+          "zh-CN": "反例"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#B0001C",
+          "background": "#FFD6DC"
+        },
+        "dark": {
+          "stroke": "#FB7185",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "counterexample",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Provides an example that refutes a claim.",
+          "zh-CN": "给出一个用于否定某个断言的反例。"
+        }
+      }
+    },
+    {
+      "id": "construction",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Construction",
+          "zh-CN": "构造"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#5F5F5F",
+          "background": "#F0F0F0"
+        },
+        "dark": {
+          "stroke": "#A3A3A3",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "construction",
+      "style": "proof",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Describes how to construct an object.",
+          "zh-CN": "描述如何构造一个对象。"
+        }
+      }
+    },
+    {
+      "id": "proof",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Proof",
+          "zh-CN": "证明"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#5F5F5F",
+          "background": "#F0F0F0"
+        },
+        "dark": {
+          "stroke": "#D1D5DB",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "proof",
+      "style": "proof",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Provides a proof of a stated result.",
+          "zh-CN": "给出某个已陈述结果的证明。"
+        }
+      }
+    },
+    {
+      "id": "problem",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Problem",
+          "zh-CN": "问题"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#005B9C",
+          "background": "#DAF0FF"
+        },
+        "dark": {
+          "stroke": "#38BDF8",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "problem",
+      "style": "problem",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "States a problem or exercise to solve.",
+          "zh-CN": "陈述一个待解决的问题或练习。"
+        }
+      }
+    },
+    {
+      "id": "context",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Context",
+          "zh-CN": "上下文"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#6D28D9",
+          "background": "#EDE9FE"
+        },
+        "dark": {
+          "stroke": "#A78BFA",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "context",
+      "style": "",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Declares context used by subsequent entries.",
+          "zh-CN": "声明后续条目使用的上下文。"
+        }
+      }
+    },
+    {
+      "id": "ctor",
+      "name": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Constructor",
+          "zh-CN": "构造子"
+        }
+      },
+      "coloring": {
+        "light": {
+          "stroke": "#2F6F00",
+          "background": "#CFFFA8"
+        },
+        "dark": {
+          "stroke": "#A3E635",
+          "background": "#313131"
+        }
+      },
+      "defaultCounterName": "ctor",
+      "style": "ctor",
+      "description": {
+        "type": "i18n",
+        "default_language": "en",
+        "values": {
+          "en": "Introduces a constructor of an inductive object.",
+          "zh-CN": "引入归纳对象的一个构造子。"
+        }
+      }
+    }
+  ],
+  "macroKinds": [],
+  "packages": [],
+  "entries": [],
+  "macros": [],
+  "relationships": [],
+  "libraries": []
+}

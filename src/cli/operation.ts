@@ -13,6 +13,8 @@ import { querySnoogl } from '../../lib/snoogle-query.ts';
 import { computeEntryBareLatex, EntryAnalysisError } from '../../lib/entry-analysis.ts';
 import { findEntityReferences } from '../../lib/entity-references.ts';
 import { macroEntityPath } from '../../lib/entity-storage.ts';
+import { initializeWorkspace, InitWorkspaceError } from '../../lib/init-workspace.ts';
+import { BUILTIN_INIT_PRESET_DESCRIPTORS } from '../../lib/init-presets.ts';
 
 export const OPERATION_PROTOCOL = 'snl.operation/v1' as const;
 export const RESULT_PROTOCOL = 'snl.result/v1' as const;
@@ -29,7 +31,7 @@ const ENTITY_DOMAINS: Readonly<Record<string, ManagedEntityType>> = Object.freez
 });
 const ENTITY_ACTIONS = ['list', 'get', 'create', 'update', 'delete'] as const;
 export const COMMAND_PATHS = Object.freeze([
-  'help', 'info', 'validate',
+  'help', 'init', 'info', 'validate',
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
   'snoogl', 'entry/latex', 'entry/references', 'macro/usages',
 ]);
@@ -74,7 +76,28 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     const tokens = command.split('/');
     if (tokens.length === 1 && command === 'help') {
       exactArguments(request.arguments, []);
-      return succeed(command, { operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL, commands: COMMAND_PATHS.filter(path => path !== 'help') });
+      return succeed(command, {
+        operationProtocol: OPERATION_PROTOCOL,
+        resultProtocol: RESULT_PROTOCOL,
+        commands: COMMAND_PATHS.filter(path => path !== 'help'),
+        initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+      });
+    }
+    if (tokens.length === 1 && command === 'init') {
+      exactArguments(request.arguments, ['preset', 'value']);
+      if (own(request.arguments, 'preset') &&
+          (typeof request.arguments.preset !== 'string' || request.arguments.preset.length === 0)) {
+        throw new TypeError('preset must be a non-empty string when present.');
+      }
+      const preset = own(request.arguments, 'preset') ? request.arguments.preset as string : undefined;
+      try {
+        return succeed(command, await initializeWorkspace(request.root, preset, request.arguments.value));
+      } catch (error) {
+        if (error instanceof InitWorkspaceError) {
+          return operationFailure(command, error.exitCode, error.code, error.message, error.details);
+        }
+        throw error;
+      }
     }
     if (tokens.length === 1 && command === 'validate') {
       exactArguments(request.arguments, ['scope']);

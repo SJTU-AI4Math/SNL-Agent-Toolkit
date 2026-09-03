@@ -260,25 +260,25 @@ function libraryDir(workspaceRoot, slug) {
 function libraryGraphPath(workspaceRoot, slug) {
   return path2.join(libraryDir(workspaceRoot, slug), "graph.json");
 }
-async function pathExists(p) {
+async function pathExists(p2) {
   try {
-    await fs2.lstat(p);
+    await fs2.lstat(p2);
     return true;
   } catch (error) {
     if (error.code === "ENOENT") return false;
     throw error;
   }
 }
-async function readJson(p) {
+async function readJson(p2) {
   let handle;
   try {
-    handle = await fs2.open(p, constants2.O_RDONLY | constants2.O_NOFOLLOW);
+    handle = await fs2.open(p2, constants2.O_RDONLY | constants2.O_NOFOLLOW);
     const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${p} must be a regular, non-symlink file.`);
+    if (!stat.isFile()) throw new Error(`${p2} must be a regular, non-symlink file.`);
     return JSON.parse(await handle.readFile("utf8"));
   } catch (error) {
     if (error.code === "ELOOP") {
-      throw new Error(`${p} must be a regular, non-symlink file.`);
+      throw new Error(`${p2} must be a regular, non-symlink file.`);
     }
     throw error;
   } finally {
@@ -305,11 +305,11 @@ function usesCurrentEntitySchemas(config) {
 }
 async function readConfig(workspaceRoot) {
   await assertSnlDoc(workspaceRoot);
-  const p = configPath(workspaceRoot);
-  if (!await pathExists(p)) {
+  const p2 = configPath(workspaceRoot);
+  if (!await pathExists(p2)) {
     return { version: "0.0.0" };
   }
-  const config = await readJson(p);
+  const config = await readJson(p2);
   if (usesCurrentEntitySchemas(config)) assertCurrentKindCatalogs(config);
   return config;
 }
@@ -510,13 +510,13 @@ async function readEntries(workspaceRoot) {
     }
     return entries;
   }
-  const p = entriesPath(workspaceRoot);
-  if (!await pathExists(p)) {
+  const p2 = entriesPath(workspaceRoot);
+  if (!await pathExists(p2)) {
     return [];
   }
-  const raw = await readJson(p);
+  const raw = await readJson(p2);
   if (!Array.isArray(raw)) {
-    throw new Error(`${p} is not a JSON array`);
+    throw new Error(`${p2} is not a JSON array`);
   }
   return raw;
 }
@@ -943,15 +943,15 @@ async function main() {
 `);
     return 2;
   }
-  const targets = [...parsed.positional.map((p) => path3.resolve(p))];
+  const targets = [...parsed.positional.map((p2) => path3.resolve(p2))];
   for (const slug of slugs) {
     targets.push(libraryGraphPath(root, slug));
   }
   if (targets.length === 0) {
     const allSlugs = await listLibrarySlugs(root);
     for (const slug of allSlugs) {
-      const p = libraryGraphPath(root, slug);
-      if (await pathExists(p)) targets.push(p);
+      const p2 = libraryGraphPath(root, slug);
+      if (await pathExists(p2)) targets.push(p2);
     }
     if (targets.length === 0) {
       process.stderr.write(

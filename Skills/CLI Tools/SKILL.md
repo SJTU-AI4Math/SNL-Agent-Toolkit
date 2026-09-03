@@ -4,7 +4,7 @@ This manual records the normative CLI product surface. A command is currently im
 
 ## `snl init`
 
-* `--root <path>`
+* `--root <path>`; optionally choose `--preset <built-in-preset-id>` or `--input <file|->`
 * `--json`
 
 ## `snl info`

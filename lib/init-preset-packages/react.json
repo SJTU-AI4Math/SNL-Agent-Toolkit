@@ -1,0 +1,77 @@
+{
+  "schema": "snl.init-preset",
+  "version": 1,
+  "id": "react",
+  "entryKinds": [
+    {
+      "id": "section",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Section", "zh-CN": "章节" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Groups related React documentation.", "zh-CN": "组织相关的 React 文档。" } },
+      "coloring": { "light": { "stroke": "#475569", "background": "#F1F5F9" }, "dark": { "stroke": "#CBD5E1", "background": "#313131" } },
+      "defaultCounterName": "section",
+      "style": "section"
+    },
+    {
+      "id": "component",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Component", "zh-CN": "组件" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Documents a React component and its props.", "zh-CN": "记录 React 组件及其属性。" } },
+      "coloring": { "light": { "stroke": "#0369A1", "background": "#E0F2FE" }, "dark": { "stroke": "#7DD3FC", "background": "#313131" } },
+      "defaultCounterName": "component",
+      "style": ""
+    },
+    {
+      "id": "hook",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Hook", "zh-CN": "Hook" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Documents a React Hook and its lifecycle contract.", "zh-CN": "记录 React Hook 及其生命周期契约。" } },
+      "coloring": { "light": { "stroke": "#7E22CE", "background": "#F3E8FF" }, "dark": { "stroke": "#C084FC", "background": "#313131" } },
+      "defaultCounterName": "hook",
+      "style": ""
+    },
+    {
+      "id": "context",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Context", "zh-CN": "上下文" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Documents a React Context contract.", "zh-CN": "记录 React Context 契约。" } },
+      "coloring": { "light": { "stroke": "#0F766E", "background": "#CCFBF1" }, "dark": { "stroke": "#5EEAD4", "background": "#313131" } },
+      "defaultCounterName": "context",
+      "style": ""
+    },
+    {
+      "id": "provider",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Provider", "zh-CN": "提供器" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Documents a Context provider and its supplied state.", "zh-CN": "记录 Context 提供器及其状态。" } },
+      "coloring": { "light": { "stroke": "#15803D", "background": "#DCFCE7" }, "dark": { "stroke": "#4ADE80", "background": "#313131" } },
+      "defaultCounterName": "provider",
+      "style": ""
+    },
+    {
+      "id": "utility",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Utility", "zh-CN": "工具" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Documents a supporting React utility.", "zh-CN": "记录 React 辅助工具。" } },
+      "coloring": { "light": { "stroke": "#4B5563", "background": "#F3F4F6" }, "dark": { "stroke": "#9CA3AF", "background": "#313131" } },
+      "defaultCounterName": "utility",
+      "style": ""
+    },
+    {
+      "id": "example",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Example", "zh-CN": "示例" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Shows a concrete React usage example.", "zh-CN": "展示具体的 React 使用示例。" } },
+      "coloring": { "light": { "stroke": "#A16207", "background": "#FEF9C3" }, "dark": { "stroke": "#FDE047", "background": "#313131" } },
+      "defaultCounterName": "example",
+      "style": ""
+    },
+    {
+      "id": "test",
+      "name": { "type": "i18n", "default_language": "en", "values": { "en": "Test", "zh-CN": "测试" } },
+      "description": { "type": "i18n", "default_language": "en", "values": { "en": "Documents a behavioral or rendering test.", "zh-CN": "记录行为或渲染测试。" } },
+      "coloring": { "light": { "stroke": "#B45309", "background": "#FEF3C7" }, "dark": { "stroke": "#FBBF24", "background": "#313131" } },
+      "defaultCounterName": "test",
+      "style": ""
+    }
+  ],
+  "macroKinds": [],
+  "packages": [],
+  "entries": [],
+  "macros": [],
+  "relationships": [],
+  "libraries": []
+}
