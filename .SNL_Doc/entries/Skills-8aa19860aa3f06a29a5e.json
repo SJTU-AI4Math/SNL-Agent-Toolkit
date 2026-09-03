@@ -1,0 +1,17 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Author.sec.Macro",
+    "package": "Skills",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": "Macro Authoring",
+    "content": {
+      "snl": "%Macro authoring involves the following steps:#0%(__enum__(%Identity the global id and kind of the macro.%,%Create styles and templates, author I18N variants if necessary.%,%Link the macro to appropirate sources.%,%Give macro and its styles tags for better searching.%))"
+    },
+    "contribution_info": null,
+    "pointer": null
+  }
+}

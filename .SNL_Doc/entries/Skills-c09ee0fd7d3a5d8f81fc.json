@@ -16,7 +16,7 @@
       }
     },
     "content": {
-      "snl": "%This skill describes the recommended workflow of authoring an SNL library from scratch, with only NL documents for reference, where poor terminology usage is expected.\nIf maintaining an existing SNL library, please refer to #0.%(%the skill for maintaining%@Skill.Maintain)"
+      "snl": "%This skill describes the recommended workflow of authoring an SNL library from scratch. If maintaining an existing SNL library, please refer to #0. It tells you how to use the SNL infrastructure. It does not tell you how to write good SNL macros and entries. If macros and entries need refinery, refer to #1.%(%the skill for maintaining%@Skill.Maintain,%the skill for refinery%@Skill.Refinery)"
     },
     "contribution_info": null,
     "pointer": {

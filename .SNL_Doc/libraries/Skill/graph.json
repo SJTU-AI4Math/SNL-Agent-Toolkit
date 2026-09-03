@@ -1203,6 +1203,20 @@
       "props": {
         "entryId": "Skill.Refinery.Entry.subsec.CounterExamples"
       }
+    },
+    {
+      "id": "n_85",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Author.sec.Library"
+      }
+    },
+    {
+      "id": "n_86",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Author.sec.Macro"
+      }
     }
   ],
   "relationships": [
@@ -2019,6 +2033,16 @@
     {
       "from": "n_79",
       "to": "n_84",
+      "label": "branch"
+    },
+    {
+      "from": "n_64",
+      "to": "n_85",
+      "label": "branch"
+    },
+    {
+      "from": "n_64",
+      "to": "n_86",
       "label": "branch"
     }
   ]
