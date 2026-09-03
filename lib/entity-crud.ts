@@ -357,6 +357,24 @@ export async function validateManagedWorkspace(root: string): Promise<{
             issues.push({ severity: "error", code: `${type}.read-failed`, message: error instanceof Error ? error.message : String(error), path: type });
         }
     }
+    for (const [type, directory] of [["entry", "entries"], ["macro", "macros"], ["library", "libraries"]] as const) {
+        if ((rows.get(type)?.length ?? 0) !== 0)
+            continue;
+        const placeholder = path.join(docRoot(root), directory, ".gitkeep");
+        try {
+            const stat = await fs.lstat(placeholder);
+            if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== 0)
+                throw new Error("placeholder must be an empty regular file");
+        }
+        catch (error) {
+            issues.push({
+                severity: "error",
+                code: "workspace.git-empty-directory",
+                message: `Empty .SNL_Doc/${directory}/ requires an empty regular .gitkeep so the Extension-readable topology survives Git.`,
+                path: `.SNL_Doc/${directory}`
+            });
+        }
+    }
     let entries: Awaited<ReturnType<typeof readEntries>> = [];
     try { entries = await readEntries(root); }
     catch (error) {
