@@ -15,7 +15,9 @@
         "zh-CN": "库描述"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The description of a #0 is some text that provides additional information about the library, such as its purpose, contents and structure of entries in it.%(Concept.Library)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

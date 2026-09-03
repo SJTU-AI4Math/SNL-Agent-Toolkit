@@ -15,7 +15,9 @@
         "zh-CN": "库标题"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The title of a #0 is a string that tells the #0's content.%(Concept.Library)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

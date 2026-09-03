@@ -7,7 +7,7 @@
     "description": "",
     "source": {
       "entries": [
-        "Skill.SNLeco.cpt.TermMacro"
+        "Skill.SNLeco.cpt.Entry"
       ],
       "urls": []
     },
@@ -19,31 +19,7 @@
         "tags": [],
         "template": {
           "mode": "text",
-          "body": "term macro",
-          "typst": {
-            "built_in": "",
-            "synthesis": {
-              "mode": "formula",
-              "macro": ""
-            }
-          },
-          "latex": {
-            "built_in": "",
-            "synthesis": {
-              "mode": "formula",
-              "macro": ""
-            }
-          },
-          "markdown": "",
-          "text": ""
-        }
-      },
-      {
-        "style_name": "plural",
-        "tags": [],
-        "template": {
-          "mode": "text",
-          "body": "term macros",
+          "body": "entry tag",
           "typst": {
             "built_in": "",
             "synthesis": {
@@ -64,6 +40,6 @@
       }
     ],
     "tags": [],
-    "name": "Concept.TermMacro"
+    "name": "Concept.EntryTag"
   }
 }

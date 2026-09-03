@@ -15,7 +15,9 @@
         "zh-CN": "指针"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A #0 is a reference to a piece of text in a file. The #0 is stored in the #1 and can be used to sync the file content with the #1.%(Concept.EntryPointer, Concept.Entry)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

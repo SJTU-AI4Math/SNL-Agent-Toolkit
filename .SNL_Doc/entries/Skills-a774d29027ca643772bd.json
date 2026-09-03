@@ -15,7 +15,9 @@
         "zh-CN": "条目标签"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%An #0 is a string that is used to categorize #1. It can be used to group #1 by some criteria so as to facilitate searching.%(Concept.EntryTag, Concept.Entry[plural])"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

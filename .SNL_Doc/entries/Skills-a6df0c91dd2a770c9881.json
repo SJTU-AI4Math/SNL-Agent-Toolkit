@@ -15,7 +15,9 @@
         "zh-CN": "库"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A #0 is a collection of stored #1 that are organized and made available for reading.%(Concept.Library, Concept.Entry[plural])"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

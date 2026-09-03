@@ -7,7 +7,7 @@
     "description": "",
     "source": {
       "entries": [
-        "Skill.SNLeco.cpt.TermMacro"
+        "Skill.SNLeco.cpt.Library"
       ],
       "urls": []
     },
@@ -19,7 +19,7 @@
         "tags": [],
         "template": {
           "mode": "text",
-          "body": "term macro",
+          "body": "library",
           "typst": {
             "built_in": "",
             "synthesis": {
@@ -43,7 +43,7 @@
         "tags": [],
         "template": {
           "mode": "text",
-          "body": "term macros",
+          "body": "libraries",
           "typst": {
             "built_in": "",
             "synthesis": {
@@ -64,6 +64,6 @@
       }
     ],
     "tags": [],
-    "name": "Concept.TermMacro"
+    "name": "Concept.Library"
   }
 }
