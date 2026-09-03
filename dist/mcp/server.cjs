@@ -22247,9 +22247,16 @@ async function validateManagedWorkspace(root) {
     }
   }
   for (const [type, directory] of [["entry", "entries"], ["macro", "macros"], ["library", "libraries"]]) {
-    if ((rows.get(type)?.length ?? 0) !== 0)
+    const absoluteDirectory = import_node_path2.default.join(docRoot(root), directory);
+    let hasPersistentContent = false;
+    try {
+      const children = await import_node_fs6.promises.readdir(absoluteDirectory, { withFileTypes: true });
+      hasPersistentContent = type === "library" ? children.some((child) => child.isDirectory()) : children.some((child) => child.isFile() && child.name.endsWith(".json"));
+    } catch {
+    }
+    if (hasPersistentContent)
       continue;
-    const placeholder = import_node_path2.default.join(docRoot(root), directory, ".gitkeep");
+    const placeholder = import_node_path2.default.join(absoluteDirectory, ".gitkeep");
     try {
       const stat = await import_node_fs6.promises.lstat(placeholder);
       if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== 0)

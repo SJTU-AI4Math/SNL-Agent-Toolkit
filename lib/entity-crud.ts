@@ -358,9 +358,18 @@ export async function validateManagedWorkspace(root: string): Promise<{
         }
     }
     for (const [type, directory] of [["entry", "entries"], ["macro", "macros"], ["library", "libraries"]] as const) {
-        if ((rows.get(type)?.length ?? 0) !== 0)
+        const absoluteDirectory = path.join(docRoot(root), directory);
+        let hasPersistentContent = false;
+        try {
+            const children = await fs.readdir(absoluteDirectory, { withFileTypes: true });
+            hasPersistentContent = type === "library"
+                ? children.some(child => child.isDirectory())
+                : children.some(child => child.isFile() && child.name.endsWith(".json"));
+        }
+        catch { /* Missing/unsafe directories are reported below and by entity readers. */ }
+        if (hasPersistentContent)
             continue;
-        const placeholder = path.join(docRoot(root), directory, ".gitkeep");
+        const placeholder = path.join(absoluteDirectory, ".gitkeep");
         try {
             const stat = await fs.lstat(placeholder);
             if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== 0)

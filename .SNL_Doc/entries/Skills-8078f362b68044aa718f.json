@@ -9,13 +9,13 @@
     "kind": "cli",
     "title": "$\\texttt{snl validate}$",
     "content": {
-      "markdown": "Use `snl validate` as the normal fail-closed gate before and after every mutation sequence.\n\n### Agent procedure\n1. Validate the whole target workspace before writing; inherited errors must be understood before proceeding.\n2. Classify every reported issue by stable code and severity. Fix errors before publication; do not loop on informational fallback notices.\n3. Validate again after the final write and require a clean structured result.\n\n### Machine-use contract\nInvoke `snl validate` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+      "markdown": "Use `snl validate` as the normal fail-closed gate before and after every mutation sequence.\n\n### Agent procedure\n1. Validate the whole target workspace before writing; inherited errors must be understood before proceeding.\n2. Classify every reported issue by stable code and severity. Fix errors before publication; do not loop on informational fallback notices.\n3. Validate again after the final write and require a clean structured result. Treat `workspace.git-empty-directory` as blocking: stage the canonical `.gitkeep` for every empty entity family.\n4. Before publication, reconstruct the staged Git tree and validate that checkout so untracked empty directories cannot produce a false green result.\n\n### Machine-use contract\nInvoke `snl validate` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
     },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",
       "mode": "lines",
-      "line": 13
+      "line": 24
     }
   }
 }

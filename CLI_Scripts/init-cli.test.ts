@@ -147,6 +147,22 @@ describe('snl init', () => {
       issue.code === 'workspace.git-empty-directory' && issue.path === '.SNL_Doc/entries'));
   });
 
+  it('does not misreport a populated directory when a sibling directory is missing', async () => {
+    const root = await target();
+    assert.equal(run(root, ['init']).status, 0);
+    await Promise.all([
+      rm(path.join(root, '.SNL_Doc', 'entries'), { recursive: true }),
+      rm(path.join(root, '.SNL_Doc', 'libraries'), { recursive: true }),
+      rm(path.join(root, '.SNL_Doc', 'macros', '.gitkeep')),
+    ]);
+    const call = run(root, ['validate']);
+    assert.equal(call.status, 1, call.stderr || call.stdout);
+    const issues = result(call).error.details.issues as Array<{ code: string; path: string }>;
+    assert.ok(issues.some(issue => issue.path === '.SNL_Doc/entries'));
+    assert.equal(issues.some(issue =>
+      issue.code === 'workspace.git-empty-directory' && issue.path === '.SNL_Doc/macros'), false);
+  });
+
   it('parses and installs Entries that exercise every initial Markdown Macro', async () => {
     const root = await target();
     assert.equal(run(root, ['init']).status, 0);
