@@ -2,6 +2,8 @@
 
 This manual records the normative CLI product surface. A command is currently implemented only when its canonical path appears in machine-readable `snl --help`; absent commands are planned contracts and must not be emulated with a different operation.
 
+JSON files used only as command input are local execution artifacts, not repository content. Keep them at a local-only path covered by `.gitignore`, or create them in an operating-system temporary directory outside the working repository and remove them after use. Never stage or commit such payloads merely because an `snl` command consumed them.
+
 ## `snl init`
 
 * `--root <path>`; optionally choose `--preset <built-in-preset-id>` or `--input <file|->`
