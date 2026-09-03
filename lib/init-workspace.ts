@@ -187,6 +187,8 @@ export async function initializeWorkspace(
     await Promise.all(['entries', 'macros', 'packages', 'libraries']
       .map(directory => fs.mkdir(path.join(stageDoc, directory), { recursive: true })));
     await Promise.all([
+      ...['entries', 'macros', 'libraries'].map(directory =>
+        fs.writeFile(path.join(stageDoc, directory, '.gitkeep'), '', { flag: 'wx', mode: 0o644 })),
       ...defaultPackageManifests().map(item => writeJson(path.join(stageDoc, item.relativePath), item.value)),
       ...defaultMacroEnvelopes().map(item => writeJson(path.join(stageDoc, item.relativePath), item.value)),
       writeJson(path.join(stageDoc, 'relationships.json'), { version: 1, relationships: [] }),

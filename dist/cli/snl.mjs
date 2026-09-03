@@ -21548,6 +21548,23 @@ async function validateManagedWorkspace(root) {
       issues.push({ severity: "error", code: `${type}.read-failed`, message: error instanceof Error ? error.message : String(error), path: type });
     }
   }
+  for (const [type, directory] of [["entry", "entries"], ["macro", "macros"], ["library", "libraries"]]) {
+    if ((rows.get(type)?.length ?? 0) !== 0)
+      continue;
+    const placeholder = path7.join(docRoot(root), directory, ".gitkeep");
+    try {
+      const stat = await fs5.lstat(placeholder);
+      if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== 0)
+        throw new Error("placeholder must be an empty regular file");
+    } catch (error) {
+      issues.push({
+        severity: "error",
+        code: "workspace.git-empty-directory",
+        message: `Empty .SNL_Doc/${directory}/ requires an empty regular .gitkeep so the Extension-readable topology survives Git.`,
+        path: `.SNL_Doc/${directory}`
+      });
+    }
+  }
   let entries = [];
   try {
     entries = await readEntries(root);
@@ -26033,6 +26050,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
     }
     await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs6.mkdir(path8.join(stageDoc, directory), { recursive: true })));
     await Promise.all([
+      ...["entries", "macros", "libraries"].map((directory) => fs6.writeFile(path8.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
       ...defaultPackageManifests().map((item) => writeJson(path8.join(stageDoc, item.relativePath), item.value)),
       ...defaultMacroEnvelopes().map((item) => writeJson(path8.join(stageDoc, item.relativePath), item.value)),
       writeJson(path8.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
