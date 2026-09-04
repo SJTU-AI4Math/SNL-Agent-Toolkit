@@ -15,7 +15,9 @@
         "zh-CN": "术语宏类型"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%According to the initialized #0, a #1 can be assigned to a specific kind by some criteria when it is created or later changed.%(Concept.MacroKind, Concept.TermMacro)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

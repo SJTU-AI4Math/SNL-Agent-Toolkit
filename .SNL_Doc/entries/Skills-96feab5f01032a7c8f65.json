@@ -15,7 +15,9 @@
         "zh-CN": "术语宏来源"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The source of the #0 is an object that contains the definition of this #0, such as an entry, a URL, or a list of them. When the source is (temporarily) none, the #0 could also work but with lower #1 scores.%(Concept.TermMacro, Concept.SSI)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

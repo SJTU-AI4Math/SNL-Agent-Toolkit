@@ -147,6 +147,32 @@
       }
     },
     {
+      "id": "dep.Skill.SNLeco.cpt.HTMLExport.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.HTMLExport",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": false
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.HTMLExport.Skill.SNLeco.cpt.Library",
+      "from": "Skill.SNLeco.cpt.HTMLExport",
+      "to": "Skill.SNLeco.cpt.Library",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Library"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
       "id": "dep.Skill.SNLeco.cpt.Library.Skill.SNLeco.cpt.Entry",
       "from": "Skill.SNLeco.cpt.Library",
       "to": "Skill.SNLeco.cpt.Entry",
@@ -173,6 +199,19 @@
       }
     },
     {
+      "id": "dep.Skill.SNLeco.cpt.LibraryID.Skill.SNLeco.cpt.Library",
+      "from": "Skill.SNLeco.cpt.LibraryID",
+      "to": "Skill.SNLeco.cpt.Library",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Library"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
       "id": "dep.Skill.SNLeco.cpt.LibraryTitle.Skill.SNLeco.cpt.Library",
       "from": "Skill.SNLeco.cpt.LibraryTitle",
       "to": "Skill.SNLeco.cpt.Library",
@@ -181,6 +220,32 @@
         "generator": "macro-source-scan",
         "macros": [
           "Concept.Library"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.MacroPackage.Skill.SNLeco.cpt.EntryPackage",
+      "from": "Skill.SNLeco.cpt.MacroPackage",
+      "to": "Skill.SNLeco.cpt.EntryPackage",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryPackage"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.MacroPackage.Skill.SNLeco.cpt.TermMacro",
+      "from": "Skill.SNLeco.cpt.MacroPackage",
+      "to": "Skill.SNLeco.cpt.TermMacro",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacro"
         ],
         "isAtomic": true
       }
@@ -207,6 +272,84 @@
         "generator": "macro-source-scan",
         "macros": [
           "Concept.TermMacroStyle"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacroKind.Skill.SNLeco.cpt.TermMacro",
+      "from": "Skill.SNLeco.cpt.TermMacroKind",
+      "to": "Skill.SNLeco.cpt.TermMacro",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacro"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacroName.Skill.SNLeco.cpt.TermMacro",
+      "from": "Skill.SNLeco.cpt.TermMacroName",
+      "to": "Skill.SNLeco.cpt.TermMacro",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacro"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacroSource.Skill.SNLeco.cpt.TermMacro",
+      "from": "Skill.SNLeco.cpt.TermMacroSource",
+      "to": "Skill.SNLeco.cpt.TermMacro",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacro"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacroStyle.Skill.SNLeco.cpt.TermMacro",
+      "from": "Skill.SNLeco.cpt.TermMacroStyle",
+      "to": "Skill.SNLeco.cpt.TermMacro",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacro"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacroStyleTag.Skill.SNLeco.cpt.TermMacroStyle",
+      "from": "Skill.SNLeco.cpt.TermMacroStyleTag",
+      "to": "Skill.SNLeco.cpt.TermMacroStyle",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacroStyle"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.TermMacroUUID.Skill.SNLeco.cpt.TermMacro",
+      "from": "Skill.SNLeco.cpt.TermMacroUUID",
+      "to": "Skill.SNLeco.cpt.TermMacro",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.TermMacro"
         ],
         "isAtomic": true
       }

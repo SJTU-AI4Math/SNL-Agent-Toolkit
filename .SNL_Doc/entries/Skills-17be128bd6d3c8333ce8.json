@@ -15,7 +15,9 @@
         "zh-CN": "术语宏样式标签"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The #0s are tagged \"default\", \"style1\", \"style2\", etc. when created. To make it readable, a style tag can be renamed to a more meaningful name.%(Concept.TermMacroStyle)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

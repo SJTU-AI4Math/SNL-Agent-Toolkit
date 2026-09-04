@@ -15,7 +15,9 @@
         "zh-CN": "术语宏 UUID"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The #0 is a unique, invariant, informationless identifier that is automatically generated when the #1 is created.%(Concept.TermMacroUUID, Concept.TermMacro)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

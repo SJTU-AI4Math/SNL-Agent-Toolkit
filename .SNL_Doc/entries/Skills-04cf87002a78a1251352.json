@@ -15,7 +15,9 @@
         "zh-CN": "术语宏名称"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The #0 of a #1 is a string which serves as the distinguishable, universally unique identifier. The #0 is used to call the #1 in the SNL corpus. %(Concept.TermMacroName, Concept.TermMacro)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

@@ -15,7 +15,9 @@
         "zh-CN": "库 ID"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The ID of a #0 is a unique slug that is used to distinguish it from others. Once a #0 is created, its ID cannot be changed.%(Concept.Library)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

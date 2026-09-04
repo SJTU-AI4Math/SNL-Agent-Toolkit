@@ -15,7 +15,9 @@
         "zh-CN": "HTML 导出"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A #0 can be exported to HTML format for sharing and viewing. The exported HTML file will contain the #0's title, description, and #1 with their tree structures and corresponding interactive effects (optional).%(Concept.Library, Concept.Entry[plural])"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

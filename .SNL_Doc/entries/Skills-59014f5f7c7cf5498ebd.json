@@ -15,7 +15,9 @@
         "zh-CN": "宏包"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A #0 is a collection of #1 that are designed to work together. It is usually created in correspondence with a specific #2.%(Concept.MacroPackage, Concept.TermMacro[plural], Concept.EntryPackage)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",
