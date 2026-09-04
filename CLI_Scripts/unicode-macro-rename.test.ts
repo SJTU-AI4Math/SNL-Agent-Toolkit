@@ -7,7 +7,7 @@ import path from 'node:path';
 import { isSnlIdentifier } from '@sjtu-ai4math/snl-basics/core';
 import { getManagedEntity, validateManagedWorkspace } from '../lib/entity-crud.ts';
 import { findEntityReferences, renameEntityId } from '../lib/entity-references.ts';
-import { macroEntityPath } from '../lib/entity-storage.ts';
+import { entryEntityPath, macroEntityPath, packageManifestPath } from '../lib/entity-storage.ts';
 import { parseSnlSyntaxTree } from '../lib/snl-parser.ts';
 
 const roots: string[] = [];
@@ -46,6 +46,33 @@ async function unicodeWorkspace(): Promise<string> {
       metadata: { generator: 'macro-source-scan', macros: ['文.之'], isAtomic: true },
     }],
   });
+  assert.equal((await validateManagedWorkspace(root)).valid, true);
+  return root;
+}
+
+async function unicodeEntryMembershipWorkspace(): Promise<string> {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'snl-unicode-entry-rename-'));
+  roots.push(root);
+  await cp(path.join(repo, 'CLI_Scripts/fixtures/workspace-v0.1.0'), root, { recursive: true });
+  const doc = path.join(root, '.SNL_Doc');
+  const entryDir = path.join(doc, 'entries');
+  const [entryFile] = (await readdir(entryDir)).filter(name => name.endsWith('.json'));
+  const oldPath = path.join(entryDir, entryFile);
+  const source = JSON.parse(await readFile(oldPath, 'utf8'));
+  source.entry.id = '文.皆';
+  source.entry.title = '文.皆';
+  source.entry.content.snl = '%文.皆%';
+  await json(path.join(doc, entryEntityPath('_unpackaged', '文.皆')), source);
+  source.entry.id = '墨翟';
+  source.entry.title = '墨翟';
+  source.entry.content.snl = '%墨翟%';
+  await json(path.join(doc, entryEntityPath('_unpackaged', '墨翟')), source);
+  await rm(oldPath);
+
+  const manifestPath = path.join(doc, packageManifestPath('_unpackaged'));
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  manifest.entry_ids = ['墨翟', '文.皆'];
+  await json(manifestPath, manifest);
   assert.equal((await validateManagedWorkspace(root)).valid, true);
   return root;
 }
@@ -164,6 +191,24 @@ describe('Unicode Macro identity rename', () => {
     assert.equal(result.data.oldId, '文.之');
     assert.equal(result.data.newId, '文法.之');
     assert.ok(result.data.entity.revision);
+    assert.equal((await validateManagedWorkspace(root)).valid, true);
+  });
+});
+
+describe('Unicode Entry identity rename', () => {
+  it('re-sorts owned Package membership by canonical UTF-16 code units', async () => {
+    const root = await unicodeEntryMembershipWorkspace();
+    const plan = await renameEntityId(root, 'entry', '文.皆', '文法.皆');
+    assert.ok(plan.occurrences.some(item => item.category === 'package-membership'));
+
+    const expected = ['墨翟', '文法.皆'];
+    const manifest = JSON.parse(await readFile(path.join(
+      root, '.SNL_Doc', packageManifestPath('_unpackaged'),
+    ), 'utf8'));
+    assert.deepEqual(manifest.entry_ids, expected);
+    const readBack = await getManagedEntity(root, 'entry-package', '_unpackaged');
+    assert.deepEqual(readBack?.value.entry_ids, expected);
+    assert.ok(await getManagedEntity(root, 'entry', '文法.皆'));
     assert.equal((await validateManagedWorkspace(root)).valid, true);
   });
 });

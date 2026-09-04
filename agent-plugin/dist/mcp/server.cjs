@@ -21759,7 +21759,7 @@ function buildStructuredEdits(file, entityType2, oldId, newId, rewriteSnlMacroTo
       edits.push(jsonValueEdit(
         file,
         ["entry_ids"],
-        [...entryIds].sort((left, right) => String(left).localeCompare(String(right)))
+        [...entryIds].sort((left, right) => compareCanonicalIds(String(left), String(right)))
       ));
     }
     return edits;

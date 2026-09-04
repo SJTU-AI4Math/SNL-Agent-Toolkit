@@ -23,6 +23,7 @@ import {
 import {
   CURRENT_ENTRY_SCHEMA_VERSION,
   CURRENT_MACRO_SCHEMA_VERSION,
+  compareCanonicalIds,
   entryEntityPath,
   macroEntityPath,
   packageManifestPath,
@@ -993,7 +994,7 @@ function buildStructuredEdits(
       edits.push(jsonValueEdit(
         file,
         ['entry_ids'],
-        [...entryIds].sort((left, right) => String(left).localeCompare(String(right))),
+        [...entryIds].sort((left, right) => compareCanonicalIds(String(left), String(right))),
       ));
     }
     return edits;

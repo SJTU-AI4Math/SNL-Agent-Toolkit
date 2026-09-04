@@ -4730,7 +4730,7 @@ function buildStructuredEdits(file, entityType, oldId, newId, rewriteSnlMacroTok
       edits.push(jsonValueEdit(
         file,
         ["entry_ids"],
-        [...entryIds].sort((left, right) => String(left).localeCompare(String(right)))
+        [...entryIds].sort((left, right) => compareCanonicalIds(String(left), String(right)))
       ));
     }
     return edits;
