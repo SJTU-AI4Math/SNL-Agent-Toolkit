@@ -10,6 +10,7 @@ import {
   CURRENT_PACKAGE_SCHEMA_VERSION,
   UNPACKAGED_PACKAGE_ID,
   assertPackageId,
+  compareCanonicalIds,
   entryEntityPath,
   macroEntityPath,
   packageManifestPath,
@@ -297,8 +298,7 @@ export async function addEntryEntity(
             : [];
           return {
             ...manifest,
-            entry_ids: [...new Set([...entryIds, entry.id])]
-              .sort((left, right) => left.localeCompare(right)),
+            entry_ids: [...new Set([...entryIds, entry.id])].sort(compareCanonicalIds),
           };
         })()
       : null;

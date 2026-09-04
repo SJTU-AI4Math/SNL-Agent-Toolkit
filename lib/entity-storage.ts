@@ -10,6 +10,11 @@ export const UNPACKAGED_PACKAGE_ID = '_unpackaged' as const;
 
 export type EntityIdentityKind = 'package' | 'entry' | 'macro';
 
+/** Locale-independent ordering for persisted canonical identities. */
+export function compareCanonicalIds(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
 export interface EntityStorageReceipt {
   legacy_backup_present: boolean;
   legacy_entries_present: boolean;
@@ -124,7 +129,7 @@ export function assertCanonicalEntryIds(value: unknown, label = 'Package entry_i
     !Array.isArray(value) ||
     value.some((entryId) => typeof entryId !== 'string' || !entryId || entryId !== entryId.trim()) ||
     new Set(value).size !== value.length ||
-    value.some((entryId, index) => index > 0 && value[index - 1].localeCompare(entryId) > 0)
+    value.some((entryId, index) => index > 0 && compareCanonicalIds(value[index - 1], entryId) > 0)
   ) {
     throw new Error(`${label} must be a sorted array of unique, non-empty canonical Entry ids.`);
   }

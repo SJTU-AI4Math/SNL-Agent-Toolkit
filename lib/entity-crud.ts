@@ -357,6 +357,33 @@ export async function validateManagedWorkspace(root: string): Promise<{
             issues.push({ severity: "error", code: `${type}.read-failed`, message: error instanceof Error ? error.message : String(error), path: type });
         }
     }
+    for (const [type, directory] of [["entry", "entries"], ["macro", "macros"], ["library", "libraries"]] as const) {
+        const absoluteDirectory = path.join(docRoot(root), directory);
+        let hasPersistentContent = false;
+        try {
+            const children = await fs.readdir(absoluteDirectory, { withFileTypes: true });
+            hasPersistentContent = type === "library"
+                ? children.some(child => child.isDirectory())
+                : children.some(child => child.isFile() && child.name.endsWith(".json"));
+        }
+        catch { /* Missing/unsafe directories are reported below and by entity readers. */ }
+        if (hasPersistentContent)
+            continue;
+        const placeholder = path.join(absoluteDirectory, ".gitkeep");
+        try {
+            const stat = await fs.lstat(placeholder);
+            if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== 0)
+                throw new Error("placeholder must be an empty regular file");
+        }
+        catch (error) {
+            issues.push({
+                severity: "error",
+                code: "workspace.git-empty-directory",
+                message: `Empty .SNL_Doc/${directory}/ requires an empty regular .gitkeep so the Extension-readable topology survives Git.`,
+                path: `.SNL_Doc/${directory}`
+            });
+        }
+    }
     let entries: Awaited<ReturnType<typeof readEntries>> = [];
     try { entries = await readEntries(root); }
     catch (error) {

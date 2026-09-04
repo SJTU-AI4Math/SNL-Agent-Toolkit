@@ -93,7 +93,7 @@ describe('snl init', () => {
     });
     assert.deepEqual(config.active_macro_packages, ['BasicMacros']);
 
-    const macroFiles = await readdir(path.join(doc, 'macros'));
+    const macroFiles = (await readdir(path.join(doc, 'macros'))).filter(file => file.endsWith('.json'));
     assert.equal(macroFiles.length, 7);
     const macros = await Promise.all(macroFiles.map(async file => (await readJson(path.join(doc, 'macros', file))).macro));
     assert.deepEqual(macros.map(macro => macro.name).sort(), [
@@ -111,8 +111,8 @@ describe('snl init', () => {
     assert.equal(display.styles[0].template.mode, 'formula_display');
     assert.equal(display.styles[0].template.markdown, '$$#0$$');
 
-    assert.equal((await readdir(path.join(doc, 'entries'))).length, 0);
-    assert.equal((await readdir(path.join(doc, 'libraries'))).length, 0);
+    assert.deepEqual(await readdir(path.join(doc, 'entries')), ['.gitkeep']);
+    assert.deepEqual(await readdir(path.join(doc, 'libraries')), ['.gitkeep']);
     const manifests = await Promise.all((await readdir(path.join(doc, 'packages')))
       .map(file => readJson(path.join(doc, 'packages', file))));
     assert.deepEqual(manifests.map(item => item.id).sort(), ['BasicMacros', '_unpackaged']);
@@ -133,6 +133,34 @@ describe('snl init', () => {
       library: 0,
     });
     assert.equal(await readFile(path.join(root, 'README.md'), 'utf8'), '# Existing repository\n');
+  });
+
+  it('fails validation when an empty schema directory would disappear from Git', async () => {
+    const root = await target();
+    assert.equal(run(root, ['init']).status, 0);
+    await rm(path.join(root, '.SNL_Doc', 'entries', '.gitkeep'), { force: true });
+    const call = run(root, ['validate']);
+    assert.equal(call.status, 1, call.stderr || call.stdout);
+    const body = result(call);
+    assert.equal(body.error.code, 'workspace.invalid');
+    assert.ok(body.error.details.issues.some((issue: any) =>
+      issue.code === 'workspace.git-empty-directory' && issue.path === '.SNL_Doc/entries'));
+  });
+
+  it('does not misreport a populated directory when a sibling directory is missing', async () => {
+    const root = await target();
+    assert.equal(run(root, ['init']).status, 0);
+    await Promise.all([
+      rm(path.join(root, '.SNL_Doc', 'entries'), { recursive: true }),
+      rm(path.join(root, '.SNL_Doc', 'libraries'), { recursive: true }),
+      rm(path.join(root, '.SNL_Doc', 'macros', '.gitkeep')),
+    ]);
+    const call = run(root, ['validate']);
+    assert.equal(call.status, 1, call.stderr || call.stdout);
+    const issues = result(call).error.details.issues as Array<{ code: string; path: string }>;
+    assert.ok(issues.some(issue => issue.path === '.SNL_Doc/entries'));
+    assert.equal(issues.some(issue =>
+      issue.code === 'workspace.git-empty-directory' && issue.path === '.SNL_Doc/macros'), false);
   });
 
   it('parses and installs Entries that exercise every initial Markdown Macro', async () => {

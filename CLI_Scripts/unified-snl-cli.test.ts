@@ -14,6 +14,7 @@ async function json(file:string,value:unknown){await mkdir(path.dirname(file),{r
 async function workspace(){
  const root=await mkdtemp(path.join(tmpdir(),'snl-unified-'));roots.push(root);const doc=path.join(root,'.SNL_Doc');
  await Promise.all(['entries','macros','packages','libraries'].map(d=>mkdir(path.join(doc,d),{recursive:true})));
+ await Promise.all(['macros','libraries'].map(d=>writeFile(path.join(doc,d,'.gitkeep'),'')));
  await json(path.join(doc,'config.json'),{version:'0.0.6',entry_kinds:[{id:'definition',name:'Definition',coloring:{stroke:'#000',background:'#fff'},style:''}],macro_kinds:[],active_macro_packages:[],entity_storage:{version:1,legacy_backup_version:'0.0.5',entry_default_package:'_unpackaged',receipt:makeEntityStorageReceipt(null,new Map(),false)}});
  await json(path.join(doc,packageManifestPath('_unpackaged')),{format:'snl-package',version:1,id:'_unpackaged',name:'Unpackaged',description:''});
  const entry={id:'entry.demo',package:'_unpackaged',kind:'definition',title:'Demo',content:{},contribution_info:null,pointer:null};

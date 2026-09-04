@@ -10,7 +10,6 @@
     "Skill.Author.sec.EntryKind",
     "Skill.Author.sec.Library",
     "Skill.Author.sec.Macro",
-    "Skill.checklist.md-Refinery",
     "Skill.CLI",
     "Skill.CLI.snl-batch",
     "Skill.CLI.snl-batch-apply",
@@ -182,6 +181,7 @@
     "Skill.SNLeco.sec.Concepts",
     "Skill.SNLeco.sec.DataSchema",
     "Skill.SNLeco.sec.PragmaticConcepts",
-    "Skill.VerifyFix"
+    "Skill.VerifyFix",
+    "Skill.checklist.md-Refinery"
   ]
 }

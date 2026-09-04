@@ -3740,6 +3740,9 @@ var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
 var CURRENT_ENTRY_SCHEMA_VERSION = 1;
 var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
+function compareCanonicalIds(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
 function semanticDigest(value) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
@@ -4070,7 +4073,7 @@ async function readEntries(workspaceRoot) {
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
+        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
         if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
           throw new Error(
             `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`
@@ -4187,7 +4190,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && entryIds[index - 1].localeCompare(entryId) > 0)) {
+      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );

@@ -2,10 +2,19 @@
 
 This manual records the normative CLI product surface. A command is currently implemented only when its canonical path appears in machine-readable `snl --help`; absent commands are planned contracts and must not be emulated with a different operation.
 
+JSON files used only as command input are local execution artifacts, not repository content. Keep them at a local-only path covered by `.gitignore`, or create them in an operating-system temporary directory outside the working repository and remove them after use. Never stage or commit such payloads merely because an `snl` command consumed them.
+
 ## `snl init`
 
 * `--root <path>`; optionally choose `--preset <built-in-preset-id>` or `--input <file|->`
 * `--json`
+
+Git tracks files, not empty directories. `snl init` therefore creates empty
+regular `.gitkeep` files in `.SNL_Doc/entries/`, `.SNL_Doc/macros/`, and
+`.SNL_Doc/libraries/`; they are topology placeholders rather than SNL entities.
+Stage them with the rest of `.SNL_Doc`. Otherwise an empty entity directory can
+exist locally, disappear after commit/clone, and make the Extension reject the
+workspace.
 
 ## `snl info`
 
@@ -16,6 +25,13 @@ This manual records the normative CLI product surface. A command is currently im
 
 * `--root <path>`
 * `--json`
+
+Validation includes Git-persistence topology. If an entity family has no
+persisted content, its directory must contain the canonical empty regular
+`.gitkeep`; otherwise validation fails with
+`workspace.git-empty-directory`. Before publication, reconstruct the staged Git
+tree and validate that checkout instead of relying only on the live working
+directory.
 
 ## `snl import`
 
