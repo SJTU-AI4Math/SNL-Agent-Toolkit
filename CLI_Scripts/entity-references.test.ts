@@ -505,12 +505,8 @@ describe('renameEntityId', () => {
     assert.equal((await findEntityReferences(root, 'macro', '__proto__')).length, 1);
   });
 
-  it('rejects a new id outside the SNL grammar when the old id has SNL references', async () => {
+  it('rejects a numeral literal as a destination when the old id has SNL references', async () => {
     const root = await fixture();
-    await assert.rejects(
-      renameEntityId(root, 'macro', 'Macro.old', '新名字'),
-      /not representable as an SNL identifier/,
-    );
     await assert.rejects(
       renameEntityId(root, 'macro', 'Macro.old', '1.2'),
       /not representable as an SNL identifier/,

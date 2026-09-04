@@ -14,10 +14,11 @@ declare const __SNL_CLI_EXECUTABLE__: boolean | undefined;
 interface ParsedCli { request?: OperationRequest; json: boolean; error?: string }
 function parseCli(argv: string[]): ParsedCli {
   let root = '.'; let json = false; let help = false; const positional: string[] = []; const args: JsonObject = {};
-  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--preset': 'preset', '--if-match': 'expectedRevision', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope' };
+  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--preset': 'preset', '--if-match': 'expectedRevision', '--to': 'to', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope' };
   for (let i=0;i<argv.length;i++) {
     const token=argv[i];
     if (token==='--json') { json=true; continue; }
+    if (token==='--dry-run') { args.dryRun=true; continue; }
     if (token==='--help' || token==='-h') { help=true; continue; }
     const key=Object.hasOwn(valueFlags, token) ? valueFlags[token] : undefined;
     if (key) { const value=argv[++i]; if(value===undefined)return{json,error:`${token} requires a value.`}; if(key==='root')root=value; else if(key==='limit')args.limit=Number(value); else args[key]=value; continue; }
@@ -31,7 +32,7 @@ function parseCli(argv: string[]): ParsedCli {
     if (action || rest.length) return {json,error:'init accepts no identity positional; use --preset <id> or --input <file|->.'};
   }
   if (command === 'validate' && args.scope === undefined) args.scope = 'workspace';
-  const knownActions = new Set(['list','get','create','update','delete']);
+  const knownActions = new Set(['list','get','create','update','rename','delete']);
   const singleIdentityActions = new Set(['latex','references','usages']);
   if (action && knownActions.has(action)) {
     if (action==='list' || action==='create') { if(rest.length)return{json,error:`${action} accepts no identity positional.`}; }

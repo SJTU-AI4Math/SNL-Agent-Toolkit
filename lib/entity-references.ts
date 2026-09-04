@@ -283,7 +283,7 @@ function materializeEntityPlan(submitted: unknown): RenamePlan {
     assertExactFields(occurrence, [...required, ...optional], `Entity rename plan.occurrences[${index}]`);
     if (occurrence.entityType !== 'entry' && occurrence.entityType !== 'macro') throw new Error('Invalid occurrence entityType.');
     if (occurrence.role !== 'definition' && occurrence.role !== 'reference') throw new Error('Invalid occurrence role.');
-    if (!['definition', 'snl', 'library-index', 'macro-source', 'relationship', 'generated-witness'].includes(occurrence.category as string)) {
+    if (!['definition', 'snl', 'library-index', 'macro-source', 'package-membership', 'relationship', 'generated-witness'].includes(occurrence.category as string)) {
       throw new Error('Invalid occurrence category.');
     }
     for (const field of ['id', 'file', 'path']) assertString(occurrence[field], `Entity occurrence.${field}`);
@@ -363,6 +363,8 @@ export async function findEntityReferences(
  */
 interface RenameOptions {
   dryRun?: boolean;
+  /** Exact source-definition revision from the public managed-entity read. */
+  expectedRevision?: string;
   beforeInstall?: () => void | Promise<void>;
   /** Test hook for deterministic non-cooperative write interleavings. */
   beforeInstallFile?: (relativePath: string) => void | Promise<void>;
@@ -638,6 +640,16 @@ async function renameEntityIdUnlocked(
     throw new Error(
       `Expected one ${entityType} definition for '${oldId}', found ${definitions.length}; resolve the identity collision before renaming.`,
     );
+  }
+  if (options.expectedRevision !== undefined) {
+    const definition = definitions[0];
+    const source = files.find((file) => file.relPath === definition.file);
+    const currentRevision = source === undefined ? '' : sha256(JSON.stringify(source.data));
+    if (currentRevision !== options.expectedRevision) {
+      throw new Error(
+        `Source ${entityType} revision does not match --if-match; reread the entity and retry.`,
+      );
+    }
   }
   if (
     occurrences.some((o) => o.path.endsWith('.content.snl')) &&
@@ -1632,10 +1644,11 @@ function validateNonEmptyIdentity(id: string): void {
 }
 
 function isTraceableSnlIdentity(entityType: EntityType, id: string): boolean {
-  const pattern = entityType === 'macro'
-    ? /^[A-Za-z_\\][A-Za-z0-9_.\-]*$/
-    : /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/;
-  return pattern.test(id);
+  if (entityType === 'entry') return /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/.test(id);
+  // SNL-Basics is the grammar authority. In particular, it accepts complete
+  // Unicode identifiers such as 文法.之; the old ASCII approximation rejected
+  // valid multi-code-point names. Numerals are parsed as literals, not refs.
+  return isSnlIdentifier(id) && !/^\d+(?:\.\d+)*$/.test(id);
 }
 
 function occurrence(

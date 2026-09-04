@@ -54,9 +54,10 @@ test('batch, rename, membership, occurrence, and artifact contracts bind their f
   assert.deepEqual(keys(get('CLI.snl-library-move--entry').request.arguments), ['beforeOccurrenceId', 'expectedRevision', 'id', 'occurrenceId', 'parentOccurrenceId']);
   assert.deepEqual(keys(get('CLI.snl-library-remove--entry').request.arguments), ['expectedRevision', 'id', 'occurrenceId']);
 
-  for (const id of ['CLI.snl-entry-rename', 'CLI.snl-macro-rename', 'CLI.snl-library-rename']) {
-    assert.deepEqual(keys(get(id).request.arguments), ['checkedDigest', 'dryRun', 'expectedRevision', 'expectedWorkspaceRevision', 'id', 'to']);
+  for (const id of ['CLI.snl-entry-rename', 'CLI.snl-macro-rename']) {
+    assert.deepEqual(keys(get(id).request.arguments), ['dryRun', 'expectedRevision', 'id', 'to']);
   }
+  assert.deepEqual(keys(get('CLI.snl-library-rename').request.arguments), ['checkedDigest', 'dryRun', 'expectedRevision', 'expectedWorkspaceRevision', 'id', 'to']);
   assert.deepEqual(keys(get('CLI.snl-entry-package-set').request.arguments), ['expectedDestinationPackageRevision', 'expectedEntryRevision', 'expectedSourcePackageRevision', 'id', 'package']);
   for (const id of ['CLI.snl-macro--package-add--member', 'CLI.snl-macro--package-remove--member']) {
     assert.deepEqual(keys(get(id).request.arguments), ['expectedMemberRevision', 'expectedPackageRevision', 'id', 'member']);

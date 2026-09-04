@@ -11,7 +11,7 @@ import {
 import { readConfig } from '../../lib/snl-doc.ts';
 import { querySnoogl } from '../../lib/snoogle-query.ts';
 import { computeEntryBareLatex, EntryAnalysisError } from '../../lib/entry-analysis.ts';
-import { findEntityReferences } from '../../lib/entity-references.ts';
+import { findEntityReferences, renameEntityId } from '../../lib/entity-references.ts';
 import { macroEntityPath } from '../../lib/entity-storage.ts';
 import { initializeWorkspace, InitWorkspaceError } from '../../lib/init-workspace.ts';
 import { BUILTIN_INIT_PRESET_DESCRIPTORS } from '../../lib/init-presets.ts';
@@ -35,6 +35,7 @@ export const COMMAND_PATHS = Object.freeze([
   'help', 'init', 'info', 'validate',
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
   'snoogl', 'entry/latex', 'entry/references', 'macro/usages', 'repair/package-entry-ids',
+  'entry/rename', 'macro/rename',
 ]);
 type CommandDescriptor = { command: string; access: 'read' | 'write'; arguments: Record<string, { type: string; required: boolean }>; summary: string };
 const field = (type: string, required: boolean) => ({ type, required });
@@ -45,6 +46,7 @@ function describeCommand(command: string): CommandDescriptor {
   if (action === 'create') return { command, access: 'write', arguments: { value: field('object', true) }, summary: 'Create one validated managed entity.' };
   if (action === 'update') return { command, access: 'write', arguments: { id: field('string', true), value: field('object', true), expectedRevision: field('string', true) }, summary: 'Replace one managed entity under revision control.' };
   if (action === 'delete') return { command, access: 'write', arguments: { id: field('string', true), expectedRevision: field('string', true) }, summary: 'Delete one managed entity under revision control.' };
+  if (action === 'rename') return { command, access: 'write', arguments: { id: field('string', true), to: field('string', true), expectedRevision: field('string', true), dryRun: field('boolean', false) }, summary: 'Rename one identity and all owned references under revision control.' };
   if (command === 'entry/latex') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Render one Entry as bare LaTeX.' };
   if (command === 'repair/package-entry-ids') return { command, access: 'write', arguments: { id: field('string', true) }, summary: 'Rebuild one Package Entry membership index from canonical Entry envelopes.' };
   if (command === 'entry/references' || command === 'macro/usages') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Find structured references to one existing identity.' };
@@ -180,6 +182,40 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     }
     const action = tokens[1];
     const args = request.arguments;
+    if (action === 'rename') {
+      if (type !== 'entry' && type !== 'macro') return operationFailure(command, 2, 'command.unknown', `Unknown command ${JSON.stringify(command)}.`);
+      exactArguments(args, ['id', 'to', 'expectedRevision', 'dryRun']);
+      const id = stringArg(args, 'id')!;
+      const to = stringArg(args, 'to')!;
+      const expectedRevision = stringArg(args, 'expectedRevision')!;
+      const dryRun = own(args, 'dryRun') ? args.dryRun : false;
+      if (typeof dryRun !== 'boolean') throw new TypeError('dryRun must be a boolean.');
+      const candidates = type === 'entry'
+        ? [await getManagedEntity(request.root, type, id)].filter((item): item is NonNullable<typeof item> => item !== undefined)
+        : (await listManagedEntities(request.root, type)).filter(item => item.value.name === id);
+      if (candidates.length === 0) return operationFailure(command, 1, 'entity.not-found', `${type} ${JSON.stringify(id)} does not exist.`);
+      if (candidates.length !== 1) return operationFailure(command, 1, 'entity.identity-collision', `${type} ${JSON.stringify(id)} has ${candidates.length} definitions; resolve the collision before renaming.`);
+      if (candidates[0].revision !== expectedRevision) return operationFailure(command, 1, 'entity.revision-conflict', `${type} ${JSON.stringify(id)} changed; reread it and retry.`);
+      try {
+        const plan = await renameEntityId(request.root, type, id, to, { dryRun, expectedRevision });
+        if (dryRun) return succeed(command, { ...plan, dryRun: true });
+        const renamedId = type === 'entry' ? to : `${String(candidates[0].value.package)}::${to}`;
+        const entity = await getManagedEntity(request.root, type, renamedId);
+        if (!entity) return operationFailure(command, 2, 'workspace.operation-failed', 'Rename committed but canonical readback failed.');
+        return succeed(command, { ...plan, dryRun: false, entity });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (/revision does not match|changed during rename planning|plan is stale/i.test(message))
+          return operationFailure(command, 1, 'entity.revision-conflict', message);
+        if (/already appears|destination already exists|collision/i.test(message))
+          return operationFailure(command, 1, 'entity.identity-collision', message);
+        if (/No (?:entry|macro) definition found/i.test(message))
+          return operationFailure(command, 1, 'entity.not-found', message);
+        if (/not representable|forbidden|identical|malformed|expected one|post-write verification/i.test(message))
+          return operationFailure(command, 1, 'entity.invalid', message);
+        throw error;
+      }
+    }
     if (action === 'list') {
       exactArguments(args, ['query', 'limit', 'cursor']);
       const query = stringArg(args, 'query', false)?.toLocaleLowerCase();

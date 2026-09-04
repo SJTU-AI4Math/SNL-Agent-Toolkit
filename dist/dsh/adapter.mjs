@@ -11071,85 +11071,85 @@ var doubleVerts = /* @__PURE__ */ new Set(["\\|", "\\lVert", "\\rVert", "\\Vert"
 var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, options, mode, classes) {
   var top;
   var middle;
-  var repeat;
+  var repeat2;
   var bottom;
   var svgLabel = "";
   var viewBoxWidth = 0;
-  top = repeat = bottom = delim;
+  top = repeat2 = bottom = delim;
   middle = null;
   var font = "Size1-Regular";
   if (delim === "\\uparrow") {
-    repeat = bottom = "\u23D0";
+    repeat2 = bottom = "\u23D0";
   } else if (delim === "\\Uparrow") {
-    repeat = bottom = "\u2016";
+    repeat2 = bottom = "\u2016";
   } else if (delim === "\\downarrow") {
-    top = repeat = "\u23D0";
+    top = repeat2 = "\u23D0";
   } else if (delim === "\\Downarrow") {
-    top = repeat = "\u2016";
+    top = repeat2 = "\u2016";
   } else if (delim === "\\updownarrow") {
     top = "\\uparrow";
-    repeat = "\u23D0";
+    repeat2 = "\u23D0";
     bottom = "\\downarrow";
   } else if (delim === "\\Updownarrow") {
     top = "\\Uparrow";
-    repeat = "\u2016";
+    repeat2 = "\u2016";
     bottom = "\\Downarrow";
   } else if (verts.has(delim)) {
-    repeat = "\u2223";
+    repeat2 = "\u2223";
     svgLabel = "vert";
     viewBoxWidth = 333;
   } else if (doubleVerts.has(delim)) {
-    repeat = "\u2225";
+    repeat2 = "\u2225";
     svgLabel = "doublevert";
     viewBoxWidth = 556;
   } else if (delim === "[" || delim === "\\lbrack") {
     top = "\u23A1";
-    repeat = "\u23A2";
+    repeat2 = "\u23A2";
     bottom = "\u23A3";
     font = "Size4-Regular";
     svgLabel = "lbrack";
     viewBoxWidth = 667;
   } else if (delim === "]" || delim === "\\rbrack") {
     top = "\u23A4";
-    repeat = "\u23A5";
+    repeat2 = "\u23A5";
     bottom = "\u23A6";
     font = "Size4-Regular";
     svgLabel = "rbrack";
     viewBoxWidth = 667;
   } else if (delim === "\\lfloor" || delim === "\u230A") {
-    repeat = top = "\u23A2";
+    repeat2 = top = "\u23A2";
     bottom = "\u23A3";
     font = "Size4-Regular";
     svgLabel = "lfloor";
     viewBoxWidth = 667;
   } else if (delim === "\\lceil" || delim === "\u2308") {
     top = "\u23A1";
-    repeat = bottom = "\u23A2";
+    repeat2 = bottom = "\u23A2";
     font = "Size4-Regular";
     svgLabel = "lceil";
     viewBoxWidth = 667;
   } else if (delim === "\\rfloor" || delim === "\u230B") {
-    repeat = top = "\u23A5";
+    repeat2 = top = "\u23A5";
     bottom = "\u23A6";
     font = "Size4-Regular";
     svgLabel = "rfloor";
     viewBoxWidth = 667;
   } else if (delim === "\\rceil" || delim === "\u2309") {
     top = "\u23A4";
-    repeat = bottom = "\u23A5";
+    repeat2 = bottom = "\u23A5";
     font = "Size4-Regular";
     svgLabel = "rceil";
     viewBoxWidth = 667;
   } else if (delim === "(" || delim === "\\lparen") {
     top = "\u239B";
-    repeat = "\u239C";
+    repeat2 = "\u239C";
     bottom = "\u239D";
     font = "Size4-Regular";
     svgLabel = "lparen";
     viewBoxWidth = 875;
   } else if (delim === ")" || delim === "\\rparen") {
     top = "\u239E";
-    repeat = "\u239F";
+    repeat2 = "\u239F";
     bottom = "\u23A0";
     font = "Size4-Regular";
     svgLabel = "rparen";
@@ -11158,38 +11158,38 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     top = "\u23A7";
     middle = "\u23A8";
     bottom = "\u23A9";
-    repeat = "\u23AA";
+    repeat2 = "\u23AA";
     font = "Size4-Regular";
   } else if (delim === "\\}" || delim === "\\rbrace") {
     top = "\u23AB";
     middle = "\u23AC";
     bottom = "\u23AD";
-    repeat = "\u23AA";
+    repeat2 = "\u23AA";
     font = "Size4-Regular";
   } else if (delim === "\\lgroup" || delim === "\u27EE") {
     top = "\u23A7";
     bottom = "\u23A9";
-    repeat = "\u23AA";
+    repeat2 = "\u23AA";
     font = "Size4-Regular";
   } else if (delim === "\\rgroup" || delim === "\u27EF") {
     top = "\u23AB";
     bottom = "\u23AD";
-    repeat = "\u23AA";
+    repeat2 = "\u23AA";
     font = "Size4-Regular";
   } else if (delim === "\\lmoustache" || delim === "\u23B0") {
     top = "\u23A7";
     bottom = "\u23AD";
-    repeat = "\u23AA";
+    repeat2 = "\u23AA";
     font = "Size4-Regular";
   } else if (delim === "\\rmoustache" || delim === "\u23B1") {
     top = "\u23AB";
     bottom = "\u23A9";
-    repeat = "\u23AA";
+    repeat2 = "\u23AA";
     font = "Size4-Regular";
   }
   var topMetrics = getMetrics(top, font, mode);
   var topHeightTotal = topMetrics.height + topMetrics.depth;
-  var repeatMetrics = getMetrics(repeat, font, mode);
+  var repeatMetrics = getMetrics(repeat2, font, mode);
   var repeatHeightTotal = repeatMetrics.height + repeatMetrics.depth;
   var bottomMetrics = getMetrics(bottom, font, mode);
   var bottomHeightTotal = bottomMetrics.height + bottomMetrics.depth;
@@ -11234,14 +11234,14 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     stack.push(lap);
     if (middle === null) {
       var innerHeight = realHeightTotal - topHeightTotal - bottomHeightTotal + 2 * lapInEms;
-      stack.push(makeInner(repeat, innerHeight, options));
+      stack.push(makeInner(repeat2, innerHeight, options));
     } else {
       var _innerHeight = (realHeightTotal - topHeightTotal - bottomHeightTotal - middleHeightTotal) / 2 + 2 * lapInEms;
-      stack.push(makeInner(repeat, _innerHeight, options));
+      stack.push(makeInner(repeat2, _innerHeight, options));
       stack.push(lap);
       stack.push(makeGlyphSpan(middle, font, mode));
       stack.push(lap);
-      stack.push(makeInner(repeat, _innerHeight, options));
+      stack.push(makeInner(repeat2, _innerHeight, options));
     }
     stack.push(lap);
     stack.push(makeGlyphSpan(top, font, mode));
@@ -19946,7 +19946,7 @@ async function computeEntryBareLatex(root, id) {
 }
 
 // lib/entity-crud.ts
-import { createHash as createHash2, randomUUID as randomUUID3 } from "node:crypto";
+import { createHash as createHash3, randomUUID as randomUUID3 } from "node:crypto";
 import { constants as constants5, promises as fs5 } from "node:fs";
 import path7 from "node:path";
 
@@ -20725,6 +20725,7 @@ function describe3(v3) {
 import { constants as constants3 } from "node:fs";
 import { promises as fs3 } from "node:fs";
 import * as path5 from "node:path";
+import { createHash as createHash2 } from "node:crypto";
 
 // node_modules/jsonc-parser/lib/esm/impl/scanner.js
 function createScanner(text2, ignoreTrivia = false) {
@@ -21176,6 +21177,243 @@ var cachedBreakLinesWithSpaces = {
     })
   }
 };
+var supportedEols = ["\n", "\r", "\r\n"];
+
+// node_modules/jsonc-parser/lib/esm/impl/format.js
+function format(documentText, range, options) {
+  let initialIndentLevel;
+  let formatText;
+  let formatTextStart;
+  let rangeStart;
+  let rangeEnd;
+  if (range) {
+    rangeStart = range.offset;
+    rangeEnd = rangeStart + range.length;
+    formatTextStart = rangeStart;
+    while (formatTextStart > 0 && !isEOL(documentText, formatTextStart - 1)) {
+      formatTextStart--;
+    }
+    let endOffset = rangeEnd;
+    while (endOffset < documentText.length && !isEOL(documentText, endOffset)) {
+      endOffset++;
+    }
+    formatText = documentText.substring(formatTextStart, endOffset);
+    initialIndentLevel = computeIndentLevel(formatText, options);
+  } else {
+    formatText = documentText;
+    initialIndentLevel = 0;
+    formatTextStart = 0;
+    rangeStart = 0;
+    rangeEnd = documentText.length;
+  }
+  const eol = getEOL(options, documentText);
+  const eolFastPathSupported = supportedEols.includes(eol);
+  let numberLineBreaks = 0;
+  let indentLevel = 0;
+  let indentValue;
+  if (options.insertSpaces) {
+    indentValue = cachedSpaces[options.tabSize || 4] ?? repeat(cachedSpaces[1], options.tabSize || 4);
+  } else {
+    indentValue = "	";
+  }
+  const indentType = indentValue === "	" ? "	" : " ";
+  let scanner = createScanner(formatText, false);
+  let hasError = false;
+  function newLinesAndIndent() {
+    if (numberLineBreaks > 1) {
+      return repeat(eol, numberLineBreaks) + repeat(indentValue, initialIndentLevel + indentLevel);
+    }
+    const amountOfSpaces = indentValue.length * (initialIndentLevel + indentLevel);
+    if (!eolFastPathSupported || amountOfSpaces > cachedBreakLinesWithSpaces[indentType][eol].length) {
+      return eol + repeat(indentValue, initialIndentLevel + indentLevel);
+    }
+    if (amountOfSpaces <= 0) {
+      return eol;
+    }
+    return cachedBreakLinesWithSpaces[indentType][eol][amountOfSpaces];
+  }
+  function scanNext() {
+    let token = scanner.scan();
+    numberLineBreaks = 0;
+    while (token === 15 || token === 14) {
+      if (token === 14 && options.keepLines) {
+        numberLineBreaks += 1;
+      } else if (token === 14) {
+        numberLineBreaks = 1;
+      }
+      token = scanner.scan();
+    }
+    hasError = token === 16 || scanner.getTokenError() !== 0;
+    return token;
+  }
+  const editOperations = [];
+  function addEdit(text2, startOffset, endOffset) {
+    if (!hasError && (!range || startOffset < rangeEnd && endOffset > rangeStart) && documentText.substring(startOffset, endOffset) !== text2) {
+      editOperations.push({ offset: startOffset, length: endOffset - startOffset, content: text2 });
+    }
+  }
+  let firstToken = scanNext();
+  if (options.keepLines && numberLineBreaks > 0) {
+    addEdit(repeat(eol, numberLineBreaks), 0, 0);
+  }
+  if (firstToken !== 17) {
+    let firstTokenStart = scanner.getTokenOffset() + formatTextStart;
+    let initialIndent = indentValue.length * initialIndentLevel < 20 && options.insertSpaces ? cachedSpaces[indentValue.length * initialIndentLevel] : repeat(indentValue, initialIndentLevel);
+    addEdit(initialIndent, formatTextStart, firstTokenStart);
+  }
+  while (firstToken !== 17) {
+    let firstTokenEnd = scanner.getTokenOffset() + scanner.getTokenLength() + formatTextStart;
+    let secondToken = scanNext();
+    let replaceContent = "";
+    let needsLineBreak = false;
+    while (numberLineBreaks === 0 && (secondToken === 12 || secondToken === 13)) {
+      let commentTokenStart = scanner.getTokenOffset() + formatTextStart;
+      addEdit(cachedSpaces[1], firstTokenEnd, commentTokenStart);
+      firstTokenEnd = scanner.getTokenOffset() + scanner.getTokenLength() + formatTextStart;
+      needsLineBreak = secondToken === 12;
+      replaceContent = needsLineBreak ? newLinesAndIndent() : "";
+      secondToken = scanNext();
+    }
+    if (secondToken === 2) {
+      if (firstToken !== 1) {
+        indentLevel--;
+      }
+      ;
+      if (options.keepLines && numberLineBreaks > 0 || !options.keepLines && firstToken !== 1) {
+        replaceContent = newLinesAndIndent();
+      } else if (options.keepLines) {
+        replaceContent = cachedSpaces[1];
+      }
+    } else if (secondToken === 4) {
+      if (firstToken !== 3) {
+        indentLevel--;
+      }
+      ;
+      if (options.keepLines && numberLineBreaks > 0 || !options.keepLines && firstToken !== 3) {
+        replaceContent = newLinesAndIndent();
+      } else if (options.keepLines) {
+        replaceContent = cachedSpaces[1];
+      }
+    } else {
+      switch (firstToken) {
+        case 3:
+        case 1:
+          indentLevel++;
+          if (options.keepLines && numberLineBreaks > 0 || !options.keepLines) {
+            replaceContent = newLinesAndIndent();
+          } else {
+            replaceContent = cachedSpaces[1];
+          }
+          break;
+        case 5:
+          if (options.keepLines && numberLineBreaks > 0 || !options.keepLines) {
+            replaceContent = newLinesAndIndent();
+          } else {
+            replaceContent = cachedSpaces[1];
+          }
+          break;
+        case 12:
+          replaceContent = newLinesAndIndent();
+          break;
+        case 13:
+          if (numberLineBreaks > 0) {
+            replaceContent = newLinesAndIndent();
+          } else if (!needsLineBreak) {
+            replaceContent = cachedSpaces[1];
+          }
+          break;
+        case 6:
+          if (options.keepLines && numberLineBreaks > 0) {
+            replaceContent = newLinesAndIndent();
+          } else if (!needsLineBreak) {
+            replaceContent = cachedSpaces[1];
+          }
+          break;
+        case 10:
+          if (options.keepLines && numberLineBreaks > 0) {
+            replaceContent = newLinesAndIndent();
+          } else if (secondToken === 6 && !needsLineBreak) {
+            replaceContent = "";
+          }
+          break;
+        case 7:
+        case 8:
+        case 9:
+        case 11:
+        case 2:
+        case 4:
+          if (options.keepLines && numberLineBreaks > 0) {
+            replaceContent = newLinesAndIndent();
+          } else {
+            if ((secondToken === 12 || secondToken === 13) && !needsLineBreak) {
+              replaceContent = cachedSpaces[1];
+            } else if (secondToken !== 5 && secondToken !== 17) {
+              hasError = true;
+            }
+          }
+          break;
+        case 16:
+          hasError = true;
+          break;
+      }
+      if (numberLineBreaks > 0 && (secondToken === 12 || secondToken === 13)) {
+        replaceContent = newLinesAndIndent();
+      }
+    }
+    if (secondToken === 17) {
+      if (options.keepLines && numberLineBreaks > 0) {
+        replaceContent = newLinesAndIndent();
+      } else {
+        replaceContent = options.insertFinalNewline ? eol : "";
+      }
+    }
+    const secondTokenStart = scanner.getTokenOffset() + formatTextStart;
+    addEdit(replaceContent, firstTokenEnd, secondTokenStart);
+    firstToken = secondToken;
+  }
+  return editOperations;
+}
+function repeat(s4, count) {
+  let result = "";
+  for (let i5 = 0; i5 < count; i5++) {
+    result += s4;
+  }
+  return result;
+}
+function computeIndentLevel(content, options) {
+  let i5 = 0;
+  let nChars = 0;
+  const tabSize = options.tabSize || 4;
+  while (i5 < content.length) {
+    let ch2 = content.charAt(i5);
+    if (ch2 === cachedSpaces[1]) {
+      nChars++;
+    } else if (ch2 === "	") {
+      nChars += tabSize;
+    } else {
+      break;
+    }
+    i5++;
+  }
+  return Math.floor(nChars / tabSize);
+}
+function getEOL(options, text2) {
+  for (let i5 = 0; i5 < text2.length; i5++) {
+    const ch2 = text2.charAt(i5);
+    if (ch2 === "\r") {
+      if (i5 + 1 < text2.length && text2.charAt(i5 + 1) === "\n") {
+        return "\r\n";
+      }
+      return "\r";
+    } else if (ch2 === "\n") {
+      return "\n";
+    }
+  }
+  return options && options.eol || "\n";
+}
+function isEOL(text2, offset) {
+  return "\r\n".indexOf(text2.charAt(offset)) !== -1;
+}
 
 // node_modules/jsonc-parser/lib/esm/impl/parser.js
 var ParseOptions;
@@ -21241,6 +21479,37 @@ function parseTree3(text2, errors = [], options = ParseOptions.DEFAULT) {
     delete result.parent;
   }
   return result;
+}
+function findNodeAtLocation(root, path11) {
+  if (!root) {
+    return void 0;
+  }
+  let node = root;
+  for (let segment of path11) {
+    if (typeof segment === "string") {
+      if (node.type !== "object" || !Array.isArray(node.children)) {
+        return void 0;
+      }
+      let found = false;
+      for (const propertyNode of node.children) {
+        if (Array.isArray(propertyNode.children) && propertyNode.children[0].value === segment && propertyNode.children.length === 2) {
+          node = propertyNode.children[1];
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return void 0;
+      }
+    } else {
+      const index = segment;
+      if (node.type !== "array" || index < 0 || !Array.isArray(node.children) || index >= node.children.length) {
+        return void 0;
+      }
+      node = node.children[index];
+    }
+  }
+  return node;
 }
 function visit(text2, visitor, options = ParseOptions.DEFAULT) {
   const _scanner = createScanner(text2, false);
@@ -21568,6 +21837,150 @@ function getNodeType(value) {
   }
 }
 
+// node_modules/jsonc-parser/lib/esm/impl/edit.js
+function setProperty(text2, originalPath, value, options) {
+  const path11 = originalPath.slice();
+  const errors = [];
+  const root = parseTree3(text2, errors);
+  let parent = void 0;
+  let lastSegment = void 0;
+  while (path11.length > 0) {
+    lastSegment = path11.pop();
+    parent = findNodeAtLocation(root, path11);
+    if (parent === void 0 && value !== void 0) {
+      if (typeof lastSegment === "string") {
+        value = { [lastSegment]: value };
+      } else {
+        value = [value];
+      }
+    } else {
+      break;
+    }
+  }
+  if (!parent) {
+    if (value === void 0) {
+      throw new Error("Can not delete in empty document");
+    }
+    return withFormatting(text2, { offset: root ? root.offset : 0, length: root ? root.length : 0, content: JSON.stringify(value) }, options);
+  } else if (parent.type === "object" && typeof lastSegment === "string" && Array.isArray(parent.children)) {
+    const existing = findNodeAtLocation(parent, [lastSegment]);
+    if (existing !== void 0) {
+      if (value === void 0) {
+        if (!existing.parent) {
+          throw new Error("Malformed AST");
+        }
+        const propertyIndex = parent.children.indexOf(existing.parent);
+        let removeBegin;
+        let removeEnd = existing.parent.offset + existing.parent.length;
+        if (propertyIndex > 0) {
+          let previous = parent.children[propertyIndex - 1];
+          removeBegin = previous.offset + previous.length;
+        } else {
+          removeBegin = parent.offset + 1;
+          if (parent.children.length > 1) {
+            let next = parent.children[1];
+            removeEnd = next.offset;
+          }
+        }
+        return withFormatting(text2, { offset: removeBegin, length: removeEnd - removeBegin, content: "" }, options);
+      } else {
+        return withFormatting(text2, { offset: existing.offset, length: existing.length, content: JSON.stringify(value) }, options);
+      }
+    } else {
+      if (value === void 0) {
+        return [];
+      }
+      const newProperty = `${JSON.stringify(lastSegment)}: ${JSON.stringify(value)}`;
+      const index = options.getInsertionIndex ? options.getInsertionIndex(parent.children.map((p3) => p3.children[0].value)) : parent.children.length;
+      let edit;
+      if (index > 0) {
+        let previous = parent.children[index - 1];
+        edit = { offset: previous.offset + previous.length, length: 0, content: "," + newProperty };
+      } else if (parent.children.length === 0) {
+        edit = { offset: parent.offset + 1, length: 0, content: newProperty };
+      } else {
+        edit = { offset: parent.offset + 1, length: 0, content: newProperty + "," };
+      }
+      return withFormatting(text2, edit, options);
+    }
+  } else if (parent.type === "array" && typeof lastSegment === "number" && Array.isArray(parent.children)) {
+    const insertIndex = lastSegment;
+    if (insertIndex === -1) {
+      const newProperty = `${JSON.stringify(value)}`;
+      let edit;
+      if (parent.children.length === 0) {
+        edit = { offset: parent.offset + 1, length: 0, content: newProperty };
+      } else {
+        const previous = parent.children[parent.children.length - 1];
+        edit = { offset: previous.offset + previous.length, length: 0, content: "," + newProperty };
+      }
+      return withFormatting(text2, edit, options);
+    } else if (value === void 0 && parent.children.length >= 0) {
+      const removalIndex = lastSegment;
+      const toRemove = parent.children[removalIndex];
+      let edit;
+      if (parent.children.length === 1) {
+        edit = { offset: parent.offset + 1, length: parent.length - 2, content: "" };
+      } else if (parent.children.length - 1 === removalIndex) {
+        let previous = parent.children[removalIndex - 1];
+        let offset = previous.offset + previous.length;
+        let parentEndOffset = parent.offset + parent.length;
+        edit = { offset, length: parentEndOffset - 2 - offset, content: "" };
+      } else {
+        edit = { offset: toRemove.offset, length: parent.children[removalIndex + 1].offset - toRemove.offset, content: "" };
+      }
+      return withFormatting(text2, edit, options);
+    } else if (value !== void 0) {
+      let edit;
+      const newProperty = `${JSON.stringify(value)}`;
+      if (!options.isArrayInsertion && parent.children.length > lastSegment) {
+        const toModify = parent.children[lastSegment];
+        edit = { offset: toModify.offset, length: toModify.length, content: newProperty };
+      } else if (parent.children.length === 0 || lastSegment === 0) {
+        edit = { offset: parent.offset + 1, length: 0, content: parent.children.length === 0 ? newProperty : newProperty + "," };
+      } else {
+        const index = lastSegment > parent.children.length ? parent.children.length : lastSegment;
+        const previous = parent.children[index - 1];
+        edit = { offset: previous.offset + previous.length, length: 0, content: "," + newProperty };
+      }
+      return withFormatting(text2, edit, options);
+    } else {
+      throw new Error(`Can not ${value === void 0 ? "remove" : options.isArrayInsertion ? "insert" : "modify"} Array index ${insertIndex} as length is not sufficient`);
+    }
+  } else {
+    throw new Error(`Can not add ${typeof lastSegment !== "number" ? "index" : "property"} to parent of type ${parent.type}`);
+  }
+}
+function withFormatting(text2, edit, options) {
+  if (!options.formattingOptions) {
+    return [edit];
+  }
+  let newText = applyEdit(text2, edit);
+  let begin = edit.offset;
+  let end = edit.offset + edit.content.length;
+  if (edit.length === 0 || edit.content.length === 0) {
+    while (begin > 0 && !isEOL(newText, begin - 1)) {
+      begin--;
+    }
+    while (end < newText.length && !isEOL(newText, end)) {
+      end++;
+    }
+  }
+  const edits = format(newText, { offset: begin, length: end - begin }, { ...options.formattingOptions, keepLines: false });
+  for (let i5 = edits.length - 1; i5 >= 0; i5--) {
+    const edit2 = edits[i5];
+    newText = applyEdit(newText, edit2);
+    begin = Math.min(begin, edit2.offset);
+    end = Math.max(end, edit2.offset + edit2.length);
+    end += edit2.content.length - edit2.length;
+  }
+  const editLength = text2.length - (newText.length - end) - begin;
+  return [{ offset: begin, length: editLength, content: newText.substring(begin, end) }];
+}
+function applyEdit(text2, edit) {
+  return text2.substring(0, edit.offset) + edit.content + text2.substring(edit.offset + edit.length);
+}
+
 // node_modules/jsonc-parser/lib/esm/main.js
 var ScanError;
 (function(ScanError2) {
@@ -21600,6 +22013,7 @@ var SyntaxKind;
   SyntaxKind2[SyntaxKind2["EOF"] = 17] = "EOF";
 })(SyntaxKind || (SyntaxKind = {}));
 var parseTree4 = parseTree3;
+var findNodeAtLocation2 = findNodeAtLocation;
 var ParseErrorCode;
 (function(ParseErrorCode2) {
   ParseErrorCode2[ParseErrorCode2["InvalidSymbol"] = 1] = "InvalidSymbol";
@@ -21655,6 +22069,29 @@ function printParseErrorCode(code) {
       return "InvalidCharacter";
   }
   return "<unknown ParseErrorCode>";
+}
+function modify(text2, path11, value, options) {
+  return setProperty(text2, path11, value, options);
+}
+function applyEdits(text2, edits) {
+  let sortedEdits = edits.slice(0).sort((a4, b4) => {
+    const diff = a4.offset - b4.offset;
+    if (diff === 0) {
+      return a4.length - b4.length;
+    }
+    return diff;
+  });
+  let lastModifiedOffset = text2.length;
+  for (let i5 = sortedEdits.length - 1; i5 >= 0; i5--) {
+    let e2 = sortedEdits[i5];
+    if (e2.offset + e2.length <= lastModifiedOffset) {
+      text2 = applyEdit(text2, e2);
+    } else {
+      throw new Error("Overlapping edit");
+    }
+    lastModifiedOffset = e2.offset;
+  }
+  return text2;
 }
 
 // lib/workspace-data-lock.ts
@@ -21740,11 +22177,217 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
 }
 
 // lib/entity-references.ts
+function sha256(value) {
+  return createHash2("sha256").update(value).digest("hex");
+}
+function comparePlannedOutput(left, right) {
+  return left.sourceFile.localeCompare(right.sourceFile) || left.targetFile.localeCompare(right.targetFile) || left.sha256.localeCompare(right.sha256);
+}
+function canonicalJson(value) {
+  if (value === void 0 || typeof value === "function" || typeof value === "symbol") return void 0;
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => canonicalJson(item) ?? "null").join(",")}]`;
+  }
+  const fields = Object.keys(value).sort().flatMap((key) => {
+    const encoded = canonicalJson(value[key]);
+    return encoded === void 0 ? [] : [`${JSON.stringify(key)}:${encoded}`];
+  });
+  return `{${fields.join(",")}}`;
+}
+function planFingerprint(plan) {
+  const payload = Object.fromEntries(Object.entries(plan).filter(([key]) => key !== "fingerprint"));
+  return sha256(canonicalJson(payload) ?? "");
+}
+function fingerprintPlan(payload) {
+  const plan = payload;
+  plan.fingerprint = planFingerprint(plan);
+  return plan;
+}
+function sameCanonicalPlan(left, right) {
+  return canonicalJson(left) === canonicalJson(right);
+}
 async function findEntityReferences(workspaceRoot, entityType2, id) {
   const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
   validateNonEmptyIdentity(id);
   const files = await loadWorkspaceJson(canonicalWorkspace);
   return collectOccurrences(files, entityType2, id).sort(compareOccurrence);
+}
+async function renameEntityId(workspaceRoot, entityType2, oldId, newId, options = {}) {
+  const canonicalWorkspace = await validateWorkspaceBoundary(workspaceRoot);
+  if (options.dryRun) {
+    return renameEntityIdUnlocked(canonicalWorkspace, entityType2, oldId, newId, options);
+  }
+  return withWorkspaceDataLock(canonicalWorkspace, `rename ${entityType2} identity`, () => renameEntityIdUnlocked(canonicalWorkspace, entityType2, oldId, newId, options));
+}
+async function renameEntityIdUnlocked(canonicalWorkspace, entityType2, oldId, newId, options, expectedPlan) {
+  validateNonEmptyIdentity(oldId);
+  validateNonEmptyIdentity(newId);
+  if (entityType2 === "macro" && /[@#$%\s()[\]{}]/u.test(newId)) {
+    throw new Error(
+      `Macro id '${newId}' contains a character forbidden by the SNL-Doc macro schema.`
+    );
+  }
+  if (oldId === newId) throw new Error("Old and new ids are identical.");
+  const files = await loadWorkspaceJson(canonicalWorkspace);
+  const occurrences = collectOccurrences(files, entityType2, oldId).sort(compareOccurrence);
+  const definitions = occurrences.filter((o4) => o4.role === "definition");
+  if (definitions.length === 0) {
+    throw new Error(`No ${entityType2} definition found for '${oldId}'.`);
+  }
+  if (definitions.length !== 1) {
+    throw new Error(
+      `Expected one ${entityType2} definition for '${oldId}', found ${definitions.length}; resolve the identity collision before renaming.`
+    );
+  }
+  if (options.expectedRevision !== void 0) {
+    const definition = definitions[0];
+    const source = files.find((file) => file.relPath === definition.file);
+    const currentRevision = source === void 0 ? "" : sha256(JSON.stringify(source.data));
+    if (currentRevision !== options.expectedRevision) {
+      throw new Error(
+        `Source ${entityType2} revision does not match --if-match; reread the entity and retry.`
+      );
+    }
+  }
+  if (occurrences.some((o4) => o4.path.endsWith(".content.snl")) && !isTraceableSnlIdentity(entityType2, newId)) {
+    throw new Error(
+      `${entityType2} id '${newId}' is not representable as an SNL identifier, but '${oldId}' has SNL references.`
+    );
+  }
+  const destinationOccurrences = collectOccurrences(files, entityType2, newId, {
+    includeUnresolvedMacroTokens: entityType2 === "macro"
+  });
+  if (destinationOccurrences.length > 0) {
+    throw new Error(
+      `${entityType2} id '${newId}' already appears in ${destinationOccurrences.length} structured location(s); refusing to merge two identities.`
+    );
+  }
+  const rewriteSnlMacroTokens = entityType2 !== "macro" || macroIsActive(files, oldId);
+  const currentWorkspace = usesCurrentEntitySchemas(files.find((file) => file.relPath === "config.json")?.data);
+  const changed = /* @__PURE__ */ new Map();
+  for (const file of files) {
+    const edits = buildStructuredEdits(
+      file,
+      entityType2,
+      oldId,
+      newId,
+      rewriteSnlMacroTokens
+    );
+    if (edits.length > 0) {
+      let targetRelPath = file.relPath;
+      if (entityType2 === "entry" && /^entries\/[^/]+\.json$/.test(file.relPath) && file.data?.entry?.id === oldId) {
+        targetRelPath = entryEntityPath(file.data.package, newId);
+      } else if (entityType2 === "macro" && /^macros\/[^/]+\.json$/.test(file.relPath) && file.data?.macro?.name === oldId) {
+        targetRelPath = macroEntityPath(file.data.package, newId);
+      }
+      let next = applyTextEdits(file.raw, edits);
+      if (currentWorkspace && /^entries\/[^/]+\.json$/.test(file.relPath)) {
+        next = stampSchemaVersion(next, CURRENT_ENTRY_SCHEMA_VERSION);
+      } else if (currentWorkspace && /^macros\/[^/]+\.json$/.test(file.relPath)) {
+        next = stampSchemaVersion(next, CURRENT_MACRO_SCHEMA_VERSION);
+      }
+      changed.set(file.absPath, {
+        ...file,
+        next,
+        targetAbsPath: path5.join(file.docRoot, targetRelPath),
+        targetRelPath
+      });
+    }
+  }
+  const plan = fingerprintPlan({
+    entityType: entityType2,
+    oldId,
+    newId,
+    occurrences,
+    changedFiles: [...changed.values()].map((f) => f.targetRelPath).sort(),
+    sourceRevisions: files.map((file) => ({
+      file: file.relPath,
+      sha256: createHash2("sha256").update(file.raw).digest("hex")
+    })),
+    plannedOutputs: [...changed.values()].map((file) => ({
+      sourceFile: file.relPath,
+      targetFile: file.targetRelPath,
+      sha256: sha256(file.next)
+    })).sort(comparePlannedOutput)
+  });
+  if (expectedPlan && !sameCanonicalPlan(plan, expectedPlan)) {
+    throw new Error("Rename plan is stale because workspace sources or planned outputs changed; rescan before applying.");
+  }
+  if (options.dryRun || changed.size === 0) return plan;
+  const replacements = [...changed.values()].map((file) => ({
+    ...file,
+    temp: `${file.targetAbsPath}.snl-rename-${process.pid}-${Math.random().toString(16).slice(2)}.tmp`
+  }));
+  try {
+    await Promise.all(
+      replacements.map(async (file) => {
+        await assertCanonicalDirectory2(path5.dirname(file.targetAbsPath), file.docRoot);
+        if (file.targetAbsPath !== file.absPath && await pathExistsNoFollow(file.targetAbsPath)) {
+          throw new Error(`Rename destination already exists: ${file.targetAbsPath}.`);
+        }
+        await fs3.writeFile(file.temp, file.next, {
+          encoding: "utf8",
+          mode: file.mode,
+          flag: "wx"
+        });
+        await fs3.chmod(file.temp, file.mode);
+      })
+    );
+    if (options.beforeInstall) await options.beforeInstall();
+    for (const file of replacements) await assertUnchangedRegularFile(file);
+    const installed = [];
+    try {
+      for (const file of replacements) {
+        if (options.beforeInstallFile) await options.beforeInstallFile(file.relPath);
+        await assertUnchangedRegularFile(file);
+        await assertCanonicalDirectory2(path5.dirname(file.targetAbsPath), file.docRoot);
+        if (file.targetAbsPath !== file.absPath && await pathExistsNoFollow(file.targetAbsPath)) {
+          throw new Error(`Rename destination already exists: ${file.targetAbsPath}.`);
+        }
+        if (file.targetAbsPath === file.absPath) {
+          await fs3.rename(file.temp, file.absPath);
+          installed.push(file);
+        } else {
+          await fs3.link(file.temp, file.targetAbsPath);
+          installed.push(file);
+          await fs3.rm(file.temp);
+          await fs3.rm(file.absPath);
+        }
+      }
+      const verifiedFiles = await loadWorkspaceJson(canonicalWorkspace);
+      const stale = collectOccurrences(verifiedFiles, entityType2, oldId);
+      const current = collectOccurrences(verifiedFiles, entityType2, newId);
+      const currentDefinitions = current.filter((o4) => o4.role === "definition");
+      if (stale.length !== 0 || current.length !== occurrences.length || currentDefinitions.length !== 1) {
+        throw new Error(
+          `Post-write verification failed: old=${stale.length}, new=${current.length}, definitions=${currentDefinitions.length}, expected=${occurrences.length}.`
+        );
+      }
+    } catch (error) {
+      const rollbackFailures = (await Promise.all(installed.map(async (file) => {
+        try {
+          if (options.beforeRestoreFile) await options.beforeRestoreFile(file.relPath);
+          await restoreReplacement(file);
+          return null;
+        } catch (rollbackError) {
+          return `${file.relPath}: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`;
+        }
+      }))).filter((message) => message !== null);
+      if (rollbackFailures.length > 0) {
+        const original = error instanceof Error ? error.message : String(error);
+        const combined = new Error(
+          `${original} Rollback failed for ${rollbackFailures.join("; ")}. Workspace may be inconsistent.`
+        );
+        combined.cause = error;
+        throw combined;
+      }
+      throw error;
+    }
+  } finally {
+    await Promise.all(replacements.map((f) => fs3.rm(f.temp, { force: true })));
+  }
+  return plan;
 }
 function macroIsActive(files, id) {
   const config = files.find((file) => file.relPath === "config.json")?.data;
@@ -21902,6 +22545,151 @@ function collectFileOccurrences(file, entityType2, id, out, includeSnlMacroToken
     });
   }
 }
+function buildStructuredEdits(file, entityType2, oldId, newId, rewriteSnlMacroTokens) {
+  const edits = [];
+  const data = file.data;
+  if (/^packages\/[^/]+\.json$/.test(file.relPath)) {
+    if (entityType2 === "entry" && Array.isArray(data?.entry_ids) && data.entry_ids.includes(oldId)) {
+      const entryIds = data.entry_ids.map((value) => value === oldId ? newId : value);
+      edits.push(jsonValueEdit(
+        file,
+        ["entry_ids"],
+        [...entryIds].sort((left, right) => String(left).localeCompare(String(right)))
+      ));
+    }
+    return edits;
+  }
+  if (/^entries\/[^/]+\.json$/.test(file.relPath)) {
+    const entry = data?.entry;
+    if (entityType2 === "entry" && entry?.id === oldId) {
+      edits.push(stringValueEdit(file, ["entry", "id"], newId));
+    }
+    if (typeof entry?.content?.snl === "string" && entry.content.snl.trim() !== "" && (entityType2 !== "macro" || rewriteSnlMacroTokens)) {
+      const next = replaceSnlReferences(entry.content.snl, entityType2, oldId, newId);
+      if (next !== entry.content.snl) {
+        edits.push(stringValueEdit(file, ["entry", "content", "snl"], next));
+      }
+    }
+    return edits;
+  }
+  if (/^macros\/[^/]+\.json$/.test(file.relPath)) {
+    const macro2 = data?.macro;
+    if (entityType2 === "macro" && macro2?.name === oldId) {
+      edits.push(stringValueEdit(file, ["macro", "name"], newId));
+    }
+    if (entityType2 === "entry" && Array.isArray(macro2?.source?.entries)) {
+      macro2.source.entries.forEach((value, index) => {
+        if (value === oldId) {
+          edits.push(stringValueEdit(file, ["macro", "source", "entries", index], newId));
+        }
+      });
+    }
+    return edits;
+  }
+  if (file.relPath === "entries.json" && Array.isArray(data)) {
+    data.forEach((entry, index) => {
+      if (entityType2 === "entry" && entry?.id === oldId) {
+        edits.push(stringValueEdit(file, [index, "id"], newId));
+      }
+      if (typeof entry?.content?.snl === "string" && entry.content.snl.trim() !== "" && (entityType2 !== "macro" || rewriteSnlMacroTokens)) {
+        const next = replaceSnlReferences(entry.content.snl, entityType2, oldId, newId);
+        if (next !== entry.content.snl) {
+          edits.push(stringValueEdit(file, [index, "content", "snl"], next));
+        }
+      }
+    });
+    return edits;
+  }
+  if (file.relPath.startsWith("term_macros/")) {
+    const macros2 = data?.macros;
+    if (!macros2 || typeof macros2 !== "object" || Array.isArray(macros2)) return edits;
+    if (entityType2 === "macro" && Object.prototype.hasOwnProperty.call(macros2, oldId)) {
+      edits.push(propertyKeyEdit(file, ["macros", oldId], newId));
+    }
+    if (entityType2 === "entry") {
+      for (const [macroId, macro2] of Object.entries(macros2)) {
+        if (!Array.isArray(macro2?.source?.entries)) continue;
+        macro2.source.entries.forEach((value, index) => {
+          if (value === oldId) {
+            edits.push(stringValueEdit(file, ["macros", macroId, "source", "entries", index], newId));
+          }
+        });
+      }
+    }
+    return edits;
+  }
+  if (entityType2 === "entry" && /^libraries\/[^/]+\/graph\.json$/.test(file.relPath) && Array.isArray(data?.nodes)) {
+    data.nodes.forEach((node, index) => {
+      if (node?.props?.entryId === oldId) {
+        edits.push(stringValueEdit(file, ["nodes", index, "props", "entryId"], newId));
+      }
+    });
+  } else if (file.relPath === "relationships.json" && Array.isArray(data?.relationships)) {
+    data.relationships.forEach((rel2, index) => {
+      if (entityType2 === "entry" && rel2?.from === oldId) {
+        edits.push(stringValueEdit(file, ["relationships", index, "from"], newId));
+      }
+      if (entityType2 === "entry" && rel2?.to === oldId) {
+        edits.push(stringValueEdit(file, ["relationships", index, "to"], newId));
+      }
+      if (rel2?.metadata?.generator !== "macro-source-scan") return;
+      const witnessField = entityType2 === "macro" ? "macros" : "postfixes";
+      const witnesses = rel2.metadata[witnessField];
+      if (!Array.isArray(witnesses)) return;
+      witnesses.forEach((value, witnessIndex) => {
+        if (value === oldId) {
+          edits.push(
+            stringValueEdit(
+              file,
+              ["relationships", index, "metadata", witnessField, witnessIndex],
+              newId
+            )
+          );
+        }
+      });
+    });
+  }
+  return edits;
+}
+function stringValueEdit(file, jsonPath, value) {
+  const node = findNodeAtLocation2(file.tree, jsonPath);
+  if (!node || node.type !== "string") {
+    throw new Error(`${file.absPath}: expected string at ${JSON.stringify(jsonPath)}.`);
+  }
+  return { offset: node.offset, length: node.length, content: JSON.stringify(value) };
+}
+function jsonValueEdit(file, jsonPath, value) {
+  const node = findNodeAtLocation2(file.tree, jsonPath);
+  if (!node) throw new Error(`${file.absPath}: expected value at ${JSON.stringify(jsonPath)}.`);
+  return { offset: node.offset, length: node.length, content: JSON.stringify(value) };
+}
+function stampSchemaVersion(raw, schemaVersion) {
+  const edits = modify(raw, ["schema_version"], schemaVersion, {
+    formattingOptions: { insertSpaces: true, tabSize: 2, eol: raw.includes("\r\n") ? "\r\n" : "\n" }
+  });
+  return applyEdits(raw, edits);
+}
+function propertyKeyEdit(file, valuePath, key) {
+  const valueNode = findNodeAtLocation2(file.tree, valuePath);
+  const keyNode = valueNode?.parent?.children?.[0];
+  if (!valueNode || valueNode.parent?.type !== "property" || !keyNode || keyNode.type !== "string") {
+    throw new Error(`${file.absPath}: expected property at ${JSON.stringify(valuePath)}.`);
+  }
+  return { offset: keyNode.offset, length: keyNode.length, content: JSON.stringify(key) };
+}
+function applyTextEdits(raw, edits) {
+  const ordered = [...edits].sort((a4, b4) => b4.offset - a4.offset);
+  for (let i5 = 1; i5 < ordered.length; i5++) {
+    if (ordered[i5 - 1].offset < ordered[i5].offset + ordered[i5].length) {
+      throw new Error("Internal error: overlapping JSON source edits.");
+    }
+  }
+  let next = raw;
+  for (const edit of ordered) {
+    next = next.slice(0, edit.offset) + edit.content + next.slice(edit.offset + edit.length);
+  }
+  return next;
+}
 function scanSnlReferences(source, options = {}) {
   w(source);
   const tokens = tokenizeSnl(source);
@@ -21927,6 +22715,16 @@ function scanSnlReferences(source, options = {}) {
     refs.push({ entityType: "macro", id: token.value, start: token.start, end: token.end });
   }
   return refs;
+}
+function replaceSnlReferences(source, entityType2, oldId, newId) {
+  const matches = scanSnlReferences(source, {
+    postfixedMacroNames: entityType2 === "macro" ? /* @__PURE__ */ new Set([oldId]) : void 0
+  }).filter((r3) => r3.entityType === entityType2 && r3.id === oldId);
+  let next = source;
+  for (const match of matches.reverse()) {
+    next = next.slice(0, match.start) + newId + next.slice(match.end);
+  }
+  return next;
 }
 function isPostfixAt(previous) {
   return previous !== void 0 && ["ident", "delimited", "rparen", "rbracket"].includes(previous.type);
@@ -22264,8 +23062,84 @@ function validateSchemaShape(absPath, relPath, data) {
 function isRecord5(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+async function pathExistsNoFollow(file) {
+  try {
+    await fs3.lstat(file);
+    return true;
+  } catch (error) {
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+}
+async function assertFileContent(filePath, expected, label) {
+  let handle;
+  try {
+    handle = await fs3.open(filePath, constants3.O_RDONLY | constants3.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || await handle.readFile("utf8") !== expected) {
+      throw new Error(`${label} changed concurrently; refusing destructive rollback: ${filePath}.`);
+    }
+  } catch (error) {
+    if (error.code === "ELOOP") {
+      throw new Error(`${label} became a symlink; refusing destructive rollback: ${filePath}.`);
+    }
+    throw error;
+  } finally {
+    if (handle) await handle.close();
+  }
+}
+async function restoreReplacement(file) {
+  await assertFileContent(file.targetAbsPath, file.next, "Installed rename output");
+  if (file.targetAbsPath !== file.absPath) {
+    if (await pathExistsNoFollow(file.absPath)) {
+      throw new Error(`Rename source reappeared concurrently; refusing destructive rollback: ${file.absPath}.`);
+    }
+    await fs3.rm(file.targetAbsPath);
+  }
+  await restoreOriginal(file);
+}
+async function restoreOriginal(file) {
+  await assertCanonicalDirectory2(path5.dirname(file.absPath), file.docRoot);
+  const restoreTemp = `${file.absPath}.snl-restore-${process.pid}-${Math.random().toString(16).slice(2)}.tmp`;
+  try {
+    await fs3.writeFile(restoreTemp, file.raw, {
+      encoding: "utf8",
+      mode: file.mode,
+      flag: "wx"
+    });
+    await fs3.chmod(restoreTemp, file.mode);
+    await fs3.rename(restoreTemp, file.absPath);
+  } finally {
+    await fs3.rm(restoreTemp, { force: true });
+  }
+}
+async function assertUnchangedRegularFile(file) {
+  await assertCanonicalDirectory2(path5.dirname(file.absPath), file.docRoot);
+  let handle;
+  try {
+    handle = await fs3.open(file.absPath, constants3.O_RDONLY | constants3.O_NOFOLLOW);
+    const stat = await handle.stat();
+    if (!stat.isFile() || stat.dev !== file.device || stat.ino !== file.inode) {
+      throw new Error(`${file.absPath} changed identity during rename planning.`);
+    }
+    if (await handle.readFile("utf8") !== file.raw) {
+      throw new Error(`${file.absPath} changed during rename planning; refusing to overwrite it.`);
+    }
+  } catch (error) {
+    if (error.code === "ELOOP") {
+      throw new Error(`${file.absPath} became a symlink during rename planning.`);
+    }
+    throw error;
+  } finally {
+    if (handle) await handle.close();
+  }
+}
 function validateNonEmptyIdentity(id) {
   if (id.trim() === "") throw new Error("Identity must be a non-empty string.");
+}
+function isTraceableSnlIdentity(entityType2, id) {
+  if (entityType2 === "entry") return /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/.test(id);
+  return d(id) && !/^\d+(?:\.\d+)*$/.test(id);
 }
 function occurrence(file, entityType2, id, role, jsonPath) {
   let category;
@@ -22706,7 +23580,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
 // lib/entity-crud.ts
 var ENTITY_TYPES2 = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
 var isRecord7 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
-var sha = (value) => createHash2("sha256").update(JSON.stringify(value)).digest("hex");
+var sha = (value) => createHash3("sha256").update(JSON.stringify(value)).digest("hex");
 var compare = (a4, b4) => a4.id.localeCompare(b4.id);
 function docRoot(root) {
   return path7.join(path7.resolve(root), ".SNL_Doc");
@@ -27568,7 +28442,9 @@ var COMMAND_PATHS = Object.freeze([
   "entry/latex",
   "entry/references",
   "macro/usages",
-  "repair/package-entry-ids"
+  "repair/package-entry-ids",
+  "entry/rename",
+  "macro/rename"
 ]);
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
@@ -27578,6 +28454,7 @@ function describeCommand(command) {
   if (action === "create") return { command, access: "write", arguments: { value: field("object", true) }, summary: "Create one validated managed entity." };
   if (action === "update") return { command, access: "write", arguments: { id: field("string", true), value: field("object", true), expectedRevision: field("string", true) }, summary: "Replace one managed entity under revision control." };
   if (action === "delete") return { command, access: "write", arguments: { id: field("string", true), expectedRevision: field("string", true) }, summary: "Delete one managed entity under revision control." };
+  if (action === "rename") return { command, access: "write", arguments: { id: field("string", true), to: field("string", true), expectedRevision: field("string", true), dryRun: field("boolean", false) }, summary: "Rename one identity and all owned references under revision control." };
   if (command === "entry/latex") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Render one Entry as bare LaTeX." };
   if (command === "repair/package-entry-ids") return { command, access: "write", arguments: { id: field("string", true) }, summary: "Rebuild one Package Entry membership index from canonical Entry envelopes." };
   if (command === "entry/references" || command === "macro/usages") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Find structured references to one existing identity." };
@@ -27706,6 +28583,38 @@ async function executeOperation(request) {
     }
     const action = tokens[1];
     const args = request.arguments;
+    if (action === "rename") {
+      if (type !== "entry" && type !== "macro") return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
+      exactArguments(args, ["id", "to", "expectedRevision", "dryRun"]);
+      const id = stringArg(args, "id");
+      const to = stringArg(args, "to");
+      const expectedRevision = stringArg(args, "expectedRevision");
+      const dryRun = own(args, "dryRun") ? args.dryRun : false;
+      if (typeof dryRun !== "boolean") throw new TypeError("dryRun must be a boolean.");
+      const candidates = type === "entry" ? [await getManagedEntity(request.root, type, id)].filter((item) => item !== void 0) : (await listManagedEntities(request.root, type)).filter((item) => item.value.name === id);
+      if (candidates.length === 0) return operationFailure(command, 1, "entity.not-found", `${type} ${JSON.stringify(id)} does not exist.`);
+      if (candidates.length !== 1) return operationFailure(command, 1, "entity.identity-collision", `${type} ${JSON.stringify(id)} has ${candidates.length} definitions; resolve the collision before renaming.`);
+      if (candidates[0].revision !== expectedRevision) return operationFailure(command, 1, "entity.revision-conflict", `${type} ${JSON.stringify(id)} changed; reread it and retry.`);
+      try {
+        const plan = await renameEntityId(request.root, type, id, to, { dryRun, expectedRevision });
+        if (dryRun) return succeed(command, { ...plan, dryRun: true });
+        const renamedId = type === "entry" ? to : `${String(candidates[0].value.package)}::${to}`;
+        const entity = await getManagedEntity(request.root, type, renamedId);
+        if (!entity) return operationFailure(command, 2, "workspace.operation-failed", "Rename committed but canonical readback failed.");
+        return succeed(command, { ...plan, dryRun: false, entity });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (/revision does not match|changed during rename planning|plan is stale/i.test(message))
+          return operationFailure(command, 1, "entity.revision-conflict", message);
+        if (/already appears|destination already exists|collision/i.test(message))
+          return operationFailure(command, 1, "entity.identity-collision", message);
+        if (/No (?:entry|macro) definition found/i.test(message))
+          return operationFailure(command, 1, "entity.not-found", message);
+        if (/not representable|forbidden|identical|malformed|expected one|post-write verification/i.test(message))
+          return operationFailure(command, 1, "entity.invalid", message);
+        throw error;
+      }
+    }
     if (action === "list") {
       exactArguments(args, ["query", "limit", "cursor"]);
       const query = stringArg(args, "query", false)?.toLocaleLowerCase();

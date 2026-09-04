@@ -5165,8 +5165,8 @@ async function assertUnchangedRegularFile(file) {
   }
 }
 function isTraceableSnlIdentity(entityType, id) {
-  const pattern = entityType === "macro" ? /^[A-Za-z_\\][A-Za-z0-9_.\-]*$/ : /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/;
-  return pattern.test(id);
+  if (entityType === "entry") return /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/.test(id);
+  return d(id) && !/^\d+(?:\.\d+)*$/.test(id);
 }
 function offsetPosition(source, offset) {
   const before = source.slice(0, offset).split("\n");

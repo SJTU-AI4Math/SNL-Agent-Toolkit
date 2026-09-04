@@ -94,7 +94,15 @@ directory.
 * `--to <new-entry-id>`
 * `--root <path>`
 * `--if-match <revision>`
+* `--dry-run`
 * `--json`
+
+`--if-match` is required in both apply and dry-run modes. Dry-run returns the
+complete deterministic rewrite plan without publishing it. Apply rechecks the
+source revision under the workspace lock and atomically rewrites the Entry,
+canonical filename, Package membership, SNL postfixes, Library indexes, Macro
+sources, Relationships, and generated witnesses. Collision, dangling-reference,
+stale-revision, or projected-validation failure publishes nothing.
 
 ### `snl entry delete`
 
@@ -180,7 +188,17 @@ directory.
 * `--to <new-macro-id>`
 * `--root <path>`
 * `--if-match <revision>`
+* `--dry-run`
 * `--json`
+
+`--if-match` is required in both apply and dry-run modes. Macro identifiers are
+validated by the installed SNL-Basics parser rather than an ASCII approximation,
+so parser-valid names such as `文法.之` are accepted. The operation rewrites the
+single definition, canonical filename, resolved SNL references, and every
+schema-owned index/witness occurrence, but never rewrites same-spelled binder,
+literal, or unresolved fvar text merely by textual equality. Collision,
+dangling-reference, stale-revision, rollback, or projected-validation failure
+publishes no partial rename.
 
 ### `snl macro delete`
 

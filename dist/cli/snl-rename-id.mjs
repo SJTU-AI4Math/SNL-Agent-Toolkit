@@ -4416,6 +4416,16 @@ async function renameEntityIdUnlocked(canonicalWorkspace, entityType, oldId, new
       `Expected one ${entityType} definition for '${oldId}', found ${definitions.length}; resolve the identity collision before renaming.`
     );
   }
+  if (options.expectedRevision !== void 0) {
+    const definition = definitions[0];
+    const source = files.find((file) => file.relPath === definition.file);
+    const currentRevision = source === void 0 ? "" : sha256(JSON.stringify(source.data));
+    if (currentRevision !== options.expectedRevision) {
+      throw new Error(
+        `Source ${entityType} revision does not match --if-match; reread the entity and retry.`
+      );
+    }
+  }
   if (occurrences.some((o4) => o4.path.endsWith(".content.snl")) && !isTraceableSnlIdentity(entityType, newId)) {
     throw new Error(
       `${entityType} id '${newId}' is not representable as an SNL identifier, but '${oldId}' has SNL references.`
@@ -5304,8 +5314,8 @@ function validateNonEmptyIdentity(id) {
   if (id.trim() === "") throw new Error("Identity must be a non-empty string.");
 }
 function isTraceableSnlIdentity(entityType, id) {
-  const pattern = entityType === "macro" ? /^[A-Za-z_\\][A-Za-z0-9_.\-]*$/ : /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/;
-  return pattern.test(id);
+  if (entityType === "entry") return /^[A-Za-z0-9_\\][A-Za-z0-9_.\-]*$/.test(id);
+  return d(id) && !/^\d+(?:\.\d+)*$/.test(id);
 }
 function occurrence(file, entityType, id, role, jsonPath) {
   let category;
