@@ -15,7 +15,9 @@
         "zh-CN": "维护"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%Maintaining the SNL doc of a repository involves delicate and flexible editing. This skill covers possible scenarios and recommended tool calling pipeline in such cases.%"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/Maintain/SKILL.md",

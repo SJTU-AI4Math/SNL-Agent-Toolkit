@@ -15,7 +15,9 @@
         "zh-CN": "SNL 生态系统"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%SNL doc is a complicated semantic management system for abstract knowledge organization. It maintains its own concepts and terminology ecosystem, which is briefly introduced in this skill.%"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

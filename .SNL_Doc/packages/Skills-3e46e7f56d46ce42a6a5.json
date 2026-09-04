@@ -106,6 +106,7 @@
     "Skill.Init.sec.MacroKindInit",
     "Skill.Init.sec.PrimaryInit",
     "Skill.Maintain",
+    "Skill.Maintain.sec.RenameID",
     "Skill.Plan",
     "Skill.Read",
     "Skill.Refinery",
