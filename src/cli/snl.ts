@@ -38,6 +38,8 @@ function parseCli(argv: string[]): ParsedCli {
     else { if(rest.length!==1)return{json,error:`${command} requires one exact identity.`}; args.id=rest[0]; }
   } else if (action && singleIdentityActions.has(action)) {
     if(rest.length!==1)return{json,error:`${command} requires one exact identity.`}; args.id=rest[0];
+  } else if (command === 'repair/package-entry-ids') {
+    if(rest.length!==1)return{json,error:`${command} requires one exact Package identity.`}; args.id=rest[0];
   } else if (rest.length) return {json,error:`${command} does not accept identity positionals.`};
   return {json,request:{protocol:OPERATION_PROTOCOL,command,root:path.resolve(root),arguments:args}};
 }

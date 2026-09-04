@@ -2173,12 +2173,12 @@ var require_react_dom = __commonJS({
 });
 
 // src/cli/snl.ts
-import { promises as fs7 } from "node:fs";
-import path10 from "node:path";
+import { promises as fs8 } from "node:fs";
+import path11 from "node:path";
 import { pathToFileURL } from "node:url";
 
 // src/cli/operation.ts
-import path9 from "node:path";
+import path10 from "node:path";
 
 // lib/entity-crud.ts
 import { createHash as createHash2, randomUUID as randomUUID3 } from "node:crypto";
@@ -2194,6 +2194,9 @@ var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
 var CURRENT_ENTRY_SCHEMA_VERSION = 1;
 var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
+function compareCanonicalIds(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
 function semanticDigest(value) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
@@ -3703,27 +3706,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path11 = "";
+  var path12 = "";
   switch (size) {
     case "sqrtMain":
-      path11 = sqrtMain(extraVinculum, hLinePad);
+      path12 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path11 = sqrtSize1(extraVinculum, hLinePad);
+      path12 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path11 = sqrtSize2(extraVinculum, hLinePad);
+      path12 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path11 = sqrtSize3(extraVinculum, hLinePad);
+      path12 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path11 = sqrtSize4(extraVinculum, hLinePad);
+      path12 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path11 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path12 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path11;
+  return path12;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -7906,8 +7909,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path11 = new PathNode(pathName);
-  var svgNode = new SvgNode([path11], {
+  var path12 = new PathNode(pathName);
+  var svgNode = new SvgNode([path12], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9076,8 +9079,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path11 = new PathNode(pathName);
-      var svgNode = new SvgNode([path11], {
+      var path12 = new PathNode(pathName);
+      var svgNode = new SvgNode([path12], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -10374,8 +10377,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path11 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path11], {
+  var path12 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path12], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -10544,10 +10547,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path11 = new PathNode(svgLabel, pathStr);
+    var path12 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path11], {
+    var svg = new SvgNode([path12], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -10588,8 +10591,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path11 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path11);
+  var path12 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path12);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11096,8 +11099,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path11 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path11)], {
+    var path12 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path12)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18229,7 +18232,7 @@ async function readEntries(workspaceRoot) {
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
+        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
         if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
           throw new Error(
             `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`
@@ -18346,7 +18349,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && entryIds[index - 1].localeCompare(entryId) > 0)) {
+      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );
@@ -18480,10 +18483,10 @@ function safeExportedBinders(source) {
 }
 function isValidI18nString(value) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
-  const record2 = value;
-  if (record2.type !== "i18n" || typeof record2.default_language !== "string") return false;
-  if (typeof record2.values !== "object" || record2.values === null || Array.isArray(record2.values)) return false;
-  const values = Object.values(record2.values);
+  const record3 = value;
+  if (record3.type !== "i18n" || typeof record3.default_language !== "string") return false;
+  if (typeof record3.values !== "object" || record3.values === null || Array.isArray(record3.values)) return false;
+  const values = Object.values(record3.values);
   return values.length > 0 && values.every((item) => typeof item === "string");
 }
 function lintEntry(raw, ctx) {
@@ -18806,12 +18809,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path11 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path12 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path11} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path11,
+              message: `${path12} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path12,
               position: result.position
             });
           }
@@ -18825,43 +18828,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path11 = `macros.${name}`;
+  const path12 = `macros.${name}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path11}: macro entry must be an object.`, path: path11 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path12}: macro entry must be an object.`, path: path12 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path11}.description must be a string (may be empty).`, path: `${path11}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path12}.description must be a string (may be empty).`, path: `${path12}.description` });
   }
   if (!isRecord3(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path11}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path11}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path12}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path12}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path11}.dynamic_arity must be a boolean.`, path: `${path11}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path12}.dynamic_arity must be a boolean.`, path: `${path12}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path11}.kind must be a string when present.`, path: `${path11}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path12}.kind must be a string when present.`, path: `${path12}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path11}.tags must be a string array (may be empty).`, path: `${path11}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path12}.tags must be a string array (may be empty).`, path: `${path12}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path11}.tags must not contain backslashes.`, path: `${path11}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path12}.tags must not contain backslashes.`, path: `${path12}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path11}.default_style must be a language \u2192 style-name object.`, path: `${path11}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path12}.default_style must be a language \u2192 style-name object.`, path: `${path12}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path11}.default_style must map language keys to style-name strings.`, path: `${path11}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path12}.default_style must map language keys to style-name strings.`, path: `${path12}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path11}.styles must be a non-empty array.`, path: `${path11}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path12}.styles must be a non-empty array.`, path: `${path12}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path11}.styles[${index}]`;
+    const stylePath = `${path12}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -18925,12 +18928,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path11}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path11}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path12}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path12}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path11}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path11}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path12}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path12}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -20175,8 +20178,8 @@ function errorCode(error) {
 }
 function isLockRecord(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const record2 = value;
-  return record2.version === 1 && Number.isInteger(record2.pid) && typeof record2.hostname === "string" && typeof record2.token === "string" && typeof record2.purpose === "string" && typeof record2.createdAt === "string";
+  const record3 = value;
+  return record3.version === 1 && Number.isInteger(record3.pid) && typeof record3.hostname === "string" && typeof record3.token === "string" && typeof record3.purpose === "string" && typeof record3.createdAt === "string";
 }
 function localProcessIsAlive(pid) {
   try {
@@ -20196,7 +20199,7 @@ async function readLock(lockPath) {
 }
 async function acquireLock(workspaceRoot, purpose) {
   const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
-  const record2 = {
+  const record3 = {
     version: 1,
     pid: process.pid,
     hostname: hostname(),
@@ -20207,10 +20210,10 @@ async function acquireLock(workspaceRoot, purpose) {
   try {
     const handle = await open2(lockPath, "wx", 384);
     try {
-      await handle.writeFile(`${JSON.stringify(record2)}
+      await handle.writeFile(`${JSON.stringify(record3)}
 `, "utf8");
       await handle.sync();
-      return { handle, lockPath, record: record2 };
+      return { handle, lockPath, record: record3 };
     } catch (error) {
       await handle.close();
       await unlink(lockPath).catch(() => void 0);
@@ -20984,7 +20987,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       const entryIds = Array.isArray(manifest.entry_ids) ? manifest.entry_ids.filter((value) => typeof value === "string") : [];
       return {
         ...manifest,
-        entry_ids: [.../* @__PURE__ */ new Set([...entryIds, entry.id])].sort((left, right) => left.localeCompare(right))
+        entry_ids: [.../* @__PURE__ */ new Set([...entryIds, entry.id])].sort(compareCanonicalIds)
       };
     })() : null;
     try {
@@ -22409,14 +22412,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path11 = null;
+  let path12 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path11 = createKeyPath(key);
+    path12 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -22426,12 +22429,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name)));
     }
-    path11 = createKeyPath(name);
+    path12 = createKeyPath(name);
     id = createKeyId(name);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path11,
+    path: path12,
     id,
     weight,
     src,
@@ -22444,29 +22447,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path11) {
+function get(obj, path12) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path12, index, arrayIndex) => {
+  const deepGet = (obj2, path13, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path12[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path13[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path12[index]];
+      const value = obj2[path13[index]];
       if (!isDefined(value)) return;
-      if (index === path12.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path13.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path12, index + 1, i5);
-      } else if (path12.length) deepGet(value, path12, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path13, index + 1, i5);
+      } else if (path13.length) deepGet(value, path13, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path11) ? path11.split(".") : path11, 0);
+  deepGet(obj, isString(path12) ? path12.split(".") : path12, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -22560,8 +22563,8 @@ var FuseIndex = class {
     this.records = new Array(len);
     let recordCount = 0;
     if (isString(this.docs[0])) for (let i5 = 0; i5 < len; i5++) {
-      const record2 = this._createStringRecord(this.docs[i5], i5);
-      if (record2) this.records[recordCount++] = record2;
+      const record3 = this._createStringRecord(this.docs[i5], i5);
+      if (record3) this.records[recordCount++] = record3;
     }
     else for (let i5 = 0; i5 < len; i5++) this.records[recordCount++] = this._createObjectRecord(this.docs[i5], i5);
     this.records.length = recordCount;
@@ -22570,13 +22573,13 @@ var FuseIndex = class {
   add(doc, docIndex) {
     if (!Number.isInteger(docIndex) || docIndex < 0) throw new Error(INVALID_DOC_INDEX);
     if (isString(doc)) {
-      const record3 = this._createStringRecord(doc, docIndex);
-      if (record3) this.records.push(record3);
-      return record3;
+      const record4 = this._createStringRecord(doc, docIndex);
+      if (record4) this.records.push(record4);
+      return record4;
     }
-    const record2 = this._createObjectRecord(doc, docIndex);
-    this.records.push(record2);
-    return record2;
+    const record3 = this._createObjectRecord(doc, docIndex);
+    this.records.push(record3);
+    return record3;
   }
   removeAt(idx) {
     if (!Number.isInteger(idx) || idx < 0) throw new Error(INVALID_DOC_INDEX);
@@ -22592,15 +22595,15 @@ var FuseIndex = class {
     if (toRemove.size === 0) return;
     this.records = this.records.filter((r3) => !toRemove.has(r3.i));
     const sorted = Array.from(toRemove).sort((a4, b4) => a4 - b4);
-    for (const record2 of this.records) {
+    for (const record3 of this.records) {
       let lo = 0;
       let hi = sorted.length;
       while (lo < hi) {
         const mid = lo + hi >>> 1;
-        if (sorted[mid] < record2.i) lo = mid + 1;
+        if (sorted[mid] < record3.i) lo = mid + 1;
         else hi = mid;
       }
-      record2.i -= lo;
+      record3.i -= lo;
     }
   }
   getValueForItemAtKeyId(item, keyId) {
@@ -22618,7 +22621,7 @@ var FuseIndex = class {
     };
   }
   _createObjectRecord(doc, docIndex) {
-    const record2 = {
+    const record3 = {
       i: docIndex,
       $: {}
     };
@@ -22652,16 +22655,16 @@ var FuseIndex = class {
             }
           }
         }
-        record2.$[keyIndex] = subRecords;
+        record3.$[keyIndex] = subRecords;
       } else if (isString(value) && !isBlank(value)) {
         const subRecord = {
           v: value,
           n: this.norm.get(value)
         };
-        record2.$[keyIndex] = subRecord;
+        record3.$[keyIndex] = subRecord;
       }
     }
-    return record2;
+    return record3;
   }
   toJSON() {
     return {
@@ -23479,8 +23482,8 @@ function addField(index, text2, docIdx, analyzer) {
     index.df.set(term, (index.df.get(term) || 0) + 1);
   }
 }
-function ingestRecord(index, record2, keyCount, analyzer) {
-  const { i: docIdx, v: v3, $: fields } = record2;
+function ingestRecord(index, record3, keyCount, analyzer) {
+  const { i: docIdx, v: v3, $: fields } = record3;
   if (v3 !== void 0) {
     addField(index, v3, docIdx, analyzer);
     return;
@@ -23500,11 +23503,11 @@ function buildInvertedIndex(records, keyCount, analyzer) {
     docFieldCount: /* @__PURE__ */ new Map(),
     docTermFieldHits: /* @__PURE__ */ new Map()
   };
-  for (const record2 of records) ingestRecord(index, record2, keyCount, analyzer);
+  for (const record3 of records) ingestRecord(index, record3, keyCount, analyzer);
   return index;
 }
-function addToInvertedIndex(index, record2, keyCount, analyzer) {
-  ingestRecord(index, record2, keyCount, analyzer);
+function addToInvertedIndex(index, record3, keyCount, analyzer) {
+  ingestRecord(index, record3, keyCount, analyzer);
 }
 function removeFromInvertedIndex(index, docIdx) {
   const fieldCount = index.docFieldCount.get(docIdx);
@@ -23588,14 +23591,14 @@ var Fuse = class {
   add(doc) {
     if (!isDefined(doc)) return;
     this._docs.push(doc);
-    const record2 = this._myIndex.add(doc, this._docs.length - 1);
-    if (this._invertedIndex && record2) {
+    const record3 = this._myIndex.add(doc, this._docs.length - 1);
+    if (this._invertedIndex && record3) {
       const analyzer = createAnalyzer({
         isCaseSensitive: this.options.isCaseSensitive,
         ignoreDiacritics: this.options.ignoreDiacritics,
         tokenize: this.options.tokenize
       });
-      addToInvertedIndex(this._invertedIndex, record2, this._myIndex.keys.length, analyzer);
+      addToInvertedIndex(this._invertedIndex, record3, this._myIndex.keys.length, analyzer);
     }
     this._invalidateSearcherCache();
   }
@@ -25758,8 +25761,8 @@ function uniqueBy(values, identity, label) {
 function stableJson(value) {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
   if (value && typeof value === "object") {
-    const record2 = value;
-    return `{${Object.keys(record2).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record2[key])}`).join(",")}}`;
+    const record3 = value;
+    return `{${Object.keys(record3).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record3[key])}`).join(",")}}`;
   }
   return JSON.stringify(value);
 }
@@ -25773,12 +25776,12 @@ function assertValidLocalizedField(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new TypeError(`${label} must be a string or I18N map.`);
   }
-  const record2 = value;
-  if (record2.type !== "i18n" || typeof record2.default_language !== "string" || !record2.default_language || !record2.values || typeof record2.values !== "object" || Array.isArray(record2.values)) {
+  const record3 = value;
+  if (record3.type !== "i18n" || typeof record3.default_language !== "string" || !record3.default_language || !record3.values || typeof record3.values !== "object" || Array.isArray(record3.values)) {
     throw new TypeError(`${label} must be a valid I18N map.`);
   }
-  const values = record2.values;
-  if (typeof values[record2.default_language] !== "string" || !values[record2.default_language]) {
+  const values = record3.values;
+  if (typeof values[record3.default_language] !== "string" || !values[record3.default_language]) {
     throw new TypeError(`${label} must define a non-empty value for default_language.`);
   }
   for (const [language, text2] of Object.entries(values)) {
@@ -26106,6 +26109,61 @@ async function initializeWorkspace(root, presetId, presetValue) {
   }
 }
 
+// lib/package-membership-repair.ts
+import { promises as fs7 } from "node:fs";
+import path9 from "node:path";
+function record2(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
+  return value;
+}
+async function repairPackageEntryIds(workspaceRoot, packageId) {
+  if (!packageId) throw new Error("Package id must be non-empty.");
+  return withWorkspaceDataLock(workspaceRoot, `repair Package entry_ids ${packageId}`, async () => {
+    const config = await readConfig(workspaceRoot);
+    if (!usesCurrentEntitySchemas(config)) {
+      throw new Error("Package entry_ids repair requires the current per-entity workspace schema.");
+    }
+    const doc = snlDocRoot(workspaceRoot);
+    const manifestFile = path9.join(doc, packageManifestPath(packageId));
+    const original = await readRegularText(manifestFile);
+    const manifest = record2(JSON.parse(original.text), "Package manifest");
+    if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
+      throw new Error(`Package ${JSON.stringify(packageId)} is not a current canonical Package manifest.`);
+    }
+    const entryIds = [];
+    const seen = /* @__PURE__ */ new Set();
+    const entriesDir = path9.join(doc, "entries");
+    for (const name of (await fs7.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
+      const relative2 = `entries/${name}`;
+      const envelope = record2(JSON.parse((await readRegularText(path9.join(entriesDir, name))).text), relative2);
+      const entry = record2(envelope.entry, `${relative2}#entry`);
+      if (envelope.format !== "snl-entry" || envelope.version !== ENTRY_STORAGE_VERSION || envelope.schema_version !== CURRENT_ENTRY_SCHEMA_VERSION || typeof envelope.package !== "string" || entry.package !== envelope.package || typeof entry.id !== "string" || !entry.id) {
+        throw new Error(`${relative2} is not a current canonical Entry envelope.`);
+      }
+      if (relative2 !== entryEntityPath(envelope.package, entry.id)) {
+        throw new Error(`${relative2} does not match Entry identity ${JSON.stringify(entry.id)}.`);
+      }
+      if (seen.has(entry.id)) throw new Error(`Duplicate Entry identity ${JSON.stringify(entry.id)}.`);
+      seen.add(entry.id);
+      if (envelope.package === packageId) entryIds.push(entry.id);
+    }
+    entryIds.sort(compareCanonicalIds);
+    const next = { ...manifest, entry_ids: entryIds };
+    if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
+      await readEntries(workspaceRoot);
+      return { packageId, changed: false, entryIds };
+    }
+    await replaceJsonIfUnchanged(manifestFile, original.text, next);
+    try {
+      await readEntries(workspaceRoot);
+    } catch (error) {
+      await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
+      throw error;
+    }
+    return { packageId, changed: true, entryIds };
+  });
+}
+
 // src/cli/operation.ts
 var OPERATION_PROTOCOL = "snl.operation/v1";
 var RESULT_PROTOCOL = "snl.result/v1";
@@ -26129,7 +26187,8 @@ var COMMAND_PATHS = Object.freeze([
   "snoogl",
   "entry/latex",
   "entry/references",
-  "macro/usages"
+  "macro/usages",
+  "repair/package-entry-ids"
 ]);
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
@@ -26140,6 +26199,7 @@ function describeCommand(command) {
   if (action === "update") return { command, access: "write", arguments: { id: field("string", true), value: field("object", true), expectedRevision: field("string", true) }, summary: "Replace one managed entity under revision control." };
   if (action === "delete") return { command, access: "write", arguments: { id: field("string", true), expectedRevision: field("string", true) }, summary: "Delete one managed entity under revision control." };
   if (command === "entry/latex") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Render one Entry as bare LaTeX." };
+  if (command === "repair/package-entry-ids") return { command, access: "write", arguments: { id: field("string", true) }, summary: "Rebuild one Package Entry membership index from canonical Entry envelopes." };
   if (command === "entry/references" || command === "macro/usages") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Find structured references to one existing identity." };
   return { command, access: "read", arguments: {}, summary: "Discover this command namespace." };
 }
@@ -26166,14 +26226,14 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path9.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path10.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
     if (tokens.length === 1 && command === "help") {
       exactArguments(request.arguments, []);
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path11) => path11 !== "help"),
+        commands: COMMAND_PATHS.filter((path12) => path12 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS
       });
     }
@@ -26207,7 +26267,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path9.resolve(request.root),
+        root: path10.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,
@@ -26221,6 +26281,10 @@ async function executeOperation(request) {
       const mode = stringArg(request.arguments, "mode");
       if (mode !== "entry" && mode !== "macro") throw new TypeError("mode must be entry or macro.");
       return succeed(command, await querySnoogl(request.root, mode, stringArg(request.arguments, "query")));
+    }
+    if (command === "repair/package-entry-ids") {
+      exactArguments(request.arguments, ["id"]);
+      return succeed(command, await repairPackageEntryIds(request.root, stringArg(request.arguments, "id")));
     }
     if (command === "entry/latex") {
       exactArguments(request.arguments, ["id"]);
@@ -26352,7 +26416,7 @@ function parseCli(argv) {
     if (token.startsWith("-")) return { json, error: `Unknown flag ${token}.` };
     positional.push(token);
   }
-  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path10.resolve(root), arguments: {} } };
+  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path11.resolve(root), arguments: {} } };
   const [domain, action, ...rest] = positional;
   if (!domain) return { json, error: "Expected a command domain." };
   const command = domain === "init" ? "init" : action ? `${domain}/${action}` : domain;
@@ -26372,8 +26436,11 @@ function parseCli(argv) {
   } else if (action && singleIdentityActions.has(action)) {
     if (rest.length !== 1) return { json, error: `${command} requires one exact identity.` };
     args.id = rest[0];
+  } else if (command === "repair/package-entry-ids") {
+    if (rest.length !== 1) return { json, error: `${command} requires one exact Package identity.` };
+    args.id = rest[0];
   } else if (rest.length) return { json, error: `${command} does not accept identity positionals.` };
-  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path10.resolve(root), arguments: args } };
+  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path11.resolve(root), arguments: args } };
 }
 async function readInput(file) {
   const text2 = file === "-" ? await new Promise((resolve4, reject) => {
@@ -26382,7 +26449,7 @@ async function readInput(file) {
     process.stdin.on("data", (c3) => data += c3);
     process.stdin.on("end", () => resolve4(data));
     process.stdin.on("error", reject);
-  }) : await fs7.readFile(path10.resolve(file), "utf8");
+  }) : await fs8.readFile(path11.resolve(file), "utf8");
   return JSON.parse(text2);
 }
 async function main2(argv = process.argv.slice(2)) {
@@ -26412,7 +26479,7 @@ async function main2(argv = process.argv.slice(2)) {
   return result.exitCode;
 }
 var isBuiltExecutable = true;
-if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL(path10.resolve(process.argv[1])).href) main2().then((code) => {
+if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL(path11.resolve(process.argv[1])).href) main2().then((code) => {
   process.exitCode = code;
 });
 export {

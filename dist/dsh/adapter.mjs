@@ -2314,22 +2314,22 @@ function scalarMatches(type, value) {
   }
 }
 var ONE_OF_SIBLING_KEYWORDS = ["properties", "required", "additionalProperties", "items", "enum", "const"];
-function checkObjectSchemaTail(node, path10, properties, violations) {
+function checkObjectSchemaTail(node, path11, properties, violations) {
   const hasRequired = Object.hasOwn(node, "required");
   const required = hasRequired ? node.required : void 0;
   if (hasRequired) {
     if (!isPlainJsonArray(required) || required.some((entry) => typeof entry !== "string")) {
-      violations.push(`${path10}.required must be an array of strings`);
+      violations.push(`${path11}.required must be an array of strings`);
     } else {
       const declared = isJsonSchemaRecord(properties) ? properties : {};
       for (const key of required) {
         if (!Object.hasOwn(declared, key))
-          violations.push(`${path10}.required names "${key}" which is not in properties`);
+          violations.push(`${path11}.required names "${key}" which is not in properties`);
       }
     }
   }
   if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") {
-    violations.push(`${path10}.additionalProperties must be a boolean`);
+    violations.push(`${path11}.additionalProperties must be a boolean`);
   }
 }
 function checkSchemaNode(root, rootPath, violations, seen) {
@@ -2350,13 +2350,13 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       checkObjectSchemaTail(task.node, task.path, task.properties, violations);
       continue;
     }
-    const { node, path: path10 } = task;
+    const { node, path: path11 } = task;
     if (!isJsonSchemaRecord(node)) {
-      violations.push(`${path10} must be a schema object`);
+      violations.push(`${path11} must be a schema object`);
       continue;
     }
     if (seen.has(node)) {
-      violations.push(`${path10} is circular`);
+      violations.push(`${path11} is circular`);
       continue;
     }
     seen.add(node);
@@ -2367,48 +2367,48 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       if (ANNOTATION_KEYWORDS.has(key)) {
         try {
           if (!isJsonValue(node[key]))
-            violations.push(`${path10}.${key} annotation must be lossless JSON data`);
+            violations.push(`${path11}.${key} annotation must be lossless JSON data`);
         } catch {
-          violations.push(`${path10}.${key} annotation must be lossless JSON data`);
+          violations.push(`${path11}.${key} annotation must be lossless JSON data`);
         }
         continue;
       }
-      violations.push(`${path10}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
+      violations.push(`${path11}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
     }
     if (Object.hasOwn(node, "description") && typeof node.description !== "string") {
-      violations.push(`${path10}.description must be a string`);
+      violations.push(`${path11}.description must be a string`);
     }
     if (Object.hasOwn(node, "title") && typeof node.title !== "string") {
-      violations.push(`${path10}.title must be a string`);
+      violations.push(`${path11}.title must be a string`);
     }
     const hasType = Object.hasOwn(node, "type");
     const hasOneOf = Object.hasOwn(node, "oneOf");
     if (hasType && hasOneOf) {
-      violations.push(`${path10} cannot declare both type and oneOf`);
+      violations.push(`${path11} cannot declare both type and oneOf`);
       continue;
     }
     if (!hasType && !hasOneOf) {
       for (const key of ONE_OF_SIBLING_KEYWORDS) {
         if (Object.hasOwn(node, key))
-          violations.push(`${path10}.${key} requires type or oneOf`);
+          violations.push(`${path11}.${key} requires type or oneOf`);
       }
       continue;
     }
     if (hasOneOf) {
       const oneOf = node.oneOf;
-      tasks.push({ kind: "one-of-tail", node, path: path10 });
+      tasks.push({ kind: "one-of-tail", node, path: path11 });
       if (!isPlainJsonArray(oneOf) || oneOf.length < 2) {
-        violations.push(`${path10}.oneOf must be an array of at least two schemas`);
+        violations.push(`${path11}.oneOf must be an array of at least two schemas`);
       } else {
         for (let index = oneOf.length - 1; index >= 0; index--) {
-          tasks.push({ kind: "enter", node: oneOf[index], path: `${path10}.oneOf[${index}]` });
+          tasks.push({ kind: "enter", node: oneOf[index], path: `${path11}.oneOf[${index}]` });
         }
       }
       continue;
     }
     const type = node.type;
     if (typeof type !== "string" || !SCHEMA_TYPES.includes(type)) {
-      violations.push(Array.isArray(type) ? `${path10}.type must be a single type string (type arrays are not supported)` : `${path10}.type must be one of ${SCHEMA_TYPES.join("/")}`);
+      violations.push(Array.isArray(type) ? `${path11}.type must be a single type string (type arrays are not supported)` : `${path11}.type must be one of ${SCHEMA_TYPES.join("/")}`);
       continue;
     }
     const schemaType = type;
@@ -2422,23 +2422,23 @@ function checkSchemaNode(root, rootPath, violations, seen) {
     };
     for (const [key, types] of Object.entries(allowedFor)) {
       if (Object.hasOwn(node, key) && !types.includes(schemaType)) {
-        violations.push(`${path10}.${key} is not supported on type "${schemaType}"`);
+        violations.push(`${path11}.${key} is not supported on type "${schemaType}"`);
       }
     }
     switch (schemaType) {
       case "object": {
         const properties = Object.hasOwn(node, "properties") ? node.properties : void 0;
-        tasks.push({ kind: "object-tail", node, path: path10, properties });
+        tasks.push({ kind: "object-tail", node, path: path11, properties });
         if (Object.hasOwn(node, "properties")) {
           if (!isJsonSchemaRecord(properties)) {
-            violations.push(`${path10}.properties must be an object of schemas`);
+            violations.push(`${path11}.properties must be an object of schemas`);
           } else {
             const entries = Object.entries(properties);
             for (let index = entries.length - 1; index >= 0; index--) {
               const entry = entries[index];
               if (entry === void 0)
                 continue;
-              tasks.push({ kind: "enter", node: entry[1], path: `${path10}.properties.${entry[0]}` });
+              tasks.push({ kind: "enter", node: entry[1], path: `${path11}.properties.${entry[0]}` });
             }
           }
         }
@@ -2446,7 +2446,7 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       }
       case "array": {
         if (Object.hasOwn(node, "items"))
-          tasks.push({ kind: "enter", node: node.items, path: `${path10}.items` });
+          tasks.push({ kind: "enter", node: node.items, path: `${path11}.items` });
         break;
       }
       case "string":
@@ -2458,16 +2458,16 @@ function checkSchemaNode(root, rootPath, violations, seen) {
         const allowed = hasEnum ? node.enum : void 0;
         const enumValid = isPlainJsonArray(allowed) && allowed.length > 0 && allowed.every((entry) => scalarMatches(schemaType, entry));
         if (hasEnum && !enumValid) {
-          violations.push(`${path10}.enum must be a non-empty array of ${schemaType} values`);
+          violations.push(`${path11}.enum must be a non-empty array of ${schemaType} values`);
         }
         const hasConst = Object.hasOwn(node, "const");
         const declaredConst = hasConst ? node.const : void 0;
         const constValid = scalarMatches(schemaType, declaredConst);
         if (hasConst) {
           if (!constValid) {
-            violations.push(`${path10}.const must be a ${schemaType} value`);
+            violations.push(`${path11}.const must be a ${schemaType} value`);
           } else if (enumValid && !allowed.includes(declaredConst)) {
-            violations.push(`${path10}.const must be one of ${path10}.enum when both are declared`);
+            violations.push(`${path11}.const must be one of ${path11}.enum when both are declared`);
           }
         }
         break;
@@ -2491,24 +2491,24 @@ function safelyIsJsonValue(value) {
     return false;
   }
 }
-function diagnosticPath(path10) {
-  return path10 === "" ? "arguments" : path10;
+function diagnosticPath(path11) {
+  return path11 === "" ? "arguments" : path11;
 }
-function propertyPath(path10, key) {
-  return path10 === "" ? key : `${path10}.${key}`;
+function propertyPath(path11, key) {
+  return path11 === "" ? key : `${path11}.${key}`;
 }
-function losslessValueViolation(path10) {
-  return [`"${diagnosticPath(path10)}" must be a lossless JSON value`];
+function losslessValueViolation(path11) {
+  return [`"${diagnosticPath(path11)}" must be a lossless JSON value`];
 }
 function appendViolations(target, source) {
   for (const violation of source)
     target.push(violation);
 }
-function valueFrame(node, value, path10) {
+function valueFrame(node, value, path11) {
   return {
     node,
     value,
-    path: path10,
+    path: path11,
     catches: false,
     phase: "start",
     children: [],
@@ -2518,18 +2518,18 @@ function valueFrame(node, value, path10) {
     matches: 0
   };
 }
-function checkScalarValue(node, value, path10) {
+function checkScalarValue(node, value, path11) {
   const allowed = Object.hasOwn(node, "enum") ? node.enum : void 0;
   if (allowed !== void 0 && !allowed.includes(value)) {
-    return [`"${diagnosticPath(path10)}" must be one of ${JSON.stringify(allowed)}`];
+    return [`"${diagnosticPath(path11)}" must be one of ${JSON.stringify(allowed)}`];
   }
   if (Object.hasOwn(node, "const") && value !== node.const) {
-    return [`"${diagnosticPath(path10)}" must be ${JSON.stringify(node.const)}`];
+    return [`"${diagnosticPath(path11)}" must be ${JSON.stringify(node.const)}`];
   }
   return [];
 }
-function checkValue(schema, value, path10) {
-  const frames = [valueFrame(schema, value, path10)];
+function checkValue(schema, value, path11) {
+  const frames = [valueFrame(schema, value, path11)];
   let rootResult;
   const receive = (result) => {
     const parent = frames.at(-1);
@@ -2668,10 +2668,10 @@ function checkValue(schema, value, path10) {
       receive(losslessValueViolation(failed.path));
     }
   }
-  return rootResult ?? losslessValueViolation(path10);
+  return rootResult ?? losslessValueViolation(path11);
 }
-function validateJsonSchemaValue(schema, value, path10 = "value") {
-  return checkValue(schema, value, path10);
+function validateJsonSchemaValue(schema, value, path11 = "value") {
+  return checkValue(schema, value, path11);
 }
 
 // node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js
@@ -2689,10 +2689,10 @@ function copyAnnotations(source, target) {
   if (Object.hasOwn(source, "examples"))
     target.examples = source.examples;
 }
-function assertAuthorKeys(source, path10, allowed) {
+function assertAuthorKeys(source, path11, allowed) {
   for (const key of Object.keys(source)) {
     if (!allowed.includes(key))
-      authorError(`${path10}.${key} is not supported by the value schema DSL`);
+      authorError(`${path11}.${key} is not supported by the value schema DSL`);
   }
 }
 function assignCompiledNode(destination, node) {
@@ -2783,22 +2783,22 @@ function runSchemaCompiler(initial) {
       }
       continue;
     }
-    const { input, path: path10 } = task;
+    const { input, path: path11 } = task;
     if (!isJsonSchemaRecord(input))
-      authorError(`${path10} must be a value schema object`);
+      authorError(`${path11} must be a value schema object`);
     if (seen.has(input))
-      authorError(`${path10} is circular`);
+      authorError(`${path11} is circular`);
     seen.add(input);
     const authorKeys = [...ANNOTATION_KEYS, ...task.allowRequired ? ["required"] : []];
     const node = {};
     assignCompiledNode(task.destination, node);
     tasks.push({ kind: "leave", input });
     if (Object.hasOwn(input, "oneOf")) {
-      assertAuthorKeys(input, path10, [...authorKeys, "oneOf", "type"]);
+      assertAuthorKeys(input, path11, [...authorKeys, "oneOf", "type"]);
       if (Object.hasOwn(input, "type"))
-        authorError(`${path10} cannot declare both type and oneOf`);
+        authorError(`${path11} cannot declare both type and oneOf`);
       if (!isPlainJsonArray(input.oneOf))
-        authorError(`${path10}.oneOf must be an array of at least two value schemas`);
+        authorError(`${path11}.oneOf must be an array of at least two value schemas`);
       const branches = [];
       node.oneOf = branches;
       copyAnnotations(input, node);
@@ -2806,7 +2806,7 @@ function runSchemaCompiler(initial) {
         tasks.push({
           kind: "value",
           input: input.oneOf[index],
-          path: `${path10}.oneOf[${index}]`,
+          path: `${path11}.oneOf[${index}]`,
           allowRequired: false,
           destination: { kind: "one-of", target: branches, index }
         });
@@ -2816,13 +2816,13 @@ function runSchemaCompiler(initial) {
     const inputType = Object.hasOwn(input, "type") ? input.type : void 0;
     switch (inputType) {
       case "json":
-        assertAuthorKeys(input, path10, [...authorKeys, "type"]);
+        assertAuthorKeys(input, path11, [...authorKeys, "type"]);
         copyAnnotations(input, node);
         break;
       case "object":
-        assertAuthorKeys(input, path10, [...authorKeys, "type", "properties", "additionalProperties"]);
+        assertAuthorKeys(input, path11, [...authorKeys, "type", "properties", "additionalProperties"]);
         if (!Object.hasOwn(input, "additionalProperties") || typeof input.additionalProperties !== "boolean") {
-          authorError(`${path10}.additionalProperties must be explicitly true or false`);
+          authorError(`${path11}.additionalProperties must be explicitly true or false`);
         }
         node.type = "object";
         copyAnnotations(input, node);
@@ -2831,20 +2831,20 @@ function runSchemaCompiler(initial) {
           tasks.push({
             kind: "property-map",
             input: input.properties,
-            path: `${path10}.properties`,
+            path: `${path11}.properties`,
             destination: { kind: "object", target: node }
           });
         }
         break;
       case "array":
-        assertAuthorKeys(input, path10, [...authorKeys, "type", "items"]);
+        assertAuthorKeys(input, path11, [...authorKeys, "type", "items"]);
         node.type = "array";
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "items")) {
           tasks.push({
             kind: "value",
             input: input.items,
-            path: `${path10}.items`,
+            path: `${path11}.items`,
             allowRequired: false,
             destination: { kind: "item", target: node }
           });
@@ -2855,31 +2855,31 @@ function runSchemaCompiler(initial) {
       case "integer":
       case "boolean":
       case "null":
-        assertAuthorKeys(input, path10, [...authorKeys, "type", "enum", "const"]);
+        assertAuthorKeys(input, path11, [...authorKeys, "type", "enum", "const"]);
         node.type = inputType;
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "enum")) {
           if (!isPlainJsonArray(input.enum))
-            authorError(`${path10}.enum must be a non-empty array of scalar values`);
+            authorError(`${path11}.enum must be a non-empty array of scalar values`);
           node.enum = Array.from(input.enum, (entry) => entry);
         }
         if (Object.hasOwn(input, "const"))
           node.const = input.const;
         break;
       default:
-        authorError(`${path10}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
+        authorError(`${path11}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
     }
   }
 }
-function compilePropertyMap(input, path10) {
+function compilePropertyMap(input, path11) {
   const holder = {};
-  runSchemaCompiler({ kind: "property-map", input, path: path10, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path10} did not compile`);
+  runSchemaCompiler({ kind: "property-map", input, path: path11, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path11} did not compile`);
 }
-function compileValueSchema(input, path10) {
+function compileValueSchema(input, path11) {
   const holder = {};
-  runSchemaCompiler({ kind: "value", input, path: path10, allowRequired: false, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path10} did not compile`);
+  runSchemaCompiler({ kind: "value", input, path: path11, allowRequired: false, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path11} did not compile`);
 }
 function valueSchemaSpecToJsonSchema(spec) {
   const schema = compileValueSchema(spec, "schema");
@@ -4372,27 +4372,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path10 = "";
+  var path11 = "";
   switch (size) {
     case "sqrtMain":
-      path10 = sqrtMain(extraVinculum, hLinePad);
+      path11 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path10 = sqrtSize1(extraVinculum, hLinePad);
+      path11 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path10 = sqrtSize2(extraVinculum, hLinePad);
+      path11 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path10 = sqrtSize3(extraVinculum, hLinePad);
+      path11 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path10 = sqrtSize4(extraVinculum, hLinePad);
+      path11 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path10 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path11 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path10;
+  return path11;
 };
 var innerPath = function innerPath2(name2, height) {
   switch (name2) {
@@ -8575,8 +8575,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path10 = new PathNode(pathName);
-  var svgNode = new SvgNode([path10], {
+  var path11 = new PathNode(pathName);
+  var svgNode = new SvgNode([path11], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9745,8 +9745,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path10 = new PathNode(pathName);
-      var svgNode = new SvgNode([path10], {
+      var path11 = new PathNode(pathName);
+      var svgNode = new SvgNode([path11], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -11043,8 +11043,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path10 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path10], {
+  var path11 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path11], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -11213,10 +11213,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path10 = new PathNode(svgLabel, pathStr);
+    var path11 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path10], {
+    var svg = new SvgNode([path11], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -11257,8 +11257,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path10 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path10);
+  var path11 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path11);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11765,8 +11765,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path10 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path10)], {
+    var path11 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path11)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18938,6 +18938,9 @@ var CURRENT_PACKAGE_SCHEMA_VERSION = 2;
 var CURRENT_ENTRY_SCHEMA_VERSION = 1;
 var CURRENT_MACRO_SCHEMA_VERSION = 1;
 var UNPACKAGED_PACKAGE_ID = "_unpackaged";
+function compareCanonicalIds(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
 function semanticDigest(value) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
@@ -19286,7 +19289,7 @@ async function readEntries(workspaceRoot) {
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort((left, right) => left.localeCompare(right));
+        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
         if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
           throw new Error(
             `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`
@@ -19403,7 +19406,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && entryIds[index - 1].localeCompare(entryId) > 0)) {
+      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );
@@ -19970,10 +19973,10 @@ function safeExportedBinders(source) {
 }
 function isValidI18nString(value) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
-  const record2 = value;
-  if (record2.type !== "i18n" || typeof record2.default_language !== "string") return false;
-  if (typeof record2.values !== "object" || record2.values === null || Array.isArray(record2.values)) return false;
-  const values = Object.values(record2.values);
+  const record3 = value;
+  if (record3.type !== "i18n" || typeof record3.default_language !== "string") return false;
+  if (typeof record3.values !== "object" || record3.values === null || Array.isArray(record3.values)) return false;
+  const values = Object.values(record3.values);
   return values.length > 0 && values.every((item) => typeof item === "string");
 }
 function lintEntry(raw, ctx) {
@@ -20296,12 +20299,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path10 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
+            const path11 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path10} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path10,
+              message: `${path11} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path11,
               position: result.position
             });
           }
@@ -20315,43 +20318,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
-  const path10 = `macros.${name2}`;
+  const path11 = `macros.${name2}`;
   if (!isRecord4(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path10}: macro entry must be an object.`, path: path10 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path11}: macro entry must be an object.`, path: path11 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path10}.description must be a string (may be empty).`, path: `${path10}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path11}.description must be a string (may be empty).`, path: `${path11}.description` });
   }
   if (!isRecord4(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path10}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path10}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path11}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path11}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path10}.dynamic_arity must be a boolean.`, path: `${path10}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path11}.dynamic_arity must be a boolean.`, path: `${path11}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path10}.kind must be a string when present.`, path: `${path10}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path11}.kind must be a string when present.`, path: `${path11}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path10}.tags must be a string array (may be empty).`, path: `${path10}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path11}.tags must be a string array (may be empty).`, path: `${path11}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path10}.tags must not contain backslashes.`, path: `${path10}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path11}.tags must not contain backslashes.`, path: `${path11}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path10}.default_style must be a language \u2192 style-name object.`, path: `${path10}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path11}.default_style must be a language \u2192 style-name object.`, path: `${path11}.default_style` });
   } else if (!isRecord4(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path10}.default_style must map language keys to style-name strings.`, path: `${path10}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path11}.default_style must map language keys to style-name strings.`, path: `${path11}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path10}.styles must be a non-empty array.`, path: `${path10}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path11}.styles must be a non-empty array.`, path: `${path11}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path10}.styles[${index}]`;
+    const stylePath = `${path11}.styles[${index}]`;
     if (!isRecord4(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -20415,12 +20418,12 @@ function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
   if (isRecord4(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path10}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path10}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path11}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path11}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path10}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path10}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path11}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path11}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -21665,8 +21668,8 @@ function errorCode(error) {
 }
 function isLockRecord(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const record2 = value;
-  return record2.version === 1 && Number.isInteger(record2.pid) && typeof record2.hostname === "string" && typeof record2.token === "string" && typeof record2.purpose === "string" && typeof record2.createdAt === "string";
+  const record3 = value;
+  return record3.version === 1 && Number.isInteger(record3.pid) && typeof record3.hostname === "string" && typeof record3.token === "string" && typeof record3.purpose === "string" && typeof record3.createdAt === "string";
 }
 function localProcessIsAlive(pid) {
   try {
@@ -21686,7 +21689,7 @@ async function readLock(lockPath) {
 }
 async function acquireLock(workspaceRoot, purpose) {
   const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
-  const record2 = {
+  const record3 = {
     version: 1,
     pid: process.pid,
     hostname: hostname(),
@@ -21697,10 +21700,10 @@ async function acquireLock(workspaceRoot, purpose) {
   try {
     const handle = await open2(lockPath, "wx", 384);
     try {
-      await handle.writeFile(`${JSON.stringify(record2)}
+      await handle.writeFile(`${JSON.stringify(record3)}
 `, "utf8");
       await handle.sync();
-      return { handle, lockPath, record: record2 };
+      return { handle, lockPath, record: record3 };
     } catch (error) {
       await handle.close();
       await unlink(lockPath).catch(() => void 0);
@@ -22474,7 +22477,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
       const entryIds = Array.isArray(manifest.entry_ids) ? manifest.entry_ids.filter((value) => typeof value === "string") : [];
       return {
         ...manifest,
-        entry_ids: [.../* @__PURE__ */ new Set([...entryIds, entry.id])].sort((left, right) => left.localeCompare(right))
+        entry_ids: [.../* @__PURE__ */ new Set([...entryIds, entry.id])].sort(compareCanonicalIds)
       };
     })() : null;
     try {
@@ -24000,9 +24003,9 @@ function indexCounterPaths(counters) {
     ids.add(counter.id);
     names.add(counter.name);
     visiting.add(counter);
-    const path10 = [...parents, counter];
-    paths.set(counter, path10);
-    for (const child of counter.children) visit2(child, path10);
+    const path11 = [...parents, counter];
+    paths.set(counter, path11);
+    for (const child of counter.children) visit2(child, path11);
     visiting.delete(counter);
   };
   for (const counter of counters) visit2(counter, []);
@@ -24055,15 +24058,15 @@ function numberNodes(index, entries, kinds, counters, paths) {
   for (const nodeId of index.readingOrder) {
     const node = index.nodesById.get(nodeId);
     const counter = resolveCounter(node, entries, kinds, counters);
-    const path10 = counter ? paths.get(counter) : void 0;
-    if (!counter || !path10) {
+    const path11 = counter ? paths.get(counter) : void 0;
+    if (!counter || !path11) {
       numbers.set(nodeId, null);
       continue;
     }
     values.set(counter, (values.get(counter) ?? 0) + 1);
     resetDescendants(counter);
     const segments = [];
-    for (const level of path10) {
+    for (const level of path11) {
       const value = values.get(level);
       if (value === void 0) {
         segments.length = 0;
@@ -24137,7 +24140,7 @@ function singleLine(value) {
 }
 
 // src/cli/operation.ts
-import path9 from "node:path";
+import path10 from "node:path";
 
 // node_modules/fuse.js/dist/fuse.mjs
 function isArray(value) {
@@ -24210,14 +24213,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path10 = null;
+  let path11 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path10 = createKeyPath(key);
+    path11 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -24227,12 +24230,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name2)));
     }
-    path10 = createKeyPath(name2);
+    path11 = createKeyPath(name2);
     id = createKeyId(name2);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path10,
+    path: path11,
     id,
     weight,
     src,
@@ -24245,29 +24248,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path10) {
+function get(obj, path11) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path11, index, arrayIndex) => {
+  const deepGet = (obj2, path12, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path11[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path12[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path11[index]];
+      const value = obj2[path12[index]];
       if (!isDefined(value)) return;
-      if (index === path11.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path12.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path11, index + 1, i5);
-      } else if (path11.length) deepGet(value, path11, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path12, index + 1, i5);
+      } else if (path12.length) deepGet(value, path12, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path10) ? path10.split(".") : path10, 0);
+  deepGet(obj, isString(path11) ? path11.split(".") : path11, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -24361,8 +24364,8 @@ var FuseIndex = class {
     this.records = new Array(len);
     let recordCount = 0;
     if (isString(this.docs[0])) for (let i5 = 0; i5 < len; i5++) {
-      const record2 = this._createStringRecord(this.docs[i5], i5);
-      if (record2) this.records[recordCount++] = record2;
+      const record3 = this._createStringRecord(this.docs[i5], i5);
+      if (record3) this.records[recordCount++] = record3;
     }
     else for (let i5 = 0; i5 < len; i5++) this.records[recordCount++] = this._createObjectRecord(this.docs[i5], i5);
     this.records.length = recordCount;
@@ -24371,13 +24374,13 @@ var FuseIndex = class {
   add(doc, docIndex) {
     if (!Number.isInteger(docIndex) || docIndex < 0) throw new Error(INVALID_DOC_INDEX);
     if (isString(doc)) {
-      const record3 = this._createStringRecord(doc, docIndex);
-      if (record3) this.records.push(record3);
-      return record3;
+      const record4 = this._createStringRecord(doc, docIndex);
+      if (record4) this.records.push(record4);
+      return record4;
     }
-    const record2 = this._createObjectRecord(doc, docIndex);
-    this.records.push(record2);
-    return record2;
+    const record3 = this._createObjectRecord(doc, docIndex);
+    this.records.push(record3);
+    return record3;
   }
   removeAt(idx) {
     if (!Number.isInteger(idx) || idx < 0) throw new Error(INVALID_DOC_INDEX);
@@ -24393,15 +24396,15 @@ var FuseIndex = class {
     if (toRemove.size === 0) return;
     this.records = this.records.filter((r3) => !toRemove.has(r3.i));
     const sorted = Array.from(toRemove).sort((a4, b4) => a4 - b4);
-    for (const record2 of this.records) {
+    for (const record3 of this.records) {
       let lo = 0;
       let hi = sorted.length;
       while (lo < hi) {
         const mid = lo + hi >>> 1;
-        if (sorted[mid] < record2.i) lo = mid + 1;
+        if (sorted[mid] < record3.i) lo = mid + 1;
         else hi = mid;
       }
-      record2.i -= lo;
+      record3.i -= lo;
     }
   }
   getValueForItemAtKeyId(item, keyId) {
@@ -24419,7 +24422,7 @@ var FuseIndex = class {
     };
   }
   _createObjectRecord(doc, docIndex) {
-    const record2 = {
+    const record3 = {
       i: docIndex,
       $: {}
     };
@@ -24453,16 +24456,16 @@ var FuseIndex = class {
             }
           }
         }
-        record2.$[keyIndex] = subRecords;
+        record3.$[keyIndex] = subRecords;
       } else if (isString(value) && !isBlank(value)) {
         const subRecord = {
           v: value,
           n: this.norm.get(value)
         };
-        record2.$[keyIndex] = subRecord;
+        record3.$[keyIndex] = subRecord;
       }
     }
-    return record2;
+    return record3;
   }
   toJSON() {
     return {
@@ -25280,8 +25283,8 @@ function addField(index, text2, docIdx, analyzer) {
     index.df.set(term, (index.df.get(term) || 0) + 1);
   }
 }
-function ingestRecord(index, record2, keyCount, analyzer) {
-  const { i: docIdx, v: v3, $: fields } = record2;
+function ingestRecord(index, record3, keyCount, analyzer) {
+  const { i: docIdx, v: v3, $: fields } = record3;
   if (v3 !== void 0) {
     addField(index, v3, docIdx, analyzer);
     return;
@@ -25301,11 +25304,11 @@ function buildInvertedIndex(records, keyCount, analyzer) {
     docFieldCount: /* @__PURE__ */ new Map(),
     docTermFieldHits: /* @__PURE__ */ new Map()
   };
-  for (const record2 of records) ingestRecord(index, record2, keyCount, analyzer);
+  for (const record3 of records) ingestRecord(index, record3, keyCount, analyzer);
   return index;
 }
-function addToInvertedIndex(index, record2, keyCount, analyzer) {
-  ingestRecord(index, record2, keyCount, analyzer);
+function addToInvertedIndex(index, record3, keyCount, analyzer) {
+  ingestRecord(index, record3, keyCount, analyzer);
 }
 function removeFromInvertedIndex(index, docIdx) {
   const fieldCount = index.docFieldCount.get(docIdx);
@@ -25389,14 +25392,14 @@ var Fuse = class {
   add(doc) {
     if (!isDefined(doc)) return;
     this._docs.push(doc);
-    const record2 = this._myIndex.add(doc, this._docs.length - 1);
-    if (this._invertedIndex && record2) {
+    const record3 = this._myIndex.add(doc, this._docs.length - 1);
+    if (this._invertedIndex && record3) {
       const analyzer = createAnalyzer({
         isCaseSensitive: this.options.isCaseSensitive,
         ignoreDiacritics: this.options.ignoreDiacritics,
         tokenize: this.options.tokenize
       });
-      addToInvertedIndex(this._invertedIndex, record2, this._myIndex.keys.length, analyzer);
+      addToInvertedIndex(this._invertedIndex, record3, this._myIndex.keys.length, analyzer);
     }
     this._invalidateSearcherCache();
   }
@@ -27138,8 +27141,8 @@ function uniqueBy(values, identity, label) {
 function stableJson(value) {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
   if (value && typeof value === "object") {
-    const record2 = value;
-    return `{${Object.keys(record2).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record2[key])}`).join(",")}}`;
+    const record3 = value;
+    return `{${Object.keys(record3).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record3[key])}`).join(",")}}`;
   }
   return JSON.stringify(value);
 }
@@ -27153,12 +27156,12 @@ function assertValidLocalizedField(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new TypeError(`${label} must be a string or I18N map.`);
   }
-  const record2 = value;
-  if (record2.type !== "i18n" || typeof record2.default_language !== "string" || !record2.default_language || !record2.values || typeof record2.values !== "object" || Array.isArray(record2.values)) {
+  const record3 = value;
+  if (record3.type !== "i18n" || typeof record3.default_language !== "string" || !record3.default_language || !record3.values || typeof record3.values !== "object" || Array.isArray(record3.values)) {
     throw new TypeError(`${label} must be a valid I18N map.`);
   }
-  const values = record2.values;
-  if (typeof values[record2.default_language] !== "string" || !values[record2.default_language]) {
+  const values = record3.values;
+  if (typeof values[record3.default_language] !== "string" || !values[record3.default_language]) {
     throw new TypeError(`${label} must define a non-empty value for default_language.`);
   }
   for (const [language, text2] of Object.entries(values)) {
@@ -27486,6 +27489,61 @@ async function initializeWorkspace(root, presetId, presetValue) {
   }
 }
 
+// lib/package-membership-repair.ts
+import { promises as fs7 } from "node:fs";
+import path9 from "node:path";
+function record2(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
+  return value;
+}
+async function repairPackageEntryIds(workspaceRoot, packageId) {
+  if (!packageId) throw new Error("Package id must be non-empty.");
+  return withWorkspaceDataLock(workspaceRoot, `repair Package entry_ids ${packageId}`, async () => {
+    const config = await readConfig(workspaceRoot);
+    if (!usesCurrentEntitySchemas(config)) {
+      throw new Error("Package entry_ids repair requires the current per-entity workspace schema.");
+    }
+    const doc = snlDocRoot(workspaceRoot);
+    const manifestFile = path9.join(doc, packageManifestPath(packageId));
+    const original = await readRegularText(manifestFile);
+    const manifest = record2(JSON.parse(original.text), "Package manifest");
+    if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
+      throw new Error(`Package ${JSON.stringify(packageId)} is not a current canonical Package manifest.`);
+    }
+    const entryIds = [];
+    const seen = /* @__PURE__ */ new Set();
+    const entriesDir = path9.join(doc, "entries");
+    for (const name2 of (await fs7.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
+      const relative2 = `entries/${name2}`;
+      const envelope = record2(JSON.parse((await readRegularText(path9.join(entriesDir, name2))).text), relative2);
+      const entry = record2(envelope.entry, `${relative2}#entry`);
+      if (envelope.format !== "snl-entry" || envelope.version !== ENTRY_STORAGE_VERSION || envelope.schema_version !== CURRENT_ENTRY_SCHEMA_VERSION || typeof envelope.package !== "string" || entry.package !== envelope.package || typeof entry.id !== "string" || !entry.id) {
+        throw new Error(`${relative2} is not a current canonical Entry envelope.`);
+      }
+      if (relative2 !== entryEntityPath(envelope.package, entry.id)) {
+        throw new Error(`${relative2} does not match Entry identity ${JSON.stringify(entry.id)}.`);
+      }
+      if (seen.has(entry.id)) throw new Error(`Duplicate Entry identity ${JSON.stringify(entry.id)}.`);
+      seen.add(entry.id);
+      if (envelope.package === packageId) entryIds.push(entry.id);
+    }
+    entryIds.sort(compareCanonicalIds);
+    const next = { ...manifest, entry_ids: entryIds };
+    if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
+      await readEntries(workspaceRoot);
+      return { packageId, changed: false, entryIds };
+    }
+    await replaceJsonIfUnchanged(manifestFile, original.text, next);
+    try {
+      await readEntries(workspaceRoot);
+    } catch (error) {
+      await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
+      throw error;
+    }
+    return { packageId, changed: true, entryIds };
+  });
+}
+
 // src/cli/operation.ts
 var OPERATION_PROTOCOL = "snl.operation/v1";
 var RESULT_PROTOCOL = "snl.result/v1";
@@ -27509,7 +27567,8 @@ var COMMAND_PATHS = Object.freeze([
   "snoogl",
   "entry/latex",
   "entry/references",
-  "macro/usages"
+  "macro/usages",
+  "repair/package-entry-ids"
 ]);
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
@@ -27520,6 +27579,7 @@ function describeCommand(command) {
   if (action === "update") return { command, access: "write", arguments: { id: field("string", true), value: field("object", true), expectedRevision: field("string", true) }, summary: "Replace one managed entity under revision control." };
   if (action === "delete") return { command, access: "write", arguments: { id: field("string", true), expectedRevision: field("string", true) }, summary: "Delete one managed entity under revision control." };
   if (command === "entry/latex") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Render one Entry as bare LaTeX." };
+  if (command === "repair/package-entry-ids") return { command, access: "write", arguments: { id: field("string", true) }, summary: "Rebuild one Package Entry membership index from canonical Entry envelopes." };
   if (command === "entry/references" || command === "macro/usages") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Find structured references to one existing identity." };
   return { command, access: "read", arguments: {}, summary: "Discover this command namespace." };
 }
@@ -27546,14 +27606,14 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path9.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path10.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
     if (tokens.length === 1 && command === "help") {
       exactArguments(request.arguments, []);
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path10) => path10 !== "help"),
+        commands: COMMAND_PATHS.filter((path11) => path11 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS
       });
     }
@@ -27587,7 +27647,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path9.resolve(request.root),
+        root: path10.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,
@@ -27601,6 +27661,10 @@ async function executeOperation(request) {
       const mode = stringArg(request.arguments, "mode");
       if (mode !== "entry" && mode !== "macro") throw new TypeError("mode must be entry or macro.");
       return succeed(command, await querySnoogl(request.root, mode, stringArg(request.arguments, "query")));
+    }
+    if (command === "repair/package-entry-ids") {
+      exactArguments(request.arguments, ["id"]);
+      return succeed(command, await repairPackageEntryIds(request.root, stringArg(request.arguments, "id")));
     }
     if (command === "entry/latex") {
       exactArguments(request.arguments, ["id"]);

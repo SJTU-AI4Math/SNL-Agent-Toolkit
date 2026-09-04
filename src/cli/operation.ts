@@ -15,6 +15,7 @@ import { findEntityReferences } from '../../lib/entity-references.ts';
 import { macroEntityPath } from '../../lib/entity-storage.ts';
 import { initializeWorkspace, InitWorkspaceError } from '../../lib/init-workspace.ts';
 import { BUILTIN_INIT_PRESET_DESCRIPTORS } from '../../lib/init-presets.ts';
+import { repairPackageEntryIds } from '../../lib/package-membership-repair.ts';
 
 export const OPERATION_PROTOCOL = 'snl.operation/v1' as const;
 export const RESULT_PROTOCOL = 'snl.result/v1' as const;
@@ -33,7 +34,7 @@ const ENTITY_ACTIONS = ['list', 'get', 'create', 'update', 'delete'] as const;
 export const COMMAND_PATHS = Object.freeze([
   'help', 'init', 'info', 'validate',
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
-  'snoogl', 'entry/latex', 'entry/references', 'macro/usages',
+  'snoogl', 'entry/latex', 'entry/references', 'macro/usages', 'repair/package-entry-ids',
 ]);
 type CommandDescriptor = { command: string; access: 'read' | 'write'; arguments: Record<string, { type: string; required: boolean }>; summary: string };
 const field = (type: string, required: boolean) => ({ type, required });
@@ -45,6 +46,7 @@ function describeCommand(command: string): CommandDescriptor {
   if (action === 'update') return { command, access: 'write', arguments: { id: field('string', true), value: field('object', true), expectedRevision: field('string', true) }, summary: 'Replace one managed entity under revision control.' };
   if (action === 'delete') return { command, access: 'write', arguments: { id: field('string', true), expectedRevision: field('string', true) }, summary: 'Delete one managed entity under revision control.' };
   if (command === 'entry/latex') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Render one Entry as bare LaTeX.' };
+  if (command === 'repair/package-entry-ids') return { command, access: 'write', arguments: { id: field('string', true) }, summary: 'Rebuild one Package Entry membership index from canonical Entry envelopes.' };
   if (command === 'entry/references' || command === 'macro/usages') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Find structured references to one existing identity.' };
   return { command, access: 'read', arguments: {}, summary: 'Discover this command namespace.' };
 }
@@ -128,6 +130,10 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
       const mode = stringArg(request.arguments, 'mode');
       if (mode !== 'entry' && mode !== 'macro') throw new TypeError('mode must be entry or macro.');
       return succeed(command, await querySnoogl(request.root, mode, stringArg(request.arguments, 'query')!));
+    }
+    if (command === 'repair/package-entry-ids') {
+      exactArguments(request.arguments, ['id']);
+      return succeed(command, await repairPackageEntryIds(request.root, stringArg(request.arguments, 'id')!));
     }
     if (command === 'entry/latex') {
       exactArguments(request.arguments, ['id']);

@@ -5,6 +5,8 @@ import path from 'node:path';
 import { afterEach, describe, it } from 'node:test';
 import { createManagedEntity, deleteManagedEntity, getManagedEntity, listManagedEntities, updateManagedEntity, validateManagedWorkspace } from '../lib/entity-crud.ts';
 import { entryEntityPath, macroEntityPath, packageManifestPath } from '../lib/entity-storage.ts';
+import { repairPackageEntryIds } from '../lib/package-membership-repair.ts';
+import { executeOperation, OPERATION_PROTOCOL } from '../src/cli/operation.ts';
 
 const FIXTURE = path.join(import.meta.dirname, 'fixtures', 'workspace-v0.1.0');
 const roots: string[] = [];
@@ -83,6 +85,67 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(result.status, 'ok');
     const readBack = await getManagedEntity(root, 'entry', 'entry.blank');
     assert.equal(readBack?.value.title, '');
+  });
+
+  it('sorts Package Entry membership by deterministic UTF-16 code units', async () => {
+    const root = await fixtureCopy();
+    for (const id of ['黄歇', '墨翟']) {
+      const result = await createManagedEntity(root, 'entry', {
+        id,
+        package: '_unpackaged',
+        kind: 'definition',
+        title: id,
+        content: { snl: `%${id}%` },
+        contribution_info: null,
+        pointer: null,
+      });
+      assert.equal(result.status, 'ok');
+    }
+    const manifest = JSON.parse(await readFile(path.join(
+      root, '.SNL_Doc', packageManifestPath('_unpackaged'),
+    ), 'utf8'));
+    assert.deepEqual(manifest.entry_ids, ['entry.localized', '墨翟', '黄歇']);
+  });
+
+  it('repairs a Package membership index written with locale-dependent ordering', async () => {
+    const root = await fixtureCopy();
+    for (const id of ['黄歇', '墨翟']) {
+      const result = await createManagedEntity(root, 'entry', {
+        id, package: '_unpackaged', kind: 'definition', title: id,
+        content: { snl: `%${id}%` }, contribution_info: null, pointer: null,
+      });
+      assert.equal(result.status, 'ok');
+    }
+    const manifestFile = path.join(root, '.SNL_Doc', packageManifestPath('_unpackaged'));
+    await mutateJson(manifestFile, (manifest) => {
+      manifest.entry_ids = ['entry.localized', '黄歇', '墨翟'];
+    });
+
+    const result = await repairPackageEntryIds(root, '_unpackaged');
+
+    assert.deepEqual(result, {
+      packageId: '_unpackaged', changed: true,
+      entryIds: ['entry.localized', '墨翟', '黄歇'],
+    });
+    assert.equal((await validateManagedWorkspace(root)).valid, true);
+  });
+
+  it('exposes Package membership repair through the unified operation protocol', async () => {
+    const root = await fixtureCopy();
+    const manifestFile = path.join(root, '.SNL_Doc', packageManifestPath('_unpackaged'));
+    await mutateJson(manifestFile, (manifest) => {
+      manifest.entry_ids = ['黄歇', 'entry.localized'];
+    });
+
+    const response = await executeOperation({
+      protocol: OPERATION_PROTOCOL,
+      command: 'repair/package-entry-ids',
+      root,
+      arguments: { id: '_unpackaged' },
+    });
+
+    assert.equal(response.exitCode, 0, JSON.stringify(response.response));
+    assert.equal(response.response.ok, true);
   });
 
   it('deletes an unreferenced Entry when another canonical Entry uses Unicode identifiers', async () => {
