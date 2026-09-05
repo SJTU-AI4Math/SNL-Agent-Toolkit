@@ -39,6 +39,20 @@ describe('lintGraph', () => {
     assert.deepEqual(r.issues, []);
   });
 
+  it('skips only pool resolution when Entries are unavailable, retaining graph and id-type checks', () => {
+    const graph = {
+      nodes: [
+        { id: 'n1', label: 'Entry', props: { entryId: 'missing' } },
+        { id: 'n2', label: 'Entry', props: { entryId: 42 } },
+      ],
+      relationships: [{ from: 'ghost', to: 'n1', label: 'branch' }],
+    };
+    assert.deepEqual(codes(lintGraph(graph, { poolEntries: null })), [
+      'graph.node.bad-entry-id-type', 'graph.rel.dangling-from',
+    ]);
+    assert.ok(codes(lintGraph(graph, { poolEntries: [] })).includes('graph.node.entry-not-in-pool'));
+  });
+
   it('accepts a placeholder node (entryId unset)', () => {
     const g = {
       nodes: [{ id: 'n1', label: 'Entry', props: {} }],

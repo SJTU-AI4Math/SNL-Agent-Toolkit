@@ -348,10 +348,20 @@ async function assertEntityStorageTopology(workspaceRoot: string, config: SnlCon
  * is ignored; legacy workspaces retain aggregate compatibility.
  */
 export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
+  return readEntriesWithPackageRepair(workspaceRoot);
+}
+
+/** Repair-only verification: other Package indexes may differ in order, never membership. */
+export async function readEntriesForPackageRepair(workspaceRoot: string, packageId: string): Promise<EntryData[]> {
+  packageManifestPath(packageId);
+  return readEntriesWithPackageRepair(workspaceRoot, packageId);
+}
+
+async function readEntriesWithPackageRepair(workspaceRoot: string, repairingPackageId?: string): Promise<EntryData[]> {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId);
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const entryKindIds = new Set((config.entry_kinds ?? []).map(kind => kind.id));
     const ids = new Set<string>();
@@ -393,7 +403,10 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
           .filter((entry) => entry.package === manifest.id)
           .map((entry) => entry.id)
           .sort(compareCanonicalIds);
-        if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
+        const indexed = repairingPackageId !== undefined && manifest.id !== repairingPackageId
+          ? [...manifest.entry_ids!].sort(compareCanonicalIds)
+          : manifest.entry_ids;
+        if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
           throw new Error(
             `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`,
           );
@@ -518,6 +531,7 @@ async function readEntityMacroPackages(
 async function readEntityPackageManifests(
   workspaceRoot: string,
   requireCurrentSchema = false,
+  repairingPackageId?: string,
 ): Promise<Map<string, PackageManifest>> {
   const manifests = new Map<string, PackageManifest>();
   const foldedIds = new Set<string>();
@@ -539,8 +553,9 @@ async function readEntityPackageManifests(
         entryIds.some((entryId: unknown) =>
           typeof entryId !== 'string' || !entryId || entryId !== entryId.trim()) ||
         new Set(entryIds).size !== entryIds.length ||
-        entryIds.some((entryId: string, index: number) =>
-          index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)
+        ((repairingPackageId === undefined || value.id === repairingPackageId) &&
+          entryIds.some((entryId: string, index: number) =>
+            index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0))
       ) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`,

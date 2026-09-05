@@ -18194,10 +18194,17 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
   }
 }
 async function readEntries(workspaceRoot) {
+  return readEntriesWithPackageRepair(workspaceRoot);
+}
+async function readEntriesForPackageRepair(workspaceRoot, packageId) {
+  packageManifestPath(packageId);
+  return readEntriesWithPackageRepair(workspaceRoot, packageId);
+}
+async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config));
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId);
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
@@ -18233,7 +18240,8 @@ async function readEntries(workspaceRoot) {
     if (usesCurrentEntitySchemas(config)) {
       for (const manifest of manifests.values()) {
         const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
-        if (JSON.stringify(manifest.entry_ids) !== JSON.stringify(actual)) {
+        const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
+        if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
           throw new Error(
             `Package ${JSON.stringify(manifest.id)} entry_ids does not exactly match its owned Entry entities.`
           );
@@ -18335,7 +18343,7 @@ async function readEntityMacroPackages(workspaceRoot) {
   }
   return out;
 }
-async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false) {
+async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId) {
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
@@ -18349,7 +18357,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
+      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );
@@ -19163,7 +19171,7 @@ function lintGraph(raw, ctx) {
       path: "relationships"
     });
   }
-  const poolIds = new Set(ctx.poolEntries.map((e2) => e2.id));
+  const poolIds = ctx.poolEntries === null ? null : new Set(ctx.poolEntries.map((e2) => e2.id));
   for (const n4 of nodes) {
     if (n4.label !== "Entry") continue;
     const entryId = n4.props?.entryId;
@@ -19179,7 +19187,7 @@ function lintGraph(raw, ctx) {
       });
       continue;
     }
-    if (!poolIds.has(entryId)) {
+    if (poolIds !== null && !poolIds.has(entryId)) {
       issues.push({
         severity: "error",
         code: "graph.node.entry-not-in-pool",
@@ -22449,25 +22457,25 @@ async function validateManagedWorkspace(root) {
       });
     }
   }
-  let entries = [];
+  let entries = null;
   try {
     entries = await readEntries(root);
   } catch (error) {
     if (!issues.some((issue) => issue.code === "entry.read-failed"))
       issues.push({ severity: "error", code: "entry.read-failed", message: error instanceof Error ? error.message : String(error), path: "entry" });
   }
-  const entryIds = new Set(entries.map((entry) => entry.id));
+  const entryIds = entries === null ? null : new Set(entries.map((entry) => entry.id));
   for (const relationship of rows.get("relationship") ?? []) {
     const from = relationship.value.from;
     const to = relationship.value.to;
     const label = relationship.value.label;
     if (typeof from !== "string" || !from)
       issues.push({ severity: "error", code: "relationship.invalid-from", message: `Relationship ${relationship.id} requires a non-empty from Entry id.`, path: `relationship:${relationship.id}.from` });
-    else if (!entryIds.has(from))
+    else if (entryIds !== null && !entryIds.has(from))
       issues.push({ severity: "error", code: "relationship.dangling-from", message: `Relationship ${relationship.id} references missing Entry ${from}.`, path: `relationship:${relationship.id}.from` });
     if (typeof to !== "string" || !to)
       issues.push({ severity: "error", code: "relationship.invalid-to", message: `Relationship ${relationship.id} requires a non-empty to Entry id.`, path: `relationship:${relationship.id}.to` });
-    else if (!entryIds.has(to))
+    else if (entryIds !== null && !entryIds.has(to))
       issues.push({ severity: "error", code: "relationship.dangling-to", message: `Relationship ${relationship.id} references missing Entry ${to}.`, path: `relationship:${relationship.id}.to` });
     if (typeof label !== "string" || !label)
       issues.push({ severity: "error", code: "relationship.invalid-label", message: `Relationship ${relationship.id} requires a non-empty label.`, path: `relationship:${relationship.id}.label` });
@@ -27024,12 +27032,18 @@ async function repairPackageEntryIds(workspaceRoot, packageId) {
     entryIds.sort(compareCanonicalIds);
     const next = { ...manifest, entry_ids: entryIds };
     if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
-      await readEntries(workspaceRoot);
+      await readEntriesForPackageRepair(workspaceRoot, packageId);
+      if ((await readRegularText(manifestFile)).text !== original.text) {
+        throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
+      }
       return { packageId, changed: false, entryIds };
     }
     await replaceJsonIfUnchanged(manifestFile, original.text, next);
     try {
-      await readEntries(workspaceRoot);
+      await readEntriesForPackageRepair(workspaceRoot, packageId);
+      if ((await readRegularText(manifestFile)).text !== jsonText(next)) {
+        throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
+      }
     } catch (error) {
       await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
       throw error;

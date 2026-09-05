@@ -384,24 +384,25 @@ export async function validateManagedWorkspace(root: string): Promise<{
             });
         }
     }
-    let entries: Awaited<ReturnType<typeof readEntries>> = [];
+    // An unreadable pool is unknown, not a readable empty workspace.
+    let entries: Awaited<ReturnType<typeof readEntries>> | null = null;
     try { entries = await readEntries(root); }
     catch (error) {
         if (!issues.some(issue => issue.code === "entry.read-failed"))
             issues.push({ severity: "error", code: "entry.read-failed", message: error instanceof Error ? error.message : String(error), path: "entry" });
     }
-    const entryIds = new Set(entries.map(entry => entry.id));
+    const entryIds = entries === null ? null : new Set(entries.map(entry => entry.id));
     for (const relationship of rows.get("relationship") ?? []) {
         const from = relationship.value.from;
         const to = relationship.value.to;
         const label = relationship.value.label;
         if (typeof from !== "string" || !from)
             issues.push({ severity: "error", code: "relationship.invalid-from", message: `Relationship ${relationship.id} requires a non-empty from Entry id.`, path: `relationship:${relationship.id}.from` });
-        else if (!entryIds.has(from))
+        else if (entryIds !== null && !entryIds.has(from))
             issues.push({ severity: "error", code: "relationship.dangling-from", message: `Relationship ${relationship.id} references missing Entry ${from}.`, path: `relationship:${relationship.id}.from` });
         if (typeof to !== "string" || !to)
             issues.push({ severity: "error", code: "relationship.invalid-to", message: `Relationship ${relationship.id} requires a non-empty to Entry id.`, path: `relationship:${relationship.id}.to` });
-        else if (!entryIds.has(to))
+        else if (entryIds !== null && !entryIds.has(to))
             issues.push({ severity: "error", code: "relationship.dangling-to", message: `Relationship ${relationship.id} references missing Entry ${to}.`, path: `relationship:${relationship.id}.to` });
         if (typeof label !== "string" || !label)
             issues.push({ severity: "error", code: "relationship.invalid-label", message: `Relationship ${relationship.id} requires a non-empty label.`, path: `relationship:${relationship.id}.label` });

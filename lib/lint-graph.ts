@@ -45,8 +45,8 @@ import type {
 import type { LintIssue, LintReport } from './lint-report.ts';
 
 export interface LintGraphContext {
-  /** All entries in the shared pool — used for entryId resolution. */
-  poolEntries: EntryData[];
+  /** All entries in the shared pool; null skips only resolution when the pool is unavailable. */
+  poolEntries: EntryData[] | null;
 }
 
 /**
@@ -263,7 +263,7 @@ export function lintGraph(raw: unknown, ctx: LintGraphContext): LintReport {
   }
 
   // Entry ID resolution.
-  const poolIds = new Set(ctx.poolEntries.map((e) => e.id));
+  const poolIds = ctx.poolEntries === null ? null : new Set(ctx.poolEntries.map((e) => e.id));
   for (const n of nodes) {
     if (n.label !== 'Entry') continue;
     const entryId = n.props?.entryId;
@@ -280,7 +280,7 @@ export function lintGraph(raw: unknown, ctx: LintGraphContext): LintReport {
       });
       continue;
     }
-    if (!poolIds.has(entryId)) {
+    if (poolIds !== null && !poolIds.has(entryId)) {
       issues.push({
         severity: 'error',
         code: 'graph.node.entry-not-in-pool',

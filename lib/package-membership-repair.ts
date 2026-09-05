@@ -10,7 +10,7 @@ import {
   packageManifestPath,
 } from './entity-storage.ts';
 import { jsonText, readRegularText, replaceJsonIfUnchanged } from './guarded-json-file.ts';
-import { readConfig, readEntries, snlDocRoot, usesCurrentEntitySchemas } from './snl-doc.ts';
+import { readConfig, readEntriesForPackageRepair, snlDocRoot, usesCurrentEntitySchemas } from './snl-doc.ts';
 import { withWorkspaceDataLock } from './workspace-data-lock.ts';
 
 export interface PackageMembershipRepairResult {
@@ -86,13 +86,19 @@ export async function repairPackageEntryIds(
 
     const next = { ...manifest, entry_ids: entryIds };
     if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
-      await readEntries(workspaceRoot);
+      await readEntriesForPackageRepair(workspaceRoot, packageId);
+      if ((await readRegularText(manifestFile)).text !== original.text) {
+        throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
+      }
       return { packageId, changed: false, entryIds };
     }
 
     await replaceJsonIfUnchanged(manifestFile, original.text, next);
     try {
-      await readEntries(workspaceRoot);
+      await readEntriesForPackageRepair(workspaceRoot, packageId);
+      if ((await readRegularText(manifestFile)).text !== jsonText(next)) {
+        throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
+      }
     } catch (error) {
       await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
       throw error;
