@@ -336,6 +336,12 @@ export interface BatchApplyHooks {
   afterExchange?: () => Promise<void>;
   beforeParentSync?: () => Promise<void>;
 }
+/** Whole canonical authority revision, shared by batch and relationship publication. */
+export async function captureWorkspaceRevision(root: string, allowWriterLock = false): Promise<string> {
+  await assertRoot(root);
+  if (!allowWriterLock && await exists(path.join(root, '.SNL_Doc', DATA_WRITE_LOCK_FILENAME))) throw new BatchError('workspace.locked', 'Workspace has an active or stale writer lock.', 2);
+  return revision(root, await snapshot(root));
+}
 export async function checkBatch(root: string, raw: unknown) {
   const operations = normalize(raw);
   await assertRoot(root);

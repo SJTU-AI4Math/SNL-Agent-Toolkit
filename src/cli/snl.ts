@@ -55,11 +55,15 @@ export async function main(argv=process.argv.slice(2)): Promise<number> {
   try {
     const input=parsed.request.arguments.input;
     if(typeof input==='string'){
-      const value = await readInput(input, parsed.request.command.startsWith('batch/'));
+      const value = await readInput(input, parsed.request.command.startsWith('batch/') || parsed.request.command === 'relationship/generate');
       delete parsed.request.arguments.input;
       if (parsed.request.command === 'batch/check') parsed.request.arguments.operations = value;
       else if (parsed.request.command === 'batch/apply') {
         if (!value || typeof value !== 'object' || Array.isArray(value)) throw new SyntaxError('batch apply input must be {operations,checkedDigest,expectedWorkspaceRevision}.');
+        parsed.request.arguments = { ...parsed.request.arguments, ...value };
+      } else if (parsed.request.command === 'relationship/generate') {
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new SyntaxError('relationship generate input must be an arguments object.');
+        if (Object.keys(value).some(key => Object.hasOwn(parsed.request!.arguments, key))) throw new SyntaxError('Do not duplicate relationship arguments between flags and input JSON.');
         parsed.request.arguments = { ...parsed.request.arguments, ...value };
       } else parsed.request.arguments.value = value;
     }

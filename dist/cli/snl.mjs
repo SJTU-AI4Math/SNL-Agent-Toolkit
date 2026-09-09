@@ -112,8 +112,8 @@ var require_react_production = __commonJS({
     function cloneAndReplaceKey(oldElement, newKey) {
       return ReactElement(oldElement.type, newKey, oldElement.props);
     }
-    function isValidElement(object) {
-      return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+    function isValidElement(object2) {
+      return "object" === typeof object2 && null !== object2 && object2.$$typeof === REACT_ELEMENT_TYPE;
     }
     function escape2(key) {
       var escaperLookup = { "=": "=0", ":": "=2" };
@@ -687,8 +687,8 @@ var require_react_development = __commonJS({
       function validateChildKeys(node) {
         isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
-      function isValidElement(object) {
-        return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+      function isValidElement(object2) {
+        return "object" === typeof object2 && null !== object2 && object2.$$typeof === REACT_ELEMENT_TYPE;
       }
       function escape2(key) {
         var escaperLookup = { "=": "=0", ":": "=2" };
@@ -1695,8 +1695,8 @@ var require_react_jsx_runtime_development = __commonJS({
       function validateChildKeys(node) {
         isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
-      function isValidElement(object) {
-        return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+      function isValidElement(object2) {
+        return "object" === typeof object2 && null !== object2 && object2.$$typeof === REACT_ELEMENT_TYPE;
       }
       var React = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
         return null;
@@ -2174,11 +2174,11 @@ var require_react_dom = __commonJS({
 
 // src/cli/snl.ts
 import { promises as fs9 } from "node:fs";
-import path12 from "node:path";
+import path13 from "node:path";
 import { pathToFileURL } from "node:url";
 
 // src/cli/operation.ts
-import path11 from "node:path";
+import path12 from "node:path";
 
 // lib/entity-crud.ts
 import { createHash as createHash3, randomUUID as randomUUID3 } from "node:crypto";
@@ -3706,27 +3706,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path13 = "";
+  var path14 = "";
   switch (size) {
     case "sqrtMain":
-      path13 = sqrtMain(extraVinculum, hLinePad);
+      path14 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path13 = sqrtSize1(extraVinculum, hLinePad);
+      path14 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path13 = sqrtSize2(extraVinculum, hLinePad);
+      path14 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path13 = sqrtSize3(extraVinculum, hLinePad);
+      path14 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path13 = sqrtSize4(extraVinculum, hLinePad);
+      path14 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path13 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path14 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path13;
+  return path14;
 };
 var innerPath = function innerPath2(name, height) {
   switch (name) {
@@ -7909,8 +7909,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path13 = new PathNode(pathName);
-  var svgNode = new SvgNode([path13], {
+  var path14 = new PathNode(pathName);
+  var svgNode = new SvgNode([path14], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9079,8 +9079,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path13 = new PathNode(pathName);
-      var svgNode = new SvgNode([path13], {
+      var path14 = new PathNode(pathName);
+      var svgNode = new SvgNode([path14], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -10377,8 +10377,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path13 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path13], {
+  var path14 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path14], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -10547,10 +10547,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path13 = new PathNode(svgLabel, pathStr);
+    var path14 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path13], {
+    var svg = new SvgNode([path14], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -10591,8 +10591,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path13 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path13);
+  var path14 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path14);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11099,8 +11099,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path13 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path13)], {
+    var path14 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path14)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18824,12 +18824,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path13 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path14 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path13} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path13,
+              message: `${path14} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path14,
               position: result.position
             });
           }
@@ -18843,43 +18843,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path13 = `macros.${name}`;
+  const path14 = `macros.${name}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path13}: macro entry must be an object.`, path: path13 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path14}: macro entry must be an object.`, path: path14 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path13}.description must be a string (may be empty).`, path: `${path13}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path14}.description must be a string (may be empty).`, path: `${path14}.description` });
   }
   if (!isRecord3(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path13}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path13}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path14}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path14}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path13}.dynamic_arity must be a boolean.`, path: `${path13}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path14}.dynamic_arity must be a boolean.`, path: `${path14}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path13}.kind must be a string when present.`, path: `${path13}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path14}.kind must be a string when present.`, path: `${path14}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path13}.tags must be a string array (may be empty).`, path: `${path13}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path14}.tags must be a string array (may be empty).`, path: `${path14}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path13}.tags must not contain backslashes.`, path: `${path13}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path14}.tags must not contain backslashes.`, path: `${path14}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path13}.default_style must be a language \u2192 style-name object.`, path: `${path13}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path14}.default_style must be a language \u2192 style-name object.`, path: `${path14}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path13}.default_style must map language keys to style-name strings.`, path: `${path13}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style must map language keys to style-name strings.`, path: `${path14}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path13}.styles must be a non-empty array.`, path: `${path13}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path14}.styles must be a non-empty array.`, path: `${path14}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path13}.styles[${index}]`;
+    const stylePath = `${path14}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -18943,12 +18943,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path13}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path13}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path14}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path13}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path13}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path14}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path14}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -20005,12 +20005,12 @@ function parseTree3(text3, errors = [], options = ParseOptions.DEFAULT) {
   }
   return result;
 }
-function findNodeAtLocation(root, path13) {
+function findNodeAtLocation(root, path14) {
   if (!root) {
     return void 0;
   }
   let node = root;
-  for (let segment of path13) {
+  for (let segment of path14) {
     if (typeof segment === "string") {
       if (node.type !== "object" || !Array.isArray(node.children)) {
         return void 0;
@@ -20364,14 +20364,14 @@ function getNodeType(value) {
 
 // node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text3, originalPath, value, options) {
-  const path13 = originalPath.slice();
+  const path14 = originalPath.slice();
   const errors = [];
   const root = parseTree3(text3, errors);
   let parent = void 0;
   let lastSegment = void 0;
-  while (path13.length > 0) {
-    lastSegment = path13.pop();
-    parent = findNodeAtLocation(root, path13);
+  while (path14.length > 0) {
+    lastSegment = path14.pop();
+    parent = findNodeAtLocation(root, path14);
     if (parent === void 0 && value !== void 0) {
       if (typeof lastSegment === "string") {
         value = { [lastSegment]: value };
@@ -20595,8 +20595,8 @@ function printParseErrorCode(code) {
   }
   return "<unknown ParseErrorCode>";
 }
-function modify(text3, path13, value, options) {
-  return setProperty(text3, path13, value, options);
+function modify(text3, path14, value, options) {
+  return setProperty(text3, path14, value, options);
 }
 function applyEdits(text3, edits) {
   let sortedEdits = edits.slice(0).sort((a4, b4) => {
@@ -23313,14 +23313,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path13 = null;
+  let path14 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path13 = createKeyPath(key);
+    path14 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -23330,12 +23330,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name)));
     }
-    path13 = createKeyPath(name);
+    path14 = createKeyPath(name);
     id = createKeyId(name);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path13,
+    path: path14,
     id,
     weight,
     src,
@@ -23348,29 +23348,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path13) {
+function get(obj, path14) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path14, index, arrayIndex) => {
+  const deepGet = (obj2, path15, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path14[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path15[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path14[index]];
+      const value = obj2[path15[index]];
       if (!isDefined(value)) return;
-      if (index === path14.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path15.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path14, index + 1, i5);
-      } else if (path14.length) deepGet(value, path14, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path15, index + 1, i5);
+      } else if (path15.length) deepGet(value, path15, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path13) ? path13.split(".") : path13, 0);
+  deepGet(obj, isString(path14) ? path14.split(".") : path14, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -27439,6 +27439,11 @@ async function exchange(a4, b4) {
   if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.", 2);
   await run("python3", ["-I", "-c", EXCHANGE, a4, b4]);
 }
+async function captureWorkspaceRevision(root, allowWriterLock = false) {
+  await assertRoot(root);
+  if (!allowWriterLock && await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock.", 2);
+  return revision(root, await snapshot(root));
+}
 async function checkBatch(root, raw) {
   const operations = normalize(raw);
   await assertRoot(root);
@@ -27547,6 +27552,360 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
   }
 }
 
+// lib/relationship-operation.ts
+import path11 from "node:path";
+import { isDeepStrictEqual as isDeepStrictEqual2 } from "node:util";
+
+// lib/relationship-generation.ts
+import { isDeepStrictEqual } from "node:util";
+var AUTO_GENERATOR_TAG = "macro-source-scan";
+var AUTO_LABEL = "depends";
+var AUTO_LABELS = ["depends", "uses_context"];
+var AUTO_LABEL_USES_CONTEXT = "uses_context";
+function extractSnlReferences(snl) {
+  const macros2 = /* @__PURE__ */ new Set();
+  const contextSrcs = /* @__PURE__ */ new Set();
+  if (!snl) return { macros: [], contextSrcs: [] };
+  let i5 = 0;
+  const n4 = snl.length;
+  const isIdStart = (c3) => /[A-Za-z_.]/.test(c3);
+  const isIdCont = (c3) => /[A-Za-z0-9_.]/.test(c3);
+  while (i5 < n4) {
+    const c3 = snl[i5];
+    if (/\s|[(),\[\]]/.test(c3)) {
+      i5 += 1;
+      continue;
+    }
+    if (c3 === "%") {
+      i5 += 1;
+      while (i5 < n4 && snl[i5] !== "%") i5 += 1;
+      i5 += 1;
+      continue;
+    }
+    if (c3 === "$") {
+      const isDisplay = snl[i5 + 1] === "$";
+      const delim = isDisplay ? "$$" : "$";
+      i5 += delim.length;
+      while (i5 < n4 && snl.substr(i5, delim.length) !== delim) i5 += 1;
+      i5 += delim.length;
+      continue;
+    }
+    if (c3 === "@") {
+      i5 += 1;
+      if (i5 < n4 && (snl[i5] === "%" || snl[i5] === "$")) continue;
+      while (i5 < n4 && isIdCont(snl[i5])) i5 += 1;
+      continue;
+    }
+    if (isIdStart(c3)) {
+      let j4 = i5 + 1;
+      while (j4 < n4 && isIdCont(snl[j4])) j4 += 1;
+      macros2.add(snl.slice(i5, j4));
+      i5 = j4;
+      if (i5 < n4 && snl[i5] === "[") {
+        while (i5 < n4 && snl[i5] !== "]") i5 += 1;
+        if (i5 < n4) i5 += 1;
+      }
+      if (i5 < n4 && snl[i5] === "@") {
+        i5 += 1;
+        const start = i5;
+        while (i5 < n4 && isIdCont(snl[i5])) i5 += 1;
+        if (i5 > start) contextSrcs.add(snl.slice(start, i5));
+      }
+      continue;
+    }
+    i5 += 1;
+  }
+  return { macros: Array.from(macros2), contextSrcs: Array.from(contextSrcs) };
+}
+function reconcileDependencyRelationships(entries, macros2, existing, scope) {
+  const poolIds = new Set(entries.map((entry) => entry.id));
+  const isSystemAutoRow = (relationship) => AUTO_LABELS.includes(relationship.label) && relationship.metadata !== null && typeof relationship.metadata === "object" && relationship.metadata.generator === AUTO_GENERATOR_TAG;
+  const isManagedDependencyRow = (relationship) => relationship.label === AUTO_LABEL && isSystemAutoRow(relationship);
+  const preservedRows = [];
+  const inScopeAuto = /* @__PURE__ */ new Map();
+  for (const relationship of existing) {
+    const inScope = scope.entryIds === null || scope.entryIds.has(relationship.from);
+    if (isManagedDependencyRow(relationship) && inScope) {
+      inScopeAuto.set(`${relationship.label}|${relationship.from}|${relationship.to}`, relationship);
+    } else {
+      preservedRows.push(relationship);
+    }
+  }
+  const preservedUser = preservedRows.filter(
+    (relationship) => !isSystemAutoRow(relationship)
+  ).length;
+  const generated = /* @__PURE__ */ new Map();
+  const idPrefix = {
+    [AUTO_LABEL]: "dep",
+    [AUTO_LABEL_USES_CONTEXT]: "ctx"
+  };
+  const witnessField = {
+    [AUTO_LABEL]: "macros",
+    [AUTO_LABEL_USES_CONTEXT]: "postfixes"
+  };
+  const allocatedIds = new Set(preservedRows.map(({ id }) => id));
+  const allocateGeneratedId = (label, from, to, previous) => {
+    if (previous && !allocatedIds.has(previous.id)) {
+      allocatedIds.add(previous.id);
+      return previous.id;
+    }
+    const base = `${idPrefix[label]}.${from}.${to}`;
+    let candidate = base;
+    let suffix = 1;
+    while (allocatedIds.has(candidate)) candidate = `${base}.${suffix++}`;
+    allocatedIds.add(candidate);
+    return candidate;
+  };
+  const upsert = (label, from, to, witness) => {
+    if (!to || from === to || !poolIds.has(to)) return;
+    const key = `${label}|${from}|${to}`;
+    let bucket = generated.get(key);
+    if (!bucket) {
+      const previous = inScopeAuto.get(key);
+      bucket = {
+        rel: {
+          id: allocateGeneratedId(label, from, to, previous),
+          from,
+          to,
+          label,
+          metadata: {
+            generator: AUTO_GENERATOR_TAG,
+            [witnessField[label]]: [],
+            isAtomic: true
+          }
+        },
+        witnesses: /* @__PURE__ */ new Set()
+      };
+      generated.set(key, bucket);
+    }
+    bucket.witnesses.add(witness);
+  };
+  for (const entry of entries) {
+    if (scope.entryIds !== null && !scope.entryIds.has(entry.id)) continue;
+    const snl = entry.content?.snl ?? "";
+    if (!snl.trim()) continue;
+    const references = extractSnlReferences(snl);
+    for (const name of references.macros) {
+      const macro2 = Object.hasOwn(macros2, name) ? macros2[name] : void 0;
+      if (!macro2 || !Array.isArray(macro2.source?.entries)) continue;
+      for (const source of macro2.source.entries) upsert(AUTO_LABEL, entry.id, source, name);
+    }
+  }
+  for (const bucket of generated.values()) {
+    const metadata = bucket.rel.metadata;
+    metadata[witnessField[bucket.rel.label]] = Array.from(bucket.witnesses).sort();
+  }
+  const relationships = [...preservedRows, ...Array.from(generated.values(), ({ rel: rel2 }) => rel2)];
+  const generatedRows = new Set(Array.from(generated.values(), ({ rel: rel2 }) => rel2));
+  computeAtomicityInPlace(relationships, (relationship) => generatedRows.has(relationship));
+  relationships.sort(
+    (left, right) => left.id < right.id ? -1 : left.id > right.id ? 1 : 0
+  );
+  let added = 0;
+  let updated = 0;
+  for (const key of generated.keys()) {
+    if (inScopeAuto.has(key)) updated += 1;
+    else added += 1;
+  }
+  let removed = 0;
+  for (const key of inScopeAuto.keys()) {
+    if (!generated.has(key)) removed += 1;
+  }
+  return {
+    relationships,
+    report: {
+      added,
+      removed,
+      updated,
+      preservedUser,
+      totalDepends: relationships.filter(({ label }) => label === AUTO_LABEL).length,
+      totalUsesContext: relationships.filter(({ label }) => label === AUTO_LABEL_USES_CONTEXT).length,
+      atomicCount: relationships.filter(
+        (relationship) => AUTO_LABELS.includes(relationship.label) && relationship.metadata !== null && typeof relationship.metadata === "object" && relationship.metadata.isAtomic === true
+      ).length
+    }
+  };
+}
+function computeAtomicityInPlace(rels, shouldUpdate = () => true) {
+  for (const label of AUTO_LABELS) {
+    const bucket = rels.filter((rel2) => rel2.label === label);
+    const selected = bucket.map((rel2) => shouldUpdate(rel2));
+    if (!selected.some(Boolean)) continue;
+    const ids = /* @__PURE__ */ new Map();
+    const vertex = (id) => {
+      let index = ids.get(id);
+      if (index === void 0) {
+        index = ids.size;
+        ids.set(id, index);
+      }
+      return index;
+    };
+    const edges = bucket.map((rel2) => ({ from: vertex(rel2.from), to: vertex(rel2.to) }));
+    const adjacency = Array.from({ length: ids.size }, () => []);
+    const indegree = new Uint32Array(ids.size);
+    edges.forEach(({ from, to }, index) => {
+      adjacency[from].push(index);
+      indegree[to] += 1;
+    });
+    const order = [];
+    indegree.forEach((degree, index) => {
+      if (degree === 0) order.push(index);
+    });
+    for (let cursor = 0; cursor < order.length; cursor += 1) {
+      for (const index of adjacency[order[cursor]]) {
+        const to = edges[index].to;
+        indegree[to] -= 1;
+        if (indegree[to] === 0) order.push(to);
+      }
+    }
+    const atomic = new Uint8Array(edges.length);
+    const words = Math.ceil(ids.size / 32);
+    if (order.length === ids.size && ids.size * words * 4 <= 64 * 1024 * 1024) {
+      const rank = new Uint32Array(ids.size);
+      order.forEach((id, index) => {
+        rank[id] = index;
+      });
+      const reachable = new Uint32Array(ids.size * words);
+      for (let cursor = order.length - 1; cursor >= 0; cursor -= 1) {
+        const from = order[cursor];
+        const offset = from * words;
+        const outgoing = adjacency[from].sort((a4, b4) => rank[edges[a4].to] - rank[edges[b4].to]);
+        for (let i5 = 0; i5 < outgoing.length; ) {
+          const to = edges[outgoing[i5]].to;
+          let end = i5 + 1;
+          while (end < outgoing.length && edges[outgoing[end]].to === to) end += 1;
+          const word = to >>> 5;
+          const bit = 1 << (to & 31);
+          const covered = (reachable[offset + word] & bit) !== 0;
+          if (!covered && end === i5 + 1) atomic[outgoing[i5]] = 1;
+          if (!covered) {
+            const targetOffset = to * words;
+            for (let w4 = 0; w4 < words; w4 += 1) reachable[offset + w4] |= reachable[targetOffset + w4];
+            reachable[offset + word] |= bit;
+          }
+          i5 = end;
+        }
+      }
+    } else {
+      const seen = new Uint32Array(ids.size);
+      edges.forEach(({ from, to }, thisIndex) => {
+        if (!selected[thisIndex]) return;
+        const stamp = thisIndex + 1;
+        const queue = [from];
+        seen[from] = stamp;
+        let hit = false;
+        for (let cursor = 0; cursor < queue.length && !hit; cursor += 1) {
+          const current = queue[cursor];
+          for (const index of adjacency[current]) {
+            if (current === from && index === thisIndex) continue;
+            const next = edges[index].to;
+            if (next === to) {
+              hit = true;
+              break;
+            }
+            if (seen[next] !== stamp) {
+              seen[next] = stamp;
+              queue.push(next);
+            }
+          }
+        }
+        atomic[thisIndex] = hit ? 0 : 1;
+      });
+    }
+    bucket.forEach((rel2, index) => {
+      if (!selected[index]) return;
+      const md = rel2.metadata ?? {};
+      md.isAtomic = atomic[index] === 1;
+      rel2.metadata = md;
+    });
+  }
+}
+var RELATIONSHIP_GENERATION_PROVENANCE = Object.freeze({
+  generator: "macro-source-scan",
+  repository: "https://github.com/SJTU-AI4Math/SNL-Doc-Extension",
+  revision: "704b007877174f62649fcd3e8b97af4a43f9ad71",
+  path: "src/snlDoc.ts",
+  sourceSha256: "26c09e16c5f72efd2bba5f2e2bf7f5cb0a1867e34d0cc34f91c7b99f509cee5a",
+  functions: Object.freeze(["extractSnlReferences", "reconcileDependencyRelationships", "computeAtomicityInPlace"]),
+  atomicity: "exact-edge-exclusion/dag-bitset-or-traversal"
+});
+function planDependencyRelationships(entries, activeMacros, existing, scope) {
+  const result = reconcileDependencyRelationships(entries, activeMacros, existing, scope);
+  const before = new Map(existing.map((rel2) => [rel2.id, rel2]));
+  const after = new Map(result.relationships.map((rel2) => [rel2.id, rel2]));
+  const changes = { added: [], removed: [], updated: [] };
+  for (const rel2 of result.relationships) {
+    const previous = before.get(rel2.id);
+    if (!previous) changes.added.push(rel2);
+    else if (!isDeepStrictEqual(previous, rel2)) changes.updated.push({ before: previous, after: rel2 });
+  }
+  for (const rel2 of existing) if (!after.has(rel2.id)) changes.removed.push(rel2);
+  changes.removed.sort((a4, b4) => a4.id < b4.id ? -1 : a4.id > b4.id ? 1 : 0);
+  return { ...result, changes, provenance: RELATIONSHIP_GENERATION_PROVENANCE };
+}
+
+// lib/relationship-operation.ts
+var object = (v3) => v3 !== null && typeof v3 === "object" && !Array.isArray(v3);
+function parseScope(raw) {
+  if (!object(raw) || Object.keys(raw).some((k5) => k5 !== "entryIds")) throw new TypeError("scope must be an object with only optional entryIds.");
+  if (Object.hasOwn(raw, "entryIds") && (!Array.isArray(raw.entryIds) || !raw.entryIds.every((x3) => typeof x3 === "string" && x3.length > 0))) throw new TypeError("scope.entryIds must be an array of non-empty strings.");
+  return raw;
+}
+async function validate2(root) {
+  const result = await validateManagedWorkspace(root);
+  if (!result.valid) throw new BatchError("workspace.invalid", "Relationship generation requires a valid workspace.", 1, result);
+  return result;
+}
+async function generateRelationships(root, args) {
+  const scope = parseScope(args.scope ?? {});
+  const dryRun = args.dryRun ?? false;
+  if (typeof dryRun !== "boolean") throw new TypeError("dryRun must be a boolean.");
+  if (!dryRun && (typeof args.expectedWorkspaceRevision !== "string" || !args.expectedWorkspaceRevision)) throw new TypeError("Apply requires expectedWorkspaceRevision from a dry-run.");
+  if (args.expectedWorkspaceRevision !== void 0 && (typeof args.expectedWorkspaceRevision !== "string" || !args.expectedWorkspaceRevision)) throw new TypeError("expectedWorkspaceRevision must be a non-empty string.");
+  const derive = async () => {
+    const beforeRevision = await captureWorkspaceRevision(root, !dryRun);
+    if (args.expectedWorkspaceRevision !== void 0 && args.expectedWorkspaceRevision !== beforeRevision) throw new BatchError("relationship.workspace-conflict", "Workspace changed; rerun relationship generation dry-run.");
+    await validate2(root);
+    const file = path11.join(root, ".SNL_Doc", "relationships.json");
+    const original = await readRegularText(file);
+    const envelope = JSON.parse(original.text);
+    if (!object(envelope) || !Array.isArray(envelope.relationships)) throw new BatchError("workspace.invalid", "relationships.json must contain a relationships array.");
+    const [entries, macros2] = await Promise.all([readEntries(root), readActiveMacros(root)]);
+    if (scope.entryIds) {
+      const allIds = new Set(entries.map((e2) => e2.id));
+      for (const id of scope.entryIds) if (!allIds.has(id)) throw new BatchError("entry.not-found", `Unknown scope Entry ${JSON.stringify(id)}.`);
+    }
+    const plan = planDependencyRelationships(entries, macros2, envelope.relationships, { entryIds: scope.entryIds ? new Set(scope.entryIds) : null });
+    if (await captureWorkspaceRevision(root, !dryRun) !== beforeRevision) throw new BatchError("relationship.workspace-conflict", "Workspace changed during derivation; no write performed.");
+    return { plan, beforeRevision, original, envelope, file };
+  };
+  if (dryRun) {
+    const { plan, beforeRevision } = await derive();
+    return { ...plan, dryRun: true, expectedWorkspaceRevision: beforeRevision };
+  }
+  await captureWorkspaceRevision(root);
+  return withWorkspaceDataLock(root, "relationship-generation", async () => {
+    const { plan, beforeRevision, original, envelope, file } = await derive();
+    const unchanged = isDeepStrictEqual2(envelope.relationships, plan.relationships);
+    if (!unchanged) {
+      await replaceJsonIfUnchanged(file, original.text, { ...envelope, relationships: plan.relationships }, {
+        beforeDirectorySync: async () => {
+          await validate2(root);
+          const readback = JSON.parse((await readRegularText(file)).text);
+          if (!isDeepStrictEqual2(readback, { ...envelope, relationships: plan.relationships })) throw new BatchError("relationship.readback-failed", "Relationship readback differs from derived snapshot.");
+        }
+      });
+    }
+    return {
+      ...plan,
+      dryRun: false,
+      changed: !unchanged,
+      previousWorkspaceRevision: beforeRevision,
+      resultingWorkspaceRevision: await captureWorkspaceRevision(root, true)
+    };
+  });
+}
+
 // src/cli/operation.ts
 var OPERATION_PROTOCOL = "snl.operation/v1";
 var RESULT_PROTOCOL = "snl.result/v1";
@@ -27576,12 +27935,14 @@ var COMMAND_PATHS = Object.freeze([
   "macro/usages",
   "repair/package-entry-ids",
   "entry/rename",
-  "macro/rename"
+  "macro/rename",
+  "relationship/generate"
 ]);
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
   if (command === "batch/check") return { command, access: "read", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true) }, summary: "Validate a complete dependent create batch without workspace writes; return digest and workspace revision." };
   if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required)." };
+  if (command === "relationship/generate") return { command, access: "write", arguments: { scope: field("object{entryIds?:string[]}", false), expectedWorkspaceRevision: field("string (required for apply)", false), dryRun: field("boolean", false) }, summary: "Derive Extension-compatible dependencies; dry-run returns a workspace revision for guarded apply." };
   const action = command.split("/").at(-1);
   if (action === "list") return { command, access: "read", arguments: { query: field("string|null", false), limit: field("integer", false), cursor: field("string|null", false) }, summary: "List one managed entity family with stable pagination." };
   if (action === "get") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Read one exact managed entity and its revision." };
@@ -27617,11 +27978,15 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path11.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path12.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
     if (command === "batch") {
       exactArguments(request.arguments, []);
       return succeed(command, { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) });
+    }
+    if (command === "relationship/generate") {
+      exactArguments(request.arguments, ["scope", "expectedWorkspaceRevision", "dryRun"]);
+      return succeed(command, await generateRelationships(request.root, request.arguments));
     }
     if (command === "batch/check" || command === "batch/apply") {
       const args2 = request.arguments;
@@ -27636,7 +28001,7 @@ async function executeOperation(request) {
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path13) => path13 !== "help"),
+        commands: COMMAND_PATHS.filter((path14) => path14 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
         batch: { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) }
       });
@@ -27671,7 +28036,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path11.resolve(request.root),
+        root: path12.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,
@@ -27859,7 +28224,7 @@ function parseCli(argv) {
     if (token.startsWith("-")) return { json, error: `Unknown flag ${token}.` };
     positional.push(token);
   }
-  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path12.resolve(root), arguments: {} } };
+  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path13.resolve(root), arguments: {} } };
   const [domain, action, ...rest] = positional;
   if (!domain) return { json, error: "Expected a command domain." };
   const command = domain === "init" ? "init" : action ? `${domain}/${action}` : domain;
@@ -27883,7 +28248,7 @@ function parseCli(argv) {
     if (rest.length !== 1) return { json, error: `${command} requires one exact Package identity.` };
     args.id = rest[0];
   } else if (rest.length) return { json, error: `${command} does not accept identity positionals.` };
-  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path12.resolve(root), arguments: args } };
+  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path13.resolve(root), arguments: args } };
 }
 async function readInput(file, batch = false) {
   const text3 = file === "-" ? await new Promise((resolve4, reject) => {
@@ -27892,7 +28257,7 @@ async function readInput(file, batch = false) {
     process.stdin.on("data", (c3) => data += c3);
     process.stdin.on("end", () => resolve4(data));
     process.stdin.on("error", reject);
-  }) : await fs9.readFile(path12.resolve(file), "utf8");
+  }) : await fs9.readFile(path13.resolve(file), "utf8");
   return batch ? parseBatchJson(text3) : JSON.parse(text3);
 }
 async function main2(argv = process.argv.slice(2)) {
@@ -27906,11 +28271,15 @@ async function main2(argv = process.argv.slice(2)) {
   try {
     const input = parsed.request.arguments.input;
     if (typeof input === "string") {
-      const value = await readInput(input, parsed.request.command.startsWith("batch/"));
+      const value = await readInput(input, parsed.request.command.startsWith("batch/") || parsed.request.command === "relationship/generate");
       delete parsed.request.arguments.input;
       if (parsed.request.command === "batch/check") parsed.request.arguments.operations = value;
       else if (parsed.request.command === "batch/apply") {
         if (!value || typeof value !== "object" || Array.isArray(value)) throw new SyntaxError("batch apply input must be {operations,checkedDigest,expectedWorkspaceRevision}.");
+        parsed.request.arguments = { ...parsed.request.arguments, ...value };
+      } else if (parsed.request.command === "relationship/generate") {
+        if (!value || typeof value !== "object" || Array.isArray(value)) throw new SyntaxError("relationship generate input must be an arguments object.");
+        if (Object.keys(value).some((key) => Object.hasOwn(parsed.request.arguments, key))) throw new SyntaxError("Do not duplicate relationship arguments between flags and input JSON.");
         parsed.request.arguments = { ...parsed.request.arguments, ...value };
       } else parsed.request.arguments.value = value;
     }
@@ -27927,7 +28296,7 @@ async function main2(argv = process.argv.slice(2)) {
   return result.exitCode;
 }
 var isBuiltExecutable = true;
-if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL(path12.resolve(process.argv[1])).href) main2().then((code) => {
+if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL(path13.resolve(process.argv[1])).href) main2().then((code) => {
   process.exitCode = code;
 });
 export {

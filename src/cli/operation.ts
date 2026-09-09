@@ -17,6 +17,7 @@ import { initializeWorkspace, InitWorkspaceError } from '../../lib/init-workspac
 import { BUILTIN_INIT_PRESET_DESCRIPTORS } from '../../lib/init-presets.ts';
 import { repairPackageEntryIds } from '../../lib/package-membership-repair.ts';
 import { applyBatch, checkBatch, BatchError, BATCH_CREATE_TYPES } from '../../lib/batch.ts';
+import { generateRelationships } from '../../lib/relationship-operation.ts';
 
 export const OPERATION_PROTOCOL = 'snl.operation/v1' as const;
 export const RESULT_PROTOCOL = 'snl.result/v1' as const;
@@ -37,13 +38,14 @@ export const COMMAND_PATHS = Object.freeze([
   'batch', 'batch/check', 'batch/apply',
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
   'snoogl', 'entry/latex', 'entry/references', 'macro/usages', 'repair/package-entry-ids',
-  'entry/rename', 'macro/rename',
+  'entry/rename', 'macro/rename', 'relationship/generate',
 ]);
 type CommandDescriptor = { command: string; access: 'read' | 'write'; arguments: Record<string, { type: string; required: boolean }>; summary: string };
 const field = (type: string, required: boolean) => ({ type, required });
 function describeCommand(command: string): CommandDescriptor {
   if (command === 'batch/check') return { command, access: 'read', arguments: { operations: field('array<{command,arguments:{value}}> (create-only)', true) }, summary: 'Validate a complete dependent create batch without workspace writes; return digest and workspace revision.' };
   if (command === 'batch/apply') return { command, access: 'write', arguments: { operations: field('array<{command,arguments:{value}}> (create-only)', true), checkedDigest: field('string', true), expectedWorkspaceRevision: field('string', true) }, summary: 'Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required).' };
+  if (command === 'relationship/generate') return { command, access: 'write', arguments: { scope: field('object{entryIds?:string[]}', false), expectedWorkspaceRevision: field('string (required for apply)', false), dryRun: field('boolean', false) }, summary: 'Derive Extension-compatible dependencies; dry-run returns a workspace revision for guarded apply.' };
   const action = command.split('/').at(-1);
   if (action === 'list') return { command, access: 'read', arguments: { query: field('string|null', false), limit: field('integer', false), cursor: field('string|null', false) }, summary: 'List one managed entity family with stable pagination.' };
   if (action === 'get') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Read one exact managed entity and its revision.' };
@@ -85,6 +87,10 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     if (command === 'batch') {
       exactArguments(request.arguments, []);
       return succeed(command, { commands: ['batch/check', 'batch/apply'].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map(type => `${type}/create`) });
+    }
+    if (command === 'relationship/generate') {
+      exactArguments(request.arguments, ['scope', 'expectedWorkspaceRevision', 'dryRun']);
+      return succeed(command, await generateRelationships(request.root, request.arguments));
     }
     if (command === 'batch/check' || command === 'batch/apply') {
       const args = request.arguments;

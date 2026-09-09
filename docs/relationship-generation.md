@@ -1,9 +1,36 @@
 # Dependency relationship generation
 
-`lib/relationship-generation.ts` is a **pure plan**, not a second canonical
-writer. It implements the derivation behind the normative
-`.SNL_Doc` Entry `CLI.snl-relationship-generate`; transport registration and
-transaction publication belong to the operation core.
+`snl relationship generate` implements the normative `.SNL_Doc` Entry
+`CLI.snl-relationship-generate` through the shared operation core. The pure
+plan lives in `lib/relationship-generation.ts`; guarded publication lives in
+`lib/relationship-operation.ts`.
+
+## Public CLI
+
+Run a dry-run first with an input JSON object `{ "scope": {}, "dryRun": true }`:
+
+```sh
+snl relationship generate --root /absolute/workspace --input review.json --json
+```
+
+The result includes `expectedWorkspaceRevision`, the complete candidate rows,
+Extension counters, actual changes and source provenance. To apply, use the same
+scope and the returned revision in an input object
+`{ "scope": {}, "expectedWorkspaceRevision": "<returned token>" }`, passed to
+that same command. An optional `scope.entryIds` string array restricts source
+Entries; omitted means all, an empty array means none. Unknown scope keys/IDs
+are rejected. Do not repeat input JSON fields as CLI flags.
+
+Dry-run leaves canonical bytes untouched. Apply uses one shared writer lock,
+rechecks the whole authority revision, and calls the guarded JSON publisher
+with whole-workspace validation and exact readback before publication finalizes.
+Manual and out-of-scope rows and unknown envelope fields survive. A no-op does
+not rewrite the file. The resulting opaque revision covers the complete
+`.SNL_Doc` tree, not just the relationship array. As with existing guarded
+writers, this is coordinated concurrent publication, not a multi-reader
+snapshot protocol or protection against arbitrary non-cooperating filesystem
+writers. Batch publication's separate Linux requirement is documented in
+`Skills/CLI Tools/Batch.md`.
 
 ## Integration
 
