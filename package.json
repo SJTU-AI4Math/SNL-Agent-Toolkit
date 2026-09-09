@@ -22,6 +22,7 @@
   },
   "scripts": {
     "generate:plugin": "node scripts/generate-plugin-metadata.mjs",
+    "generate:init-skill": "tsx scripts/materialize-init-skill.ts",
     "build:cli": "node scripts/build-cli.mjs",
     "build:plugin": "npm run generate:plugin && node scripts/build-plugin.mjs",
     "test": "tsx --test --test-concurrency=1 CLI_Scripts/*.test.ts",

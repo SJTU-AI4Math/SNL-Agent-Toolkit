@@ -29,12 +29,15 @@ SNL-Agent-Toolkit/
 ```bash
 git clone git@github.com:SJTU-AI4Math/SNL-Agent-Toolkit.git
 cd SNL-Agent-Toolkit
-npm install
+npm ci
+npm run build:plugin
+node dist/cli/snl.mjs --help
 npm test
 ```
 
-Invoke the unified CLI from a checkout or as the installed `snl` bin. Legacy
-`bin/snl-*.mjs` shims remain checkout-only compatibility entry points:
+Invoke the unified CLI from a checkout or as the installed `snl` bin. Source lives under `src/cli/`; `package.json.bin` points to the built `dist/cli/` artifacts. Looking only in the legacy `bin/` directory is not capability discovery. A PATH-linked executable can also lag a newer checkout.
+
+For a new workspace, read [Initialize](Skills/Initialize/SKILL.md). The default is the lean three Entry Kinds / five Macro Kinds plus BasicMacros, not a full template catalog. Preset forms below are alternatives, not successive commands to run on one target:
 
 ```bash
 ./dist/cli/snl.mjs --root /path/to/project --json init
@@ -44,25 +47,17 @@ Invoke the unified CLI from a checkout or as the installed `snl` bin. Legacy
 ./dist/cli/snl.mjs --root /path/to/project --json entry get algebra.def.group
 ./dist/cli/snl.mjs --root /path/to/project --json validate
 
-# Legacy compatibility examples
-node bin/snl-entity.mjs --root /path/to/project --json list --type entry-kind
-node bin/snl-entity.mjs --root /path/to/project --json get --type entry algebra.def.group
-node bin/snl-add-package.mjs --root /path/to/project --json examples/package-draft.minimal.json
-node bin/snl-add-macro.mjs --root /path/to/project --package Topology --json examples/macro-draft.minimal.json
-node bin/snl-add-entry.mjs --root /path/to/project --json examples/entry-draft.minimal.json
-
-node bin/snl-lint-package.mjs --root /path/to/project
-node bin/snl-find-refs.mjs --root /path/to/project --type entry algebra.def.group
-node bin/snl-rename-id.mjs --root /path/to/project --type entry --dry-run old.id new.id
 ```
 
 The write CLIs compute canonical identity hashes and filenames, construct storage
 envelopes, fill safe defaults, lint before writing, acquire `.data-write.lock`, and
 refuse malformed/current-future-incompatible workspaces. `--json` gives stable
-agent-facing `created`, `invalid`, `conflict`, or `error` output. They never edit
+agent-facing `snl.result/v1` objects with `ok`, `command`, and `data` or a structured `error`. They never edit
 migration receipts or frozen legacy backups.
 
-See [`Skills/CLI Tools/SKILL.md`](<Skills/CLI Tools/SKILL.md>) for the current command inventory and machine-facing invocation contracts.
+See [`Skills/CLI Tools/SKILL.md`](<Skills/CLI Tools/SKILL.md>) for the normative command contracts and `snl --help` for the implemented command inventory. The manual is not a promise that every command is available: for example, batch, import/migrate, and Library HTML export remain planned unless advertised by the executable. Never emulate these with direct JSON writes.
+
+Legacy compatibility binaries remain available for existing callers; they are not the recommended new-workspace workflow. Current usable packaged guides are listed in [Skills/README.md](Skills/README.md); reserved directories are not completed workflows. Installing the MCP plugin registers tools, not a native Skill alias named `snl-agent-toolkit`.
 
 ## Schema ownership
 

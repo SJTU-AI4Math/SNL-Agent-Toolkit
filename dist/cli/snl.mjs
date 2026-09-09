@@ -27125,7 +27125,14 @@ async function executeOperation(request) {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
         commands: COMMAND_PATHS.filter((path12) => path12 !== "help"),
-        initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS
+        initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        initHelp: {
+          usage: "snl init --root <directory> [--preset <id> | --input <file|->] [--json]",
+          rootDefault: ".",
+          oneShot: true,
+          defaultEntryKinds: DEFAULT_ENTRY_KINDS.map((kind) => kind.id),
+          defaultMacroKinds: DEFAULT_MACRO_KINDS.map((kind) => kind.id)
+        }
       });
     }
     if (tokens.length === 1 && command === "init") {
@@ -27348,7 +27355,7 @@ function parseCli(argv) {
   if (!domain) return { json, error: "Expected a command domain." };
   const command = domain === "init" ? "init" : action ? `${domain}/${action}` : domain;
   if (domain === "init") {
-    if (action || rest.length) return { json, error: "init accepts no identity positional; use --preset <id> or --input <file|->." };
+    if (action || rest.length) return { json, error: "init accepts no identity positional; use --root <directory>, optionally with --preset <id> or --input <file|->." };
   }
   if (command === "validate" && args.scope === void 0) args.scope = "workspace";
   const knownActions = /* @__PURE__ */ new Set(["list", "get", "create", "update", "rename", "delete"]);

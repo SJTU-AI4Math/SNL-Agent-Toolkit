@@ -29,7 +29,7 @@ function parseCli(argv: string[]): ParsedCli {
   const [domain,action,...rest]=positional; if(!domain)return{json,error:'Expected a command domain.'};
   const command=domain==='init'?'init':action?`${domain}/${action}`:domain;
   if (domain === 'init') {
-    if (action || rest.length) return {json,error:'init accepts no identity positional; use --preset <id> or --input <file|->.'};
+    if (action || rest.length) return {json,error:'init accepts no identity positional; use --root <directory>, optionally with --preset <id> or --input <file|->.'};
   }
   if (command === 'validate' && args.scope === undefined) args.scope = 'workspace';
   const knownActions = new Set(['list','get','create','update','rename','delete']);

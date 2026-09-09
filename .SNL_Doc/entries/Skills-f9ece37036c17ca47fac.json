@@ -15,7 +15,9 @@
         "zh-CN": "初始化"
       }
     },
-    "content": {},
+    "content": {
+      "markdown": "Use this guide when an existing directory or repository should become a new SNL workspace. Initialize through the official Toolkit, not by constructing `.SNL_Doc` files, calculating identity hashes, or copying an old workspace skeleton. These instructions describe the default bootstrap and explicitly selected presets; initialization is not migration or repair.\n\nBefore use, identify the installed `snl` executable and run `snl --help` and `snl init --help`. A source checkout, built `dist`, PATH-linked executable, and agent Skill registration are different things. Follow the executed version's advertised commands, not a historical claim that there is no init CLI. Other workflows in the CLI manual can still be normative but unimplemented; do not emulate an absent command silently."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/Initialize/SKILL.md",

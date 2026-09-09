@@ -15,7 +15,9 @@
         "zh-CN": "条目类型初始化"
       }
     },
-    "content": {},
+    "content": {
+      "markdown": "The official default Entry Kinds are `section`, `subsection`, and `entry`. Start with this lean catalog unless a domain preset is explicitly intended; add semantic roles deliberately through the public Kind API as the document evolves.\n\nAn existing Fulcrum template's full 16 Entry Kinds are a separate configuration, not an obsolete list and not the new-workspace default. Do not copy the full catalog automatically. Read back actual IDs and theme/localization fields after selecting a preset. Do not use Entry Kinds merely to encode subject areas that belong in Library topology or Packages."
+    },
     "contribution_info": null,
     "pointer": null
   }

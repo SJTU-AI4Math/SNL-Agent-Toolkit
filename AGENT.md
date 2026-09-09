@@ -9,8 +9,9 @@
 ## Start
 
 1. Load [`CLI Tools`](<Skills/CLI Tools/SKILL.md>) before invoking Toolkit commands. Treat machine-readable `snl --help` as the current implementation boundary.
-2. Load [`RefineNL2SNL`](Skills/RefineNL2SNL/SKILL.md) when refining natural-language material into SNL.
-3. For workflows whose physical Skill is still empty, read the owning `.SNL_Doc` Library/Entries directly; an empty `SKILL.md` is not usable guidance and is not routed here.
+2. Load [`Initialize`](Skills/Initialize/SKILL.md) for a new workspace; use the official `snl init --root <dir>` and its lean defaults unless a preset is explicitly intended.
+3. Load [`RefineNL2SNL`](Skills/RefineNL2SNL/SKILL.md) when refining natural-language material into SNL.
+4. Other physical Skills are still incomplete. In a source checkout, inspect their owning `.SNL_Doc` Library/Entries, which may themselves be unfinished. The npm package does not include that specification workspace; package-only users should use the published guides and implemented CLI contracts, and report the missing workflow rather than invent it. An empty `SKILL.md` is not usable guidance.
 
 ## Non-negotiable rules
 
