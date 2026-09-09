@@ -22115,6 +22115,7 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
 }
 
 // lib/entity-crud.ts
+var isUnsupportedSchemaMessage = (message) => /unsupported (?:future )?(?:workspace|schema|entity_storage)|newer than this Toolkit supports|no registered migration|must carry current Package manifest schema_version/i.test(message);
 var ENTITY_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
 var isRecord6 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
 var sha = (value) => createHash3("sha256").update(JSON.stringify(value)).digest("hex");
@@ -27853,6 +27854,7 @@ function parseScope(raw) {
 }
 async function validate2(root) {
   const result = await validateManagedWorkspace(root);
+  if (result.issues.some((issue) => isUnsupportedSchemaMessage(issue.message))) throw new BatchError("workspace.unsupported-schema", "Workspace or entity schema is not supported by this Toolkit.", 2, result);
   if (!result.valid) throw new BatchError("workspace.invalid", "Relationship generation requires a valid workspace.", 1, result);
   return result;
 }
@@ -27867,8 +27869,11 @@ async function generateRelationships(root, args) {
     if (args.expectedWorkspaceRevision !== void 0 && args.expectedWorkspaceRevision !== beforeRevision) throw new BatchError("relationship.workspace-conflict", "Workspace changed; rerun relationship generation dry-run.");
     await validate2(root);
     const file = path11.join(root, ".SNL_Doc", "relationships.json");
-    const original = await readRegularText(file);
-    const envelope = JSON.parse(original.text);
+    const original = await readRegularText(file).catch((error) => {
+      if (error.code === "ENOENT") return null;
+      throw error;
+    });
+    const envelope = original ? JSON.parse(original.text) : { version: 1, relationships: [] };
     if (!object(envelope) || !Array.isArray(envelope.relationships)) throw new BatchError("workspace.invalid", "relationships.json must contain a relationships array.");
     const [entries, macros2] = await Promise.all([readEntries(root), readActiveMacros(root)]);
     if (scope.entryIds) {
@@ -27888,13 +27893,16 @@ async function generateRelationships(root, args) {
     const { plan, beforeRevision, original, envelope, file } = await derive();
     const unchanged = isDeepStrictEqual2(envelope.relationships, plan.relationships);
     if (!unchanged) {
-      await replaceJsonIfUnchanged(file, original.text, { ...envelope, relationships: plan.relationships }, {
+      const value = { ...envelope, relationships: plan.relationships };
+      const hooks = {
         beforeDirectorySync: async () => {
           await validate2(root);
           const readback = JSON.parse((await readRegularText(file)).text);
-          if (!isDeepStrictEqual2(readback, { ...envelope, relationships: plan.relationships })) throw new BatchError("relationship.readback-failed", "Relationship readback differs from derived snapshot.");
+          if (!isDeepStrictEqual2(readback, value)) throw new BatchError("relationship.readback-failed", "Relationship readback differs from derived snapshot.");
         }
-      });
+      };
+      if (original) await replaceJsonIfUnchanged(file, original.text, value, hooks);
+      else await installNewJson(file, value, hooks);
     }
     return {
       ...plan,
@@ -27957,7 +27965,6 @@ function describeCommand(command) {
 }
 var own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 var isRecord8 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-var isUnsupportedSchemaMessage = (message) => /unsupported (?:future )?(?:workspace|schema|entity_storage)|newer than this Toolkit supports|no registered migration|must carry current Package manifest schema_version/i.test(message);
 var operationFailure = (command, exitCode, code, message, details) => ({
   exitCode,
   response: { protocol: RESULT_PROTOCOL, ok: false, command, error: { code, message, ...details === void 0 ? {} : { details }, retryable: code.endsWith("locked") } }

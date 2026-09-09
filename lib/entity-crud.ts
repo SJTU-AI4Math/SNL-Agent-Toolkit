@@ -11,6 +11,7 @@ import { findEntityReferences } from "./entity-references.ts";
 import { withWorkspaceDataLock } from "./workspace-data-lock.ts";
 import { addEntryEntity, addMacroEntity, addPackageEntity } from "./entity-writes.ts";
 import { installNewJson, jsonText, readRegularText, removeJsonIfUnchanged, replaceJsonIfUnchanged } from "./guarded-json-file.ts";
+export const isUnsupportedSchemaMessage = (message: string) => /unsupported (?:future )?(?:workspace|schema|entity_storage)|newer than this Toolkit supports|no registered migration|must carry current Package manifest schema_version/i.test(message);
 export const ENTITY_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"] as const;
 export type ManagedEntityType = typeof ENTITY_TYPES[number];
 export interface ManagedEntity {

@@ -24,8 +24,14 @@ are rejected. Do not repeat input JSON fields as CLI flags.
 Dry-run leaves canonical bytes untouched. Apply uses one shared writer lock,
 rechecks the whole authority revision, and calls the guarded JSON publisher
 with whole-workspace validation and exact readback before publication finalizes.
-Manual and out-of-scope rows and unknown envelope fields survive. A no-op does
-not rewrite the file. The resulting opaque revision covers the complete
+Manual and out-of-scope rows and unknown envelope fields survive. An absent
+`relationships.json` is a valid empty pool: dry-run never creates it; apply uses
+guarded first creation if there are derived rows, and otherwise leaves it absent.
+Only ENOENT is treated as absence; malformed, unreadable or non-regular files
+are not silently replaced with empty data. A no-op does not rewrite the file.
+Unsupported schema returns exit 2 / `workspace.unsupported-schema`, using the
+same classifier as public `validate`; ordinary invalid data remains exit 1.
+The resulting opaque revision covers the complete
 `.SNL_Doc` tree, not just the relationship array. As with existing guarded
 writers, this is coordinated concurrent publication, not a multi-reader
 snapshot protocol or protection against arbitrary non-cooperating filesystem
