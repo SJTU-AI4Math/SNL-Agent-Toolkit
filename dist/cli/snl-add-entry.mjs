@@ -2556,6 +2556,14 @@ function lintEntry(raw, ctx) {
     return { issues };
   }
   const e2 = raw;
+  if (Object.hasOwn(e2, "tags") && (!Array.isArray(e2.tags) || !Array.from(e2.tags).every((tag) => typeof tag === "string"))) {
+    issues.push({
+      severity: "error",
+      code: "entry.bad-tags",
+      message: "Field `tags` must be an array of strings when present.",
+      path: "tags"
+    });
+  }
   if (typeof e2.id !== "string" || e2.id.trim() === "") {
     issues.push({
       severity: "error",
@@ -17509,6 +17517,9 @@ function isLocalizedLabel(value, required) {
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertCurrentEntryPayload(value, label) {
+  if (Object.hasOwn(value, "tags") && (!Array.isArray(value.tags) || !Array.from(value.tags).every((tag) => typeof tag === "string"))) {
+    throw new Error(`${label}#tags must be an array of strings when present.`);
+  }
   if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }

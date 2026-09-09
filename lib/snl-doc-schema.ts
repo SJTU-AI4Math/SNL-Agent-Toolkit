@@ -138,6 +138,8 @@ export interface I18n<TLanguage extends string, TValue> {
 
 export interface EntryData {
   id: string;
+  /** Exact authored strings; absence means no tags. Order and duplicates are preserved. */
+  tags?: string[];
   /** Immutable Package identity in per-entity storage. */
   package?: string;
   kind: string;

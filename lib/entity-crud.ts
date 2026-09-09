@@ -699,7 +699,12 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
     await options.afterRevisionCheck?.();
     if (operation === "update") {
-        const value = requireRecord(input, type);
+        const supplied = requireRecord(input, type);
+        // Tags are optional additive Entry data: omission preserves the current
+        // authored array, while an own [] explicitly clears it. Never mutate input.
+        const value = type === "entry" && !Object.hasOwn(supplied, "tags") && Object.hasOwn(current.value, "tags")
+            ? { ...supplied, tags: current.value.tags }
+            : supplied;
         const problem = await validationMessage(root, type, value, id);
         if (problem)
             return invalid(problem);
