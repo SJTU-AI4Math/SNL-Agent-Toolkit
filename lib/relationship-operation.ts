@@ -25,8 +25,8 @@ async function validate(root: string) {
  * and fsync succeed. No handwritten storage path or per-edge mutation loop is used.
  */
 export async function generateRelationships(root: string, args: { scope?: unknown; expectedWorkspaceRevision?: string; dryRun?: boolean }) {
-  const scope = parseScope(args.scope ?? {});
-  const dryRun = args.dryRun ?? false;
+  const scope = parseScope(args.scope === undefined ? {} : args.scope);
+  const dryRun = args.dryRun === undefined ? false : args.dryRun;
   if (typeof dryRun !== 'boolean') throw new TypeError('dryRun must be a boolean.');
   if (!dryRun && (typeof args.expectedWorkspaceRevision !== 'string' || !args.expectedWorkspaceRevision)) throw new TypeError('Apply requires expectedWorkspaceRevision from a dry-run.');
   if (args.expectedWorkspaceRevision !== undefined && (typeof args.expectedWorkspaceRevision !== 'string' || !args.expectedWorkspaceRevision)) throw new TypeError('expectedWorkspaceRevision must be a non-empty string.');

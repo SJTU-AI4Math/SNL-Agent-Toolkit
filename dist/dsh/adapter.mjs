@@ -29219,8 +29219,8 @@ async function validate2(root) {
   return result;
 }
 async function generateRelationships(root, args) {
-  const scope = parseScope(args.scope ?? {});
-  const dryRun = args.dryRun ?? false;
+  const scope = parseScope(args.scope === void 0 ? {} : args.scope);
+  const dryRun = args.dryRun === void 0 ? false : args.dryRun;
   if (typeof dryRun !== "boolean") throw new TypeError("dryRun must be a boolean.");
   if (!dryRun && (typeof args.expectedWorkspaceRevision !== "string" || !args.expectedWorkspaceRevision)) throw new TypeError("Apply requires expectedWorkspaceRevision from a dry-run.");
   if (args.expectedWorkspaceRevision !== void 0 && (typeof args.expectedWorkspaceRevision !== "string" || !args.expectedWorkspaceRevision)) throw new TypeError("expectedWorkspaceRevision must be a non-empty string.");
