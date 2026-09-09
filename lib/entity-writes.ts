@@ -113,7 +113,7 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot: string): Promise<strin
   return resolved;
 }
 
-function normalizeEntryDraft(raw: unknown, packageOverride?: string): Record<string, unknown> | unknown {
+export function normalizeEntryDraft(raw: unknown, packageOverride?: string): Record<string, unknown> | unknown {
   if (!isRecord(raw)) return raw;
   const normalizedOverride = typeof packageOverride === 'string' ? packageOverride.trim() : packageOverride;
   const packageId = normalizedOverride !== undefined
@@ -145,7 +145,7 @@ function templateUsesVariadic(value: unknown): boolean {
   return false;
 }
 
-function normalizeMacroDraft(raw: unknown, current = false): Record<string, unknown> | unknown {
+export function normalizeMacroDraft(raw: unknown, current = false): Record<string, unknown> | unknown {
   if (!isRecord(raw)) return raw;
   const styles = Array.isArray(raw.styles)
     ? raw.styles.map((style) => isRecord(style)

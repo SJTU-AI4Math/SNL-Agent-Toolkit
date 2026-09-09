@@ -1,9 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { hostname } from 'node:os';
-import { open, readFile, unlink, type FileHandle } from 'node:fs/promises';
+import { lstat, open, readFile, unlink, type FileHandle } from 'node:fs/promises';
 import * as path from 'node:path';
 
 export const DATA_WRITE_LOCK_FILENAME = '.data-write.lock';
+export const BATCH_JOURNAL_FILENAME = '.snl-batch-transaction.json';
+
+async function hasBatchJournal(root: string): Promise<boolean> {
+  try { await lstat(path.join(root, BATCH_JOURNAL_FILENAME)); return true; }
+  catch (error) { if (errorCode(error) === 'ENOENT') return false; throw error; }
+}
 
 interface LockRecord {
   version: 1;
@@ -94,13 +100,15 @@ export async function withWorkspaceDataLock<T>(
   purpose: string,
   task: () => Promise<T>,
 ): Promise<T> {
+  if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
   try {
+    if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     return await task();
   } finally {
     await acquired.handle.close();
     const current = await readLock(acquired.lockPath);
-    if (current?.token === acquired.record.token) {
+    if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
         await unlink(acquired.lockPath);
       } catch (error) {

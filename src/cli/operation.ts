@@ -16,6 +16,7 @@ import { macroEntityPath } from '../../lib/entity-storage.ts';
 import { initializeWorkspace, InitWorkspaceError } from '../../lib/init-workspace.ts';
 import { BUILTIN_INIT_PRESET_DESCRIPTORS } from '../../lib/init-presets.ts';
 import { repairPackageEntryIds } from '../../lib/package-membership-repair.ts';
+import { applyBatch, checkBatch, BatchError, BATCH_CREATE_TYPES } from '../../lib/batch.ts';
 
 export const OPERATION_PROTOCOL = 'snl.operation/v1' as const;
 export const RESULT_PROTOCOL = 'snl.result/v1' as const;
@@ -33,6 +34,7 @@ const ENTITY_DOMAINS: Readonly<Record<string, ManagedEntityType>> = Object.freez
 const ENTITY_ACTIONS = ['list', 'get', 'create', 'update', 'delete'] as const;
 export const COMMAND_PATHS = Object.freeze([
   'help', 'init', 'info', 'validate',
+  'batch', 'batch/check', 'batch/apply',
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
   'snoogl', 'entry/latex', 'entry/references', 'macro/usages', 'repair/package-entry-ids',
   'entry/rename', 'macro/rename',
@@ -40,6 +42,8 @@ export const COMMAND_PATHS = Object.freeze([
 type CommandDescriptor = { command: string; access: 'read' | 'write'; arguments: Record<string, { type: string; required: boolean }>; summary: string };
 const field = (type: string, required: boolean) => ({ type, required });
 function describeCommand(command: string): CommandDescriptor {
+  if (command === 'batch/check') return { command, access: 'read', arguments: { operations: field('array<{command,arguments:{value}}> (create-only)', true) }, summary: 'Validate a complete dependent create batch without workspace writes; return digest and workspace revision.' };
+  if (command === 'batch/apply') return { command, access: 'write', arguments: { operations: field('array<{command,arguments:{value}}> (create-only)', true), checkedDigest: field('string', true), expectedWorkspaceRevision: field('string', true) }, summary: 'Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required).' };
   const action = command.split('/').at(-1);
   if (action === 'list') return { command, access: 'read', arguments: { query: field('string|null', false), limit: field('integer', false), cursor: field('string|null', false) }, summary: 'List one managed entity family with stable pagination.' };
   if (action === 'get') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Read one exact managed entity and its revision.' };
@@ -78,6 +82,20 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
       return operationFailure(command || 'unknown', 2, 'operation.invalid-request', 'Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.');
     if (!path.isAbsolute(request.root)) return operationFailure(command, 2, 'workspace.root-not-absolute', 'root must be an absolute path.');
     const tokens = command.split('/');
+    if (command === 'batch') {
+      exactArguments(request.arguments, []);
+      return succeed(command, { commands: ['batch/check', 'batch/apply'].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map(type => `${type}/create`) });
+    }
+    if (command === 'batch/check' || command === 'batch/apply') {
+      const args = request.arguments;
+      exactArguments(args, command === 'batch/check' ? ['operations'] : ['operations', 'checkedDigest', 'expectedWorkspaceRevision']);
+      const data = command === 'batch/check'
+        ? await checkBatch(request.root, args.operations)
+        : await applyBatch(request.root, args.operations, stringArg(args, 'checkedDigest')!, stringArg(args, 'expectedWorkspaceRevision')!);
+      const result = succeed(command, data);
+      if (result.response.ok) result.response.diagnostics = data.diagnostics;
+      return result;
+    }
     if (tokens.length === 1 && command === 'help') {
       exactArguments(request.arguments, []);
       return succeed(command, {
@@ -85,6 +103,7 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
         resultProtocol: RESULT_PROTOCOL,
         commands: COMMAND_PATHS.filter(path => path !== 'help'),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        batch: { commands: ['batch/check', 'batch/apply'].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map(type => `${type}/create`) },
       });
     }
     if (tokens.length === 1 && command === 'init') {
@@ -263,7 +282,10 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     }
     return operationFailure(command, 2, 'command.unknown', `Unknown command ${JSON.stringify(command)}.`);
   } catch (error) {
+    if (error instanceof BatchError) return operationFailure(command, error.exitCode, error.code, error.message, error.details);
     const message = error instanceof Error ? error.message : String(error);
+    if (/batch recovery required/i.test(message)) return operationFailure(command, 2, 'batch.recovery-required', message);
+    if (/workspace data (?:is locked|has a stale)/i.test(message)) return operationFailure(command, 2, 'workspace.locked', message);
     if (isUnsupportedSchemaMessage(message)) return operationFailure(command, 2, 'workspace.unsupported-schema', message);
     if (error instanceof TypeError) return operationFailure(command, 2, 'operation.invalid-arguments', message);
     return operationFailure(command, 2, 'workspace.operation-failed', message);

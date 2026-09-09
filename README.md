@@ -43,6 +43,9 @@ Invoke the unified CLI from a checkout or as the installed `snl` bin. Legacy
 ./dist/cli/snl.mjs --root /path/to/project --json entry list --limit 50
 ./dist/cli/snl.mjs --root /path/to/project --json entry get algebra.def.group
 ./dist/cli/snl.mjs --root /path/to/project --json validate
+./dist/cli/snl.mjs --root /path/to/project --json batch
+./dist/cli/snl.mjs --root /path/to/project --json batch check --input /tmp/operations.json
+./dist/cli/snl.mjs --root /path/to/project --json batch apply --input /tmp/apply.json
 
 # Legacy compatibility examples
 node bin/snl-entity.mjs --root /path/to/project --json list --type entry-kind
@@ -63,6 +66,11 @@ agent-facing `created`, `invalid`, `conflict`, or `error` output. They never edi
 migration receipts or frozen legacy backups.
 
 See [`Skills/CLI Tools/SKILL.md`](<Skills/CLI Tools/SKILL.md>) for the current command inventory and machine-facing invocation contracts.
+
+For dependent multi-entity imports, use the real checked [batch API](<Skills/CLI Tools/Batch.md>),
+not single-entity loops. Its first edition supports dependent creates with one
+digest/revision receipt and Linux directory-exchange publication (`python3`
+required), with explicit guarded recovery and documented crash/reader limits.
 
 ## Schema ownership
 
@@ -131,4 +139,4 @@ hermes mcp test snl-agent-toolkit
 dsh plugin --profile default add .
 ```
 
-The npm package also exposes `@snl-doc/agent-toolkit/dsh`, `snl-agent-mcp`, and the batch-oriented `snl-entity` CLI. The plugin runtime is prebuilt and does not require `tsx` or TypeScript source execution.
+The npm package also exposes `@snl-doc/agent-toolkit/dsh`, `snl-agent-mcp`, the single-entity `snl-entity` CLI, and checked `snl batch` transactions. The plugin runtime is prebuilt and does not require `tsx` or TypeScript source execution.

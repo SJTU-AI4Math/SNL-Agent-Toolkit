@@ -4075,8 +4075,14 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
       return value.entry;
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
+      const membership = /* @__PURE__ */ new Map();
+      for (const entry of entries) {
+        const owned = membership.get(entry.package) ?? [];
+        owned.push(entry.id);
+        membership.set(entry.package, owned);
+      }
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
+        const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
           throw new Error(
@@ -4284,9 +4290,19 @@ async function readActiveMacros(workspaceRoot) {
 // lib/workspace-data-lock.ts
 import { randomUUID } from "node:crypto";
 import { hostname } from "node:os";
-import { open, readFile, unlink } from "node:fs/promises";
+import { lstat, open, readFile, unlink } from "node:fs/promises";
 import * as path3 from "node:path";
 var DATA_WRITE_LOCK_FILENAME = ".data-write.lock";
+var BATCH_JOURNAL_FILENAME = ".snl-batch-transaction.json";
+async function hasBatchJournal(root) {
+  try {
+    await lstat(path3.join(root, BATCH_JOURNAL_FILENAME));
+    return true;
+  } catch (error) {
+    if (errorCode(error) === "ENOENT") return false;
+    throw error;
+  }
+}
 function errorCode(error) {
   return error && typeof error === "object" && "code" in error ? String(error.code) : void 0;
 }
@@ -4347,13 +4363,15 @@ async function acquireLock(workspaceRoot, purpose) {
   }
 }
 async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
+  if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
   try {
+    if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     return await task();
   } finally {
     await acquired.handle.close();
     const current = await readLock(acquired.lockPath);
-    if (current?.token === acquired.record.token) {
+    if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
         await unlink(acquired.lockPath);
       } catch (error) {
