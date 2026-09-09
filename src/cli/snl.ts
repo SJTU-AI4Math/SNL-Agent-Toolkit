@@ -8,6 +8,7 @@ import {
   type JsonObject,
   type OperationRequest,
 } from './operation.ts';
+import { parseBatchJson } from '../../lib/batch.ts';
 
 declare const __SNL_CLI_EXECUTABLE__: boolean | undefined;
 
@@ -44,16 +45,24 @@ function parseCli(argv: string[]): ParsedCli {
   } else if (rest.length) return {json,error:`${command} does not accept identity positionals.`};
   return {json,request:{protocol:OPERATION_PROTOCOL,command,root:path.resolve(root),arguments:args}};
 }
-async function readInput(file: string): Promise<unknown> {
+async function readInput(file: string, batch = false): Promise<unknown> {
   const text=file==='-'?await new Promise<string>((resolve,reject)=>{let data='';process.stdin.setEncoding('utf8');process.stdin.on('data',c=>data+=c);process.stdin.on('end',()=>resolve(data));process.stdin.on('error',reject);}):await fs.readFile(path.resolve(file),'utf8');
-  return JSON.parse(text);
+  return batch ? parseBatchJson(text) : JSON.parse(text);
 }
 export async function main(argv=process.argv.slice(2)): Promise<number> {
   const parsed=parseCli(argv);
   if (!parsed.request) { const r=operationFailure('unknown',2,'usage.invalid',parsed.error??'Invalid invocation.');process.stdout.write(`${JSON.stringify(r.response)}\n`);return r.exitCode; }
   try {
     const input=parsed.request.arguments.input;
-    if(typeof input==='string'){parsed.request.arguments.value=await readInput(input);delete parsed.request.arguments.input;}
+    if(typeof input==='string'){
+      const value = await readInput(input, parsed.request.command.startsWith('batch/'));
+      delete parsed.request.arguments.input;
+      if (parsed.request.command === 'batch/check') parsed.request.arguments.operations = value;
+      else if (parsed.request.command === 'batch/apply') {
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new SyntaxError('batch apply input must be {operations,checkedDigest,expectedWorkspaceRevision}.');
+        parsed.request.arguments = { ...parsed.request.arguments, ...value };
+      } else parsed.request.arguments.value = value;
+    }
   } catch(error) {
     const code=error instanceof SyntaxError?'input.invalid-json':'input.read-failed';const r=operationFailure(parsed.request.command,2,code,error instanceof Error?error.message:String(error));process.stdout.write(`${JSON.stringify(r.response)}\n`);return r.exitCode;
   }

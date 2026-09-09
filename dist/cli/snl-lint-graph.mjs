@@ -505,8 +505,14 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
       return value.entry;
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
+      const membership = /* @__PURE__ */ new Map();
+      for (const entry of entries) {
+        const owned = membership.get(entry.package) ?? [];
+        owned.push(entry.id);
+        membership.set(entry.package, owned);
+      }
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
+        const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
           throw new Error(

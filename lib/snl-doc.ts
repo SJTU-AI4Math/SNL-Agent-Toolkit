@@ -398,11 +398,14 @@ async function readEntriesWithPackageRepair(workspaceRoot: string, repairingPack
       return value.entry as unknown as EntryData & { package: string };
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
+      const membership = new Map<string, string[]>();
+      for (const entry of entries) {
+        const owned = membership.get(entry.package) ?? [];
+        owned.push(entry.id);
+        membership.set(entry.package, owned);
+      }
       for (const manifest of manifests.values()) {
-        const actual = entries
-          .filter((entry) => entry.package === manifest.id)
-          .map((entry) => entry.id)
-          .sort(compareCanonicalIds);
+        const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== undefined && manifest.id !== repairingPackageId
           ? [...manifest.entry_ids!].sort(compareCanonicalIds)
           : manifest.entry_ids;

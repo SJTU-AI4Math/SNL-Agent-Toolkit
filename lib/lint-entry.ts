@@ -62,6 +62,8 @@ export interface LintEntryContext {
    * for id-uniqueness checks. Pass `[]` when linting standalone.
    */
   siblingEntries: EntryData[];
+  /** Precomputed full-pool binder index for batch linting; avoids reparsing the pool per Entry. */
+  exportedBinders?: ReadonlyMap<string, ReadonlySet<string>>;
   /**
    * When true, unresolved identifiers become errors instead of info
    * notes. Off by default: SNL's fvar/bvar fallback for unbound names is
@@ -238,15 +240,16 @@ export function lintEntry(
       // its own decls if that ever makes sense). If `siblingEntries`
       // is empty (standalone lint), we cannot check anything and just
       // report the src refs as info without a dangling verdict.
-      const exportedBinders = new Map<string, Set<string>>();
-      for (const sibling of ctx.siblingEntries) {
-        if (typeof sibling.id === 'string') {
-          exportedBinders.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+      const exportedBinders = ctx.exportedBinders ?? (() => {
+        const index = new Map<string, ReadonlySet<string>>();
+        for (const sibling of ctx.siblingEntries) {
+          if (typeof sibling.id === 'string') {
+            index.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+          }
         }
-      }
-      if (typeof e.id === 'string') {
-        exportedBinders.set(e.id, safeExportedBinders(snl));
-      }
+        if (typeof e.id === 'string') index.set(e.id, safeExportedBinders(snl));
+        return index;
+      })();
       const srcRefs = collectSrcReferences(parsed.tree);
       for (const ref of srcRefs) {
         const declarations = exportedBinders.get(ref.sourceId);
