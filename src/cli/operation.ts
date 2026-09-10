@@ -85,6 +85,7 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
         resultProtocol: RESULT_PROTOCOL,
         commands: COMMAND_PATHS.filter(path => path !== 'help'),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        web: { usage: 'snl [--root <directory>] [--port <port>] [--json]', host: '127.0.0.1', defaultPort: 4911, readOnly: true, rootDefault: '.' },
         initHelp: {
           usage: 'snl init --root <directory> [--preset <id> | --input <file|->] [--json]',
           rootDefault: '.',

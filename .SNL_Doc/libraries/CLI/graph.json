@@ -1,6 +1,13 @@
 {
   "nodes": [
     {
+      "id": "cli.web-host",
+      "label": "Entry",
+      "props": {
+        "entryId": "CLI.WebHost"
+      }
+    },
+    {
       "id": "cli.snl-init",
       "label": "Entry",
       "props": {

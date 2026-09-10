@@ -28,12 +28,16 @@ async function assertCanonicalDirectory(directory: string, expected?: DirectoryI
 export async function readRegularText(file: string): Promise<{ text: string; mode: number; dev: number; ino: number; directoryDev: number; directoryIno: number }> {
   const directory = path.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
+  // Windows has no native O_NOFOLLOW. Check the directory entry itself, then
+  // verify the opened descriptor still identifies that same regular file.
+  const before = await fs.lstat(file);
+  if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
     handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
     const stat = await handle.stat();
     await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
       text: await handle.readFile('utf8'), mode: stat.mode & 0o777,
       dev: stat.dev, ino: stat.ino,

@@ -6,6 +6,7 @@
   "name": "CLI Tools",
   "description": "",
   "entry_ids": [
+    "CLI.WebHost",
     "CLI.snl-batch",
     "CLI.snl-batch-apply",
     "CLI.snl-batch-check",

@@ -30,6 +30,7 @@ SNL-Agent-Toolkit/
 git clone git@github.com:SJTU-AI4Math/SNL-Agent-Toolkit.git
 cd SNL-Agent-Toolkit
 npm ci
+npm run build:web
 npm run build:plugin
 node dist/cli/snl.mjs --help
 npm test
@@ -58,6 +59,28 @@ migration receipts or frozen legacy backups.
 See [`Skills/CLI Tools/SKILL.md`](<Skills/CLI Tools/SKILL.md>) for the normative command contracts and `snl --help` for the implemented command inventory. The manual is not a promise that every command is available: for example, batch, import/migrate, and Library HTML export remain planned unless advertised by the executable. Never emulate these with direct JSON writes.
 
 Legacy compatibility binaries remain available for existing callers; they are not the recommended new-workspace workflow. Current usable packaged guides are listed in [Skills/README.md](Skills/README.md); reserved directories are not completed workflows. Installing the MCP plugin registers tools, not a native Skill alias named `snl-agent-toolkit`.
+
+## Local Web reader
+
+After installing a built npm package (or building the source checkout above and running `npm link`):
+
+```bash
+cd /path/to/my-snl-workspace
+snl
+# SNL read-only reader: http://127.0.0.1:4911
+
+snl --root /path/to/another-workspace --port 4912
+```
+
+Open the printed URL in a browser. The homepage shows the canonical root and Libraries. Reading, SNoogL, relationship graph and common routes use the same Reader source as HTML exports. Refresh reloads current folder data; no editor or data-source switching is included in this first version. Source/Monaco viewing is not yet connected in this local host (existing HTML export source viewing is unchanged).
+
+The startup folder is the initial data source, not the Toolkit installation folder. No parent search or process-wide `chdir` occurs. Missing `.SNL_Doc` gives an `snl init` hint without initializing it. The process stays in the foreground; Ctrl+C stops it. Port conflicts fail rather than changing ports. `--json` prints one `snl.web/v1` readiness event after listening, then keeps running; operation commands retain `snl.result/v1`. Help never starts a service. The HTTP host is not an MCP operation.
+
+The listener binds only to `127.0.0.1`. It serves an explicit frontend asset list and read APIs, not arbitrary repository paths. Foreign Host/Origin, cross-site requests and mutations are rejected. Do not expose this local-only service through an external reverse proxy.
+
+### Shared frontend build
+
+`reader-source.json` pins an immutable Extension revision. `npm run build:web` downloads that source at build time, installs its locked build dependencies in a temporary directory, then invokes its maintained `build-local-reader.mjs`. It builds shared browser and model artifacts into ignored `dist/web/`; no UI source fork is vendored into Toolkit. `npm run build:web -- --source /path/to/extension` can instead use an already-installed, clean checkout at exactly the pinned revision. `npm pack` performs the frontend build and includes the prebuilt assets. Node, npm, network access and tar are needed when building from source; normal `snl` startup needs no network, compiler or VS Code.
 
 ## Schema ownership
 

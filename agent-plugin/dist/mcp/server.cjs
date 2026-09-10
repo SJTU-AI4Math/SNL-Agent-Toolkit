@@ -17821,12 +17821,14 @@ async function assertCanonicalDirectory(directory, expected) {
 async function readRegularText(file) {
   const directory = import_node_path.default.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
+  const before = await import_node_fs.promises.lstat(file);
+  if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
     handle = await import_node_fs.promises.open(file, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW);
     const stat = await handle.stat();
     await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
       text: await handle.readFile("utf8"),
       mode: stat.mode & 511,
@@ -18261,20 +18263,7 @@ async function pathExists(p3) {
   }
 }
 async function readJson(p3) {
-  let handle;
-  try {
-    handle = await import_node_fs2.promises.open(p3, import_node_fs2.constants.O_RDONLY | import_node_fs2.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${p3} must be a regular, non-symlink file.`);
-    return JSON.parse(await handle.readFile("utf8"));
-  } catch (error) {
-    if (error.code === "ELOOP") {
-      throw new Error(`${p3} must be a regular, non-symlink file.`);
-    }
-    throw error;
-  } finally {
-    await handle?.close();
-  }
+  return JSON.parse((await readRegularText(p3)).text);
 }
 async function readCanonicalLibraryJson(p3) {
   return JSON.parse((await readRegularText(p3)).text);
@@ -27711,6 +27700,7 @@ async function executeOperation(request) {
         resultProtocol: RESULT_PROTOCOL,
         commands: COMMAND_PATHS.filter((path11) => path11 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
         initHelp: {
           usage: "snl init --root <directory> [--preset <id> | --input <file|->] [--json]",
           rootDefault: ".",

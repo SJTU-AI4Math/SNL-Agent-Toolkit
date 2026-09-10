@@ -18587,7 +18587,7 @@ function t3(t4) {
 }
 
 // lib/snl-doc.ts
-import { constants as constants2, promises as fs2 } from "node:fs";
+import { promises as fs2 } from "node:fs";
 import * as path3 from "node:path";
 
 // lib/guarded-json-file.ts
@@ -18616,12 +18616,14 @@ async function assertCanonicalDirectory(directory, expected) {
 async function readRegularText(file) {
   const directory = path2.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
+  const before = await fs.lstat(file);
+  if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
     handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
     const stat = await handle.stat();
     await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile()) throw new Error(`${file} must be a regular, non-symlink file.`);
+    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
       text: await handle.readFile("utf8"),
       mode: stat.mode & 511,
@@ -19056,20 +19058,7 @@ async function pathExists(p3) {
   }
 }
 async function readJson(p3) {
-  let handle;
-  try {
-    handle = await fs2.open(p3, constants2.O_RDONLY | constants2.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${p3} must be a regular, non-symlink file.`);
-    return JSON.parse(await handle.readFile("utf8"));
-  } catch (error) {
-    if (error.code === "ELOOP") {
-      throw new Error(`${p3} must be a regular, non-symlink file.`);
-    }
-    throw error;
-  } finally {
-    await handle?.close();
-  }
+  return JSON.parse((await readRegularText(p3)).text);
 }
 async function readCanonicalLibraryJson(p3) {
   return JSON.parse((await readRegularText(p3)).text);
@@ -28506,6 +28495,7 @@ async function executeOperation(request) {
         resultProtocol: RESULT_PROTOCOL,
         commands: COMMAND_PATHS.filter((path11) => path11 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
         initHelp: {
           usage: "snl init --root <directory> [--preset <id> | --input <file|->] [--json]",
           rootDefault: ".",
