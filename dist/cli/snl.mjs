@@ -23462,7 +23462,9 @@ async function createWorkspaceReader(root, modelSource) {
     return (await listManagedEntities(root, "library")).map(({ id, value }) => {
       assertSlug(id);
       const title = value.meta?.title;
-      return { slug: id, title: title || id };
+      const graph = value.graph;
+      const entryCount = graph ? new Set(graph.nodes.filter((node) => node.label === "Entry").map((node) => node.id)).size : null;
+      return { slug: id, title: title || id, entryCount, relationshipCount: graph?.relationships.length ?? null };
     });
   };
   return {
