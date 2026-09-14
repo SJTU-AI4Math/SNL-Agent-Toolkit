@@ -18899,6 +18899,11 @@ function isTemplate(value) {
   if (!isRecord(value) || Object.hasOwn(value, "type") || !["formula_inline", "formula_display", "text", "block"].includes(String(value.mode)) || typeof value.body !== "string" || value.mode !== "block" && !value.body.trim() || value.separator !== void 0 && typeof value.separator !== "string") {
     return false;
   }
+  if (value.svg_template !== void 0) {
+    if (value.mode !== "block" || !isRecord(value.svg_template)) return false;
+    const width = value.svg_template.block_width_px;
+    if (width !== void 0 && (typeof width !== "number" || !Number.isFinite(width) || width <= 0 || width > 4096)) return false;
+  }
   return value.block_template_name === void 0 || value.mode === "block" && typeof value.block_template_name === "string";
 }
 function analyzePlaceholders(body) {

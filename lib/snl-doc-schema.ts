@@ -373,6 +373,14 @@ function isTemplate(value: unknown): value is SnlMacroTemplate {
       (value.separator !== undefined && typeof value.separator !== 'string')) {
     return false;
   }
+  // Optional consumer projection; follow Basics.Specification.Svg without
+  // materializing defaults or changing opaque projection fields.
+  if (value.svg_template !== undefined) {
+    if (value.mode !== 'block' || !isRecord(value.svg_template)) return false;
+    const width = value.svg_template.block_width_px;
+    if (width !== undefined && (typeof width !== 'number' ||
+        !Number.isFinite(width) || width <= 0 || width > 4096)) return false;
+  }
   return value.block_template_name === undefined ||
     (value.mode === 'block' && typeof value.block_template_name === 'string');
 }
