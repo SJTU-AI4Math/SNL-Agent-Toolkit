@@ -252,8 +252,8 @@ export function createToolkitTools(adapter: EntityAdapter): ToolkitTool[] {
         type: 'object', additionalProperties: false, required: ['root', 'command', 'arguments'],
         properties: {
           root: baseProperties.root,
-          command: { type: 'string', description: 'Canonical command path such as entry/get or validate.' },
-          arguments: { type: 'object', additionalProperties: true, description: 'Command-specific argument object.' },
+          command: { type: 'string', description: 'Canonical command path such as entry/get, validate, or relationship/generate. Use help or relationship to discover strict command arguments.' },
+          arguments: { type: 'object', additionalProperties: true, description: 'Command-specific argument object. relationship/generate requires scope:{} (global); dryRun:true returns expectedWorkspaceRevision, which apply requires. Explicit nulls/unknown keys are rejected.' },
         },
       },
       async execute(raw) {

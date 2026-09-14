@@ -15,7 +15,7 @@ declare const __SNL_CLI_EXECUTABLE__: boolean | undefined;
 interface ParsedCli { request?: OperationRequest; json: boolean; error?: string }
 function parseCli(argv: string[]): ParsedCli {
   let root = '.'; let json = false; let help = false; const positional: string[] = []; const args: JsonObject = {};
-  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--preset': 'preset', '--if-match': 'expectedRevision', '--to': 'to', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope' };
+  const valueFlags: Record<string, string> = { '--root': 'root', '-r': 'root', '--input': 'input', '-i': 'input', '--preset': 'preset', '--if-match': 'expectedRevision', '--to': 'to', '--limit': 'limit', '--cursor': 'cursor', '--query': 'query', '--mode': 'mode', '--scope': 'scope', '--if-workspace-match': 'expectedWorkspaceRevision' };
   for (let i=0;i<argv.length;i++) {
     const token=argv[i];
     if (token==='--json') { json=true; continue; }
@@ -31,6 +31,9 @@ function parseCli(argv: string[]): ParsedCli {
   const command=domain==='init'?'init':action?`${domain}/${action}`:domain;
   if (domain === 'init') {
     if (action || rest.length) return {json,error:'init accepts no identity positional; use --root <directory>, optionally with --preset <id> or --input <file|->.'};
+  }
+  if (command === 'relationship/generate' && typeof args.scope === 'string') {
+    try { args.scope = JSON.parse(args.scope); } catch { return {json,error:'--scope must be JSON {} for global generation.'}; }
   }
   if (command === 'validate' && args.scope === undefined) args.scope = 'workspace';
   const knownActions = new Set(['list','get','create','update','rename','delete']);
@@ -105,6 +108,11 @@ export async function main(argv=process.argv.slice(2)): Promise<number> {
       const value = await readInput(input, parsed.request.command.startsWith('batch/'));
       delete parsed.request.arguments.input;
       if (parsed.request.command === 'batch/check') parsed.request.arguments.operations = value;
+      else if (parsed.request.command === 'relationship/generate') {
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new SyntaxError('relationship generate input must be an arguments object.');
+        for (const key of Object.keys(value)) if (Object.hasOwn(parsed.request.arguments, key)) throw new SyntaxError(`Duplicate relationship generate argument ${key}.`);
+        parsed.request.arguments = { ...parsed.request.arguments, ...value };
+      }
       else if (parsed.request.command === 'batch/apply') {
         if (!value || typeof value !== 'object' || Array.isArray(value)) throw new SyntaxError('batch apply input must be {operations,checkedDigest,expectedWorkspaceRevision}.');
         parsed.request.arguments = { ...parsed.request.arguments, ...value };

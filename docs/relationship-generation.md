@@ -1,4 +1,4 @@
-# Relationship generation: pinned pure-plan port (not a publisher)
+# Relationship generation: pure SDK and global cache publisher
 
 ## Supported surface
 
@@ -27,23 +27,37 @@ Pinned executable oracle: SNL-Doc-Extension commit `76acedbc05f0523b8ad2a2e99ebf
 - Unlike legacy Toolkit `74c0b1df5ff38f2b51ef9e0e64759d6cad4836eb`, **parallel direct edges do not make each other non-atomic**. Current Extension excludes all matching direct endpoints when searching for a composite path. The DAG bitset optimization marks the entire parallel group atomic unless an earlier neighbor's closure covers the target. Cyclic/over-budget graphs use matching endpoint-exclusion traversal.
 - DAG complexity remains `O((V+E) ceil(V/32) + E log E)` time and `O(V ceil(V/32)+E)` storage. Bitsets are capped at 64 MiB. Cycles fall back globally and can be expensive; sparse fallback tests are not a dense-cycle performance claim. Pure timing is separate from disk/CLI/cache/UI performance.
 
-## Engineering integration pending: no relationship/generate command shipped
+## Global cache publisher: CLI / execute / MCP / DSH
 
-Toolkit base `b84fdf3977b3b271b114602b7d6797ca865b05cb` has a planned normative Entry `CLI.snl-relationship-generate`, but no command in `COMMAND_PATHS`. It asks for `scope`, whole-workspace CAS, managed-slice replacement, resulting revision, canonical readback and validation, without specifying a cache target or cache publication receipt.
+`snl relationship generate --scope '{}' --dry-run --root /absolute/workspace --json`
+returns a zero-write preview and `data.expectedWorkspaceRevision`. Review the view diff, then run
+`snl relationship generate --scope '{}' --if-workspace-match '<token>' --root /absolute/workspace --json`.
+`--input <file|->` alternatively accepts the raw arguments object. Duplicate flag/input fields are rejected.
+MCP and DSH `snl_execute` use `command: "relationship/generate"` and the same arguments.
+`snl relationship --root /absolute/workspace --json` describes the operation.
 
-Pinned Extension `spec.cache.dependencies`, `schema.read.relationships`, and `src/snlDoc.ts:7380-7415,7635-7671` instead require:
+Scope is required and accepts only `{}`: global complete Entries + active Macros + all authored relationships.
+`dryRun` defaults false; explicit null/nonboolean is invalid. Apply needs a fresh preview Authoring token;
+a supplied dry-run token is also checked. Unknown arguments fail before config reads.
 
-1. Strict saved Authoring read first, then current generated cache plus manual rows.
-2. Ordinary generation writes only rebuildable dependencies cache; never Authoring.
-3. Scope remains only for source compatibility; actual invalidation/generation is global.
-4. Saved historical rows and composed rows are different identities/views; generated rows are read-only.
+Only `.SNL_Doc/.cache/dependencies/result.json` is written (plus transient same-directory temporary file
+and the existing transient Authoring lock). Envelope `snl-derived-cache/schema=1`, generator `dependencies`,
+version `"1"`, library `null`, canonical inputHash/valueHash exactly match Extension 76acedbc.
+Manual and historical managed Authoring bytes are never edited. `changes` is a current-view diff, not deletion authority.
 
-The product direction is established, not blocked on a new owner decision: global cache-only generation with unchanged Authoring bytes. The pinned `spec.cache`, `spec.cache.runtime`, `spec.cache.dependencies` and `derivedCache.cachePath` define `.SNL_Doc/.cache/dependencies/result.json`, generator `dependencies`, algorithm version `1`, envelope `snl-derived-cache` schema `1`, global `library:null`, and input/value fingerprints. Complete sorted Entry id+SNL, active Macro name+source.entries and authored relationships bind the input. The empty request scope means global computation; do not invent local selector fields or shrink the input pool.
+`lib/dependency-cache-descriptor.ts` reuses the pinned complete input projection and validator.
+`lib/dependency-cache-storage.ts` is the pinned native format/fingerprint/path-guard subset with deliberate
+strict-publisher adaptations: no memory fallback, no cache `.gitignore` write, directory sync after rename,
+complete-input callback after temporary sync, and no cleanup of the shared result. Only owned temporary files
+are removed. The exact original native runtime is frozen in the test fixture and exercised for readback.
 
-The prerequisite Authoring revision repair is implemented: opaque version-2 workspace tokens exclude exactly the reserved `.SNL_Doc/.cache` and `.SNL_Doc/libraries/<legal-cache-slug>/.cache` subtrees, not arbitrary `.cache` assets elsewhere. Canonical root, unknown author directories, files, modes and frozen backups remain authority. Cache-only create/update/delete leaves the token unchanged. Old whole-tree tokens fail closed as `batch.workspace-conflict`; reread/recheck using the upgraded Toolkit. Cache bytes never become an Authoring CAS credential.
+Apply takes the shared Authoring lock, checks fresh CAS, validates, plans, and rechecks full inputs/revision
+before publication and after same-input readCache and composed-view readback/validation. Strict failures use
+`relationship.publication-failed` or `relationship.readback-failed` (exit 2); stale authority uses
+`relationship.workspace-conflict` (exit 1). Successful cache-only apply can return the same Authoring token.
 
-Remaining engineering work is snapshot-bound cache publication under the shared lock, strict publication-error handling (not an in-memory fallback masquerading as persisted success), complete-input readback and Authoring validation, and common CLI/execute/MCP/DSH wiring. Dry-run must not create caches or lock residue. A successful cache-only apply may return the same Authoring revision; view removals do not authorize saved-row deletion. Do not restore the old `lib/relationship-operation.ts` Authoring writer or invent another cache schema.
-
-Batch publication remains a separate complete physical-tree transaction: it copies caches too and verifies full physical readback/rollback. Cache changes between check and apply are accepted when Authoring is unchanged, but cache churn during physical staging/exchange may require quiescence and a whole-batch retry (`batch.physical-conflict`), or recovery if the retained preimage also changed. An Authoring token is not a copy-safety or mixed-writer certificate. See `Skills/CLI Tools/Batch.md`.
-
-This follow-up changes the revision/batch boundary, tests and related normative documentation only. Command discovery and transport allowlists still omit generation; tags, lock implementation, reader pins and package version remain unchanged. It does not claim cache publication, installed Extension Host/UI parity, mixed-writer safety of a new publisher, or full release readiness. Rebuild with `npm run build:cli` before packaging; `npm pack --ignore-scripts` in the focused test is not the full release prepack gate.
+Other Extension cache writers do not share this Authoring lock. A late stale envelope may physically replace
+a newer artifact but cannot pass a current-input readCache. Clear/replacement may fail readback or happen after
+success. No whole-namespace cross-process atomicity or immunity to malicious same-UID path races is promised.
+Failures never unconditionally delete someone else's result. Existing batch physical copy/rollback and revision
+helper logic are unchanged. No browser/Extension Host UI claim follows from native cache reader acceptance.
