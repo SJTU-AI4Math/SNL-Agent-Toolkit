@@ -14,6 +14,8 @@ async function contracts(): Promise<Map<string, Contract>> {
     if (!name.startsWith('CLI-') || !name.endsWith('.json')) continue;
     const raw = JSON.parse(await readFile(path.join(entriesDir, name), 'utf8'));
     const entry = raw.entry;
+    // Bare snl is a foreground CLI lifecycle, not a transport-neutral operation.
+    if (entry.id === 'CLI.WebHost') continue;
     const markdown = entry.content.markdown as string;
     const fences = [...markdown.matchAll(/```json\n([^`]+)\n```/g)];
     assert.equal(fences.length, 1, entry.id);
@@ -24,6 +26,15 @@ async function contracts(): Promise<Map<string, Contract>> {
 }
 
 function keys(value: Record<string, unknown>): string[] { return Object.keys(value).sort(); }
+
+test('bare Web host is specified separately without pretending to be an MCP operation', async () => {
+  const entries = await Promise.all((await readdir(entriesDir)).filter(n => n.startsWith('CLI-') && n.endsWith('.json')).map(async n => JSON.parse(await readFile(path.join(entriesDir, n), 'utf8')).entry));
+  const host = entries.filter(entry => entry.id === 'CLI.WebHost');
+  assert.equal(host.length, 1);
+  assert.match(host[0].content.markdown, /127\.0\.0\.1:4911/);
+  assert.match(host[0].content.markdown, /not an operation available through MCP/);
+  assert.doesNotMatch(host[0].content.markdown, /snl\.operation\/v1/);
+});
 
 test('all 88 CLI product contracts declare availability and contain only valid protocol JSON examples', async () => {
   const all = await contracts();

@@ -110,20 +110,7 @@ export async function pathExists(p: string): Promise<boolean> {
 }
 
 async function readJson<T>(p: string): Promise<T> {
-  let handle;
-  try {
-    handle = await fs.open(p, constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    if (!stat.isFile()) throw new Error(`${p} must be a regular, non-symlink file.`);
-    return JSON.parse(await handle.readFile('utf8')) as T;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ELOOP') {
-      throw new Error(`${p} must be a regular, non-symlink file.`);
-    }
-    throw error;
-  } finally {
-    await handle?.close();
-  }
+  return JSON.parse((await readRegularText(p)).text) as T;
 }
 
 async function readCanonicalLibraryJson<T>(p: string): Promise<T> {

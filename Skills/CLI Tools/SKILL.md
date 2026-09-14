@@ -592,3 +592,13 @@ publishes no partial rename.
 * `--root <path>`
 * `--input <file|directory|->`
 * `--json`
+
+## `snl repair package-entry-ids`
+
+* `<PackageId>`
+* `--root <workspace>`
+* `--json`
+
+Implemented scoped repair: rebuild one current-schema Package Entry membership index from canonical Entry envelopes, under the writer lock and guarded replacement. Rehearse on an untouched copy and validate the whole workspace afterward; repairing one Package does not certify all siblings. Read `data.packageId`, `data.changed`, and `data.entryIds`. This is not migration or arbitrary JSON repair, and has no `--dry-run` or `--if-match` flag.
+
+For new workspaces use [Initialize](../Initialize/SKILL.md); default initialization does not require this repair.

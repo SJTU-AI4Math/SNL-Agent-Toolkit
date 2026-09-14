@@ -60,6 +60,32 @@ describe('snl init', () => {
     ]);
   });
 
+  it('explains the target syntax and default catalogs without initializing during help', async () => {
+    const root = await target();
+    const before = await snapshot(root);
+    const call = run(root, ['init', '--help']);
+    assert.equal(call.status, 0, call.stderr || call.stdout);
+    const help = result(call).data.initHelp;
+    assert.ok(help, 'init help must explain how to invoke the command, not just list its name');
+    assert.equal(help.usage, 'snl init --root <directory> [--preset <id> | --input <file|->] [--json]');
+    assert.equal(help.rootDefault, '.');
+    assert.equal(help.oneShot, true);
+    assert.deepEqual(help.defaultEntryKinds, ['section', 'subsection', 'entry']);
+    assert.deepEqual(help.defaultMacroKinds, ['fvar', 'binder', 'const', 'bvar', 'sub']);
+    assert.deepEqual(await snapshot(root), before);
+  });
+
+  it('points a mistaken positional target to --root without writing anything', async () => {
+    const root = await target();
+    const before = await snapshot(root);
+    const call = run(root, ['init', root]);
+    assert.equal(call.status, 2);
+    const body = result(call);
+    assert.equal(body.error.code, 'usage.invalid');
+    assert.match(body.error.message, /--root <directory>/);
+    assert.deepEqual(await snapshot(root), before);
+  });
+
   it('initializes the exact default workspace in a non-empty repository', async () => {
     const root = await target();
     const call = run(root, ['init']);

@@ -5,11 +5,12 @@
 ## Published, usable guidance
 
 - [`CLI Tools`](<CLI Tools/SKILL.md>) — normative CLI product surface and machine-facing invocation skeletons. Current implementation availability is discovered through `snl --help`.
+- [`Initialize`](Initialize/SKILL.md) — official CLI/MCP initialization, default versus preset catalogs, one-shot conflicts, and Git-persistent validation. Regenerate from canonical Entries with `npm run generate:init-skill`.
 - [`RefineNL2SNL`](RefineNL2SNL/SKILL.md) — refine natural-language material into high-quality SNL.
 
 ## Unmaterialized guidance
 
-Other current Skill directories are reserved outputs whose `SKILL.md` files are empty. Do not route an Agent to an empty file. Until those physical Skills are generated from their owning `.SNL_Doc` Libraries and validated, read the canonical SNL Entries directly.
+`SNL Ecosystem` contains a partial concept outline, not a complete workflow. `Plan`, `Author`, `Read`, `Maintain`, and `Verify and Fix` remain reserved outputs with empty `SKILL.md` files. Their canonical SNL sections may also be incomplete. Do not route an Agent to an empty file or advertise these directories as completed workflows. Source-checkout maintainers can inspect the owning `.SNL_Doc` Entries; package-only users cannot, because `.SNL_Doc` is not in the npm payload. Use published guides and advertised CLI capabilities, and report unavailable workflows explicitly.
 
 ## Maintenance rule
 

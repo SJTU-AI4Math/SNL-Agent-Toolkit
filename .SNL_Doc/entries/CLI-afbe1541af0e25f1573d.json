@@ -1,0 +1,17 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "CLI",
+  "entry": {
+    "id": "CLI.WebHost",
+    "package": "CLI",
+    "kind": "cli",
+    "title": "snl — local Web reader",
+    "content": {
+      "markdown": "# Local Web reader\n\nRunning `snl` with no operation starts a foreground, read-only HTTP service for the startup directory. `snl --root <directory> --port <port>` overrides the initial folder and port. Default bind is `127.0.0.1:4911`; only numeric ports 1–65535 are accepted at the CLI. Existing operation commands and JSON help retain their behavior. The Web host is a CLI lifecycle, not an operation available through MCP/dsh.\n\nThe initial folder is resolved once; no process.chdir or parent-directory search is performed. Missing .SNL_Doc reports an actionable init hint without creating data. The service reports its URL and canonical workspace root only after listening. Occupied ports fail explicitly without choosing another port. Ctrl+C/SIGTERM closes this service. Startup does not require VS Code, network access or frontend compilation.\n\nThe homepage displays the workspace name and root and lists its Libraries. Library reading, Entry/Macro views, SNoogL, relationship graph, themes and common navigation reuse the HTML export's BrowserReader and route codec. Workspace routes carry Library context separately from Entry identity and preserve Library occurrence node identity. Old standalone HTML hashes remain compatible. Refresh reads current folder data; source failures are visible and must not silently retain success-shaped stale content. An empty initialized workspace is a usable empty homepage, not a synthetic Library.\n\nThe local adapter reads the full workspace pool for discovery and the selected Library for the outline. It owns scoped filesystem reads; the browser receives a read model through same-origin GET APIs. Public HTTP paths are a fixed frontend asset allowlist and explicit read APIs, never a static mount of the repository. Reject foreign Host/Origin and cross-site requests, arbitrary path traversal and mutation methods; no filesystem absolute path or database credential is accepted as a browser route identity. Entry resources are limited to authorized .SNL_Doc assets; symlinks must not escape authorized roots. The source root may be displayed to the local user but is not a static URL.\n\nThis first slice has one folder source per service, no UI source switching, database backend or editing. Keep its data adapter separate from route/UI code so future source identities and editable capabilities do not require another router. HTML exports stay frozen and read-only. Existing HTML source/Monaco behavior remains; the local service must explicitly mark source viewing unavailable until its own source adapter is connected, never claim that showing a Pointer implements synchronization.\n\nFrontend/model artifacts are built from an immutable Extension source revision through its maintained build entry, packaged with Toolkit and not checked into Git as copied authored source. Source checkouts document the build step; npm packages carry prebuilt runtime assets. Reuse does not require an independently published frontend package for this first slice.\n"
+    },
+    "contribution_info": null,
+    "pointer": null
+  }
+}

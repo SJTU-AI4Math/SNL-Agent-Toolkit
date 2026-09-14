@@ -15,7 +15,9 @@
         "zh-CN": "宏类型初始化"
       }
     },
-    "content": {},
+    "content": {
+      "markdown": "The official default Macro Kinds are `fvar`, `binder`, `const`, `bvar`, and `sub`. These five categories are distinct from the seven seeded BasicMacros. Preserve the initializer's current light/dark coloring and schema, and use public Kind APIs for later authorized changes.\n\nA template's full six Macro Kinds are a separate configuration, not the default. Do not infer that every preset installs the template's writing Macros or removes required default Kinds. Compare the actual scratch-workspace catalog and Macro inventory before selecting or extending a preset."
+    },
     "contribution_info": null,
     "pointer": null
   }

@@ -16,7 +16,8 @@
       }
     },
     "content": {
-      "snl": "%Maintaining the SNL doc of a repository involves delicate and flexible editing. This skill covers possible scenarios and recommended tool calling pipeline in such cases.%"
+      "snl": "%Maintaining the SNL doc of a repository involves delicate and flexible editing. This skill covers possible scenarios and recommended tool calling pipeline in such cases.%",
+      "markdown": "\n\n### Implemented Package membership repair\n\n`snl repair package-entry-ids <PackageId> --root <workspace> --json` rebuilds one current-schema Package membership index from canonical Entry envelopes. This is a scoped maintenance operation, not arbitrary JSON repair or workspace migration. Rehearse on an untouched copy, use the exact discovered Package ID, preserve the original for comparison, then validate the full workspace. Multiple known ordering defects can be repaired one Package at a time; success for one target does not certify all siblings. Do not invent `--dry-run` or `--if-match` support for this command. Inspect `data.changed`, `data.packageId`, and `data.entryIds`, and read back the affected manifest through public APIs. Default initialization does not require this repair."
     },
     "contribution_info": null,
     "pointer": {

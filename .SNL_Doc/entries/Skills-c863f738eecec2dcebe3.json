@@ -15,7 +15,9 @@
         "zh-CN": "初始化的 $\\texttt{SKILL.md}$"
       }
     },
-    "content": {},
+    "content": {
+      "markdown": "`Skills/Initialize/SKILL.md` is the materialized agent guide for the Initialize subtree. Its body is assembled in this order: Skill.Init, Skill.Init.sec.PrimaryInit, Skill.Init.sec.EntryKindInit, Skill.Init.sec.MacroKindInit. Update these canonical Entries first, regenerate the projection, and run the initialization/guidance regressions before routing agents to it. An empty or stale projection is not usable guidance."
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/Initialize/SKILL.md",

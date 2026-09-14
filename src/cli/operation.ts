@@ -14,7 +14,7 @@ import { computeEntryBareLatex, EntryAnalysisError } from '../../lib/entry-analy
 import { findEntityReferences, renameEntityId } from '../../lib/entity-references.ts';
 import { macroEntityPath } from '../../lib/entity-storage.ts';
 import { initializeWorkspace, InitWorkspaceError } from '../../lib/init-workspace.ts';
-import { BUILTIN_INIT_PRESET_DESCRIPTORS } from '../../lib/init-presets.ts';
+import { BUILTIN_INIT_PRESET_DESCRIPTORS, DEFAULT_ENTRY_KINDS, DEFAULT_MACRO_KINDS } from '../../lib/init-presets.ts';
 import { repairPackageEntryIds } from '../../lib/package-membership-repair.ts';
 
 export const OPERATION_PROTOCOL = 'snl.operation/v1' as const;
@@ -85,6 +85,14 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
         resultProtocol: RESULT_PROTOCOL,
         commands: COMMAND_PATHS.filter(path => path !== 'help'),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        web: { usage: 'snl [--root <directory>] [--port <port>] [--json]', host: '127.0.0.1', defaultPort: 4911, readOnly: true, rootDefault: '.' },
+        initHelp: {
+          usage: 'snl init --root <directory> [--preset <id> | --input <file|->] [--json]',
+          rootDefault: '.',
+          oneShot: true,
+          defaultEntryKinds: DEFAULT_ENTRY_KINDS.map(kind => kind.id),
+          defaultMacroKinds: DEFAULT_MACRO_KINDS.map(kind => kind.id),
+        },
       });
     }
     if (tokens.length === 1 && command === 'init') {

@@ -29,7 +29,7 @@ function parseCli(argv: string[]): ParsedCli {
   const [domain,action,...rest]=positional; if(!domain)return{json,error:'Expected a command domain.'};
   const command=domain==='init'?'init':action?`${domain}/${action}`:domain;
   if (domain === 'init') {
-    if (action || rest.length) return {json,error:'init accepts no identity positional; use --preset <id> or --input <file|->.'};
+    if (action || rest.length) return {json,error:'init accepts no identity positional; use --root <directory>, optionally with --preset <id> or --input <file|->.'};
   }
   if (command === 'validate' && args.scope === undefined) args.scope = 'workspace';
   const knownActions = new Set(['list','get','create','update','rename','delete']);
@@ -48,7 +48,54 @@ async function readInput(file: string): Promise<unknown> {
   const text=file==='-'?await new Promise<string>((resolve,reject)=>{let data='';process.stdin.setEncoding('utf8');process.stdin.on('data',c=>data+=c);process.stdin.on('end',()=>resolve(data));process.stdin.on('error',reject);}):await fs.readFile(path.resolve(file),'utf8');
   return JSON.parse(text);
 }
+function webArguments(argv: string[]): { root: string; port: number; json: boolean; error?: string } | null {
+  if (argv.includes('--help') || argv.includes('-h')) return null;
+  let root = '.'; let port = 4911; let json = false; let error: string | undefined;
+  for (let i = 0; i < argv.length; i++) {
+    const token = argv[i];
+    if (token === '--json') { json = true; continue; }
+    if (token === '--root' || token === '-r') {
+      if (argv[i + 1] === undefined) return { root, port, json, error: `${token} requires a value.` };
+      root = argv[++i]; continue;
+    }
+    if (token === '--port') {
+      const value = argv[++i];
+      if (!value || !/^[0-9]+$/.test(value) || !Number.isSafeInteger(Number(value)) || Number(value) < 1 || Number(value) > 65535) error = '--port requires an integer from 1 to 65535.';
+      else port = Number(value);
+      continue;
+    }
+    return null; // Existing domains and unknown flags remain owned by the operation parser.
+  }
+  return { root: path.resolve(root), port, json, error };
+}
 export async function main(argv=process.argv.slice(2)): Promise<number> {
+  const web = webArguments(argv);
+  if (web) {
+    if (web.error) {
+      process.stdout.write(JSON.stringify(operationFailure('web', 2, 'usage.invalid', web.error).response) + '\n'); return 2;
+    }
+    try {
+      const { startWebReader } = await import('../web/server');
+      const running = await startWebReader(web.root, web.port);
+      process.stdout.write(web.json
+        ? JSON.stringify({ protocol: 'snl.web/v1', ok: true, url: running.url, root: running.root, readOnly: true }) + '\n'
+        : `SNL read-only reader: ${running.url}\nWorkspace: ${JSON.stringify(running.root)}\nPress Ctrl+C to stop.\n`);
+      await new Promise<void>((resolve, reject) => {
+        let closing = false;
+        const stop = () => {
+          if (closing) return; closing = true;
+          process.off('SIGINT', stop); process.off('SIGTERM', stop);
+          running.close().then(resolve, reject);
+        };
+        process.on('SIGINT', stop); process.on('SIGTERM', stop);
+      });
+      return 0;
+    } catch (error) {
+      const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : 'web.start-failed';
+      process.stdout.write(JSON.stringify(operationFailure('web', 2, code, error instanceof Error ? error.message : 'Web host failed.').response) + '\n');
+      return 2;
+    }
+  }
   const parsed=parseCli(argv);
   if (!parsed.request) { const r=operationFailure('unknown',2,'usage.invalid',parsed.error??'Invalid invocation.');process.stdout.write(`${JSON.stringify(r.response)}\n`);return r.exitCode; }
   try {
