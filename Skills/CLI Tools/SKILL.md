@@ -581,17 +581,30 @@ publishes no partial rename.
 
 ## `snl batch`
 
+Implemented create-only batch commands, input/receipt schemas, supported entity
+families, and Linux publication/recovery limits are documented in
+[Batch.md](Batch.md). Calling the namespace itself is read-only discovery.
+
 ### `snl batch check`
 
 * `--root <path>`
-* `--input <file|directory|->`
+* `--input <file|->` — plain JSON operations array
 * `--json`
 
 ### `snl batch apply`
 
 * `--root <path>`
-* `--input <file|directory|->`
+* `--input <file|->` — `{operations,checkedDigest,expectedWorkspaceRevision}`
 * `--json`
+
+Publication uses whole-directory exchange with guarded recovery, not unconditional
+rollback or unlocked-reader snapshot isolation. On `batch.recovery-required`,
+stop writes and preserve the journal, lock and retained generations. On
+`batch.committed-cleanup-failed`, the batch is already committed: inspect the
+resulting revision and residue, never blindly replay. A successful result with
+`batch.backup-cleanup-failed` also means committed data with a retained backup.
+See the canonical `CLI.snl-batch-apply` Spec and [Batch.md](Batch.md) for the
+failure model and manual recovery boundary.
 
 ## `snl repair package-entry-ids`
 

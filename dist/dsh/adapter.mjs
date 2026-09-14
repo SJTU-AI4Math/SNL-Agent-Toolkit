@@ -2314,22 +2314,22 @@ function scalarMatches(type, value) {
   }
 }
 var ONE_OF_SIBLING_KEYWORDS = ["properties", "required", "additionalProperties", "items", "enum", "const"];
-function checkObjectSchemaTail(node, path11, properties, violations) {
+function checkObjectSchemaTail(node, path12, properties, violations) {
   const hasRequired = Object.hasOwn(node, "required");
   const required = hasRequired ? node.required : void 0;
   if (hasRequired) {
     if (!isPlainJsonArray(required) || required.some((entry) => typeof entry !== "string")) {
-      violations.push(`${path11}.required must be an array of strings`);
+      violations.push(`${path12}.required must be an array of strings`);
     } else {
       const declared = isJsonSchemaRecord(properties) ? properties : {};
       for (const key of required) {
         if (!Object.hasOwn(declared, key))
-          violations.push(`${path11}.required names "${key}" which is not in properties`);
+          violations.push(`${path12}.required names "${key}" which is not in properties`);
       }
     }
   }
   if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") {
-    violations.push(`${path11}.additionalProperties must be a boolean`);
+    violations.push(`${path12}.additionalProperties must be a boolean`);
   }
 }
 function checkSchemaNode(root, rootPath, violations, seen) {
@@ -2350,13 +2350,13 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       checkObjectSchemaTail(task.node, task.path, task.properties, violations);
       continue;
     }
-    const { node, path: path11 } = task;
+    const { node, path: path12 } = task;
     if (!isJsonSchemaRecord(node)) {
-      violations.push(`${path11} must be a schema object`);
+      violations.push(`${path12} must be a schema object`);
       continue;
     }
     if (seen.has(node)) {
-      violations.push(`${path11} is circular`);
+      violations.push(`${path12} is circular`);
       continue;
     }
     seen.add(node);
@@ -2367,48 +2367,48 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       if (ANNOTATION_KEYWORDS.has(key)) {
         try {
           if (!isJsonValue(node[key]))
-            violations.push(`${path11}.${key} annotation must be lossless JSON data`);
+            violations.push(`${path12}.${key} annotation must be lossless JSON data`);
         } catch {
-          violations.push(`${path11}.${key} annotation must be lossless JSON data`);
+          violations.push(`${path12}.${key} annotation must be lossless JSON data`);
         }
         continue;
       }
-      violations.push(`${path11}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
+      violations.push(`${path12}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
     }
     if (Object.hasOwn(node, "description") && typeof node.description !== "string") {
-      violations.push(`${path11}.description must be a string`);
+      violations.push(`${path12}.description must be a string`);
     }
     if (Object.hasOwn(node, "title") && typeof node.title !== "string") {
-      violations.push(`${path11}.title must be a string`);
+      violations.push(`${path12}.title must be a string`);
     }
     const hasType = Object.hasOwn(node, "type");
     const hasOneOf = Object.hasOwn(node, "oneOf");
     if (hasType && hasOneOf) {
-      violations.push(`${path11} cannot declare both type and oneOf`);
+      violations.push(`${path12} cannot declare both type and oneOf`);
       continue;
     }
     if (!hasType && !hasOneOf) {
       for (const key of ONE_OF_SIBLING_KEYWORDS) {
         if (Object.hasOwn(node, key))
-          violations.push(`${path11}.${key} requires type or oneOf`);
+          violations.push(`${path12}.${key} requires type or oneOf`);
       }
       continue;
     }
     if (hasOneOf) {
       const oneOf = node.oneOf;
-      tasks.push({ kind: "one-of-tail", node, path: path11 });
+      tasks.push({ kind: "one-of-tail", node, path: path12 });
       if (!isPlainJsonArray(oneOf) || oneOf.length < 2) {
-        violations.push(`${path11}.oneOf must be an array of at least two schemas`);
+        violations.push(`${path12}.oneOf must be an array of at least two schemas`);
       } else {
         for (let index = oneOf.length - 1; index >= 0; index--) {
-          tasks.push({ kind: "enter", node: oneOf[index], path: `${path11}.oneOf[${index}]` });
+          tasks.push({ kind: "enter", node: oneOf[index], path: `${path12}.oneOf[${index}]` });
         }
       }
       continue;
     }
     const type = node.type;
     if (typeof type !== "string" || !SCHEMA_TYPES.includes(type)) {
-      violations.push(Array.isArray(type) ? `${path11}.type must be a single type string (type arrays are not supported)` : `${path11}.type must be one of ${SCHEMA_TYPES.join("/")}`);
+      violations.push(Array.isArray(type) ? `${path12}.type must be a single type string (type arrays are not supported)` : `${path12}.type must be one of ${SCHEMA_TYPES.join("/")}`);
       continue;
     }
     const schemaType = type;
@@ -2422,23 +2422,23 @@ function checkSchemaNode(root, rootPath, violations, seen) {
     };
     for (const [key, types] of Object.entries(allowedFor)) {
       if (Object.hasOwn(node, key) && !types.includes(schemaType)) {
-        violations.push(`${path11}.${key} is not supported on type "${schemaType}"`);
+        violations.push(`${path12}.${key} is not supported on type "${schemaType}"`);
       }
     }
     switch (schemaType) {
       case "object": {
         const properties = Object.hasOwn(node, "properties") ? node.properties : void 0;
-        tasks.push({ kind: "object-tail", node, path: path11, properties });
+        tasks.push({ kind: "object-tail", node, path: path12, properties });
         if (Object.hasOwn(node, "properties")) {
           if (!isJsonSchemaRecord(properties)) {
-            violations.push(`${path11}.properties must be an object of schemas`);
+            violations.push(`${path12}.properties must be an object of schemas`);
           } else {
             const entries = Object.entries(properties);
             for (let index = entries.length - 1; index >= 0; index--) {
               const entry = entries[index];
               if (entry === void 0)
                 continue;
-              tasks.push({ kind: "enter", node: entry[1], path: `${path11}.properties.${entry[0]}` });
+              tasks.push({ kind: "enter", node: entry[1], path: `${path12}.properties.${entry[0]}` });
             }
           }
         }
@@ -2446,7 +2446,7 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       }
       case "array": {
         if (Object.hasOwn(node, "items"))
-          tasks.push({ kind: "enter", node: node.items, path: `${path11}.items` });
+          tasks.push({ kind: "enter", node: node.items, path: `${path12}.items` });
         break;
       }
       case "string":
@@ -2458,16 +2458,16 @@ function checkSchemaNode(root, rootPath, violations, seen) {
         const allowed = hasEnum ? node.enum : void 0;
         const enumValid = isPlainJsonArray(allowed) && allowed.length > 0 && allowed.every((entry) => scalarMatches(schemaType, entry));
         if (hasEnum && !enumValid) {
-          violations.push(`${path11}.enum must be a non-empty array of ${schemaType} values`);
+          violations.push(`${path12}.enum must be a non-empty array of ${schemaType} values`);
         }
         const hasConst = Object.hasOwn(node, "const");
         const declaredConst = hasConst ? node.const : void 0;
         const constValid = scalarMatches(schemaType, declaredConst);
         if (hasConst) {
           if (!constValid) {
-            violations.push(`${path11}.const must be a ${schemaType} value`);
+            violations.push(`${path12}.const must be a ${schemaType} value`);
           } else if (enumValid && !allowed.includes(declaredConst)) {
-            violations.push(`${path11}.const must be one of ${path11}.enum when both are declared`);
+            violations.push(`${path12}.const must be one of ${path12}.enum when both are declared`);
           }
         }
         break;
@@ -2491,24 +2491,24 @@ function safelyIsJsonValue(value) {
     return false;
   }
 }
-function diagnosticPath(path11) {
-  return path11 === "" ? "arguments" : path11;
+function diagnosticPath(path12) {
+  return path12 === "" ? "arguments" : path12;
 }
-function propertyPath(path11, key) {
-  return path11 === "" ? key : `${path11}.${key}`;
+function propertyPath(path12, key) {
+  return path12 === "" ? key : `${path12}.${key}`;
 }
-function losslessValueViolation(path11) {
-  return [`"${diagnosticPath(path11)}" must be a lossless JSON value`];
+function losslessValueViolation(path12) {
+  return [`"${diagnosticPath(path12)}" must be a lossless JSON value`];
 }
 function appendViolations(target, source) {
   for (const violation of source)
     target.push(violation);
 }
-function valueFrame(node, value, path11) {
+function valueFrame(node, value, path12) {
   return {
     node,
     value,
-    path: path11,
+    path: path12,
     catches: false,
     phase: "start",
     children: [],
@@ -2518,18 +2518,18 @@ function valueFrame(node, value, path11) {
     matches: 0
   };
 }
-function checkScalarValue(node, value, path11) {
+function checkScalarValue(node, value, path12) {
   const allowed = Object.hasOwn(node, "enum") ? node.enum : void 0;
   if (allowed !== void 0 && !allowed.includes(value)) {
-    return [`"${diagnosticPath(path11)}" must be one of ${JSON.stringify(allowed)}`];
+    return [`"${diagnosticPath(path12)}" must be one of ${JSON.stringify(allowed)}`];
   }
   if (Object.hasOwn(node, "const") && value !== node.const) {
-    return [`"${diagnosticPath(path11)}" must be ${JSON.stringify(node.const)}`];
+    return [`"${diagnosticPath(path12)}" must be ${JSON.stringify(node.const)}`];
   }
   return [];
 }
-function checkValue(schema, value, path11) {
-  const frames = [valueFrame(schema, value, path11)];
+function checkValue(schema, value, path12) {
+  const frames = [valueFrame(schema, value, path12)];
   let rootResult;
   const receive = (result) => {
     const parent = frames.at(-1);
@@ -2668,10 +2668,10 @@ function checkValue(schema, value, path11) {
       receive(losslessValueViolation(failed.path));
     }
   }
-  return rootResult ?? losslessValueViolation(path11);
+  return rootResult ?? losslessValueViolation(path12);
 }
-function validateJsonSchemaValue(schema, value, path11 = "value") {
-  return checkValue(schema, value, path11);
+function validateJsonSchemaValue(schema, value, path12 = "value") {
+  return checkValue(schema, value, path12);
 }
 
 // node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js
@@ -2689,10 +2689,10 @@ function copyAnnotations(source, target) {
   if (Object.hasOwn(source, "examples"))
     target.examples = source.examples;
 }
-function assertAuthorKeys(source, path11, allowed) {
+function assertAuthorKeys(source, path12, allowed) {
   for (const key of Object.keys(source)) {
     if (!allowed.includes(key))
-      authorError(`${path11}.${key} is not supported by the value schema DSL`);
+      authorError(`${path12}.${key} is not supported by the value schema DSL`);
   }
 }
 function assignCompiledNode(destination, node) {
@@ -2783,22 +2783,22 @@ function runSchemaCompiler(initial) {
       }
       continue;
     }
-    const { input, path: path11 } = task;
+    const { input, path: path12 } = task;
     if (!isJsonSchemaRecord(input))
-      authorError(`${path11} must be a value schema object`);
+      authorError(`${path12} must be a value schema object`);
     if (seen.has(input))
-      authorError(`${path11} is circular`);
+      authorError(`${path12} is circular`);
     seen.add(input);
     const authorKeys = [...ANNOTATION_KEYS, ...task.allowRequired ? ["required"] : []];
     const node = {};
     assignCompiledNode(task.destination, node);
     tasks.push({ kind: "leave", input });
     if (Object.hasOwn(input, "oneOf")) {
-      assertAuthorKeys(input, path11, [...authorKeys, "oneOf", "type"]);
+      assertAuthorKeys(input, path12, [...authorKeys, "oneOf", "type"]);
       if (Object.hasOwn(input, "type"))
-        authorError(`${path11} cannot declare both type and oneOf`);
+        authorError(`${path12} cannot declare both type and oneOf`);
       if (!isPlainJsonArray(input.oneOf))
-        authorError(`${path11}.oneOf must be an array of at least two value schemas`);
+        authorError(`${path12}.oneOf must be an array of at least two value schemas`);
       const branches = [];
       node.oneOf = branches;
       copyAnnotations(input, node);
@@ -2806,7 +2806,7 @@ function runSchemaCompiler(initial) {
         tasks.push({
           kind: "value",
           input: input.oneOf[index],
-          path: `${path11}.oneOf[${index}]`,
+          path: `${path12}.oneOf[${index}]`,
           allowRequired: false,
           destination: { kind: "one-of", target: branches, index }
         });
@@ -2816,13 +2816,13 @@ function runSchemaCompiler(initial) {
     const inputType = Object.hasOwn(input, "type") ? input.type : void 0;
     switch (inputType) {
       case "json":
-        assertAuthorKeys(input, path11, [...authorKeys, "type"]);
+        assertAuthorKeys(input, path12, [...authorKeys, "type"]);
         copyAnnotations(input, node);
         break;
       case "object":
-        assertAuthorKeys(input, path11, [...authorKeys, "type", "properties", "additionalProperties"]);
+        assertAuthorKeys(input, path12, [...authorKeys, "type", "properties", "additionalProperties"]);
         if (!Object.hasOwn(input, "additionalProperties") || typeof input.additionalProperties !== "boolean") {
-          authorError(`${path11}.additionalProperties must be explicitly true or false`);
+          authorError(`${path12}.additionalProperties must be explicitly true or false`);
         }
         node.type = "object";
         copyAnnotations(input, node);
@@ -2831,20 +2831,20 @@ function runSchemaCompiler(initial) {
           tasks.push({
             kind: "property-map",
             input: input.properties,
-            path: `${path11}.properties`,
+            path: `${path12}.properties`,
             destination: { kind: "object", target: node }
           });
         }
         break;
       case "array":
-        assertAuthorKeys(input, path11, [...authorKeys, "type", "items"]);
+        assertAuthorKeys(input, path12, [...authorKeys, "type", "items"]);
         node.type = "array";
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "items")) {
           tasks.push({
             kind: "value",
             input: input.items,
-            path: `${path11}.items`,
+            path: `${path12}.items`,
             allowRequired: false,
             destination: { kind: "item", target: node }
           });
@@ -2855,31 +2855,31 @@ function runSchemaCompiler(initial) {
       case "integer":
       case "boolean":
       case "null":
-        assertAuthorKeys(input, path11, [...authorKeys, "type", "enum", "const"]);
+        assertAuthorKeys(input, path12, [...authorKeys, "type", "enum", "const"]);
         node.type = inputType;
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "enum")) {
           if (!isPlainJsonArray(input.enum))
-            authorError(`${path11}.enum must be a non-empty array of scalar values`);
+            authorError(`${path12}.enum must be a non-empty array of scalar values`);
           node.enum = Array.from(input.enum, (entry) => entry);
         }
         if (Object.hasOwn(input, "const"))
           node.const = input.const;
         break;
       default:
-        authorError(`${path11}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
+        authorError(`${path12}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
     }
   }
 }
-function compilePropertyMap(input, path11) {
+function compilePropertyMap(input, path12) {
   const holder = {};
-  runSchemaCompiler({ kind: "property-map", input, path: path11, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path11} did not compile`);
+  runSchemaCompiler({ kind: "property-map", input, path: path12, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path12} did not compile`);
 }
-function compileValueSchema(input, path11) {
+function compileValueSchema(input, path12) {
   const holder = {};
-  runSchemaCompiler({ kind: "value", input, path: path11, allowRequired: false, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path11} did not compile`);
+  runSchemaCompiler({ kind: "value", input, path: path12, allowRequired: false, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path12} did not compile`);
 }
 function valueSchemaSpecToJsonSchema(spec) {
   const schema = compileValueSchema(spec, "schema");
@@ -2918,7 +2918,7 @@ function defineTool(options) {
   }
   const parameters = parameterSchemaSpecToJsonSchema(options.parameters);
   const outputSchema = valueSchemaSpecToJsonSchema(options.output.schema);
-  const validate = (args) => validateJsonSchemaValue(parameters, args, "");
+  const validate2 = (args) => validateJsonSchemaValue(parameters, args, "");
   const tool = {
     name: options.name,
     description: options.description,
@@ -2936,7 +2936,7 @@ function defineTool(options) {
     },
     ...options.timeoutMs !== void 0 ? { timeoutMs: options.timeoutMs } : {},
     async execute(args, exec) {
-      const violations = validate(args);
+      const violations = validate2(args);
       if (violations.length > 0)
         throw new ToolArgsError(violations);
       return userExecute(args, exec);
@@ -2947,21 +2947,21 @@ function defineTool(options) {
   }
   if (userPresentCall) {
     tool.presentCall = (args) => {
-      if (validate(args).length > 0)
+      if (validate2(args).length > 0)
         return void 0;
       return userPresentCall(args);
     };
   }
   if (userPresentResult) {
     tool.presentResult = (args, result) => {
-      if (validate(args).length > 0)
+      if (validate2(args).length > 0)
         return void 0;
       return userPresentResult(args, result);
     };
   }
   if (userIsConcurrencySafe) {
     tool.isConcurrencySafe = (args) => {
-      if (validate(args).length > 0)
+      if (validate2(args).length > 0)
         return false;
       return userIsConcurrencySafe(args);
     };
@@ -3940,7 +3940,7 @@ var ESCAPE_LOOKUP = {
   "'": "&#x27;"
 };
 var ESCAPE_REGEX = /[&><"']/g;
-var escape = (text2) => String(text2).replace(ESCAPE_REGEX, (match) => ESCAPE_LOOKUP[match]);
+var escape = (text3) => String(text3).replace(ESCAPE_REGEX, (match) => ESCAPE_LOOKUP[match]);
 var getBaseElem = (group) => {
   if (group.type === "ordgroup") {
     if (group.body.length === 1) {
@@ -4372,27 +4372,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path11 = "";
+  var path12 = "";
   switch (size) {
     case "sqrtMain":
-      path11 = sqrtMain(extraVinculum, hLinePad);
+      path12 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path11 = sqrtSize1(extraVinculum, hLinePad);
+      path12 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path11 = sqrtSize2(extraVinculum, hLinePad);
+      path12 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path11 = sqrtSize3(extraVinculum, hLinePad);
+      path12 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path11 = sqrtSize4(extraVinculum, hLinePad);
+      path12 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path11 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path12 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path11;
+  return path12;
 };
 var innerPath = function innerPath2(name2, height) {
   switch (name2) {
@@ -4815,7 +4815,7 @@ var iCombinations = {
   "\xEC": "\u0131\u0300"
 };
 var SymbolNode = class {
-  constructor(text2, height, depth, italic2, skew, width, classes, style2) {
+  constructor(text3, height, depth, italic2, skew, width, classes, style2) {
     this.text = void 0;
     this.height = void 0;
     this.depth = void 0;
@@ -4825,7 +4825,7 @@ var SymbolNode = class {
     this.maxFontSize = void 0;
     this.classes = void 0;
     this.style = void 0;
-    this.text = text2;
+    this.text = text3;
     this.height = height || 0;
     this.depth = depth || 0;
     this.italic = italic2 || 0;
@@ -8214,7 +8214,7 @@ var boldSymbol = function boldSymbol2(value, mode, type) {
 };
 var makeOrd = function makeOrd2(group, options, type) {
   var mode = group.mode;
-  var text2 = group.text;
+  var text3 = group.text;
   var classes = ["mord"];
   var {
     font,
@@ -8226,18 +8226,18 @@ var makeOrd = function makeOrd2(group, options, type) {
   var fontOrFamily = useFont ? font : fontFamily;
   var wideFontName = "";
   var wideFontClass = "";
-  if (text2.charCodeAt(0) === 55349) {
-    var wideCharData = wideCharacterFont(text2);
+  if (text3.charCodeAt(0) === 55349) {
+    var wideCharData = wideCharacterFont(text3);
     wideFontName = wideCharData.font;
     wideFontClass = wideCharData[mode + "Class"];
   }
   if (wideFontName) {
-    return makeSymbol(text2, wideFontName, mode, options, classes.concat(wideFontClass));
+    return makeSymbol(text3, wideFontName, mode, options, classes.concat(wideFontClass));
   } else if (fontOrFamily) {
     var fontName;
     var fontClasses;
     if (fontOrFamily === "boldsymbol") {
-      var fontData = boldSymbol(text2, mode, type);
+      var fontData = boldSymbol(text3, mode, type);
       fontName = fontData.fontName;
       fontClasses = [fontData.fontClass];
     } else if (useFont) {
@@ -8247,29 +8247,29 @@ var makeOrd = function makeOrd2(group, options, type) {
       fontName = retrieveTextFontName(fontFamily, fontWeight, fontShape);
       fontClasses = [fontFamily, fontWeight, fontShape];
     }
-    if (lookupSymbol(text2, fontName, mode).metrics) {
-      return makeSymbol(text2, fontName, mode, options, classes.concat(fontClasses));
-    } else if (ligatures.hasOwnProperty(text2) && fontName.slice(0, 10) === "Typewriter") {
+    if (lookupSymbol(text3, fontName, mode).metrics) {
+      return makeSymbol(text3, fontName, mode, options, classes.concat(fontClasses));
+    } else if (ligatures.hasOwnProperty(text3) && fontName.slice(0, 10) === "Typewriter") {
       var parts = [];
-      for (var i5 = 0; i5 < text2.length; i5++) {
-        parts.push(makeSymbol(text2[i5], fontName, mode, options, classes.concat(fontClasses)));
+      for (var i5 = 0; i5 < text3.length; i5++) {
+        parts.push(makeSymbol(text3[i5], fontName, mode, options, classes.concat(fontClasses)));
       }
       return makeFragment(parts);
     }
   }
   if (type === "mathord") {
-    return makeSymbol(text2, "Math-Italic", mode, options, classes.concat(["mathnormal"]));
+    return makeSymbol(text3, "Math-Italic", mode, options, classes.concat(["mathnormal"]));
   } else if (type === "textord") {
-    var _font = symbols[mode][text2] && symbols[mode][text2].font;
+    var _font = symbols[mode][text3] && symbols[mode][text3].font;
     if (_font === "ams") {
       var _fontName = retrieveTextFontName("amsrm", fontWeight, fontShape);
-      return makeSymbol(text2, _fontName, mode, options, classes.concat("amsrm", fontWeight, fontShape));
+      return makeSymbol(text3, _fontName, mode, options, classes.concat("amsrm", fontWeight, fontShape));
     } else if (_font === "main" || !_font) {
       var _fontName2 = retrieveTextFontName("textrm", fontWeight, fontShape);
-      return makeSymbol(text2, _fontName2, mode, options, classes.concat(fontWeight, fontShape));
+      return makeSymbol(text3, _fontName2, mode, options, classes.concat(fontWeight, fontShape));
     } else {
       var _fontName3 = retrieveTextFontName(_font, fontWeight, fontShape);
-      return makeSymbol(text2, _fontName3, mode, options, classes.concat(_fontName3, fontWeight, fontShape));
+      return makeSymbol(text3, _fontName3, mode, options, classes.concat(_fontName3, fontWeight, fontShape));
     }
   } else {
     throw new Error("unexpected type: " + type + " in makeOrd");
@@ -8575,8 +8575,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path11 = new PathNode(pathName);
-  var svgNode = new SvgNode([path11], {
+  var path12 = new PathNode(pathName);
+  var svgNode = new SvgNode([path12], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9005,11 +9005,11 @@ var MathNode = class {
     }
     for (var i5 = 0; i5 < this.children.length; i5++) {
       if (this.children[i5] instanceof TextNode && this.children[i5 + 1] instanceof TextNode) {
-        var text2 = this.children[i5].toText() + this.children[++i5].toText();
+        var text3 = this.children[i5].toText() + this.children[++i5].toText();
         while (this.children[i5 + 1] instanceof TextNode) {
-          text2 += this.children[++i5].toText();
+          text3 += this.children[++i5].toText();
         }
-        node.appendChild(new TextNode(text2).toNode());
+        node.appendChild(new TextNode(text3).toNode());
       } else {
         node.appendChild(this.children[i5].toNode());
       }
@@ -9046,9 +9046,9 @@ var MathNode = class {
   }
 };
 var TextNode = class {
-  constructor(text2) {
+  constructor(text3) {
     this.text = void 0;
-    this.text = text2;
+    this.text = text3;
   }
   /**
    * Converts the text node into a DOM text node.
@@ -9134,11 +9134,11 @@ var SpaceNode = class {
 };
 var noVariantSymbols = /* @__PURE__ */ new Set(["\\imath", "\\jmath"]);
 var rowLikeTypes = /* @__PURE__ */ new Set(["mrow", "mtable"]);
-var makeText = function makeText2(text2, mode, options) {
-  if (symbols[mode][text2] && symbols[mode][text2].replace && text2.charCodeAt(0) !== 55349 && !(ligatures.hasOwnProperty(text2) && options && (options.fontFamily && options.fontFamily.slice(4, 6) === "tt" || options.font && options.font.slice(4, 6) === "tt"))) {
-    text2 = symbols[mode][text2].replace;
+var makeText = function makeText2(text3, mode, options) {
+  if (symbols[mode][text3] && symbols[mode][text3].replace && text3.charCodeAt(0) !== 55349 && !(ligatures.hasOwnProperty(text3) && options && (options.fontFamily && options.fontFamily.slice(4, 6) === "tt" || options.font && options.font.slice(4, 6) === "tt"))) {
+    text3 = symbols[mode][text3].replace;
   }
-  return new TextNode(text2);
+  return new TextNode(text3);
 };
 var makeRow = function makeRow2(body) {
   if (body.length === 1) {
@@ -9190,18 +9190,18 @@ var getVariant = (group, options) => {
   if (mathVariant) {
     return typeof mathVariant === "function" ? mathVariant(group) : mathVariant;
   }
-  var text2 = group.text;
-  if (noVariantSymbols.has(text2)) {
+  var text3 = group.text;
+  if (noVariantSymbols.has(text3)) {
     return null;
   }
-  if (symbols[mode][text2]) {
-    var replacement = symbols[mode][text2].replace;
+  if (symbols[mode][text3]) {
+    var replacement = symbols[mode][text3].replace;
     if (replacement) {
-      text2 = replacement;
+      text3 = replacement;
     }
   }
   var fontName = fontMap[font].fontName;
-  if (getCharacterMetrics(text2, fontName, mode)) {
+  if (getCharacterMetrics(text3, fontName, mode)) {
     return fontMap[font].variant;
   }
   return null;
@@ -9745,8 +9745,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path11 = new PathNode(pathName);
-      var svgNode = new SvgNode([path11], {
+      var path12 = new PathNode(pathName);
+      var svgNode = new SvgNode([path12], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -10672,21 +10672,21 @@ defineFunction({
       number += node.text;
     }
     var code = parseInt(number);
-    var text2;
+    var text3;
     if (isNaN(code)) {
       throw new ParseError("\\@char has non-numeric argument " + number);
     } else if (code < 0 || code >= 1114111) {
       throw new ParseError("\\@char with invalid code point " + number);
     } else if (code <= 65535) {
-      text2 = String.fromCharCode(code);
+      text3 = String.fromCharCode(code);
     } else {
       code -= 65536;
-      text2 = String.fromCharCode((code >> 10) + 55296, (code & 1023) + 56320);
+      text3 = String.fromCharCode((code >> 10) + 55296, (code & 1023) + 56320);
     }
     return {
       type: "textord",
       mode: parser.mode,
-      text: text2
+      text: text3
     };
   }
 });
@@ -11010,8 +11010,8 @@ var centerSpan = function centerSpan2(span, options, style2) {
   span.depth += shift;
 };
 var makeSmallDelim = function makeSmallDelim2(delim, style2, center, options, mode, classes) {
-  var text2 = makeSymbol(delim, "Main-Regular", mode, options);
-  var span = styleWrap(text2, style2, options, classes);
+  var text3 = makeSymbol(delim, "Main-Regular", mode, options);
+  var span = styleWrap(text3, style2, options, classes);
   if (center) {
     centerSpan(span, options, style2);
   }
@@ -11043,8 +11043,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path11 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path11], {
+  var path12 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path12], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -11213,10 +11213,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path11 = new PathNode(svgLabel, pathStr);
+    var path12 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path11], {
+    var svg = new SvgNode([path12], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -11257,8 +11257,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path11 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path11);
+  var path12 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path12);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11765,8 +11765,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path11 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path11)], {
+    var path12 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path12)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -12118,20 +12118,20 @@ var SourceLocation = class _SourceLocation {
 };
 var Token = class _Token {
   // used in \noexpand
-  constructor(text2, loc) {
+  constructor(text3, loc) {
     this.text = void 0;
     this.loc = void 0;
     this.noexpand = void 0;
     this.treatAsRelax = void 0;
-    this.text = text2;
+    this.text = text3;
     this.loc = loc;
   }
   /**
    * Given a pair of tokens (this and endToken), compute a `Token` encompassing
    * the whole input range enclosed by these two.
    */
-  range(endToken, text2) {
-    return new _Token(text2, SourceLocation.range(this, endToken));
+  range(endToken, text3) {
+    return new _Token(text3, SourceLocation.range(this, endToken));
   }
 };
 function getHLines(parser) {
@@ -15424,17 +15424,17 @@ defineFunctionBuilders({
     return makeOrd(group, options, "textord");
   },
   mathmlBuilder(group, options) {
-    var text2 = makeText(group.text, group.mode, options);
+    var text3 = makeText(group.text, group.mode, options);
     var variant = getVariant(group, options) || "normal";
     var node;
     if (group.mode === "text") {
-      node = new MathNode("mtext", [text2]);
+      node = new MathNode("mtext", [text3]);
     } else if (/[0-9]/.test(group.text)) {
-      node = new MathNode("mn", [text2]);
+      node = new MathNode("mn", [text3]);
     } else if (group.text === "\\prime") {
-      node = new MathNode("mo", [text2]);
+      node = new MathNode("mo", [text3]);
     } else {
-      node = new MathNode("mi", [text2]);
+      node = new MathNode("mi", [text3]);
     }
     if (variant !== defaultVariant[node.type]) {
       node.setAttribute("mathvariant", variant);
@@ -15670,11 +15670,11 @@ defineFunction({
     throw new ParseError("\\verb ended by end of line instead of matching delimiter");
   },
   htmlBuilder(group, options) {
-    var text2 = makeVerb(group);
+    var text3 = makeVerb(group);
     var body = [];
     var newOptions = options.havingStyle(options.style.text());
-    for (var i5 = 0; i5 < text2.length; i5++) {
-      var c3 = text2[i5];
+    for (var i5 = 0; i5 < text3.length; i5++) {
+      var c3 = text3[i5];
       if (c3 === "~") {
         c3 = "\\textasciitilde";
       }
@@ -15683,8 +15683,8 @@ defineFunction({
     return makeSpan(["mord", "text"].concat(newOptions.sizingClasses(options)), tryCombineChars(body), newOptions);
   },
   mathmlBuilder(group, options) {
-    var text2 = new TextNode(makeVerb(group));
-    var node = new MathNode("mtext", [text2]);
+    var text3 = new TextNode(makeVerb(group));
+    var node = new MathNode("mtext", [text3]);
     node.setAttribute("mathvariant", "monospace");
     return node;
   }
@@ -15739,8 +15739,8 @@ var Lexer = class {
     if (match === null || match.index !== pos) {
       throw new ParseError("Unexpected character: '" + input[pos] + "'", new Token(input[pos], new SourceLocation(this, pos, pos + 1)));
     }
-    var text2 = match[6] || match[3] || (match[2] ? "\\ " : " ");
-    if (this.catcodes[text2] === 14) {
+    var text3 = match[6] || match[3] || (match[2] ? "\\ " : " ");
+    if (this.catcodes[text3] === 14) {
       var nlIndex = input.indexOf("\n", this.tokenRegex.lastIndex);
       if (nlIndex === -1) {
         this.tokenRegex.lastIndex = input.length;
@@ -15750,7 +15750,7 @@ var Lexer = class {
       }
       return this.lex();
     }
-    return new Token(text2, new SourceLocation(this, pos, this.tokenRegex.lastIndex));
+    return new Token(text3, new SourceLocation(this, pos, this.tokenRegex.lastIndex));
   }
 };
 var Namespace = class {
@@ -15991,11 +15991,11 @@ var newcommand = (context, existsOK, nonexistsOK, skipIfExists) => {
     throw new ParseError("\\newcommand's first argument must be a macro name");
   }
   var name2 = arg[0].text;
-  var exists = context.isDefined(name2);
-  if (exists && !existsOK) {
+  var exists2 = context.isDefined(name2);
+  if (exists2 && !existsOK) {
     throw new ParseError("\\newcommand{" + name2 + "} attempting to redefine " + (name2 + "; use \\renewcommand"));
   }
-  if (!exists && !nonexistsOK) {
+  if (!exists2 && !nonexistsOK) {
     throw new ParseError("\\renewcommand{" + name2 + "} when command " + name2 + " does not yet exist; use \\newcommand");
   }
   var numArgs = 0;
@@ -16013,7 +16013,7 @@ var newcommand = (context, existsOK, nonexistsOK, skipIfExists) => {
     numArgs = parseInt(argText);
     arg = context.consumeArg().tokens;
   }
-  if (!(exists && skipIfExists)) {
+  if (!(exists2 && skipIfExists)) {
     context.macros.set(name2, {
       tokens: arg,
       numArgs
@@ -17429,12 +17429,12 @@ var Parser = class _Parser {
    * Checks a result to make sure it has the right type, and throws an
    * appropriate error otherwise.
    */
-  expect(text2, consume) {
+  expect(text3, consume) {
     if (consume === void 0) {
       consume = true;
     }
-    if (this.fetch().text !== text2) {
-      throw new ParseError("Expected '" + text2 + "', got '" + this.fetch().text + "'", this.fetch());
+    if (this.fetch().text !== text3) {
+      throw new ParseError("Expected '" + text3 + "', got '" + this.fetch().text + "'", this.fetch());
     }
     if (consume) {
       this.consume();
@@ -17615,13 +17615,13 @@ var Parser = class _Parser {
    * Converts the textual input of an unsupported command into a text node
    * contained within a color node whose color is determined by errorColor
    */
-  formatUnsupportedCmd(text2) {
+  formatUnsupportedCmd(text3) {
     var textordArray = [];
-    for (var i5 = 0; i5 < text2.length; i5++) {
+    for (var i5 = 0; i5 < text3.length; i5++) {
       textordArray.push({
         type: "textord",
         mode: "text",
-        text: text2[i5]
+        text: text3[i5]
       });
     }
     var textNode = {
@@ -18033,11 +18033,11 @@ var Parser = class _Parser {
    */
   parseGroup(name2, breakOnTokenText) {
     var firstToken = this.fetch();
-    var text2 = firstToken.text;
+    var text3 = firstToken.text;
     var result;
-    if (text2 === "{" || text2 === "\\begingroup") {
+    if (text3 === "{" || text3 === "\\begingroup") {
       this.consume();
-      var groupEnd = text2 === "{" ? "}" : "\\endgroup";
+      var groupEnd = text3 === "{" ? "}" : "\\endgroup";
       this.gullet.beginGroup();
       var expression = this.parseExpression(false, groupEnd);
       var lastToken = this.fetch();
@@ -18052,15 +18052,15 @@ var Parser = class _Parser {
         // which doesn't affect spacing in math mode, i.e., is transparent.
         // https://tex.stackexchange.com/questions/1930/when-should-one-
         // use-begingroup-instead-of-bgroup
-        semisimple: text2 === "\\begingroup" || void 0
+        semisimple: text3 === "\\begingroup" || void 0
       };
     } else {
       result = this.parseFunction(breakOnTokenText, name2) || this.parseSymbol();
-      if (result == null && text2[0] === "\\" && !implicitCommands.hasOwnProperty(text2)) {
+      if (result == null && text3[0] === "\\" && !implicitCommands.hasOwnProperty(text3)) {
         if (this.settings.throwOnError) {
-          throw new ParseError("Undefined control sequence: " + text2, firstToken);
+          throw new ParseError("Undefined control sequence: " + text3, firstToken);
         }
-        result = this.formatUnsupportedCmd(text2);
+        result = this.formatUnsupportedCmd(text3);
         this.consume();
       }
     }
@@ -18123,10 +18123,10 @@ var Parser = class _Parser {
    */
   parseSymbol() {
     var nucleus = this.fetch();
-    var text2 = nucleus.text;
-    if (/^\\verb[^a-zA-Z]/.test(text2)) {
+    var text3 = nucleus.text;
+    if (/^\\verb[^a-zA-Z]/.test(text3)) {
       this.consume();
-      var arg = text2.slice(5);
+      var arg = text3.slice(5);
       var star = arg.charAt(0) === "*";
       if (star) {
         arg = arg.slice(1);
@@ -18142,27 +18142,27 @@ var Parser = class _Parser {
         star
       };
     }
-    if (unicodeSymbols.hasOwnProperty(text2[0]) && !symbols[this.mode][text2[0]]) {
+    if (unicodeSymbols.hasOwnProperty(text3[0]) && !symbols[this.mode][text3[0]]) {
       if (this.settings.strict && this.mode === "math") {
-        this.settings.reportNonstrict("unicodeTextInMathMode", 'Accented Unicode text character "' + text2[0] + '" used in math mode', nucleus);
+        this.settings.reportNonstrict("unicodeTextInMathMode", 'Accented Unicode text character "' + text3[0] + '" used in math mode', nucleus);
       }
-      text2 = unicodeSymbols[text2[0]] + text2.slice(1);
+      text3 = unicodeSymbols[text3[0]] + text3.slice(1);
     }
-    var match = combiningDiacriticalMarksEndRegex.exec(text2);
+    var match = combiningDiacriticalMarksEndRegex.exec(text3);
     if (match) {
-      text2 = text2.substring(0, match.index);
-      if (text2 === "i") {
-        text2 = "\u0131";
-      } else if (text2 === "j") {
-        text2 = "\u0237";
+      text3 = text3.substring(0, match.index);
+      if (text3 === "i") {
+        text3 = "\u0131";
+      } else if (text3 === "j") {
+        text3 = "\u0237";
       }
     }
     var symbol;
-    if (symbols[this.mode][text2]) {
-      if (this.settings.strict && this.mode === "math" && extraLatin.includes(text2)) {
-        this.settings.reportNonstrict("unicodeTextInMathMode", 'Latin-1/Unicode text character "' + text2[0] + '" used in math mode', nucleus);
+    if (symbols[this.mode][text3]) {
+      if (this.settings.strict && this.mode === "math" && extraLatin.includes(text3)) {
+        this.settings.reportNonstrict("unicodeTextInMathMode", 'Latin-1/Unicode text character "' + text3[0] + '" used in math mode', nucleus);
       }
-      var group = symbols[this.mode][text2].group;
+      var group = symbols[this.mode][text3].group;
       var loc = SourceLocation.range(nucleus);
       var s4;
       if (isAtom(group)) {
@@ -18171,30 +18171,30 @@ var Parser = class _Parser {
           mode: this.mode,
           family: group,
           loc,
-          text: text2
+          text: text3
         };
       } else {
         s4 = {
           type: group,
           mode: this.mode,
           loc,
-          text: text2
+          text: text3
         };
       }
       symbol = s4;
-    } else if (text2.charCodeAt(0) >= 128) {
+    } else if (text3.charCodeAt(0) >= 128) {
       if (this.settings.strict) {
-        if (!supportedCodepoint(text2.charCodeAt(0))) {
-          this.settings.reportNonstrict("unknownSymbol", 'Unrecognized Unicode character "' + text2[0] + '"' + (" (" + text2.charCodeAt(0) + ")"), nucleus);
+        if (!supportedCodepoint(text3.charCodeAt(0))) {
+          this.settings.reportNonstrict("unknownSymbol", 'Unrecognized Unicode character "' + text3[0] + '"' + (" (" + text3.charCodeAt(0) + ")"), nucleus);
         } else if (this.mode === "math") {
-          this.settings.reportNonstrict("unicodeTextInMathMode", 'Unicode text character "' + text2[0] + '" used in math mode', nucleus);
+          this.settings.reportNonstrict("unicodeTextInMathMode", 'Unicode text character "' + text3[0] + '" used in math mode', nucleus);
         }
       }
       symbol = {
         type: "textord",
         mode: "text",
         loc: SourceLocation.range(nucleus),
-        text: text2
+        text: text3
       };
     } else {
       return null;
@@ -18961,14 +18961,14 @@ function makeEntityStorageReceipt(entries, macroPackages, legacyBackupPresent) {
 }
 var PACKAGE_ID_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 var WINDOWS_DEVICE_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i;
-function assertPackageId(packageId) {
-  if (packageId !== UNPACKAGED_PACKAGE_ID && (!PACKAGE_ID_RE.test(packageId) || packageId.toLowerCase().endsWith(".json"))) {
+function assertPackageId(packageId2) {
+  if (packageId2 !== UNPACKAGED_PACKAGE_ID && (!PACKAGE_ID_RE.test(packageId2) || packageId2.toLowerCase().endsWith(".json"))) {
     throw new Error(
-      `Package id ${JSON.stringify(packageId)} must be 1-64 ASCII letters, digits, dots, underscores, or hyphens, start with a letter or digit, and not end in .json.`
+      `Package id ${JSON.stringify(packageId2)} must be 1-64 ASCII letters, digits, dots, underscores, or hyphens, start with a letter or digit, and not end in .json.`
     );
   }
-  if (WINDOWS_DEVICE_RE.test(packageId)) {
-    throw new Error(`Package id ${JSON.stringify(packageId)} is a reserved Windows device name.`);
+  if (WINDOWS_DEVICE_RE.test(packageId2)) {
+    throw new Error(`Package id ${JSON.stringify(packageId2)} is a reserved Windows device name.`);
   }
 }
 function entityIdentityHash(kind, ...segments) {
@@ -18977,19 +18977,19 @@ function entityIdentityHash(kind, ...segments) {
   }
   return createHash("sha256").update(Buffer.from(`snl-doc/v1\0${kind}\0${segments.join("\0")}`, "utf8")).digest("hex").slice(0, 20);
 }
-function packageManifestPath(packageId) {
-  assertPackageId(packageId);
-  return `packages/${packageId}-${entityIdentityHash("package", packageId)}.json`;
+function packageManifestPath(packageId2) {
+  assertPackageId(packageId2);
+  return `packages/${packageId2}-${entityIdentityHash("package", packageId2)}.json`;
 }
-function entryEntityPath(packageId, entryId) {
-  assertPackageId(packageId);
+function entryEntityPath(packageId2, entryId) {
+  assertPackageId(packageId2);
   if (!entryId) throw new Error("Entry id must be non-empty.");
-  return `entries/${packageId}-${entityIdentityHash("entry", packageId, entryId)}.json`;
+  return `entries/${packageId2}-${entityIdentityHash("entry", packageId2, entryId)}.json`;
 }
-function macroEntityPath(packageId, macroName) {
-  assertPackageId(packageId);
+function macroEntityPath(packageId2, macroName) {
+  assertPackageId(packageId2);
   if (!macroName) throw new Error("Macro name must be non-empty.");
-  return `macros/${packageId}-${entityIdentityHash("macro", packageId, macroName)}.json`;
+  return `macros/${packageId2}-${entityIdentityHash("macro", packageId2, macroName)}.json`;
 }
 function assertCompatibleSchemaMarker(value, current, label, required = false) {
   if (!Object.hasOwn(value, "schema_version")) {
@@ -19204,14 +19204,14 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     if (!Array.isArray(config.active_macro_packages) || !config.active_macro_packages.every((value) => typeof value === "string")) {
       throw new Error("active_macro_packages must be an array of Package IDs.");
     }
-    for (const packageId of config.active_macro_packages) {
-      if (packageId === UNPACKAGED_PACKAGE_ID) {
+    for (const packageId2 of config.active_macro_packages) {
+      if (packageId2 === UNPACKAGED_PACKAGE_ID) {
         throw new Error("active_macro_packages cannot activate the system _unpackaged Package.");
       }
-      if (packageId !== packageId.trim()) {
+      if (packageId2 !== packageId2.trim()) {
         throw new Error("active_macro_packages contains a whitespace-padded Package ID.");
       }
-      packageManifestPath(packageId);
+      packageManifestPath(packageId2);
     }
   }
   const entriesFile = entriesPath(workspaceRoot);
@@ -19236,18 +19236,18 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
     throw new Error("Current entity topology migration receipt does not match the frozen legacy backup.");
   }
   const manifests = await readEntityPackageManifests(workspaceRoot);
-  for (const packageId of config.active_macro_packages ?? []) {
-    if (!manifests.has(packageId)) {
-      throw new Error(`Active Macro Package ${JSON.stringify(packageId)} has no Package manifest.`);
+  for (const packageId2 of config.active_macro_packages ?? []) {
+    if (!manifests.has(packageId2)) {
+      throw new Error(`Active Macro Package ${JSON.stringify(packageId2)} has no Package manifest.`);
     }
   }
 }
 async function readEntries(workspaceRoot) {
   return readEntriesWithPackageRepair(workspaceRoot);
 }
-async function readEntriesForPackageRepair(workspaceRoot, packageId) {
-  packageManifestPath(packageId);
-  return readEntriesWithPackageRepair(workspaceRoot, packageId);
+async function readEntriesForPackageRepair(workspaceRoot, packageId2) {
+  packageManifestPath(packageId2);
+  return readEntriesWithPackageRepair(workspaceRoot, packageId2);
 }
 async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
   const config = await readConfig(workspaceRoot);
@@ -19287,8 +19287,14 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
       return value.entry;
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
+      const membership = /* @__PURE__ */ new Map();
+      for (const entry of entries) {
+        const owned = membership.get(entry.package) ?? [];
+        owned.push(entry.id);
+        membership.set(entry.package, owned);
+      }
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
+        const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
           throw new Error(
@@ -19439,10 +19445,10 @@ async function readJsonDirectory(directory, required = false) {
   const names = (await fs2.readdir(directory)).filter((name2) => name2.endsWith(".json")).sort();
   const rows = await Promise.all(names.map(async (name2) => {
     const absolute = path3.join(directory, name2);
-    const text2 = (await readRegularText(absolute)).text;
+    const text3 = (await readRegularText(absolute)).text;
     let value;
     try {
-      value = JSON.parse(text2);
+      value = JSON.parse(text3);
     } catch (error) {
       throw new Error(`Invalid JSON in ${absolute}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
     }
@@ -19469,9 +19475,9 @@ async function readActiveMacros(workspaceRoot) {
   ]);
   const active = config.active_macro_packages === void 0 ? null : new Set(config.active_macro_packages);
   if (active && usesEntityStorage(config)) {
-    for (const packageId of active) {
-      if (!Object.prototype.hasOwnProperty.call(packages, packageId)) {
-        throw new Error(`active_macro_packages references missing Package ${JSON.stringify(packageId)}.`);
+    for (const packageId2 of active) {
+      if (!Object.prototype.hasOwnProperty.call(packages, packageId2)) {
+        throw new Error(`active_macro_packages references missing Package ${JSON.stringify(packageId2)}.`);
       }
     }
   }
@@ -19973,10 +19979,10 @@ function safeExportedBinders(source) {
 }
 function isValidI18nString(value) {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
-  const record3 = value;
-  if (record3.type !== "i18n" || typeof record3.default_language !== "string") return false;
-  if (typeof record3.values !== "object" || record3.values === null || Array.isArray(record3.values)) return false;
-  const values = Object.values(record3.values);
+  const record4 = value;
+  if (record4.type !== "i18n" || typeof record4.default_language !== "string") return false;
+  if (typeof record4.values !== "object" || record4.values === null || Array.isArray(record4.values)) return false;
+  const values = Object.values(record4.values);
   return values.length > 0 && values.every((item) => typeof item === "string");
 }
 function lintEntry(raw, ctx) {
@@ -20095,15 +20101,16 @@ function lintEntry(raw, ctx) {
           path: "content.snl"
         });
       }
-      const exportedBinders = /* @__PURE__ */ new Map();
-      for (const sibling of ctx.siblingEntries) {
-        if (typeof sibling.id === "string") {
-          exportedBinders.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+      const exportedBinders = ctx.exportedBinders ?? (() => {
+        const index = /* @__PURE__ */ new Map();
+        for (const sibling of ctx.siblingEntries) {
+          if (typeof sibling.id === "string") {
+            index.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+          }
         }
-      }
-      if (typeof e2.id === "string") {
-        exportedBinders.set(e2.id, safeExportedBinders(snl));
-      }
+        if (typeof e2.id === "string") index.set(e2.id, safeExportedBinders(snl));
+        return index;
+      })();
       const srcRefs = collectSrcReferences(parsed.tree);
       for (const ref of srcRefs) {
         const declarations = exportedBinders.get(ref.sourceId);
@@ -20307,12 +20314,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path11 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
+            const path12 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path11} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path11,
+              message: `${path12} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path12,
               position: result.position
             });
           }
@@ -20326,43 +20333,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
-  const path11 = `macros.${name2}`;
+  const path12 = `macros.${name2}`;
   if (!isRecord4(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path11}: macro entry must be an object.`, path: path11 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path12}: macro entry must be an object.`, path: path12 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path11}.description must be a string (may be empty).`, path: `${path11}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path12}.description must be a string (may be empty).`, path: `${path12}.description` });
   }
   if (!isRecord4(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path11}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path11}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path12}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path12}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path11}.dynamic_arity must be a boolean.`, path: `${path11}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path12}.dynamic_arity must be a boolean.`, path: `${path12}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path11}.kind must be a string when present.`, path: `${path11}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path12}.kind must be a string when present.`, path: `${path12}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path11}.tags must be a string array (may be empty).`, path: `${path11}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path12}.tags must be a string array (may be empty).`, path: `${path12}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path11}.tags must not contain backslashes.`, path: `${path11}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path12}.tags must not contain backslashes.`, path: `${path12}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path11}.default_style must be a language \u2192 style-name object.`, path: `${path11}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path12}.default_style must be a language \u2192 style-name object.`, path: `${path12}.default_style` });
   } else if (!isRecord4(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path11}.default_style must map language keys to style-name strings.`, path: `${path11}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path12}.default_style must map language keys to style-name strings.`, path: `${path12}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path11}.styles must be a non-empty array.`, path: `${path11}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path12}.styles must be a non-empty array.`, path: `${path12}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path11}.styles[${index}]`;
+    const stylePath = `${path12}.styles[${index}]`;
     if (!isRecord4(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -20426,12 +20433,12 @@ function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
   if (isRecord4(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path11}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path11}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path12}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path12}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path11}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path11}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path12}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path12}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -20736,14 +20743,14 @@ import * as path5 from "node:path";
 import { createHash as createHash2 } from "node:crypto";
 
 // node_modules/jsonc-parser/lib/esm/impl/scanner.js
-function createScanner(text2, ignoreTrivia = false) {
-  const len = text2.length;
+function createScanner(text3, ignoreTrivia = false) {
+  const len = text3.length;
   let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
-  function scanHexDigits(count, exact) {
+  function scanHexDigits(count, exact2) {
     let digits = 0;
     let value2 = 0;
-    while (digits < count || !exact) {
-      let ch2 = text2.charCodeAt(pos);
+    while (digits < count || !exact2) {
+      let ch2 = text3.charCodeAt(pos);
       if (ch2 >= 48 && ch2 <= 57) {
         value2 = value2 * 16 + ch2 - 48;
       } else if (ch2 >= 65 && ch2 <= 70) {
@@ -20770,35 +20777,35 @@ function createScanner(text2, ignoreTrivia = false) {
   }
   function scanNumber() {
     let start = pos;
-    if (text2.charCodeAt(pos) === 48) {
+    if (text3.charCodeAt(pos) === 48) {
       pos++;
     } else {
       pos++;
-      while (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+      while (pos < text3.length && isDigit(text3.charCodeAt(pos))) {
         pos++;
       }
     }
-    if (pos < text2.length && text2.charCodeAt(pos) === 46) {
+    if (pos < text3.length && text3.charCodeAt(pos) === 46) {
       pos++;
-      if (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+      if (pos < text3.length && isDigit(text3.charCodeAt(pos))) {
         pos++;
-        while (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+        while (pos < text3.length && isDigit(text3.charCodeAt(pos))) {
           pos++;
         }
       } else {
         scanError = 3;
-        return text2.substring(start, pos);
+        return text3.substring(start, pos);
       }
     }
     let end = pos;
-    if (pos < text2.length && (text2.charCodeAt(pos) === 69 || text2.charCodeAt(pos) === 101)) {
+    if (pos < text3.length && (text3.charCodeAt(pos) === 69 || text3.charCodeAt(pos) === 101)) {
       pos++;
-      if (pos < text2.length && text2.charCodeAt(pos) === 43 || text2.charCodeAt(pos) === 45) {
+      if (pos < text3.length && text3.charCodeAt(pos) === 43 || text3.charCodeAt(pos) === 45) {
         pos++;
       }
-      if (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+      if (pos < text3.length && isDigit(text3.charCodeAt(pos))) {
         pos++;
-        while (pos < text2.length && isDigit(text2.charCodeAt(pos))) {
+        while (pos < text3.length && isDigit(text3.charCodeAt(pos))) {
           pos++;
         }
         end = pos;
@@ -20806,30 +20813,30 @@ function createScanner(text2, ignoreTrivia = false) {
         scanError = 3;
       }
     }
-    return text2.substring(start, end);
+    return text3.substring(start, end);
   }
   function scanString() {
     let result = "", start = pos;
     while (true) {
       if (pos >= len) {
-        result += text2.substring(start, pos);
+        result += text3.substring(start, pos);
         scanError = 2;
         break;
       }
-      const ch2 = text2.charCodeAt(pos);
+      const ch2 = text3.charCodeAt(pos);
       if (ch2 === 34) {
-        result += text2.substring(start, pos);
+        result += text3.substring(start, pos);
         pos++;
         break;
       }
       if (ch2 === 92) {
-        result += text2.substring(start, pos);
+        result += text3.substring(start, pos);
         pos++;
         if (pos >= len) {
           scanError = 2;
           break;
         }
-        const ch22 = text2.charCodeAt(pos++);
+        const ch22 = text3.charCodeAt(pos++);
         switch (ch22) {
           case 34:
             result += '"';
@@ -20871,7 +20878,7 @@ function createScanner(text2, ignoreTrivia = false) {
       }
       if (ch2 >= 0 && ch2 <= 31) {
         if (isLineBreak(ch2)) {
-          result += text2.substring(start, pos);
+          result += text3.substring(start, pos);
           scanError = 2;
           break;
         } else {
@@ -20892,19 +20899,19 @@ function createScanner(text2, ignoreTrivia = false) {
       tokenOffset = len;
       return token = 17;
     }
-    let code = text2.charCodeAt(pos);
+    let code = text3.charCodeAt(pos);
     if (isWhiteSpace(code)) {
       do {
         pos++;
         value += String.fromCharCode(code);
-        code = text2.charCodeAt(pos);
+        code = text3.charCodeAt(pos);
       } while (isWhiteSpace(code));
       return token = 15;
     }
     if (isLineBreak(code)) {
       pos++;
       value += String.fromCharCode(code);
-      if (code === 13 && text2.charCodeAt(pos) === 10) {
+      if (code === 13 && text3.charCodeAt(pos) === 10) {
         pos++;
         value += "\n";
       }
@@ -20940,31 +20947,31 @@ function createScanner(text2, ignoreTrivia = false) {
       // comments
       case 47:
         const start = pos - 1;
-        if (text2.charCodeAt(pos + 1) === 47) {
+        if (text3.charCodeAt(pos + 1) === 47) {
           pos += 2;
           while (pos < len) {
-            if (isLineBreak(text2.charCodeAt(pos))) {
+            if (isLineBreak(text3.charCodeAt(pos))) {
               break;
             }
             pos++;
           }
-          value = text2.substring(start, pos);
+          value = text3.substring(start, pos);
           return token = 12;
         }
-        if (text2.charCodeAt(pos + 1) === 42) {
+        if (text3.charCodeAt(pos + 1) === 42) {
           pos += 2;
           const safeLength = len - 1;
           let commentClosed = false;
           while (pos < safeLength) {
-            const ch2 = text2.charCodeAt(pos);
-            if (ch2 === 42 && text2.charCodeAt(pos + 1) === 47) {
+            const ch2 = text3.charCodeAt(pos);
+            if (ch2 === 42 && text3.charCodeAt(pos + 1) === 47) {
               pos += 2;
               commentClosed = true;
               break;
             }
             pos++;
             if (isLineBreak(ch2)) {
-              if (ch2 === 13 && text2.charCodeAt(pos) === 10) {
+              if (ch2 === 13 && text3.charCodeAt(pos) === 10) {
                 pos++;
               }
               lineNumber++;
@@ -20975,7 +20982,7 @@ function createScanner(text2, ignoreTrivia = false) {
             pos++;
             scanError = 1;
           }
-          value = text2.substring(start, pos);
+          value = text3.substring(start, pos);
           return token = 13;
         }
         value += String.fromCharCode(code);
@@ -20985,7 +20992,7 @@ function createScanner(text2, ignoreTrivia = false) {
       case 45:
         value += String.fromCharCode(code);
         pos++;
-        if (pos === len || !isDigit(text2.charCodeAt(pos))) {
+        if (pos === len || !isDigit(text3.charCodeAt(pos))) {
           return token = 16;
         }
       // found a minus, followed by a number so
@@ -21007,10 +21014,10 @@ function createScanner(text2, ignoreTrivia = false) {
       default:
         while (pos < len && isUnknownContentCharacter(code)) {
           pos++;
-          code = text2.charCodeAt(pos);
+          code = text3.charCodeAt(pos);
         }
         if (tokenOffset !== pos) {
-          value = text2.substring(tokenOffset, pos);
+          value = text3.substring(tokenOffset, pos);
           switch (value) {
             case "true":
               return token = 8;
@@ -21255,9 +21262,9 @@ function format(documentText, range, options) {
     return token;
   }
   const editOperations = [];
-  function addEdit(text2, startOffset, endOffset) {
-    if (!hasError && (!range || startOffset < rangeEnd && endOffset > rangeStart) && documentText.substring(startOffset, endOffset) !== text2) {
-      editOperations.push({ offset: startOffset, length: endOffset - startOffset, content: text2 });
+  function addEdit(text3, startOffset, endOffset) {
+    if (!hasError && (!range || startOffset < rangeEnd && endOffset > rangeStart) && documentText.substring(startOffset, endOffset) !== text3) {
+      editOperations.push({ offset: startOffset, length: endOffset - startOffset, content: text3 });
     }
   }
   let firstToken = scanNext();
@@ -21405,11 +21412,11 @@ function computeIndentLevel(content, options) {
   }
   return Math.floor(nChars / tabSize);
 }
-function getEOL(options, text2) {
-  for (let i5 = 0; i5 < text2.length; i5++) {
-    const ch2 = text2.charAt(i5);
+function getEOL(options, text3) {
+  for (let i5 = 0; i5 < text3.length; i5++) {
+    const ch2 = text3.charAt(i5);
     if (ch2 === "\r") {
-      if (i5 + 1 < text2.length && text2.charAt(i5 + 1) === "\n") {
+      if (i5 + 1 < text3.length && text3.charAt(i5 + 1) === "\n") {
         return "\r\n";
       }
       return "\r";
@@ -21419,8 +21426,8 @@ function getEOL(options, text2) {
   }
   return options && options.eol || "\n";
 }
-function isEOL(text2, offset) {
-  return "\r\n".indexOf(text2.charAt(offset)) !== -1;
+function isEOL(text3, offset) {
+  return "\r\n".indexOf(text3.charAt(offset)) !== -1;
 }
 
 // node_modules/jsonc-parser/lib/esm/impl/parser.js
@@ -21430,7 +21437,7 @@ var ParseOptions;
     allowTrailingComma: false
   };
 })(ParseOptions || (ParseOptions = {}));
-function parseTree3(text2, errors = [], options = ParseOptions.DEFAULT) {
+function parseTree3(text3, errors = [], options = ParseOptions.DEFAULT) {
   let currentParent = { type: "array", offset: -1, length: -1, children: [], parent: void 0 };
   function ensurePropertyComplete(endOffset) {
     if (currentParent.type === "property") {
@@ -21481,19 +21488,19 @@ function parseTree3(text2, errors = [], options = ParseOptions.DEFAULT) {
       errors.push({ error, offset, length });
     }
   };
-  visit(text2, visitor, options);
+  visit(text3, visitor, options);
   const result = currentParent.children[0];
   if (result) {
     delete result.parent;
   }
   return result;
 }
-function findNodeAtLocation(root, path11) {
+function findNodeAtLocation(root, path12) {
   if (!root) {
     return void 0;
   }
   let node = root;
-  for (let segment of path11) {
+  for (let segment of path12) {
     if (typeof segment === "string") {
       if (node.type !== "object" || !Array.isArray(node.children)) {
         return void 0;
@@ -21519,8 +21526,8 @@ function findNodeAtLocation(root, path11) {
   }
   return node;
 }
-function visit(text2, visitor, options = ParseOptions.DEFAULT) {
-  const _scanner = createScanner(text2, false);
+function visit(text3, visitor, options = ParseOptions.DEFAULT) {
+  const _scanner = createScanner(text3, false);
   const _jsonPath = [];
   let suppressedCallbacks = 0;
   function toNoArgVisit(visitFunction) {
@@ -21846,15 +21853,15 @@ function getNodeType(value) {
 }
 
 // node_modules/jsonc-parser/lib/esm/impl/edit.js
-function setProperty(text2, originalPath, value, options) {
-  const path11 = originalPath.slice();
+function setProperty(text3, originalPath, value, options) {
+  const path12 = originalPath.slice();
   const errors = [];
-  const root = parseTree3(text2, errors);
+  const root = parseTree3(text3, errors);
   let parent = void 0;
   let lastSegment = void 0;
-  while (path11.length > 0) {
-    lastSegment = path11.pop();
-    parent = findNodeAtLocation(root, path11);
+  while (path12.length > 0) {
+    lastSegment = path12.pop();
+    parent = findNodeAtLocation(root, path12);
     if (parent === void 0 && value !== void 0) {
       if (typeof lastSegment === "string") {
         value = { [lastSegment]: value };
@@ -21869,7 +21876,7 @@ function setProperty(text2, originalPath, value, options) {
     if (value === void 0) {
       throw new Error("Can not delete in empty document");
     }
-    return withFormatting(text2, { offset: root ? root.offset : 0, length: root ? root.length : 0, content: JSON.stringify(value) }, options);
+    return withFormatting(text3, { offset: root ? root.offset : 0, length: root ? root.length : 0, content: JSON.stringify(value) }, options);
   } else if (parent.type === "object" && typeof lastSegment === "string" && Array.isArray(parent.children)) {
     const existing = findNodeAtLocation(parent, [lastSegment]);
     if (existing !== void 0) {
@@ -21890,9 +21897,9 @@ function setProperty(text2, originalPath, value, options) {
             removeEnd = next.offset;
           }
         }
-        return withFormatting(text2, { offset: removeBegin, length: removeEnd - removeBegin, content: "" }, options);
+        return withFormatting(text3, { offset: removeBegin, length: removeEnd - removeBegin, content: "" }, options);
       } else {
-        return withFormatting(text2, { offset: existing.offset, length: existing.length, content: JSON.stringify(value) }, options);
+        return withFormatting(text3, { offset: existing.offset, length: existing.length, content: JSON.stringify(value) }, options);
       }
     } else {
       if (value === void 0) {
@@ -21909,7 +21916,7 @@ function setProperty(text2, originalPath, value, options) {
       } else {
         edit = { offset: parent.offset + 1, length: 0, content: newProperty + "," };
       }
-      return withFormatting(text2, edit, options);
+      return withFormatting(text3, edit, options);
     }
   } else if (parent.type === "array" && typeof lastSegment === "number" && Array.isArray(parent.children)) {
     const insertIndex = lastSegment;
@@ -21922,7 +21929,7 @@ function setProperty(text2, originalPath, value, options) {
         const previous = parent.children[parent.children.length - 1];
         edit = { offset: previous.offset + previous.length, length: 0, content: "," + newProperty };
       }
-      return withFormatting(text2, edit, options);
+      return withFormatting(text3, edit, options);
     } else if (value === void 0 && parent.children.length >= 0) {
       const removalIndex = lastSegment;
       const toRemove = parent.children[removalIndex];
@@ -21937,7 +21944,7 @@ function setProperty(text2, originalPath, value, options) {
       } else {
         edit = { offset: toRemove.offset, length: parent.children[removalIndex + 1].offset - toRemove.offset, content: "" };
       }
-      return withFormatting(text2, edit, options);
+      return withFormatting(text3, edit, options);
     } else if (value !== void 0) {
       let edit;
       const newProperty = `${JSON.stringify(value)}`;
@@ -21951,7 +21958,7 @@ function setProperty(text2, originalPath, value, options) {
         const previous = parent.children[index - 1];
         edit = { offset: previous.offset + previous.length, length: 0, content: "," + newProperty };
       }
-      return withFormatting(text2, edit, options);
+      return withFormatting(text3, edit, options);
     } else {
       throw new Error(`Can not ${value === void 0 ? "remove" : options.isArrayInsertion ? "insert" : "modify"} Array index ${insertIndex} as length is not sufficient`);
     }
@@ -21959,11 +21966,11 @@ function setProperty(text2, originalPath, value, options) {
     throw new Error(`Can not add ${typeof lastSegment !== "number" ? "index" : "property"} to parent of type ${parent.type}`);
   }
 }
-function withFormatting(text2, edit, options) {
+function withFormatting(text3, edit, options) {
   if (!options.formattingOptions) {
     return [edit];
   }
-  let newText = applyEdit(text2, edit);
+  let newText = applyEdit(text3, edit);
   let begin = edit.offset;
   let end = edit.offset + edit.content.length;
   if (edit.length === 0 || edit.content.length === 0) {
@@ -21982,11 +21989,11 @@ function withFormatting(text2, edit, options) {
     end = Math.max(end, edit2.offset + edit2.length);
     end += edit2.content.length - edit2.length;
   }
-  const editLength = text2.length - (newText.length - end) - begin;
+  const editLength = text3.length - (newText.length - end) - begin;
   return [{ offset: begin, length: editLength, content: newText.substring(begin, end) }];
 }
-function applyEdit(text2, edit) {
-  return text2.substring(0, edit.offset) + edit.content + text2.substring(edit.offset + edit.length);
+function applyEdit(text3, edit) {
+  return text3.substring(0, edit.offset) + edit.content + text3.substring(edit.offset + edit.length);
 }
 
 // node_modules/jsonc-parser/lib/esm/main.js
@@ -22078,10 +22085,10 @@ function printParseErrorCode(code) {
   }
   return "<unknown ParseErrorCode>";
 }
-function modify(text2, path11, value, options) {
-  return setProperty(text2, path11, value, options);
+function modify(text3, path12, value, options) {
+  return setProperty(text3, path12, value, options);
 }
-function applyEdits(text2, edits) {
+function applyEdits(text3, edits) {
   let sortedEdits = edits.slice(0).sort((a4, b4) => {
     const diff = a4.offset - b4.offset;
     if (diff === 0) {
@@ -22089,32 +22096,42 @@ function applyEdits(text2, edits) {
     }
     return diff;
   });
-  let lastModifiedOffset = text2.length;
+  let lastModifiedOffset = text3.length;
   for (let i5 = sortedEdits.length - 1; i5 >= 0; i5--) {
     let e2 = sortedEdits[i5];
     if (e2.offset + e2.length <= lastModifiedOffset) {
-      text2 = applyEdit(text2, e2);
+      text3 = applyEdit(text3, e2);
     } else {
       throw new Error("Overlapping edit");
     }
     lastModifiedOffset = e2.offset;
   }
-  return text2;
+  return text3;
 }
 
 // lib/workspace-data-lock.ts
 import { randomUUID as randomUUID2 } from "node:crypto";
 import { hostname } from "node:os";
-import { open as open2, readFile, unlink } from "node:fs/promises";
+import { lstat, open as open2, readFile, unlink } from "node:fs/promises";
 import * as path4 from "node:path";
 var DATA_WRITE_LOCK_FILENAME = ".data-write.lock";
+var BATCH_JOURNAL_FILENAME = ".snl-batch-transaction.json";
+async function hasBatchJournal(root) {
+  try {
+    await lstat(path4.join(root, BATCH_JOURNAL_FILENAME));
+    return true;
+  } catch (error) {
+    if (errorCode(error) === "ENOENT") return false;
+    throw error;
+  }
+}
 function errorCode(error) {
   return error && typeof error === "object" && "code" in error ? String(error.code) : void 0;
 }
 function isLockRecord(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const record3 = value;
-  return record3.version === 1 && Number.isInteger(record3.pid) && typeof record3.hostname === "string" && typeof record3.token === "string" && typeof record3.purpose === "string" && typeof record3.createdAt === "string";
+  const record4 = value;
+  return record4.version === 1 && Number.isInteger(record4.pid) && typeof record4.hostname === "string" && typeof record4.token === "string" && typeof record4.purpose === "string" && typeof record4.createdAt === "string";
 }
 function localProcessIsAlive(pid) {
   try {
@@ -22134,7 +22151,7 @@ async function readLock(lockPath) {
 }
 async function acquireLock(workspaceRoot, purpose) {
   const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
-  const record3 = {
+  const record4 = {
     version: 1,
     pid: process.pid,
     hostname: hostname(),
@@ -22145,10 +22162,10 @@ async function acquireLock(workspaceRoot, purpose) {
   try {
     const handle = await open2(lockPath, "wx", 384);
     try {
-      await handle.writeFile(`${JSON.stringify(record3)}
+      await handle.writeFile(`${JSON.stringify(record4)}
 `, "utf8");
       await handle.sync();
-      return { handle, lockPath, record: record3 };
+      return { handle, lockPath, record: record4 };
     } catch (error) {
       await handle.close();
       await unlink(lockPath).catch(() => void 0);
@@ -22168,13 +22185,15 @@ async function acquireLock(workspaceRoot, purpose) {
   }
 }
 async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
+  if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
   try {
+    if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     return await task();
   } finally {
     await acquired.handle.close();
     const current = await readLock(acquired.lockPath);
-    if (current?.token === acquired.record.token) {
+    if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
         await unlink(acquired.lockPath);
       } catch (error) {
@@ -22402,8 +22421,8 @@ function macroIsActive(files, id) {
   const active = Array.isArray(config?.active_macro_packages) ? new Set(config.active_macro_packages) : null;
   return files.some((file) => {
     if (file.relPath.startsWith("macros/")) {
-      const packageId = file.data?.package;
-      if (typeof packageId !== "string" || active && !active.has(packageId)) return false;
+      const packageId2 = file.data?.package;
+      if (typeof packageId2 !== "string" || active && !active.has(packageId2)) return false;
       return file.data?.macro?.name === id;
     }
     if (!file.relPath.startsWith("term_macros/")) return false;
@@ -22975,92 +22994,92 @@ function validateNoDuplicateKeys(node, absPath) {
 }
 function validateSchemaShape(absPath, relPath, data) {
   const value = data;
-  const fail = (message) => {
+  const fail2 = (message) => {
     throw new Error(`${absPath}: ${message}`);
   };
   if (relPath === "config.json") {
-    if (!isRecord5(value)) fail("config.json must be an object.");
+    if (!isRecord5(value)) fail2("config.json must be an object.");
     if (value.active_macro_packages !== void 0 && (!Array.isArray(value.active_macro_packages) || !value.active_macro_packages.every((item) => typeof item === "string"))) {
-      fail("config.active_macro_packages must be a string array when present.");
+      fail2("config.active_macro_packages must be a string array when present.");
     }
     return;
   }
   if (/^packages\/[^/]+\.json$/.test(relPath)) {
     if (!isRecord5(value) || value.format !== "snl-package" || value.version !== 1 || typeof value.id !== "string" || typeof value.name !== "string" || typeof value.description !== "string") {
-      fail("Package manifest must use the snl-package v1 envelope.");
+      fail2("Package manifest must use the snl-package v1 envelope.");
     }
-    if (relPath !== packageManifestPath(value.id)) fail("Package manifest path does not match its logical identity.");
+    if (relPath !== packageManifestPath(value.id)) fail2("Package manifest path does not match its logical identity.");
     return;
   }
   if (/^entries\/[^/]+\.json$/.test(relPath)) {
     if (!isRecord5(value) || value.format !== "snl-entry" || value.version !== 1 || typeof value.package !== "string" || !isRecord5(value.entry) || typeof value.entry.id !== "string" || !isRecord5(value.entry.content) || value.entry.package !== value.package) {
-      fail("Entry entity must use the snl-entry v1 envelope with matching Package identity.");
+      fail2("Entry entity must use the snl-entry v1 envelope with matching Package identity.");
     }
-    if (relPath !== entryEntityPath(value.package, value.entry.id)) fail("Entry entity path does not match its logical identity.");
+    if (relPath !== entryEntityPath(value.package, value.entry.id)) fail2("Entry entity path does not match its logical identity.");
     if (value.entry.content.snl !== void 0 && typeof value.entry.content.snl !== "string") {
-      fail("Entry content.snl must be a string when present.");
+      fail2("Entry content.snl must be a string when present.");
     }
     return;
   }
   if (/^macros\/[^/]+\.json$/.test(relPath)) {
     if (!isRecord5(value) || value.format !== "snl-macro" || value.version !== 1 || typeof value.package !== "string" || !isRecord5(value.macro) || typeof value.macro.name !== "string" || !isRecord5(value.macro.source) || !Array.isArray(value.macro.source.entries) || !value.macro.source.entries.every((item) => typeof item === "string")) {
-      fail("Macro entity must use the snl-macro v1 envelope with source.entries[].");
+      fail2("Macro entity must use the snl-macro v1 envelope with source.entries[].");
     }
-    if (relPath !== macroEntityPath(value.package, value.macro.name)) fail("Macro entity path does not match its logical identity.");
+    if (relPath !== macroEntityPath(value.package, value.macro.name)) fail2("Macro entity path does not match its logical identity.");
     return;
   }
   if (relPath === "entries.json") {
-    if (!Array.isArray(value)) fail("entries.json must be an array.");
+    if (!Array.isArray(value)) fail2("entries.json must be an array.");
     value.forEach((entry, index) => {
       if (!isRecord5(entry) || typeof entry.id !== "string" || !isRecord5(entry.content)) {
-        fail(`entry ${index} must contain string id and object content.`);
+        fail2(`entry ${index} must contain string id and object content.`);
       }
       if (entry.content.snl !== void 0 && typeof entry.content.snl !== "string") {
-        fail(`entry ${index} content.snl must be a string when present.`);
+        fail2(`entry ${index} content.snl must be a string when present.`);
       }
     });
     return;
   }
   if (relPath.startsWith("term_macros/")) {
-    if (!isRecord5(value) || !isRecord5(value.macros)) fail("macro package must contain an object macros map.");
+    if (!isRecord5(value) || !isRecord5(value.macros)) fail2("macro package must contain an object macros map.");
     for (const [name2, macro2] of Object.entries(value.macros)) {
       if (!isRecord5(macro2) || !isRecord5(macro2.source) || !Array.isArray(macro2.source.entries)) {
-        fail(`macro ${JSON.stringify(name2)} must contain source.entries[].`);
+        fail2(`macro ${JSON.stringify(name2)} must contain source.entries[].`);
       }
       if (!macro2.source.entries.every((item) => typeof item === "string")) {
-        fail(`macro ${JSON.stringify(name2)} source.entries must contain only strings.`);
+        fail2(`macro ${JSON.stringify(name2)} source.entries must contain only strings.`);
       }
     }
     return;
   }
   if (/^libraries\/[^/]+\/graph\.json$/.test(relPath)) {
     if (!isRecord5(value) || !Array.isArray(value.nodes) || !Array.isArray(value.relationships)) {
-      fail("Library graph must contain nodes[] and relationships[].");
+      fail2("Library graph must contain nodes[] and relationships[].");
     }
     value.nodes.forEach((node, index) => {
-      if (!isRecord5(node) || !isRecord5(node.props)) fail(`graph node ${index} must contain object props.`);
+      if (!isRecord5(node) || !isRecord5(node.props)) fail2(`graph node ${index} must contain object props.`);
       if (node.props.entryId !== void 0 && typeof node.props.entryId !== "string") {
-        fail(`graph node ${index} props.entryId must be a string when present.`);
+        fail2(`graph node ${index} props.entryId must be a string when present.`);
       }
     });
     return;
   }
   if (relPath === "relationships.json") {
     if (!isRecord5(value) || !Array.isArray(value.relationships)) {
-      fail("relationships.json must contain relationships[].");
+      fail2("relationships.json must contain relationships[].");
     }
     const ids = /* @__PURE__ */ new Set();
     value.relationships.forEach((rel2, index) => {
       if (!isRecord5(rel2) || typeof rel2.id !== "string" || !rel2.id || typeof rel2.from !== "string" || !rel2.from || typeof rel2.to !== "string" || !rel2.to || typeof rel2.label !== "string" || !rel2.label) {
-        fail(`relationship ${index} must contain non-empty string id/from/to/label.`);
+        fail2(`relationship ${index} must contain non-empty string id/from/to/label.`);
       }
-      if (ids.has(rel2.id)) fail(`relationship ${index} duplicates id ${JSON.stringify(rel2.id)}.`);
+      if (ids.has(rel2.id)) fail2(`relationship ${index} duplicates id ${JSON.stringify(rel2.id)}.`);
       ids.add(rel2.id);
       if (isRecord5(rel2.metadata) && rel2.metadata.generator === "macro-source-scan") {
         for (const field2 of ["macros", "postfixes"]) {
           const values = rel2.metadata[field2];
           if (values !== void 0 && (!Array.isArray(values) || !values.every((v3) => typeof v3 === "string"))) {
-            fail(`relationship ${index} metadata.${field2} must be a string array when present.`);
+            fail2(`relationship ${index} metadata.${field2} must be a string array when present.`);
           }
         }
       }
@@ -23215,11 +23234,11 @@ async function canonicalWriteWorkspaceRoot(workspaceRoot) {
 function normalizeEntryDraft(raw, packageOverride) {
   if (!isRecord6(raw)) return raw;
   const normalizedOverride = typeof packageOverride === "string" ? packageOverride.trim() : packageOverride;
-  const packageId = normalizedOverride !== void 0 ? normalizedOverride : raw.package !== void 0 ? typeof raw.package === "string" ? raw.package.trim() : raw.package : UNPACKAGED_PACKAGE_ID;
+  const packageId2 = normalizedOverride !== void 0 ? normalizedOverride : raw.package !== void 0 ? typeof raw.package === "string" ? raw.package.trim() : raw.package : UNPACKAGED_PACKAGE_ID;
   return {
     ...raw,
     id: raw.id === void 0 ? raw.id : typeof raw.id === "string" ? raw.id.trim() : raw.id,
-    package: packageId,
+    package: packageId2,
     kind: raw.kind === void 0 ? raw.kind : typeof raw.kind === "string" ? raw.kind.trim() : raw.kind,
     title: raw.title === void 0 ? "" : typeof raw.title === "string" ? raw.title.trim() : raw.title,
     content: raw.content === void 0 ? {} : raw.content,
@@ -23299,7 +23318,7 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     });
     issues.push(...report.issues);
     const packageValue = isRecord6(normalized) ? normalized.package : void 0;
-    let packageId = "";
+    let packageId2 = "";
     if (typeof packageValue !== "string" || packageValue.length === 0) {
       issues.push({
         severity: "error",
@@ -23308,9 +23327,9 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
         path: "package"
       });
     } else {
-      packageId = packageValue;
+      packageId2 = packageValue;
       try {
-        assertPackageId(packageId);
+        assertPackageId(packageId2);
       } catch (error) {
         issues.push({
           severity: "error",
@@ -23320,11 +23339,11 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
         });
       }
     }
-    if (packageId && !Object.prototype.hasOwnProperty.call(packages, packageId)) {
+    if (packageId2 && !Object.prototype.hasOwnProperty.call(packages, packageId2)) {
       issues.push({
         severity: "error",
         code: "entry.package-not-found",
-        message: `Package ${JSON.stringify(packageId)} does not exist. Create it first or use _unpackaged.`,
+        message: `Package ${JSON.stringify(packageId2)} does not exist. Create it first or use _unpackaged.`,
         path: "package"
       });
     }
@@ -23402,25 +23421,25 @@ async function addEntryEntity(workspaceRoot, raw, options = {}) {
     };
   });
 }
-async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
+async function addMacroEntity(workspaceRoot, packageId2, raw, options = {}) {
   workspaceRoot = await canonicalWriteWorkspaceRoot(workspaceRoot);
   return withWorkspaceDataLock(workspaceRoot, "add Macro entity", async () => {
     const config = await readConfig(workspaceRoot);
     assertCurrentWriteConfig(config, "snl-add-macro");
     const packages = await readAllMacroPackages(workspaceRoot);
     const issues = [];
-    if (packageId === UNPACKAGED_PACKAGE_ID) {
+    if (packageId2 === UNPACKAGED_PACKAGE_ID) {
       issues.push({
         severity: "error",
         code: "macro.system-package",
         message: "Macros cannot be added to the system _unpackaged Package.",
         path: "package"
       });
-    } else if (!Object.prototype.hasOwnProperty.call(packages, packageId)) {
+    } else if (!Object.prototype.hasOwnProperty.call(packages, packageId2)) {
       issues.push({
         severity: "error",
         code: "macro.package-not-found",
-        message: `Package ${JSON.stringify(packageId)} does not exist. Create it first with snl-add-package.`,
+        message: `Package ${JSON.stringify(packageId2)} does not exist. Create it first with snl-add-package.`,
         path: "package"
       });
     }
@@ -23436,40 +23455,40 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
       });
     }
     const macroBody = isRecord6(normalized) ? Object.fromEntries(Object.entries(normalized).filter(([key]) => key !== "name")) : normalized;
-    const packageExists = Object.prototype.hasOwnProperty.call(packages, packageId);
+    const packageExists = Object.prototype.hasOwnProperty.call(packages, packageId2);
     const synthetic = {
       version: current ? "11" : "8",
-      name: packageExists ? packages[packageId].name : packageId,
-      description: packageExists ? packages[packageId].description : "",
+      name: packageExists ? packages[packageId2].name : packageId2,
+      description: packageExists ? packages[packageId2].description : "",
       macros: name2 ? { [name2]: macroBody } : {}
     };
     issues.push(...lintPackage(synthetic, { checkKatex: options.checkKatex !== false }).issues);
-    if (packageExists && !effectiveActivePackageIds(config, packages).has(packageId)) {
+    if (packageExists && !effectiveActivePackageIds(config, packages).has(packageId2)) {
       issues.push({
         severity: "info",
         code: "macro.package-inactive",
-        message: `Package ${JSON.stringify(packageId)} is not active; the Macro is stored but will not resolve until the Package is activated.`,
+        message: `Package ${JSON.stringify(packageId2)} is not active; the Macro is stored but will not resolve until the Package is activated.`,
         path: "package"
       });
     }
-    if (name2 && packageExists && Object.prototype.hasOwnProperty.call(packages[packageId].macros, name2)) {
+    if (name2 && packageExists && Object.prototype.hasOwnProperty.call(packages[packageId2].macros, name2)) {
       return {
         status: "conflict",
         entity: "macro",
         code: "macro.duplicate-name",
-        message: `Macro ${JSON.stringify(name2)} already exists in Package ${JSON.stringify(packageId)}.`
+        message: `Macro ${JSON.stringify(name2)} already exists in Package ${JSON.stringify(packageId2)}.`
       };
     }
     if (issues.some((issue) => issue.severity === "error")) {
       return { status: "invalid", entity: "macro", issues };
     }
     const macro2 = normalized;
-    const relativePath = macroEntityPath(packageId, macro2.name);
+    const relativePath = macroEntityPath(packageId2, macro2.name);
     const envelope = {
       format: "snl-macro",
       version: MACRO_STORAGE_VERSION,
       ...current ? { schema_version: CURRENT_MACRO_SCHEMA_VERSION } : {},
-      package: packageId,
+      package: packageId2,
       macro: macro2
     };
     try {
@@ -23480,7 +23499,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
           status: "conflict",
           entity: "macro",
           code: "macro.duplicate-name",
-          message: `Macro ${JSON.stringify(macro2.name)} already exists in Package ${JSON.stringify(packageId)}.`
+          message: `Macro ${JSON.stringify(macro2.name)} already exists in Package ${JSON.stringify(packageId2)}.`
         };
       }
       throw error;
@@ -23489,7 +23508,7 @@ async function addMacroEntity(workspaceRoot, packageId, raw, options = {}) {
       status: "created",
       entity: "macro",
       name: macro2.name,
-      package: packageId,
+      package: packageId2,
       path: relativePath,
       issues
     };
@@ -23698,13 +23717,13 @@ async function captureDirectorySnapshot(directory) {
   }
   return items;
 }
-async function installDirectorySnapshot(targetHandle, snapshot) {
+async function installDirectorySnapshot(targetHandle, snapshot2) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
   const pinned = `/proc/self/fd/${targetHandle.fd}`;
-  for (const item of snapshot.filter((item2) => item2.kind === "directory"))
+  for (const item of snapshot2.filter((item2) => item2.kind === "directory"))
     await fs5.mkdir(path7.join(pinned, item.relativePath), { mode: item.mode });
-  for (const item of snapshot.filter((item2) => item2.kind === "file")) {
+  for (const item of snapshot2.filter((item2) => item2.kind === "file")) {
     const destination = path7.join(pinned, item.relativePath);
     const file = await fs5.open(destination, constants5.O_WRONLY | constants5.O_CREAT | constants5.O_EXCL | constants5.O_NOFOLLOW, item.mode);
     try {
@@ -23728,14 +23747,14 @@ async function restoreCapturedDirectory(captured, target, hooks = {}) {
   try {
     await assertDirectoryIdentity(parent, parentIdentity);
     await assertDirectoryIdentity(target, reservation);
-    const snapshot = await captureDirectorySnapshot(captured);
+    const snapshot2 = await captureDirectorySnapshot(captured);
     const targetHandle = await fs5.open(target, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
     try {
       const targetStat = await targetHandle.stat();
       if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
         throw new Error(`${target} changed concurrently before restoration copy.`);
       await hooks.afterReservationCheckBeforeCopy?.();
-      await installDirectorySnapshot(targetHandle, snapshot);
+      await installDirectorySnapshot(targetHandle, snapshot2);
       await targetHandle.sync();
     } finally {
       await targetHandle.close();
@@ -24530,13 +24549,13 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         await removeJsonIfUnchanged(entityFile, originalEntity.text);
         return { status: "ok", operation, type, entity: current };
       }
-      const packageId = typeof current.value.package === "string" ? current.value.package : "";
-      const manifestFile = path7.join(docRoot(root), packageManifestPath(packageId));
+      const packageId2 = typeof current.value.package === "string" ? current.value.package : "";
+      const manifestFile = path7.join(docRoot(root), packageManifestPath(packageId2));
       const originalManifest = await readRegularText(manifestFile);
       const manifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
       const entryIds = manifest.entry_ids;
       if (!Array.isArray(entryIds) || entryIds.filter((value) => value === id).length !== 1)
-        throw new Error(`Package ${JSON.stringify(packageId)} does not contain Entry ${JSON.stringify(id)} exactly once.`);
+        throw new Error(`Package ${JSON.stringify(packageId2)} does not contain Entry ${JSON.stringify(id)} exactly once.`);
       const nextManifest = { ...manifest, entry_ids: entryIds.filter((value) => value !== id) };
       await replaceJsonIfUnchanged(manifestFile, originalManifest.text, nextManifest);
       try {
@@ -24679,7 +24698,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       const configFile = path7.join(docRoot(root), "config.json");
       const originalConfig = await readRegularText(configFile);
       const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
-      const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId) => packageId !== "_unpackaged");
+      const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId2) => packageId2 !== "_unpackaged");
       const nextConfig = {
         ...config,
         active_macro_packages: [...new Set(active.filter((value) => value !== id))].sort((left, right) => left.localeCompare(right))
@@ -24886,9 +24905,9 @@ function indexCounterPaths(counters) {
     ids.add(counter.id);
     names.add(counter.name);
     visiting.add(counter);
-    const path11 = [...parents, counter];
-    paths.set(counter, path11);
-    for (const child of counter.children) visit2(child, path11);
+    const path12 = [...parents, counter];
+    paths.set(counter, path12);
+    for (const child of counter.children) visit2(child, path12);
     visiting.delete(counter);
   };
   for (const counter of counters) visit2(counter, []);
@@ -24941,15 +24960,15 @@ function numberNodes(index, entries, kinds, counters, paths) {
   for (const nodeId of index.readingOrder) {
     const node = index.nodesById.get(nodeId);
     const counter = resolveCounter(node, entries, kinds, counters);
-    const path11 = counter ? paths.get(counter) : void 0;
-    if (!counter || !path11) {
+    const path12 = counter ? paths.get(counter) : void 0;
+    if (!counter || !path12) {
       numbers.set(nodeId, null);
       continue;
     }
     values.set(counter, (values.get(counter) ?? 0) + 1);
     resetDescendants(counter);
     const segments = [];
-    for (const level of path11) {
+    for (const level of path12) {
       const value = values.get(level);
       if (value === void 0) {
         segments.length = 0;
@@ -25023,7 +25042,7 @@ function singleLine(value) {
 }
 
 // src/cli/operation.ts
-import path10 from "node:path";
+import path11 from "node:path";
 
 // node_modules/fuse.js/dist/fuse.mjs
 function isArray(value) {
@@ -25096,14 +25115,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path11 = null;
+  let path12 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path11 = createKeyPath(key);
+    path12 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -25113,12 +25132,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name2)));
     }
-    path11 = createKeyPath(name2);
+    path12 = createKeyPath(name2);
     id = createKeyId(name2);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path11,
+    path: path12,
     id,
     weight,
     src,
@@ -25131,29 +25150,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path11) {
+function get(obj, path12) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path12, index, arrayIndex) => {
+  const deepGet = (obj2, path13, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path12[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path13[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path12[index]];
+      const value = obj2[path13[index]];
       if (!isDefined(value)) return;
-      if (index === path12.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path13.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path12, index + 1, i5);
-      } else if (path12.length) deepGet(value, path12, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path13, index + 1, i5);
+      } else if (path13.length) deepGet(value, path13, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path11) ? path11.split(".") : path11, 0);
+  deepGet(obj, isString(path12) ? path12.split(".") : path12, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -25247,8 +25266,8 @@ var FuseIndex = class {
     this.records = new Array(len);
     let recordCount = 0;
     if (isString(this.docs[0])) for (let i5 = 0; i5 < len; i5++) {
-      const record3 = this._createStringRecord(this.docs[i5], i5);
-      if (record3) this.records[recordCount++] = record3;
+      const record4 = this._createStringRecord(this.docs[i5], i5);
+      if (record4) this.records[recordCount++] = record4;
     }
     else for (let i5 = 0; i5 < len; i5++) this.records[recordCount++] = this._createObjectRecord(this.docs[i5], i5);
     this.records.length = recordCount;
@@ -25257,13 +25276,13 @@ var FuseIndex = class {
   add(doc, docIndex) {
     if (!Number.isInteger(docIndex) || docIndex < 0) throw new Error(INVALID_DOC_INDEX);
     if (isString(doc)) {
-      const record4 = this._createStringRecord(doc, docIndex);
-      if (record4) this.records.push(record4);
-      return record4;
+      const record5 = this._createStringRecord(doc, docIndex);
+      if (record5) this.records.push(record5);
+      return record5;
     }
-    const record3 = this._createObjectRecord(doc, docIndex);
-    this.records.push(record3);
-    return record3;
+    const record4 = this._createObjectRecord(doc, docIndex);
+    this.records.push(record4);
+    return record4;
   }
   removeAt(idx) {
     if (!Number.isInteger(idx) || idx < 0) throw new Error(INVALID_DOC_INDEX);
@@ -25279,15 +25298,15 @@ var FuseIndex = class {
     if (toRemove.size === 0) return;
     this.records = this.records.filter((r3) => !toRemove.has(r3.i));
     const sorted = Array.from(toRemove).sort((a4, b4) => a4 - b4);
-    for (const record3 of this.records) {
+    for (const record4 of this.records) {
       let lo = 0;
       let hi = sorted.length;
       while (lo < hi) {
         const mid = lo + hi >>> 1;
-        if (sorted[mid] < record3.i) lo = mid + 1;
+        if (sorted[mid] < record4.i) lo = mid + 1;
         else hi = mid;
       }
-      record3.i -= lo;
+      record4.i -= lo;
     }
   }
   getValueForItemAtKeyId(item, keyId) {
@@ -25305,7 +25324,7 @@ var FuseIndex = class {
     };
   }
   _createObjectRecord(doc, docIndex) {
-    const record3 = {
+    const record4 = {
       i: docIndex,
       $: {}
     };
@@ -25328,27 +25347,27 @@ var FuseIndex = class {
               subRecords.push(subRecord);
             }
           } else if (isDefined(item.v)) {
-            const text2 = isString(item.v) ? item.v : toString(item.v);
-            if (!isBlank(text2)) {
+            const text3 = isString(item.v) ? item.v : toString(item.v);
+            if (!isBlank(text3)) {
               const subRecord = {
-                v: text2,
+                v: text3,
                 i: item.i,
-                n: this.norm.get(text2)
+                n: this.norm.get(text3)
               };
               subRecords.push(subRecord);
             }
           }
         }
-        record3.$[keyIndex] = subRecords;
+        record4.$[keyIndex] = subRecords;
       } else if (isString(value) && !isBlank(value)) {
         const subRecord = {
           v: value,
           n: this.norm.get(value)
         };
-        record3.$[keyIndex] = subRecord;
+        record4.$[keyIndex] = subRecord;
       }
     }
-    return record3;
+    return record4;
   }
   toJSON() {
     return {
@@ -25394,10 +25413,10 @@ function convertMaskToIndices(matchmask = [], minMatchCharLength = Config.minMat
   if (matchmask[i5 - 1] && i5 - start >= minMatchCharLength) indices.push([start, i5 - 1]);
   return indices;
 }
-function search(text2, pattern, patternAlphabet, { location = Config.location, distance = Config.distance, threshold = Config.threshold, findAllMatches = Config.findAllMatches, minMatchCharLength = Config.minMatchCharLength, includeMatches = Config.includeMatches, ignoreLocation = Config.ignoreLocation } = {}) {
+function search(text3, pattern, patternAlphabet, { location = Config.location, distance = Config.distance, threshold = Config.threshold, findAllMatches = Config.findAllMatches, minMatchCharLength = Config.minMatchCharLength, includeMatches = Config.includeMatches, ignoreLocation = Config.ignoreLocation } = {}) {
   if (pattern.length > 32) throw new Error(PATTERN_LENGTH_TOO_LARGE(32));
   const patternLen = pattern.length;
-  const textLen = text2.length;
+  const textLen = text3.length;
   const expectedLocation = Math.max(0, Math.min(location, textLen));
   let currentThreshold = threshold;
   let bestLocation = expectedLocation;
@@ -25411,7 +25430,7 @@ function search(text2, pattern, patternAlphabet, { location = Config.location, d
   const computeMatches = minMatchCharLength > 1 || includeMatches;
   const matchMask = computeMatches ? Array(textLen) : [];
   let index;
-  while ((index = text2.indexOf(pattern, bestLocation)) > -1) {
+  while ((index = text3.indexOf(pattern, bestLocation)) > -1) {
     const score = calcScore(0, index);
     currentThreshold = Math.min(score, currentThreshold);
     bestLocation = index + patternLen;
@@ -25444,7 +25463,7 @@ function search(text2, pattern, patternAlphabet, { location = Config.location, d
     bitArr[finish + 1] = (1 << i5) - 1;
     for (let j4 = finish; j4 >= start; j4 -= 1) {
       const currentLocation = j4 - 1;
-      const charMatch = patternAlphabet[text2[currentLocation]];
+      const charMatch = patternAlphabet[text3[currentLocation]];
       bitArr[j4] = (bitArr[j4 + 1] << 1 | 1) & charMatch;
       if (i5) bitArr[j4] |= (lastBitArr[j4 + 1] | lastBitArr[j4]) << 1 | 1 | lastBitArr[j4 + 1];
       if (bitArr[j4] & mask) {
@@ -25463,7 +25482,7 @@ function search(text2, pattern, patternAlphabet, { location = Config.location, d
   }
   if (computeMatches && bestLocation >= 0) {
     const matchEnd = Math.min(textLen - 1, bestLocation + patternLen - 1 + bestErrors);
-    for (let k5 = bestLocation; k5 <= matchEnd; k5 += 1) if (patternAlphabet[text2[k5]]) matchMask[k5] = 1;
+    for (let k5 = bestLocation; k5 <= matchEnd; k5 += 1) if (patternAlphabet[text3[k5]]) matchMask[k5] = 1;
   }
   const result = {
     isMatch: bestLocation >= 0,
@@ -25552,12 +25571,12 @@ var BitapSearch = class {
       }
     } else addChunk(this.pattern, 0);
   }
-  searchIn(text2) {
+  searchIn(text3) {
     const { isCaseSensitive, ignoreDiacritics, includeMatches } = this.options;
-    text2 = isCaseSensitive ? text2 : text2.toLowerCase();
-    text2 = ignoreDiacritics ? stripDiacritics(text2) : text2;
-    if (this.pattern === text2) {
-      if (text2.length < this.options.minMatchCharLength) return {
+    text3 = isCaseSensitive ? text3 : text3.toLowerCase();
+    text3 = ignoreDiacritics ? stripDiacritics(text3) : text3;
+    if (this.pattern === text3) {
+      if (text3.length < this.options.minMatchCharLength) return {
         isMatch: false,
         score: 1
       };
@@ -25565,7 +25584,7 @@ var BitapSearch = class {
         isMatch: true,
         score: 0
       };
-      if (includeMatches) result2.indices = [[0, text2.length - 1]];
+      if (includeMatches) result2.indices = [[0, text3.length - 1]];
       return result2;
     }
     const { location, distance, threshold, findAllMatches, minMatchCharLength, ignoreLocation } = this.options;
@@ -25573,7 +25592,7 @@ var BitapSearch = class {
     let totalScore = 0;
     let hasMatches = false;
     this.chunks.forEach(({ pattern, alphabet, startIndex }) => {
-      const { isMatch, score, indices } = search(text2, pattern, alphabet, {
+      const { isMatch, score, indices } = search(text3, pattern, alphabet, {
         location: location + startIndex,
         distance,
         threshold,
@@ -25605,8 +25624,8 @@ var matchers = [
     singleRegex: /^=(.*)$/,
     create: (pattern) => ({
       type: "exact",
-      search(text2) {
-        const isMatch = text2 === pattern;
+      search(text3) {
+        const isMatch = text3 === pattern;
         return {
           isMatch,
           score: isMatch ? 0 : 1,
@@ -25621,12 +25640,12 @@ var matchers = [
     singleRegex: /^'(.*)$/,
     create: (pattern) => ({
       type: "include",
-      search(text2) {
+      search(text3) {
         let location = 0;
         let index;
         const indices = [];
         const patternLen = pattern.length;
-        while ((index = text2.indexOf(pattern, location)) > -1) {
+        while ((index = text3.indexOf(pattern, location)) > -1) {
           location = index + patternLen;
           indices.push([index, location - 1]);
         }
@@ -25645,8 +25664,8 @@ var matchers = [
     singleRegex: /^\^(.*)$/,
     create: (pattern) => ({
       type: "prefix-exact",
-      search(text2) {
-        const isMatch = text2.startsWith(pattern);
+      search(text3) {
+        const isMatch = text3.startsWith(pattern);
         return {
           isMatch,
           score: isMatch ? 0 : 1,
@@ -25661,12 +25680,12 @@ var matchers = [
     singleRegex: /^!\^(.*)$/,
     create: (pattern) => ({
       type: "inverse-prefix-exact",
-      search(text2) {
-        const isMatch = !text2.startsWith(pattern);
+      search(text3) {
+        const isMatch = !text3.startsWith(pattern);
         return {
           isMatch,
           score: isMatch ? 0 : 1,
-          indices: [0, text2.length - 1]
+          indices: [0, text3.length - 1]
         };
       }
     })
@@ -25677,12 +25696,12 @@ var matchers = [
     singleRegex: /^!(.*)\$$/,
     create: (pattern) => ({
       type: "inverse-suffix-exact",
-      search(text2) {
-        const isMatch = !text2.endsWith(pattern);
+      search(text3) {
+        const isMatch = !text3.endsWith(pattern);
         return {
           isMatch,
           score: isMatch ? 0 : 1,
-          indices: [0, text2.length - 1]
+          indices: [0, text3.length - 1]
         };
       }
     })
@@ -25693,12 +25712,12 @@ var matchers = [
     singleRegex: /^(.*)\$$/,
     create: (pattern) => ({
       type: "suffix-exact",
-      search(text2) {
-        const isMatch = text2.endsWith(pattern);
+      search(text3) {
+        const isMatch = text3.endsWith(pattern);
         return {
           isMatch,
           score: isMatch ? 0 : 1,
-          indices: [text2.length - pattern.length, text2.length - 1]
+          indices: [text3.length - pattern.length, text3.length - 1]
         };
       }
     })
@@ -25709,12 +25728,12 @@ var matchers = [
     singleRegex: /^!(.*)$/,
     create: (pattern) => ({
       type: "inverse-exact",
-      search(text2) {
-        const isMatch = text2.indexOf(pattern) === -1;
+      search(text3) {
+        const isMatch = text3.indexOf(pattern) === -1;
         return {
           isMatch,
           score: isMatch ? 0 : 1,
-          indices: [0, text2.length - 1]
+          indices: [0, text3.length - 1]
         };
       }
     })
@@ -25737,8 +25756,8 @@ var matchers = [
       });
       return {
         type: "fuzzy",
-        search(text2) {
-          return bitap.searchIn(text2);
+        search(text3) {
+          return bitap.searchIn(text3);
         }
       };
     }
@@ -25838,15 +25857,15 @@ var ExtendedSearch = class {
   static condition(_2, options) {
     return options.useExtendedSearch;
   }
-  searchIn(text2) {
+  searchIn(text3) {
     const query = this.query;
     if (!query) return {
       isMatch: false,
       score: 1
     };
     const { includeMatches, isCaseSensitive, ignoreDiacritics } = this.options;
-    text2 = isCaseSensitive ? text2 : text2.toLowerCase();
-    text2 = ignoreDiacritics ? stripDiacritics(text2) : text2;
+    text3 = isCaseSensitive ? text3 : text3.toLowerCase();
+    text3 = ignoreDiacritics ? stripDiacritics(text3) : text3;
     let numMatches = 0;
     const allIndices = [];
     let totalScore = 0;
@@ -25858,7 +25877,7 @@ var ExtendedSearch = class {
       hasInverse = false;
       for (let j4 = 0, pLen = searchers.length; j4 < pLen; j4 += 1) {
         const matcher = searchers[j4];
-        const { isMatch, indices, score } = matcher.search(text2);
+        const { isMatch, indices, score } = matcher.search(text3);
         if (isMatch) {
           numMatches += 1;
           totalScore += score;
@@ -26051,8 +26070,8 @@ function warnNonGlobal(regex) {
 function resolveTokenize(tokenize2) {
   if (typeof tokenize2 === "function") {
     let validated = false;
-    return (text2) => {
-      const result = tokenize2(text2);
+    return (text3) => {
+      const result = tokenize2(text3);
       if (!validated) {
         validated = true;
         if (!Array.isArray(result) || result.some((t4) => typeof t4 !== "string")) throw new Error(`[Fuse] tokenize function must return string[]; received ${Array.isArray(result) ? "array containing non-strings" : typeof result}.`);
@@ -26062,16 +26081,16 @@ function resolveTokenize(tokenize2) {
   }
   if (tokenize2 instanceof RegExp) {
     if (!tokenize2.global) warnNonGlobal(tokenize2);
-    return (text2) => text2.match(tokenize2) || [];
+    return (text3) => text3.match(tokenize2) || [];
   }
-  return (text2) => text2.match(DEFAULT_TOKEN) || [];
+  return (text3) => text3.match(DEFAULT_TOKEN) || [];
 }
 function createAnalyzer({ isCaseSensitive = false, ignoreDiacritics = false, tokenize: tokenize2 } = {}) {
   const tokenizeFn = resolveTokenize(tokenize2);
-  return { tokenize(text2) {
-    if (!isCaseSensitive) text2 = text2.toLowerCase();
-    if (ignoreDiacritics) text2 = stripDiacritics(text2);
-    return tokenizeFn(text2);
+  return { tokenize(text3) {
+    if (!isCaseSensitive) text3 = text3.toLowerCase();
+    if (ignoreDiacritics) text3 = stripDiacritics(text3);
+    return tokenizeFn(text3);
   } };
 }
 var TokenSearch = class {
@@ -26109,7 +26128,7 @@ var TokenSearch = class {
     this.numTerms = this.termSearchers.length;
     this.useMask = this.numTerms <= 31;
   }
-  searchIn(text2) {
+  searchIn(text3) {
     if (!this.termSearchers.length) return {
       isMatch: false,
       score: 1
@@ -26121,7 +26140,7 @@ var TokenSearch = class {
     let matchedMask = 0;
     const matchedTerms = this.combineAll && !this.useMask ? /* @__PURE__ */ new Set() : null;
     for (let i5 = 0; i5 < this.termSearchers.length; i5++) {
-      const result = this.termSearchers[i5].searchIn(text2);
+      const result = this.termSearchers[i5].searchIn(text3);
       const idf = this.idfWeights[i5];
       maxPossibleScore += idf;
       if (result.isMatch) {
@@ -26150,8 +26169,8 @@ var TokenSearch = class {
     return searchResult;
   }
 };
-function addField(index, text2, docIdx, analyzer) {
-  const tokens = analyzer.tokenize(text2);
+function addField(index, text3, docIdx, analyzer) {
+  const tokens = analyzer.tokenize(text3);
   if (!tokens.length) return;
   index.fieldCount++;
   index.docFieldCount.set(docIdx, (index.docFieldCount.get(docIdx) || 0) + 1);
@@ -26166,8 +26185,8 @@ function addField(index, text2, docIdx, analyzer) {
     index.df.set(term, (index.df.get(term) || 0) + 1);
   }
 }
-function ingestRecord(index, record3, keyCount, analyzer) {
-  const { i: docIdx, v: v3, $: fields } = record3;
+function ingestRecord(index, record4, keyCount, analyzer) {
+  const { i: docIdx, v: v3, $: fields } = record4;
   if (v3 !== void 0) {
     addField(index, v3, docIdx, analyzer);
     return;
@@ -26187,11 +26206,11 @@ function buildInvertedIndex(records, keyCount, analyzer) {
     docFieldCount: /* @__PURE__ */ new Map(),
     docTermFieldHits: /* @__PURE__ */ new Map()
   };
-  for (const record3 of records) ingestRecord(index, record3, keyCount, analyzer);
+  for (const record4 of records) ingestRecord(index, record4, keyCount, analyzer);
   return index;
 }
-function addToInvertedIndex(index, record3, keyCount, analyzer) {
-  ingestRecord(index, record3, keyCount, analyzer);
+function addToInvertedIndex(index, record4, keyCount, analyzer) {
+  ingestRecord(index, record4, keyCount, analyzer);
 }
 function removeFromInvertedIndex(index, docIdx) {
   const fieldCount = index.docFieldCount.get(docIdx);
@@ -26275,14 +26294,14 @@ var Fuse = class {
   add(doc) {
     if (!isDefined(doc)) return;
     this._docs.push(doc);
-    const record3 = this._myIndex.add(doc, this._docs.length - 1);
-    if (this._invertedIndex && record3) {
+    const record4 = this._myIndex.add(doc, this._docs.length - 1);
+    if (this._invertedIndex && record4) {
       const analyzer = createAnalyzer({
         isCaseSensitive: this.options.isCaseSensitive,
         ignoreDiacritics: this.options.ignoreDiacritics,
         tokenize: this.options.tokenize
       });
-      addToInvertedIndex(this._invertedIndex, record3, this._myIndex.keys.length, analyzer);
+      addToInvertedIndex(this._invertedIndex, record4, this._myIndex.keys.length, analyzer);
     }
     this._invalidateSearcherCache();
   }
@@ -26362,13 +26381,13 @@ var Fuse = class {
     const requireAllTokens = this.options.useTokenSearch && this.options.tokenMatch === "all";
     const { records } = this._myIndex;
     const results = heap ? null : [];
-    records.forEach(({ v: text2, i: idx, n: norm2 }) => {
-      if (!isDefined(text2)) return;
-      const searchResult = searcher.searchIn(text2);
+    records.forEach(({ v: text3, i: idx, n: norm2 }) => {
+      if (!isDefined(text3)) return;
+      const searchResult = searcher.searchIn(text3);
       if (searchResult.isMatch) {
         const match = {
           score: searchResult.score,
-          value: text2,
+          value: text3,
           norm: norm2,
           indices: searchResult.indices
         };
@@ -26380,7 +26399,7 @@ var Fuse = class {
         const matches = [match];
         if (!requireAllTokens || this._coversAllTokens(matches)) {
           const result = {
-            item: text2,
+            item: text3,
             idx,
             matches
           };
@@ -26494,14 +26513,14 @@ var Fuse = class {
   _findMatches({ key, value, searcher }) {
     if (!isDefined(value)) return [];
     const matches = [];
-    if (isArray(value)) value.forEach(({ v: text2, i: idx, n: norm2 }) => {
-      if (!isDefined(text2)) return;
-      const searchResult = searcher.searchIn(text2);
+    if (isArray(value)) value.forEach(({ v: text3, i: idx, n: norm2 }) => {
+      if (!isDefined(text3)) return;
+      const searchResult = searcher.searchIn(text3);
       if (searchResult.isMatch) {
         const match = {
           score: searchResult.score,
           key,
-          value: text2,
+          value: text3,
           idx,
           norm: norm2,
           indices: searchResult.indices,
@@ -26516,13 +26535,13 @@ var Fuse = class {
       }
     });
     else {
-      const { v: text2, n: norm2 } = value;
-      const searchResult = searcher.searchIn(text2);
+      const { v: text3, n: norm2 } = value;
+      const searchResult = searcher.searchIn(text3);
       if (searchResult.isMatch) {
         const match = {
           score: searchResult.score,
           key,
-          value: text2,
+          value: text3,
           norm: norm2,
           indices: searchResult.indices,
           hasInverse: searchResult.hasInverse
@@ -26557,12 +26576,12 @@ Fuse.version = "7.5.0";
 Fuse.createIndex = createIndex;
 Fuse.parseIndex = parseIndex;
 Fuse.config = Config;
-Fuse.match = function(pattern, text2, options) {
+Fuse.match = function(pattern, text3, options) {
   if (options && options.useTokenSearch) throw new Error(FUSE_MATCH_TOKEN_SEARCH_UNSUPPORTED);
   return createSearcher(pattern, {
     ...Config,
     ...options
-  }).searchIn(text2);
+  }).searchIn(text3);
 };
 Fuse.parseQuery = parse2;
 register(ExtendedSearch);
@@ -26590,7 +26609,7 @@ function expandSnoogleToken(token) {
   if (segments.length <= 1) return segments.length === 0 ? [] : [{ text: segments[0], tiers: ALL_TIERS }];
   return [
     { text: segments.at(-1), tiers: TAIL_TIERS },
-    ...segments.slice(0, -1).map((text2) => ({ text: text2, tiers: MIDDLE_TIERS }))
+    ...segments.slice(0, -1).map((text3) => ({ text: text3, tiers: MIDDLE_TIERS }))
   ];
 }
 function exactnessFactor(needle, fieldText) {
@@ -26618,8 +26637,8 @@ var SnoogleSearchIndex = class {
     documents.forEach((document2, documentIndex) => {
       Object.keys(FIELD_WEIGHTS).forEach((tier) => {
         for (const rawText of document2.fields[tier]) {
-          const text2 = rawText.trim();
-          if (text2) indexedFields.push({ documentIndex, text: text2, tier });
+          const text3 = rawText.trim();
+          if (text3) indexedFields.push({ documentIndex, text: text3, tier });
         }
       });
     });
@@ -26700,14 +26719,14 @@ async function querySnoogl(workspaceRoot, mode, query) {
   const [config, packages] = await Promise.all([readConfig(workspaceRoot), readAllMacroPackages(workspaceRoot)]);
   const active = config.active_macro_packages === void 0 ? null : new Set(config.active_macro_packages);
   const hits = [];
-  for (const packageId of Object.keys(packages).sort((a4, b4) => a4.localeCompare(b4))) {
-    if (active && !active.has(packageId)) continue;
-    const pkg = packages[packageId];
+  for (const packageId2 of Object.keys(packages).sort((a4, b4) => a4.localeCompare(b4))) {
+    if (active && !active.has(packageId2)) continue;
+    const pkg = packages[packageId2];
     for (const [id, macro2] of Object.entries(pkg.macros)) {
       hits.push({
         kind: "macro",
         id,
-        packageId,
+        packageId: packageId2,
         packageName: pkg.name,
         macroKind: typeof macro2.kind === "string" && macro2.kind ? macro2.kind : null,
         tags: Array.isArray(macro2.tags) ? [...macro2.tags] : [],
@@ -28024,8 +28043,8 @@ function uniqueBy(values, identity, label) {
 function stableJson(value) {
   if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
   if (value && typeof value === "object") {
-    const record3 = value;
-    return `{${Object.keys(record3).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record3[key])}`).join(",")}}`;
+    const record4 = value;
+    return `{${Object.keys(record4).sort().map((key) => `${JSON.stringify(key)}:${stableJson(record4[key])}`).join(",")}}`;
   }
   return JSON.stringify(value);
 }
@@ -28039,16 +28058,16 @@ function assertValidLocalizedField(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new TypeError(`${label} must be a string or I18N map.`);
   }
-  const record3 = value;
-  if (record3.type !== "i18n" || typeof record3.default_language !== "string" || !record3.default_language || !record3.values || typeof record3.values !== "object" || Array.isArray(record3.values)) {
+  const record4 = value;
+  if (record4.type !== "i18n" || typeof record4.default_language !== "string" || !record4.default_language || !record4.values || typeof record4.values !== "object" || Array.isArray(record4.values)) {
     throw new TypeError(`${label} must be a valid I18N map.`);
   }
-  const values = record3.values;
-  if (typeof values[record3.default_language] !== "string" || !values[record3.default_language]) {
+  const values = record4.values;
+  if (typeof values[record4.default_language] !== "string" || !values[record4.default_language]) {
     throw new TypeError(`${label} must define a non-empty value for default_language.`);
   }
-  for (const [language, text2] of Object.entries(values)) {
-    if (!language || typeof text2 !== "string" || !text2) {
+  for (const [language, text3] of Object.entries(values)) {
+    if (!language || typeof text3 !== "string" || !text3) {
       throw new TypeError(`${label} I18N values must use non-empty language keys and text.`);
     }
   }
@@ -28079,15 +28098,15 @@ function assertPackageMembership(preset) {
   }
   for (const pkg of preset.packages) {
     if (typeof pkg.id !== "string" || !pkg.id) throw new TypeError("Package requires a non-empty string id.");
-    const packageId = pkg.id;
+    const packageId2 = pkg.id;
     if (!Object.hasOwn(pkg, "entry_ids")) continue;
     if (!Array.isArray(pkg.entry_ids) || pkg.entry_ids.some((id) => typeof id !== "string" || !id)) {
-      throw new TypeError(`Package ${JSON.stringify(packageId)} entry_ids must be an array of non-empty strings.`);
+      throw new TypeError(`Package ${JSON.stringify(packageId2)} entry_ids must be an array of non-empty strings.`);
     }
     const declared = [...pkg.entry_ids].sort();
-    const expected = [...expectedByPackage.get(packageId) ?? []].sort();
+    const expected = [...expectedByPackage.get(packageId2) ?? []].sort();
     if (new Set(declared).size !== declared.length || JSON.stringify(declared) !== JSON.stringify(expected)) {
-      throw new TypeError(`Package ${JSON.stringify(packageId)} entry_ids must exactly match its preset Entries.`);
+      throw new TypeError(`Package ${JSON.stringify(packageId2)} entry_ids must exactly match its preset Entries.`);
     }
   }
 }
@@ -28120,8 +28139,8 @@ function normalizeInitPreset(value) {
     DEFAULT_MACRO_KINDS.map((item) => [item.id, stableJson(item)])
   );
   for (const kind of preset.macroKinds) {
-    const canonical = typeof kind.id === "string" ? canonicalMacroKinds.get(kind.id) : void 0;
-    if (canonical !== void 0 && stableJson(kind) !== canonical) {
+    const canonical2 = typeof kind.id === "string" ? canonicalMacroKinds.get(kind.id) : void 0;
+    if (canonical2 !== void 0 && stableJson(kind) !== canonical2) {
       throw new TypeError(`Default Macro Kind ${JSON.stringify(kind.id)} is reserved and cannot be overridden by a preset.`);
     }
   }
@@ -28379,19 +28398,19 @@ function record2(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
   return value;
 }
-async function repairPackageEntryIds(workspaceRoot, packageId) {
-  if (!packageId) throw new Error("Package id must be non-empty.");
-  return withWorkspaceDataLock(workspaceRoot, `repair Package entry_ids ${packageId}`, async () => {
+async function repairPackageEntryIds(workspaceRoot, packageId2) {
+  if (!packageId2) throw new Error("Package id must be non-empty.");
+  return withWorkspaceDataLock(workspaceRoot, `repair Package entry_ids ${packageId2}`, async () => {
     const config = await readConfig(workspaceRoot);
     if (!usesCurrentEntitySchemas(config)) {
       throw new Error("Package entry_ids repair requires the current per-entity workspace schema.");
     }
     const doc = snlDocRoot(workspaceRoot);
-    const manifestFile = path9.join(doc, packageManifestPath(packageId));
+    const manifestFile = path9.join(doc, packageManifestPath(packageId2));
     const original = await readRegularText(manifestFile);
     const manifest = record2(JSON.parse(original.text), "Package manifest");
-    if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
-      throw new Error(`Package ${JSON.stringify(packageId)} is not a current canonical Package manifest.`);
+    if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId2 || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
+      throw new Error(`Package ${JSON.stringify(packageId2)} is not a current canonical Package manifest.`);
     }
     const entryIds = [];
     const seen = /* @__PURE__ */ new Set();
@@ -28408,29 +28427,487 @@ async function repairPackageEntryIds(workspaceRoot, packageId) {
       }
       if (seen.has(entry.id)) throw new Error(`Duplicate Entry identity ${JSON.stringify(entry.id)}.`);
       seen.add(entry.id);
-      if (envelope.package === packageId) entryIds.push(entry.id);
+      if (envelope.package === packageId2) entryIds.push(entry.id);
     }
     entryIds.sort(compareCanonicalIds);
     const next = { ...manifest, entry_ids: entryIds };
     if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
-      await readEntriesForPackageRepair(workspaceRoot, packageId);
+      await readEntriesForPackageRepair(workspaceRoot, packageId2);
       if ((await readRegularText(manifestFile)).text !== original.text) {
-        throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
+        throw new Error(`Package ${JSON.stringify(packageId2)} changed during repair verification.`);
       }
-      return { packageId, changed: false, entryIds };
+      return { packageId: packageId2, changed: false, entryIds };
     }
     await replaceJsonIfUnchanged(manifestFile, original.text, next);
     try {
-      await readEntriesForPackageRepair(workspaceRoot, packageId);
+      await readEntriesForPackageRepair(workspaceRoot, packageId2);
       if ((await readRegularText(manifestFile)).text !== jsonText(next)) {
-        throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
+        throw new Error(`Package ${JSON.stringify(packageId2)} changed during repair verification.`);
       }
     } catch (error) {
       await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
       throw error;
     }
-    return { packageId, changed: true, entryIds };
+    return { packageId: packageId2, changed: true, entryIds };
   });
+}
+
+// lib/batch.ts
+import { constants as constants7, promises as fs8 } from "node:fs";
+import path10 from "node:path";
+import os from "node:os";
+import { createHash as createHash4 } from "node:crypto";
+import { execFile } from "node:child_process";
+import { promisify, types as utilTypes } from "node:util";
+var BATCH_CREATE_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship"];
+var BatchError = class extends Error {
+  constructor(code, message, exitCode = 1, details) {
+    super(message);
+    this.code = code;
+    this.exitCode = exitCode;
+    this.details = details;
+  }
+  code;
+  exitCode;
+  details;
+};
+var record3 = (v3) => !!v3 && typeof v3 === "object" && !Array.isArray(v3);
+var sha2 = (v3) => createHash4("sha256").update(JSON.stringify(v3)).digest("hex");
+var fail = (code, message) => {
+  throw new BatchError(code, message);
+};
+function exact(value, fields, label) {
+  const extra = Object.keys(value).filter((k5) => !fields.includes(k5));
+  if (extra.length) throw new TypeError(`${label}: unknown keys ${extra.join(", ")}.`);
+}
+function text2(v3, key) {
+  const s4 = v3[key];
+  if (typeof s4 !== "string" || !s4 || s4 !== s4.trim() || s4.includes("\0")) fail("batch.invalid", `${key} must be a non-empty canonical string without NUL.`);
+  return s4;
+}
+function packageId(value) {
+  try {
+    assertPackageId(value);
+  } catch (error) {
+    fail("batch.invalid", error instanceof Error ? error.message : String(error));
+  }
+}
+function canonical(value) {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "object" && value !== null && utilTypes.isProxy(value)) throw new TypeError("Batch JSON must not contain Proxies.");
+  if (Array.isArray(value)) {
+    const keys = Reflect.ownKeys(value);
+    if (keys.length !== value.length + 1) throw new TypeError("Batch arrays must be dense JSON arrays without extra keys.");
+    return Array.from({ length: value.length }, (_2, index) => {
+      const d3 = Object.getOwnPropertyDescriptor(value, String(index));
+      if (!d3 || !("value" in d3) || !d3.enumerable) throw new TypeError("Batch arrays must contain inert own values.");
+      return canonical(d3.value);
+    });
+  }
+  if (record3(value) && [Object.prototype, null].includes(Object.getPrototypeOf(value))) {
+    if (Reflect.ownKeys(value).length !== Object.keys(value).length) throw new TypeError("Batch JSON must not contain symbol or non-enumerable keys.");
+    return Object.fromEntries(Object.keys(value).sort(compareCanonicalIds).map((k5) => {
+      const d3 = Object.getOwnPropertyDescriptor(value, k5);
+      if (!("value" in d3)) throw new TypeError("Batch JSON must not contain accessors.");
+      return [k5, canonical(d3.value)];
+    }));
+  }
+  throw new TypeError("Batch accepts only finite JSON data.");
+}
+function normalize(raw) {
+  if (!Array.isArray(raw)) throw new TypeError("operations must be an array.");
+  return canonical(raw).map((item, index) => {
+    if (!record3(item)) throw new TypeError(`operations[${index}] must be an object.`);
+    exact(item, ["command", "arguments"], `operations[${index}]`);
+    if (!BATCH_CREATE_TYPES.some((type) => item.command === `${type}/create`)) throw new TypeError(`Unsupported batch command ${JSON.stringify(item.command)}; only advertised create commands are accepted.`);
+    if (!record3(item.arguments)) throw new TypeError(`operations[${index}].arguments must be an object.`);
+    exact(item.arguments, ["value"], `operations[${index}].arguments`);
+    if (!record3(item.arguments.value)) fail("batch.invalid", `operations[${index}].arguments.value must be an object.`);
+    let value = canonical(item.arguments.value);
+    if (item.command === "entry/create") value = normalizeEntryDraft(value);
+    if (item.command === "macro/create") {
+      const packageId2 = value.package;
+      const body = Object.fromEntries(Object.entries(value).filter(([k5]) => k5 !== "package"));
+      value = { ...normalizeMacroDraft(body, true), package: packageId2 };
+    }
+    if (item.command === "entry-package/create" || item.command === "macro-package/create") {
+      const id = typeof value.id === "string" ? value.id.trim() : value.id;
+      value = {
+        ...value,
+        id,
+        name: value.name === void 0 ? id : typeof value.name === "string" ? value.name.trim() : value.name,
+        description: value.description === void 0 ? "" : typeof value.description === "string" ? value.description.trim() : value.description
+      };
+      for (const [key, expected] of Object.entries({ format: "snl-package", version: PACKAGE_STORAGE_VERSION, schema_version: CURRENT_PACKAGE_SCHEMA_VERSION })) {
+        if (Object.hasOwn(value, key) && value[key] !== expected) fail("batch.invalid", `Package ${key} must be ${JSON.stringify(expected)}.`);
+      }
+      if (Object.hasOwn(value, "macros") || Object.hasOwn(value, "entry_ids") && (!Array.isArray(value.entry_ids) || value.entry_ids.length)) {
+        fail("batch.invalid", "Create Package membership through separate Entry/Macro operations, not embedded macros or nonempty entry_ids.");
+      }
+    }
+    return canonical({ command: item.command, arguments: { value } });
+  });
+}
+async function exists(p3) {
+  try {
+    await fs8.lstat(p3);
+    return true;
+  } catch (e2) {
+    if (e2.code === "ENOENT") return false;
+    throw e2;
+  }
+}
+async function assertRoot(root) {
+  for (const p3 of [root, path10.join(root, ".SNL_Doc")]) {
+    const s4 = await fs8.lstat(p3);
+    if (!s4.isDirectory() || s4.isSymbolicLink() || await fs8.realpath(p3) !== p3) throw new BatchError("workspace.unsafe-path", `${p3} must be a canonical non-symlink directory.`, 2);
+  }
+  if (await exists(path10.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
+}
+async function snapshot(root) {
+  const out = /* @__PURE__ */ new Map();
+  const doc = path10.join(root, ".SNL_Doc");
+  async function walk(relative2) {
+    if (relative2 === DATA_WRITE_LOCK_FILENAME) return;
+    const p3 = path10.join(doc, relative2);
+    const s4 = await fs8.lstat(p3);
+    if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
+    if (s4.isDirectory()) {
+      out.set(relative2, { kind: "directory", mode: s4.mode & 511 });
+      for (const name2 of (await fs8.readdir(p3)).sort(compareCanonicalIds)) await walk(relative2 ? `${relative2}/${name2}` : name2);
+    } else {
+      const handle = await fs8.open(p3, constants7.O_RDONLY | constants7.O_NOFOLLOW | constants7.O_NONBLOCK);
+      try {
+        const opened = await handle.stat();
+        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
+        const bytes = await handle.readFile();
+        const after = await handle.stat();
+        if (after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
+        out.set(relative2, { kind: "file", mode: opened.mode & 511, bytes });
+      } finally {
+        await handle.close();
+      }
+    }
+  }
+  await walk("");
+  return out;
+}
+function revision(root, data) {
+  const hash = createHash4("sha256").update(`snl.batch.workspace/v1\0${root}\0`);
+  for (const [name2, node] of [...data].sort(([a4], [b4]) => compareCanonicalIds(a4, b4))) {
+    hash.update(JSON.stringify([name2, node.kind, node.mode, node.kind === "file" ? node.bytes.length : 0]) + "\0");
+    if (node.kind === "file") hash.update(node.bytes);
+  }
+  return hash.digest("hex");
+}
+async function materialize(stage, data) {
+  for (const [name2, node] of data) {
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
+    if (node.kind === "directory") await fs8.mkdir(p3, { mode: 448 });
+    else {
+      await fs8.writeFile(p3, node.bytes, { flag: "wx", mode: node.mode });
+      await fs8.chmod(p3, node.mode);
+    }
+  }
+}
+async function validate(root) {
+  const result = await validateManagedWorkspace(root);
+  if (!result.valid) {
+    const unsupported = result.issues.some((i5) => /unsupported|newer than this Toolkit|no registered migration|must carry current Package manifest/.test(i5.message));
+    throw new BatchError(unsupported ? "workspace.unsupported-schema" : "batch.workspace-invalid", "Whole-workspace validation failed.", unsupported ? 2 : 1, result);
+  }
+  return result;
+}
+function readJson3(data, name2) {
+  const node = data.get(name2);
+  if (!node || node.kind !== "file") fail("batch.workspace-invalid", `Missing regular file ${name2}.`);
+  const value = JSON.parse(node.bytes.toString("utf8"));
+  if (!record3(value)) fail("batch.workspace-invalid", `${name2} must be an object.`);
+  return value;
+}
+async function prepare(stage, original, operations) {
+  const config = readJson3(original, "config.json");
+  if (config.version !== "0.1.0") throw new BatchError("workspace.unsupported-schema", "Batch v1 requires workspace data 0.1.0; migrate explicitly first.", 2);
+  await validate(stage);
+  const packages = /* @__PURE__ */ new Map();
+  const entries = /* @__PURE__ */ new Set();
+  const macros2 = /* @__PURE__ */ new Set();
+  for (const [name2, node] of original) {
+    if (node.kind !== "file" || !name2.endsWith(".json")) continue;
+    if (name2.startsWith("packages/")) {
+      const v3 = readJson3(original, name2);
+      packages.set(text2(v3, "id"), v3);
+    }
+    if (name2.startsWith("entries/")) entries.add(text2(readJson3(original, name2).entry, "id"));
+    if (name2.startsWith("macros/")) {
+      const v3 = readJson3(original, name2);
+      macros2.add(`${v3.package}\0${text2(v3.macro, "name")}`);
+    }
+  }
+  const packageIds = new Set([...packages.keys()].map((id) => id.toLowerCase()));
+  const active = new Set(Array.isArray(config.active_macro_packages) ? config.active_macro_packages : [...packages.keys()].filter((id) => id !== "_unpackaged"));
+  const kinds = new Map(["entry-kind", "macro-kind"].map((type) => [type, new Set(config[type === "entry-kind" ? "entry_kinds" : "macro_kinds"].map((v3) => text2(v3, "id")))]));
+  const relationships = original.has("relationships.json") ? readJson3(original, "relationships.json") : { relationships: [] };
+  const relationRows = relationships.relationships;
+  const relationIds = new Set(relationRows.map((v3) => text2(v3, "id")));
+  const pending = /* @__PURE__ */ new Map();
+  const changedPackages = /* @__PURE__ */ new Set();
+  const identities = [];
+  const addedEntries = /* @__PURE__ */ new Map();
+  let configChanged = false;
+  let activationChanged = false;
+  let relationsChanged = false;
+  for (let index = 0; index < operations.length; index++) {
+    const op2 = operations[index];
+    const type = op2.command.split("/")[0];
+    const value = op2.arguments.value;
+    const id = text2(value, type === "macro" ? "name" : "id");
+    let file = "";
+    const duplicate = () => fail("batch.already-exists", `operations[${index}]: ${type} ${JSON.stringify(id)} already exists or was created twice.`);
+    if (type === "entry-kind" || type === "macro-kind") {
+      if (kinds.get(type).has(id)) duplicate();
+      kinds.get(type).add(id);
+      config[type === "entry-kind" ? "entry_kinds" : "macro_kinds"].push(value);
+      configChanged = true;
+      file = "config.json";
+    } else if (type === "entry-package" || type === "macro-package") {
+      packageId(id);
+      if (id === "_unpackaged" || packageIds.has(id.toLowerCase())) duplicate();
+      if (typeof value.name !== "string" || !value.name || typeof value.description !== "string") fail("batch.invalid", "Package requires nonempty name and string description.");
+      packageIds.add(id.toLowerCase());
+      packages.set(id, { ...value, format: "snl-package", version: PACKAGE_STORAGE_VERSION, schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] });
+      changedPackages.add(id);
+      active.add(id);
+      configChanged = true;
+      activationChanged = true;
+      file = packageManifestPath(id);
+    } else if (type === "entry") {
+      if (entries.has(id)) duplicate();
+      entries.add(id);
+      const pkg = text2(value, "package");
+      packageId(pkg);
+      file = entryEntityPath(pkg, id);
+      pending.set(file, { format: "snl-entry", version: ENTRY_STORAGE_VERSION, schema_version: CURRENT_ENTRY_SCHEMA_VERSION, package: pkg, entry: value });
+      const added = addedEntries.get(pkg) ?? [];
+      added.push(id);
+      addedEntries.set(pkg, added);
+    } else if (type === "macro") {
+      const pkg = text2(value, "package");
+      packageId(pkg);
+      if (macros2.has(`${pkg}\0${id}`)) duplicate();
+      if (/[@#$%\s()[\]{}]/u.test(id)) fail("macro.bad-name", "Macro name contains forbidden syntax.");
+      macros2.add(`${pkg}\0${id}`);
+      file = macroEntityPath(pkg, id);
+      const macro2 = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
+      pending.set(file, { format: "snl-macro", version: MACRO_STORAGE_VERSION, schema_version: CURRENT_MACRO_SCHEMA_VERSION, package: pkg, macro: macro2 });
+    } else if (type === "relationship") {
+      if (relationIds.has(id)) duplicate();
+      relationIds.add(id);
+      relationRows.push(value);
+      relationsChanged = true;
+      file = "relationships.json";
+    }
+    identities.push({ type, id: type === "macro" ? `${value.package}::${id}` : id, file });
+  }
+  for (const [pkg, ids] of addedEntries) {
+    const manifest = packages.get(pkg);
+    if (!manifest) fail("batch.missing-package", `Entry Package ${JSON.stringify(pkg)} does not exist in the resulting batch.`);
+    manifest.entry_ids = [...manifest.entry_ids, ...ids].sort(compareCanonicalIds);
+    changedPackages.add(pkg);
+  }
+  for (const pkg of changedPackages) pending.set(packageManifestPath(pkg), packages.get(pkg));
+  if (configChanged) {
+    if (activationChanged) config.active_macro_packages = [...active].sort(compareCanonicalIds);
+    pending.set("config.json", config);
+  }
+  if (relationsChanged) pending.set("relationships.json", relationships);
+  for (const [name2, value] of pending) {
+    const target = path10.join(stage, ".SNL_Doc", name2);
+    if (original.has(name2)) await fs8.writeFile(target, jsonText(value));
+    else await installNewJson(target, value);
+  }
+  const validation = await validate(stage);
+  const [finalEntries, finalConfig, activeMacros, macroPackages] = await Promise.all([readEntries(stage), readConfig(stage), readActiveMacros(stage), readAllMacroPackages(stage)]);
+  const binders = /* @__PURE__ */ new Map();
+  for (const entry of finalEntries) {
+    try {
+      binders.set(entry.id, t3(entry.content?.snl ?? ""));
+    } catch {
+      binders.set(entry.id, /* @__PURE__ */ new Set());
+    }
+  }
+  const diagnostics = [...validation.issues];
+  for (let i5 = 0; i5 < operations.length; i5++) {
+    const { command, arguments: { value } } = operations[i5];
+    let issues = [];
+    if (command === "entry/create") {
+      issues = lintEntry(value, { entryKinds: finalConfig.entry_kinds ?? [], macros: activeMacros, siblingEntries: [], exportedBinders: binders }).issues;
+    } else if (command === "macro/create") {
+      const body = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "name" && key !== "package"));
+      issues = lintPackage({ version: "11", name: value.package, description: "", macros: { [String(value.name)]: body } }, { checkKatex: true }).issues;
+      const source = value.source;
+      for (const id of source.entries ?? []) if (!entries.has(id)) issues.push({ severity: "error", code: "macro.source-dangling", message: `Macro source.entries refers to missing Entry ${JSON.stringify(id)}.` });
+      if (!kinds.get("macro-kind").has(String(value.kind))) issues.push({ severity: "error", code: "macro.unknown-kind", message: `Unknown Macro Kind ${JSON.stringify(value.kind)}.` });
+    }
+    diagnostics.push(...issues.map((issue) => ({ ...issue, path: `operations[${i5}]${issue.path ? `.${issue.path}` : ""}` })));
+  }
+  if (diagnostics.some((i5) => i5.severity === "error")) throw new BatchError("batch.validation-failed", "Batch schema, syntax/semantic, or workspace-reference validation failed.", 1, { diagnostics });
+  const results = identities.map(({ type, id, file }, index) => {
+    let value = operations[index].arguments.value;
+    let source = value;
+    if (type === "entry" || type === "macro") source = pending.get(file);
+    if (type === "entry-package" || type === "macro-package") {
+      value = packages.get(id);
+      if (type === "macro-package") {
+        value = { ...value, macros: macroPackages[id].macros };
+      }
+      source = value;
+    }
+    return { operation: "create", entity: { type, id, revision: sha2(source), value } };
+  });
+  return { diagnostics, results, counts: validation.counts };
+}
+async function syncDir(p3) {
+  const h3 = await fs8.open(p3, constants7.O_RDONLY | constants7.O_DIRECTORY | constants7.O_NOFOLLOW);
+  try {
+    await h3.sync();
+  } finally {
+    await h3.close();
+  }
+}
+async function seal(stage, original) {
+  const tree = await snapshot(stage);
+  for (const [name2, node] of tree) {
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
+    if (node.kind === "file") {
+      const h3 = await fs8.open(p3, constants7.O_RDONLY | constants7.O_NOFOLLOW);
+      try {
+        await h3.sync();
+      } finally {
+        await h3.close();
+      }
+    }
+  }
+  for (const [name2, node] of [...tree].reverse()) if (node.kind === "directory") {
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
+    await fs8.chmod(p3, original.get(name2)?.mode ?? node.mode);
+    await syncDir(p3);
+  }
+  await syncDir(stage);
+}
+var run = promisify(execFile);
+var EXCHANGE = "import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n";
+async function exchange(a4, b4) {
+  if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.", 2);
+  await run("python3", ["-I", "-c", EXCHANGE, a4, b4]);
+}
+async function checkBatch(root, raw) {
+  const operations = normalize(raw);
+  await assertRoot(root);
+  if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
+  const original = await snapshot(root);
+  const expectedWorkspaceRevision = revision(root, original);
+  const temporaryRoot = await fs8.realpath(os.tmpdir());
+  const relativeTemporaryRoot = path10.relative(root, temporaryRoot);
+  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path10.sep}`) && relativeTemporaryRoot !== ".." && !path10.isAbsolute(relativeTemporaryRoot)) {
+    throw new BatchError("batch.unsafe-temp-directory", "The check temporary directory must be outside the workspace; set TMPDIR to an external directory.", 2);
+  }
+  const stage = await fs8.mkdtemp(path10.join(temporaryRoot, "snl-batch-check-"));
+  try {
+    await materialize(stage, original);
+    const prepared = await prepare(stage, original, operations);
+    await assertRoot(root);
+    if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME)) || revision(root, await snapshot(root)) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace changed during preflight; check the complete batch again.");
+    return { normalizedOperations: operations, checkedDigest: sha2(["snl.batch/v1", operations]), expectedWorkspaceRevision, diagnostics: prepared.diagnostics, counts: prepared.counts };
+  } finally {
+    await fs8.rm(stage, { recursive: true, force: true });
+  }
+}
+async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, hooks = {}) {
+  const operations = normalize(raw);
+  await assertRoot(root);
+  let committedRevision;
+  try {
+    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async () => {
+      if (sha2(["snl.batch/v1", operations]) !== checkedDigest) fail("batch.digest-conflict", "checkedDigest does not match the normalized operation sequence; recheck the whole batch.");
+      const original = await snapshot(root);
+      if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace revision changed; recheck the whole batch, never replay a suffix.");
+      const stage = await fs8.mkdtemp(path10.join(root, ".snl-batch-"));
+      const liveDoc = path10.join(root, ".SNL_Doc");
+      const stagedDoc = path10.join(stage, ".SNL_Doc");
+      const journal = path10.join(root, BATCH_JOURNAL_FILENAME);
+      let retain = false;
+      let journalCreated = false;
+      let committed = false;
+      let originalInode;
+      try {
+        await materialize(stage, original);
+        const prepared = await prepare(stage, original, operations);
+        const a4 = path10.join(stage, "probe-a"), b4 = path10.join(stage, "probe-b");
+        await fs8.mkdir(a4);
+        await fs8.mkdir(b4);
+        await exchange(a4, b4);
+        await fs8.rmdir(a4);
+        await fs8.rmdir(b4);
+        const lock = await fs8.readFile(path10.join(liveDoc, DATA_WRITE_LOCK_FILENAME));
+        await fs8.writeFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
+        const lh = await fs8.open(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), "r");
+        try {
+          await lh.sync();
+        } finally {
+          await lh.close();
+        }
+        await seal(stage, original);
+        const resultingWorkspaceRevision = revision(root, await snapshot(stage));
+        if (revision(root, await snapshot(root)) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace changed while staging; publication refused.");
+        originalInode = await fs8.stat(liveDoc);
+        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
+        journalCreated = true;
+        await hooks.beforeExchange?.();
+        await exchange(liveDoc, stagedDoc);
+        await hooks.afterExchange?.();
+        await hooks.beforeParentSync?.();
+        await syncDir(root);
+        await syncDir(stage);
+        await validate(root);
+        if (revision(root, await snapshot(root)) !== resultingWorkspaceRevision) throw new BatchError("batch.readback-failed", "Published workspace does not match the validated candidate.", 2);
+        await fs8.unlink(journal);
+        journalCreated = false;
+        committed = true;
+        committedRevision = resultingWorkspaceRevision;
+        const diagnostics = [...prepared.diagnostics];
+        try {
+          await fs8.rm(stage, { recursive: true, force: true });
+        } catch {
+          retain = true;
+          diagnostics.push({ severity: "warning", code: "batch.backup-cleanup-failed", message: `Commit completed; retained transaction backup at ${stage}.` });
+        }
+        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics, publication: "linux-directory-exchange", recoveryPath: retain ? stage : null };
+      } catch (error) {
+        if (journalCreated && originalInode) {
+          try {
+            const now = await fs8.stat(liveDoc);
+            if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
+            await syncDir(root);
+            await syncDir(stage);
+            if (revision(root, await snapshot(root)) !== expectedWorkspaceRevision) throw new Error("Rollback revision mismatch.");
+            await fs8.unlink(journal);
+            journalCreated = false;
+          } catch (rollback) {
+            retain = true;
+            throw new BatchError("batch.recovery-required", `Batch failed and rollback is uncertain. Preserve ${stage} and ${journal}; inspect both complete generations before removing any lock.`, 2, { primary: String(error), rollback: String(rollback) });
+          }
+        }
+        throw error;
+      } finally {
+        if (!committed && !retain && !journalCreated) await fs8.rm(stage, { recursive: true, force: true });
+      }
+    });
+  } catch (error) {
+    if (committedRevision) throw new BatchError("batch.committed-cleanup-failed", "The complete batch committed, but lock/resource cleanup failed. Do not replay; inspect the resulting workspace and remaining lock.", 2, { resultingWorkspaceRevision: committedRevision, cause: String(error) });
+    throw error;
+  }
 }
 
 // src/cli/operation.ts
@@ -28452,6 +28929,9 @@ var COMMAND_PATHS = Object.freeze([
   "init",
   "info",
   "validate",
+  "batch",
+  "batch/check",
+  "batch/apply",
   ...Object.keys(ENTITY_DOMAINS).flatMap((domain) => [domain, ...ENTITY_ACTIONS.map((action) => `${domain}/${action}`)]),
   "snoogl",
   "entry/latex",
@@ -28463,6 +28943,8 @@ var COMMAND_PATHS = Object.freeze([
 ]);
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
+  if (command === "batch/check") return { command, access: "read", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true) }, summary: "Validate a complete dependent create batch without workspace writes; return digest and workspace revision." };
+  if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required)." };
   const action = command.split("/").at(-1);
   if (action === "list") return { command, access: "read", arguments: { query: field("string|null", false), limit: field("integer", false), cursor: field("string|null", false) }, summary: "List one managed entity family with stable pagination." };
   if (action === "get") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Read one exact managed entity and its revision." };
@@ -28498,15 +28980,28 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path10.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path11.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
+    if (command === "batch") {
+      exactArguments(request.arguments, []);
+      return succeed(command, { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) });
+    }
+    if (command === "batch/check" || command === "batch/apply") {
+      const args2 = request.arguments;
+      exactArguments(args2, command === "batch/check" ? ["operations"] : ["operations", "checkedDigest", "expectedWorkspaceRevision"]);
+      const data = command === "batch/check" ? await checkBatch(request.root, args2.operations) : await applyBatch(request.root, args2.operations, stringArg(args2, "checkedDigest"), stringArg(args2, "expectedWorkspaceRevision"));
+      const result = succeed(command, data);
+      if (result.response.ok) result.response.diagnostics = data.diagnostics;
+      return result;
+    }
     if (tokens.length === 1 && command === "help") {
       exactArguments(request.arguments, []);
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path11) => path11 !== "help"),
+        commands: COMMAND_PATHS.filter((path12) => path12 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
+        batch: { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) },
         web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
         initHelp: {
           usage: "snl init --root <directory> [--preset <id> | --input <file|->] [--json]",
@@ -28547,7 +29042,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path10.resolve(request.root),
+        root: path11.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,
@@ -28584,9 +29079,9 @@ async function executeOperation(request) {
       const entity = await getManagedEntity(request.root, entityType2, id);
       if (!entity) return operationFailure(command, 1, "entity.not-found", `${entityType2} ${JSON.stringify(id)} does not exist.`);
       if (entityType2 === "entry") return succeed(command, { items: await findEntityReferences(request.root, entityType2, id) });
-      const packageId = entity.value.package;
+      const packageId2 = entity.value.package;
       const macroName = entity.value.name;
-      if (typeof packageId !== "string" || typeof macroName !== "string") return operationFailure(command, 1, "entity.invalid", `Macro ${JSON.stringify(id)} has no canonical package/name identity.`);
+      if (typeof packageId2 !== "string" || typeof macroName !== "string") return operationFailure(command, 1, "entity.invalid", `Macro ${JSON.stringify(id)} has no canonical package/name identity.`);
       const [config, macros2, occurrences] = await Promise.all([
         readConfig(request.root),
         listManagedEntities(request.root, "macro"),
@@ -28594,7 +29089,7 @@ async function executeOperation(request) {
       ]);
       const active = config.active_macro_packages === void 0 ? null : new Set(config.active_macro_packages);
       const winner = macros2.filter((candidate) => candidate.value.name === macroName && typeof candidate.value.package === "string" && (!active || active.has(candidate.value.package))).sort((left, right) => `${String(left.value.package)}.json`.localeCompare(`${String(right.value.package)}.json`)).at(-1);
-      const definitionFile = macroEntityPath(packageId, macroName);
+      const definitionFile = macroEntityPath(packageId2, macroName);
       const items = occurrences.filter((item) => item.role === "definition" ? item.file === definitionFile : winner?.id === id).map((item) => ({ ...item, id }));
       return succeed(command, { items });
     }
@@ -28671,11 +29166,11 @@ async function executeOperation(request) {
     if (action === "update") {
       exactArguments(args, ["id", "value", "expectedRevision"]);
       const id = stringArg(args, "id");
-      const revision = stringArg(args, "expectedRevision");
+      const revision2 = stringArg(args, "expectedRevision");
       if (!own(args, "value")) throw new TypeError("value is required.");
       if (!isRecord8(args.value)) return operationFailure(command, 1, "entity.invalid", "value must be an object.");
       try {
-        const result = await updateManagedEntity(request.root, type, id, args.value, revision);
+        const result = await updateManagedEntity(request.root, type, id, args.value, revision2);
         return result.status === "ok" ? succeed(command, { entity: result.entity }) : operationFailure(command, 1, result.code, result.message);
       } catch (error) {
         if (error instanceof TypeError) return operationFailure(command, 1, "entity.invalid", error.message);
@@ -28685,13 +29180,16 @@ async function executeOperation(request) {
     if (action === "delete") {
       exactArguments(args, ["id", "expectedRevision"]);
       const id = stringArg(args, "id");
-      const revision = stringArg(args, "expectedRevision");
-      const result = await deleteManagedEntity(request.root, type, id, revision);
+      const revision2 = stringArg(args, "expectedRevision");
+      const result = await deleteManagedEntity(request.root, type, id, revision2);
       return result.status === "ok" ? succeed(command, { deleted: { type, id, revision: result.entity.revision } }) : operationFailure(command, 1, result.code, result.message);
     }
     return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
   } catch (error) {
+    if (error instanceof BatchError) return operationFailure(command, error.exitCode, error.code, error.message, error.details);
     const message = error instanceof Error ? error.message : String(error);
+    if (/batch recovery required/i.test(message)) return operationFailure(command, 2, "batch.recovery-required", message);
+    if (/workspace data (?:is locked|has a stale)/i.test(message)) return operationFailure(command, 2, "workspace.locked", message);
     if (isUnsupportedSchemaMessage(message)) return operationFailure(command, 2, "workspace.unsupported-schema", message);
     if (error instanceof TypeError) return operationFailure(command, 2, "operation.invalid-arguments", message);
     return operationFailure(command, 2, "workspace.operation-failed", message);

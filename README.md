@@ -47,6 +47,9 @@ For a new workspace, read [Initialize](Skills/Initialize/SKILL.md). The default 
 ./dist/cli/snl.mjs --root /path/to/project --json entry list --limit 50
 ./dist/cli/snl.mjs --root /path/to/project --json entry get algebra.def.group
 ./dist/cli/snl.mjs --root /path/to/project --json validate
+./dist/cli/snl.mjs --root /path/to/project --json batch
+./dist/cli/snl.mjs --root /path/to/project --json batch check --input /tmp/operations.json
+./dist/cli/snl.mjs --root /path/to/project --json batch apply --input /tmp/apply.json
 
 ```
 
@@ -81,6 +84,11 @@ The listener binds only to `127.0.0.1`. It serves an explicit frontend asset lis
 ### Shared frontend build
 
 `reader-source.json` pins an immutable Extension revision. `npm run build:web` downloads that source at build time, installs its locked build dependencies in a temporary directory, then invokes its maintained `build-local-reader.mjs`. It builds shared browser and model artifacts into ignored `dist/web/`; no UI source fork is vendored into Toolkit. `npm run build:web -- --source /path/to/extension` can instead use an already-installed, clean checkout at exactly the pinned revision. `npm pack` performs the frontend build and includes the prebuilt assets. Node, npm, network access and tar are needed when building from source; normal `snl` startup needs no network, compiler or VS Code.
+
+For dependent multi-entity imports, use the real checked [batch API](<Skills/CLI Tools/Batch.md>),
+not single-entity loops. Its first edition supports dependent creates with one
+digest/revision receipt and Linux directory-exchange publication (`python3`
+required), with explicit guarded recovery and documented crash/reader limits.
 
 ## Schema ownership
 
@@ -159,4 +167,4 @@ hermes mcp test snl-agent-toolkit
 dsh plugin --profile default add .
 ```
 
-The npm package also exposes `@snl-doc/agent-toolkit/dsh`, `snl-agent-mcp`, and the batch-oriented `snl-entity` CLI. The plugin runtime is prebuilt and does not require `tsx` or TypeScript source execution.
+The npm package also exposes `@snl-doc/agent-toolkit/dsh`, `snl-agent-mcp`, the single-entity `snl-entity` CLI, and checked `snl batch` transactions. The plugin runtime is prebuilt and does not require `tsx` or TypeScript source execution.

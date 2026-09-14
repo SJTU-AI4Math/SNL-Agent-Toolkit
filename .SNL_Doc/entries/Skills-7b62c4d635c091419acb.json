@@ -9,13 +9,13 @@
     "kind": "cli",
     "title": "$\\texttt{snl batch check}$",
     "content": {
-      "markdown": "Use `snl batch check` to preflight a dependent multi-entity change set without writing.\n\n### Agent procedure\n1. Provide the complete batch input, not a prefix of a larger intended transaction.\n2. Inspect every planned create, update, delete, reference rewrite, and revision requirement. Require the check to pass before apply.\n\n### Machine-use contract\nInvoke `snl batch check` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+      "markdown": "Use `snl batch check` to preflight a dependent multi-entity change set without writing.\n\n### Agent procedure\n1. Provide the complete batch input, not a prefix of a larger intended transaction.\n2. Inspect every planned create, update, delete, reference rewrite, and revision requirement. Require the check to pass before apply.\n\n### Machine-use contract\nInvoke `snl batch check` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly.\n\nFor the implemented create-only allowlist, strict raw-array check input and guarded apply receipt, read Skills/CLI Tools/Batch.md. Unsupported operations, including Library writes, reject the whole batch.\n"
     },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",
       "mode": "lines",
-      "line": 584
+      "line": 588
     }
   }
 }

@@ -18398,8 +18398,14 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
       return value.entry;
     }).sort((left, right) => left.package.localeCompare(right.package) || left.id.localeCompare(right.id));
     if (usesCurrentEntitySchemas(config)) {
+      const membership = /* @__PURE__ */ new Map();
+      for (const entry of entries) {
+        const owned = membership.get(entry.package) ?? [];
+        owned.push(entry.id);
+        membership.set(entry.package, owned);
+      }
       for (const manifest of manifests.values()) {
-        const actual = entries.filter((entry) => entry.package === manifest.id).map((entry) => entry.id).sort(compareCanonicalIds);
+        const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
           throw new Error(
@@ -18773,15 +18779,16 @@ function lintEntry(raw, ctx) {
           path: "content.snl"
         });
       }
-      const exportedBinders = /* @__PURE__ */ new Map();
-      for (const sibling of ctx.siblingEntries) {
-        if (typeof sibling.id === "string") {
-          exportedBinders.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+      const exportedBinders = ctx.exportedBinders ?? (() => {
+        const index = /* @__PURE__ */ new Map();
+        for (const sibling of ctx.siblingEntries) {
+          if (typeof sibling.id === "string") {
+            index.set(sibling.id, safeExportedBinders(sibling.content?.snl));
+          }
         }
-      }
-      if (typeof e3.id === "string") {
-        exportedBinders.set(e3.id, safeExportedBinders(snl));
-      }
+        if (typeof e3.id === "string") index.set(e3.id, safeExportedBinders(snl));
+        return index;
+      })();
       const srcRefs = collectSrcReferences(parsed.tree);
       for (const ref of srcRefs) {
         const declarations = exportedBinders.get(ref.sourceId);
