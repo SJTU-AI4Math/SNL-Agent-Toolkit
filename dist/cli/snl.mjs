@@ -3973,27 +3973,27 @@ var init_katex = __esm({
     };
     sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
       extraVinculum = 1e3 * extraVinculum;
-      var path14 = "";
+      var path15 = "";
       switch (size) {
         case "sqrtMain":
-          path14 = sqrtMain(extraVinculum, hLinePad);
+          path15 = sqrtMain(extraVinculum, hLinePad);
           break;
         case "sqrtSize1":
-          path14 = sqrtSize1(extraVinculum, hLinePad);
+          path15 = sqrtSize1(extraVinculum, hLinePad);
           break;
         case "sqrtSize2":
-          path14 = sqrtSize2(extraVinculum, hLinePad);
+          path15 = sqrtSize2(extraVinculum, hLinePad);
           break;
         case "sqrtSize3":
-          path14 = sqrtSize3(extraVinculum, hLinePad);
+          path15 = sqrtSize3(extraVinculum, hLinePad);
           break;
         case "sqrtSize4":
-          path14 = sqrtSize4(extraVinculum, hLinePad);
+          path15 = sqrtSize4(extraVinculum, hLinePad);
           break;
         case "sqrtTall":
-          path14 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+          path15 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
       }
-      return path14;
+      return path15;
     };
     innerPath = function innerPath2(name, height) {
       switch (name) {
@@ -8087,8 +8087,8 @@ var init_katex = __esm({
     };
     staticSvg = function staticSvg2(value, options) {
       var [pathName, width, height] = svgData[value];
-      var path14 = new PathNode(pathName);
-      var svgNode = new SvgNode([path14], {
+      var path15 = new PathNode(pathName);
+      var svgNode = new SvgNode([path15], {
         "width": makeEm(width),
         "height": makeEm(height),
         // Override CSS rule `.katex svg { width: 100% }`
@@ -9100,8 +9100,8 @@ var init_katex = __esm({
               pathName = "tilde" + imgIndex;
             }
           }
-          var path14 = new PathNode(pathName);
-          var svgNode = new SvgNode([path14], {
+          var path15 = new PathNode(pathName);
+          var svgNode = new SvgNode([path15], {
             "width": "100%",
             "height": makeEm(_height),
             "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -10186,8 +10186,8 @@ var init_katex = __esm({
     };
     makeInner = function makeInner2(ch2, height, options) {
       var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-      var path14 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-      var svgNode = new SvgNode([path14], {
+      var path15 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+      var svgNode = new SvgNode([path15], {
         "width": makeEm(width),
         "height": makeEm(height),
         // Override CSS rule `.katex svg { width: 100% }`
@@ -10356,10 +10356,10 @@ var init_katex = __esm({
         var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
         var viewBoxHeight = Math.round(realHeightTotal * 1e3);
         var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-        var path14 = new PathNode(svgLabel, pathStr);
+        var path15 = new PathNode(svgLabel, pathStr);
         var width = makeEm(viewBoxWidth / 1e3);
         var height = makeEm(viewBoxHeight / 1e3);
-        var svg = new SvgNode([path14], {
+        var svg = new SvgNode([path15], {
           "width": width,
           "height": height,
           "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -10400,8 +10400,8 @@ var init_katex = __esm({
     vbPad = 80;
     emPad = 0.08;
     sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-      var path14 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-      var pathNode = new PathNode(sqrtName, path14);
+      var path15 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+      var pathNode = new PathNode(sqrtName, path15);
       var svg = new SvgNode([pathNode], {
         // Note: 1000:1 ratio of viewBox to document em width.
         "width": "400em",
@@ -10890,8 +10890,8 @@ var init_katex = __esm({
         var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
         inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
         var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-        var path14 = phasePath(viewBoxHeight);
-        var svgNode = new SvgNode([new PathNode("phase", path14)], {
+        var path15 = phasePath(viewBoxHeight);
+        var svgNode = new SvgNode([new PathNode("phase", path15)], {
           "width": "400em",
           "height": makeEm(viewBoxHeight / 1e3),
           "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18927,12 +18927,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path14 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
+            const path15 = `macros.${name}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path14} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path14,
+              message: `${path15} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path15,
               position: result.position
             });
           }
@@ -18946,43 +18946,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
-  const path14 = `macros.${name}`;
+  const path15 = `macros.${name}`;
   if (!isRecord3(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path14}: macro entry must be an object.`, path: path14 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path15}: macro entry must be an object.`, path: path15 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path14}.description must be a string (may be empty).`, path: `${path14}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path15}.description must be a string (may be empty).`, path: `${path15}.description` });
   }
   if (!isRecord3(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path14}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path14}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path15}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path15}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path14}.dynamic_arity must be a boolean.`, path: `${path14}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path15}.dynamic_arity must be a boolean.`, path: `${path15}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path14}.kind must be a string when present.`, path: `${path14}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path15}.kind must be a string when present.`, path: `${path15}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path14}.tags must be a string array (may be empty).`, path: `${path14}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path15}.tags must be a string array (may be empty).`, path: `${path15}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path14}.tags must not contain backslashes.`, path: `${path14}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path15}.tags must not contain backslashes.`, path: `${path15}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path14}.default_style must be a language \u2192 style-name object.`, path: `${path14}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path15}.default_style must be a language \u2192 style-name object.`, path: `${path15}.default_style` });
   } else if (!isRecord3(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style must map language keys to style-name strings.`, path: `${path14}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path15}.default_style must map language keys to style-name strings.`, path: `${path15}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path14}.styles must be a non-empty array.`, path: `${path14}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path15}.styles must be a non-empty array.`, path: `${path15}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path14}.styles[${index}]`;
+    const stylePath = `${path15}.styles[${index}]`;
     if (!isRecord3(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -19046,12 +19046,12 @@ function lintMacroEntry(name, raw, issues, checkKatexEnabled) {
   if (isRecord3(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path14}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path15}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path15}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path14}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path14}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path15}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path15}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -20135,12 +20135,12 @@ function parseTree3(text2, errors = [], options = ParseOptions.DEFAULT) {
   }
   return result;
 }
-function findNodeAtLocation(root, path14) {
+function findNodeAtLocation(root, path15) {
   if (!root) {
     return void 0;
   }
   let node = root;
-  for (let segment of path14) {
+  for (let segment of path15) {
     if (typeof segment === "string") {
       if (node.type !== "object" || !Array.isArray(node.children)) {
         return void 0;
@@ -20506,14 +20506,14 @@ var init_parser = __esm({
 
 // node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text2, originalPath, value, options) {
-  const path14 = originalPath.slice();
+  const path15 = originalPath.slice();
   const errors = [];
   const root = parseTree3(text2, errors);
   let parent = void 0;
   let lastSegment = void 0;
-  while (path14.length > 0) {
-    lastSegment = path14.pop();
-    parent = findNodeAtLocation(root, path14);
+  while (path15.length > 0) {
+    lastSegment = path15.pop();
+    parent = findNodeAtLocation(root, path15);
     if (parent === void 0 && value !== void 0) {
       if (typeof lastSegment === "string") {
         value = { [lastSegment]: value };
@@ -20693,8 +20693,8 @@ function printParseErrorCode(code) {
   }
   return "<unknown ParseErrorCode>";
 }
-function modify(text2, path14, value, options) {
-  return setProperty(text2, path14, value, options);
+function modify(text2, path15, value, options) {
+  return setProperty(text2, path15, value, options);
 }
 function applyEdits(text2, edits) {
   let sortedEdits = edits.slice(0).sort((a4, b4) => {
@@ -23437,22 +23437,215 @@ var init_entity_crud = __esm({
   }
 });
 
+// src/web/changes.ts
+import { randomUUID as randomUUID5 } from "node:crypto";
+import { constants as constants7, watch } from "node:fs";
+import { open as open3, lstat, readdir, realpath } from "node:fs/promises";
+import path11 from "node:path";
+function ignored(name, atRoot) {
+  return name === ".cache" || atRoot && /^(?:cache|caches|tmp|temp)$/i.test(name) || name === ".DS_Store" || /(?:\.lock|\.tmp|\.temp|\.sw[opx]|~)$/i.test(name) || /^\.#|^#.*#$/.test(name);
+}
+async function watchWorkspaceChanges(root, options = {}) {
+  root = path11.resolve(root);
+  const debounceMs = options.debounceMs ?? 250;
+  const retryMs = options.retryMs ?? 1e3;
+  const watchDirectory = options.watchDirectory ?? ((directory, changed) => watch(directory, { persistent: false }, (_event, filename) => changed(filename?.toString() ?? null)));
+  const epoch = randomUUID5();
+  let generation = 0;
+  let available = false;
+  let closed = false;
+  let initialized = false;
+  let failureEpoch = 0;
+  let dirty = false;
+  let timer;
+  let running;
+  let previous = /* @__PURE__ */ new Map();
+  const listeners = /* @__PURE__ */ new Set();
+  const watches = /* @__PURE__ */ new Map();
+  const revision = () => `${epoch}:${generation}`;
+  const emit = (event) => {
+    for (const listener of listeners) listener(event);
+  };
+  const stopWatches = () => {
+    const retired = [...watches.values()];
+    watches.clear();
+    for (const { watcher } of retired) watcher.close();
+  };
+  function schedule(delay = debounceMs) {
+    if (closed) return;
+    dirty = true;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = void 0;
+      void reconcile();
+    }, delay);
+    timer.unref();
+  }
+  function unavailable() {
+    if (closed) return;
+    const announce = available || !initialized;
+    available = false;
+    failureEpoch++;
+    initialized = true;
+    stopWatches();
+    if (announce) emit({ event: "unavailable", data: { message: WATCH_UNAVAILABLE } });
+    schedule(retryMs);
+  }
+  async function scan() {
+    const startedEpoch = failureEpoch;
+    const next = /* @__PURE__ */ new Map();
+    const found = /* @__PURE__ */ new Set();
+    const visit2 = async (filename, relative2, workspaceParent = false) => {
+      const before = await lstat(filename, { bigint: true });
+      if (!before.isDirectory() || before.isSymbolicLink()) throw new Error("Directory unavailable");
+      if (process.platform !== "linux" && await realpath(filename) !== filename) throw new Error("Directory link");
+      const handle = await open3(filename, constants7.O_RDONLY | constants7.O_DIRECTORY | constants7.O_NOFOLLOW);
+      try {
+        const stat = await handle.stat({ bigint: true });
+        const identity = `${stat.dev}:${stat.ino}`;
+        if (!stat.isDirectory() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error("Directory changed");
+        const pinned = process.platform === "linux" ? `/proc/self/fd/${handle.fd}` : filename;
+        const key = workspaceParent ? ".." : relative2;
+        found.add(key);
+        if (!workspaceParent) next.set(relative2, `d:${identity}`);
+        const existing = watches.get(key);
+        if (existing?.identity !== identity) {
+          watches.delete(key);
+          existing?.watcher.close();
+          const watcher = watchDirectory(pinned, (name) => {
+            if (workspaceParent && name !== null && name !== ".SNL_Doc") return;
+            if (!workspaceParent && name !== null && ignored(name, relative2 === "")) return;
+            schedule();
+          });
+          watches.set(key, { identity, watcher });
+          const lost = () => {
+            if (watches.get(key)?.watcher === watcher) unavailable();
+          };
+          watcher.on("error", lost);
+          watcher.on("close", lost);
+        }
+        if (workspaceParent) {
+          await visit2(path11.join(pinned, ".SNL_Doc"), "");
+        } else {
+          for (const item of await readdir(pinned, { withFileTypes: true })) {
+            if (ignored(item.name, relative2 === "") || item.isSymbolicLink()) continue;
+            const child = path11.join(pinned, item.name);
+            const childRelative = relative2 ? `${relative2}/${item.name}` : item.name;
+            const childStat = await lstat(child, { bigint: true });
+            if (childStat.isSymbolicLink()) continue;
+            if (childStat.isDirectory()) await visit2(child, childRelative);
+            else if (childStat.isFile()) next.set(
+              childRelative,
+              `f:${childStat.dev}:${childStat.ino}:${childStat.size}:${childStat.mtimeNs}:${childStat.ctimeNs}`
+            );
+          }
+        }
+        const after = await lstat(filename, { bigint: true });
+        if (after.isSymbolicLink() || after.dev !== stat.dev || after.ino !== stat.ino) throw new Error("Directory replaced");
+        if (process.platform !== "linux" && await realpath(filename) !== filename) throw new Error("Directory link");
+      } finally {
+        await handle.close();
+      }
+    };
+    if (process.platform === "linux") {
+      const components = root.split("/").filter(Boolean);
+      const visitRootChain = async (filename, depth = 0) => {
+        const handle = await open3(filename, constants7.O_RDONLY | constants7.O_DIRECTORY | constants7.O_NOFOLLOW);
+        try {
+          const pinned = `/proc/self/fd/${handle.fd}`;
+          if (depth < components.length) await visitRootChain(`${pinned}/${components[depth]}`, depth + 1);
+          else await visit2(`${pinned}/.`, "", true);
+        } finally {
+          await handle.close();
+        }
+      };
+      await visitRootChain("/");
+    } else {
+      await visit2(root, "", true);
+    }
+    if (closed) {
+      stopWatches();
+      return;
+    }
+    if (startedEpoch !== failureEpoch) throw new Error("Watch failed during reconciliation");
+    for (const [key, { watcher }] of watches) if (!found.has(key)) {
+      watches.delete(key);
+      watcher.close();
+    }
+    const changed = previous.size !== next.size || [...next].some(([key, value]) => previous.get(key) !== value);
+    previous = next;
+    const recovered = initialized && !available;
+    available = true;
+    if (initialized && (changed || recovered)) {
+      generation++;
+      emit({ event: "change", data: { revision: revision() } });
+    }
+    initialized = true;
+  }
+  function reconcile() {
+    if (closed) return Promise.resolve();
+    if (running) {
+      dirty = true;
+      return running;
+    }
+    dirty = false;
+    running = scan().catch(() => unavailable()).finally(() => {
+      running = void 0;
+      if (dirty && !timer && !closed) schedule();
+    });
+    return running;
+  }
+  await reconcile();
+  return {
+    get revision() {
+      return revision();
+    },
+    get available() {
+      return available;
+    },
+    subscribe(listener) {
+      if (!closed) listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    async close() {
+      closed = true;
+      available = false;
+      previous.clear();
+      if (timer) clearTimeout(timer);
+      timer = void 0;
+      listeners.clear();
+      stopWatches();
+      await running;
+      stopWatches();
+    }
+  };
+}
+var WATCH_UNAVAILABLE;
+var init_changes = __esm({
+  "src/web/changes.ts"() {
+    "use strict";
+    WATCH_UNAVAILABLE = "Automatic updates are unavailable. Use Refresh; watching will retry.";
+  }
+});
+
 // src/web/workspace.ts
 var workspace_exports = {};
 __export(workspace_exports, {
   createWorkspaceReader: () => createWorkspaceReader
 });
-import { constants as constants7, promises as fs8 } from "node:fs";
-import path11 from "node:path";
+import { constants as constants8, promises as fs8 } from "node:fs";
+import path12 from "node:path";
 import { pathToFileURL } from "node:url";
 import { createHash as createHash4 } from "node:crypto";
 async function createWorkspaceReader(root, modelSource) {
-  root = await fs8.realpath(path11.resolve(root));
+  root = await fs8.realpath(path12.resolve(root));
   if (!(await fs8.stat(root)).isDirectory()) throw new Error("Workspace root must be an existing directory.");
   await assertSnlDoc(root);
   const validation = await validateManagedWorkspace(root);
   if (!validation.valid) throw new Error("Invalid .SNL_Doc workspace: " + validation.issues.filter((issue) => issue.severity === "error").map((issue) => issue.message).join("; "));
-  if (typeof modelSource === "string" && !path11.isAbsolute(modelSource)) throw new Error("Reader model path must be absolute.");
+  if (typeof modelSource === "string" && !path12.isAbsolute(modelSource)) throw new Error("Reader model path must be absolute.");
   const model = typeof modelSource === "string" ? await import(pathToFileURL(modelSource).href) : modelSource;
   if (typeof model?.buildWorkspaceReaderSnapshot !== "function" || typeof model?.readerAssetPaths !== "function") {
     throw new Error("Reader model must export buildWorkspaceReaderSnapshot and readerAssetPaths.");
@@ -23469,7 +23662,7 @@ async function createWorkspaceReader(root, modelSource) {
   };
   return {
     async getWorkspace() {
-      return { id: "local", name: path11.basename(root), root, libraries: await libraries(), capabilities: { edit: false } };
+      return { id: "local", name: path12.basename(root), root, libraries: await libraries(), capabilities: { edit: false } };
     },
     async getSnapshot(slug) {
       assertSlug(slug);
@@ -23518,7 +23711,7 @@ function assertSlug(slug) {
 }
 function assetMime(asset) {
   const mimes = { ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".avif": "image/avif", ".bmp": "image/bmp", ".ico": "image/x-icon" };
-  return mimes[path11.extname(asset).toLowerCase()] ?? "application/octet-stream";
+  return mimes[path12.extname(asset).toLowerCase()] ?? "application/octet-stream";
 }
 async function readAsset(root, asset) {
   if (!asset || /[:\\\\%\u0000-\u001f\u007f-\u009f]/u.test(asset) || asset.split("/").some((part) => !part || part === "." || part === "..")) {
@@ -23529,18 +23722,18 @@ async function readAsset(root, asset) {
     let current = root;
     const parts = [".SNL_Doc", "assets", ...asset.split("/")];
     for (const part of parts.slice(0, -1)) {
-      current = path11.join(current, part);
+      current = path12.join(current, part);
       if (process.platform !== "linux" && await fs8.realpath(current) !== current) throw new Error("Symlink asset parent.");
-      const handle2 = await fs8.open(current, constants7.O_RDONLY | constants7.O_NOFOLLOW | constants7.O_DIRECTORY);
+      const handle2 = await fs8.open(current, constants8.O_RDONLY | constants8.O_NOFOLLOW | constants8.O_DIRECTORY);
       handles.push(handle2);
       if (!(await handle2.stat()).isDirectory()) throw new Error("Invalid asset directory.");
       if (process.platform === "linux") current = `/proc/self/fd/${handle2.fd}`;
     }
-    const filename = path11.join(current, parts.at(-1));
+    const filename = path12.join(current, parts.at(-1));
     const before = await fs8.lstat(filename);
     if (!before.isFile() || before.isSymbolicLink()) throw new Error("Asset must be a regular non-symlink file.");
     if (process.platform !== "linux" && await fs8.realpath(filename) !== filename) throw new Error("Symlink asset file.");
-    const handle = await fs8.open(filename, constants7.O_RDONLY | constants7.O_NOFOLLOW | constants7.O_NONBLOCK);
+    const handle = await fs8.open(filename, constants8.O_RDONLY | constants8.O_NOFOLLOW | constants8.O_NONBLOCK);
     handles.push(handle);
     const stat = await handle.stat();
     if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error("Asset changed while opening.");
@@ -23567,18 +23760,58 @@ __export(server_exports, {
   startWebReader: () => startWebReader
 });
 import { createServer } from "node:http";
-import { readFile as readFile2, lstat, realpath } from "node:fs/promises";
-import path12 from "node:path";
+import { randomUUID as randomUUID6 } from "node:crypto";
+import { readFile as readFile2, lstat as lstat2, realpath as realpath2 } from "node:fs/promises";
+import path13 from "node:path";
 import { fileURLToPath } from "node:url";
-async function serveWorkspace(reader, assetsDirectory, port = WEB_DEFAULT_PORT) {
+async function serveWorkspace(reader, assetsDirectory, port = WEB_DEFAULT_PORT, options = {}) {
   const assets = /* @__PURE__ */ new Map();
   for (const [name, type] of [["index.html", "text/html"], ["reader.js", "text/javascript"], ["reader.css", "text/css"]]) {
     try {
-      assets.set(name === "index.html" ? "/" : "/__snl/static/" + name, { body: await readFile2(path12.join(assetsDirectory, name)), type });
+      assets.set(name === "index.html" ? "/" : "/__snl/static/" + name, { body: await readFile2(path13.join(assetsDirectory, name)), type });
     } catch {
       throw new WebHostError("web.assets-missing", "Prebuilt reader assets are missing. For a source checkout run npm run build:web; reinstall an incomplete npm package.");
     }
   }
+  const changes = options.root ? await watchWorkspaceChanges(options.root, options.watch) : void 0;
+  const disabledRevision = `${randomUUID6()}:0`;
+  const clients = /* @__PURE__ */ new Set();
+  let heartbeat;
+  let disposal;
+  const removeClient = (res) => {
+    clients.delete(res);
+    if (!clients.size && heartbeat) {
+      clearInterval(heartbeat);
+      heartbeat = void 0;
+    }
+  };
+  const write = (res, frame2) => {
+    if (res.destroyed || res.writableEnded) {
+      removeClient(res);
+      return;
+    }
+    if (!res.write(frame2)) {
+      removeClient(res);
+      res.destroy();
+    }
+  };
+  const frame = (event) => `event: ${event.event}
+data: ${JSON.stringify(event.data)}
+
+`;
+  const unsubscribe = changes?.subscribe((event) => {
+    for (const res of clients) write(res, frame(event));
+  });
+  const dispose = () => {
+    if (disposal) return disposal;
+    if (heartbeat) clearInterval(heartbeat);
+    heartbeat = void 0;
+    unsubscribe?.();
+    for (const res of clients) res.destroy();
+    clients.clear();
+    disposal = changes?.close() ?? Promise.resolve();
+    return disposal;
+  };
   let origin = "";
   let actualPort = port;
   const server = createServer(async (req, res) => {
@@ -23609,6 +23842,26 @@ async function serveWorkspace(reader, assetsDirectory, port = WEB_DEFAULT_PORT) 
       }
       const asset = assets.get(url.pathname);
       if (asset) return send(200, asset.body, asset.type);
+      if (url.pathname === "/__snl/api/events") {
+        if (req.method === "HEAD") return send(200, "", "text/event-stream");
+        if (clients.size >= 64) return error(503, "web.events-busy", "Too many update subscribers.");
+        res.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "X-Accel-Buffering": "no" });
+        clients.add(res);
+        res.once("close", () => removeClient(res));
+        res.once("error", () => {
+          removeClient(res);
+          res.destroy();
+        });
+        write(res, frame({ event: "change", data: { revision: changes?.revision ?? disabledRevision } }));
+        if (!changes?.available) write(res, frame({ event: "unavailable", data: { message: WATCH_UNAVAILABLE } }));
+        if (clients.size && !heartbeat) {
+          heartbeat = setInterval(() => {
+            for (const client of clients) write(client, ": heartbeat\n\n");
+          }, options.heartbeatMs ?? 15e3);
+          heartbeat.unref();
+        }
+        return;
+      }
       if (url.pathname === "/__snl/api/workspace") return send(200, JSON.stringify(await reader.getWorkspace()));
       if (url.pathname === "/__snl/api/snapshot") {
         const slugs = url.searchParams.getAll("library");
@@ -23620,18 +23873,33 @@ async function serveWorkspace(reader, assetsDirectory, port = WEB_DEFAULT_PORT) 
       return error(400, "web.read-failed", e2 instanceof Error ? e2.message : "Workspace read failed.");
     }
   });
+  const closeServer = server.close.bind(server);
+  server.close = (callback) => {
+    const disposed = dispose();
+    return closeServer((error) => {
+      void disposed.then(() => callback?.(error));
+    });
+  };
+  server.once("close", () => {
+    void dispose();
+  });
   await new Promise((resolve4, reject) => {
     server.once("error", reject);
     server.listen(port, WEB_HOST, () => {
       server.off("error", reject);
       resolve4();
     });
-  }).catch((e2) => {
+  }).catch(async (e2) => {
+    await dispose();
     if (e2.code === "EADDRINUSE") throw new WebHostError("web.port-in-use", `Port ${port} is already in use; choose another with --port. No port was changed automatically.`);
     throw e2;
   });
   const address = server.address();
-  if (!address || typeof address === "string") throw new Error("No TCP listening address.");
+  if (!address || typeof address === "string") {
+    await dispose();
+    server.close();
+    throw new Error("No TCP listening address.");
+  }
   actualPort = address.port;
   origin = `http://${WEB_HOST}:${actualPort}`;
   return {
@@ -23646,26 +23914,27 @@ async function serveWorkspace(reader, assetsDirectory, port = WEB_DEFAULT_PORT) 
 async function startWebReader(root, port = WEB_DEFAULT_PORT) {
   let canonical;
   try {
-    canonical = await realpath(root);
-    if (!(await lstat(canonical)).isDirectory() || !(await lstat(path12.join(canonical, ".SNL_Doc"))).isDirectory()) throw new Error("Not a workspace");
+    canonical = await realpath2(root);
+    if (!(await lstat2(canonical)).isDirectory() || !(await lstat2(path13.join(canonical, ".SNL_Doc"))).isDirectory()) throw new Error("Not a workspace");
   } catch {
-    throw new WebHostError("web.workspace-missing", `No SNL workspace at ${path12.resolve(root)}. Use snl init --root <directory> first, or specify an existing workspace with --root.`);
+    throw new WebHostError("web.workspace-missing", `No SNL workspace at ${path13.resolve(root)}. Use snl init --root <directory> first, or specify an existing workspace with --root.`);
   }
   const assetsDirectory = fileURLToPath(new URL("../../dist/web/", import.meta.url));
   try {
-    for (const name of ["index.html", "reader.js", "reader.css", "model.mjs"]) if (!(await lstat(path12.join(assetsDirectory, name))).isFile()) throw new Error("Missing artifact");
+    for (const name of ["index.html", "reader.js", "reader.css", "model.mjs"]) if (!(await lstat2(path13.join(assetsDirectory, name))).isFile()) throw new Error("Missing artifact");
   } catch {
     throw new WebHostError("web.assets-missing", "Prebuilt reader assets are missing. For a source checkout run npm run build:web; reinstall an incomplete npm package.");
   }
   const { createWorkspaceReader: createWorkspaceReader2 } = await Promise.resolve().then(() => (init_workspace(), workspace_exports));
-  const reader = await createWorkspaceReader2(canonical, path12.join(assetsDirectory, "model.mjs"));
+  const reader = await createWorkspaceReader2(canonical, path13.join(assetsDirectory, "model.mjs"));
   await reader.getWorkspace();
-  return { ...await serveWorkspace(reader, assetsDirectory, port), root: canonical };
+  return { ...await serveWorkspace(reader, assetsDirectory, port, { root: canonical }), root: canonical };
 }
 var WEB_DEFAULT_PORT, WEB_HOST, WebHostError;
 var init_server = __esm({
   "src/web/server.ts"() {
     "use strict";
+    init_changes();
     WEB_DEFAULT_PORT = 4911;
     WEB_HOST = "127.0.0.1";
     WebHostError = class extends Error {
@@ -23680,7 +23949,7 @@ var init_server = __esm({
 
 // src/cli/snl.ts
 import { promises as fs9 } from "node:fs";
-import path13 from "node:path";
+import path14 from "node:path";
 import { pathToFileURL as pathToFileURL2 } from "node:url";
 
 // src/cli/operation.ts
@@ -23759,14 +24028,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path14 = null;
+  let path15 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path14 = createKeyPath(key);
+    path15 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -23776,12 +24045,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name)));
     }
-    path14 = createKeyPath(name);
+    path15 = createKeyPath(name);
     id = createKeyId(name);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path14,
+    path: path15,
     id,
     weight,
     src,
@@ -23794,29 +24063,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path14) {
+function get(obj, path15) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path15, index, arrayIndex) => {
+  const deepGet = (obj2, path16, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path15[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path16[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path15[index]];
+      const value = obj2[path16[index]];
       if (!isDefined(value)) return;
-      if (index === path15.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path16.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path15, index + 1, i5);
-      } else if (path15.length) deepGet(value, path15, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path16, index + 1, i5);
+      } else if (path16.length) deepGet(value, path16, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path14) ? path14.split(".") : path14, 0);
+  deepGet(obj, isString(path15) ? path15.split(".") : path15, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -27609,7 +27878,7 @@ async function executeOperation(request) {
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path14) => path14 !== "help"),
+        commands: COMMAND_PATHS.filter((path15) => path15 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
         web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
         initHelp: {
@@ -27836,7 +28105,7 @@ function parseCli(argv) {
     if (token.startsWith("-")) return { json, error: `Unknown flag ${token}.` };
     positional.push(token);
   }
-  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path13.resolve(root), arguments: {} } };
+  if (help) return { json, request: { protocol: OPERATION_PROTOCOL, command: "help", root: path14.resolve(root), arguments: {} } };
   const [domain, action, ...rest] = positional;
   if (!domain) return { json, error: "Expected a command domain." };
   const command = domain === "init" ? "init" : action ? `${domain}/${action}` : domain;
@@ -27860,7 +28129,7 @@ function parseCli(argv) {
     if (rest.length !== 1) return { json, error: `${command} requires one exact Package identity.` };
     args.id = rest[0];
   } else if (rest.length) return { json, error: `${command} does not accept identity positionals.` };
-  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path13.resolve(root), arguments: args } };
+  return { json, request: { protocol: OPERATION_PROTOCOL, command, root: path14.resolve(root), arguments: args } };
 }
 async function readInput(file) {
   const text2 = file === "-" ? await new Promise((resolve4, reject) => {
@@ -27869,7 +28138,7 @@ async function readInput(file) {
     process.stdin.on("data", (c3) => data += c3);
     process.stdin.on("end", () => resolve4(data));
     process.stdin.on("error", reject);
-  }) : await fs9.readFile(path13.resolve(file), "utf8");
+  }) : await fs9.readFile(path14.resolve(file), "utf8");
   return JSON.parse(text2);
 }
 function webArguments(argv) {
@@ -27897,7 +28166,7 @@ function webArguments(argv) {
     }
     return null;
   }
-  return { root: path13.resolve(root), port, json, error };
+  return { root: path14.resolve(root), port, json, error };
 }
 async function main2(argv = process.argv.slice(2)) {
   const web = webArguments(argv);
@@ -27958,7 +28227,7 @@ Press Ctrl+C to stop.
   return result.exitCode;
 }
 var isBuiltExecutable = true;
-if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL2(path13.resolve(process.argv[1])).href) main2().then((code) => {
+if (isBuiltExecutable || process.argv[1] && import.meta.url === pathToFileURL2(path14.resolve(process.argv[1])).href) main2().then((code) => {
   process.exitCode = code;
 });
 export {

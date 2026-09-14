@@ -22,23 +22,33 @@ const command = (args) => {
 };
 const entry = (id, markdown) => ({ id, package: '_unpackaged', kind: 'entry', title: id, content: { markdown }, contribution_info: null, pointer: null });
 const library = (slug, ids) => ({ slug, meta: { title: slug + ' library' }, graph: { nodes: ids.map((id,i) => ({ id: 'occurrence-' + i, label: 'Entry', props: { entryId: id } })), relationships: [] }, counters: { counters: [] } });
-const preset = { schema: 'snl.init-preset', version: 1, id: 'web-smoke', entries: [entry('Alpha', 'Alpha original body.\n\n![Probe](assets/probe.svg)'), entry('Beta', 'Beta independent body.'), entry('Outside', 'Outside library but searchable.')], libraries: [library('Main', ['Alpha', 'Beta']), library('Other', ['Beta'])], relationships: [{ id: 'alpha-beta', from: 'Alpha', to: 'Beta', label: 'depends', metadata: { generator: 'macro-source-scan', isAtomic: true } }] };
+const followParagraphs = '\n\n' + Array.from({ length: 45 }, (_, i) => `Follow paragraph ${i}.`).join('\n\n');
+const preset = { schema: 'snl.init-preset', version: 1, id: 'web-smoke', entries: [entry('Alpha', 'Alpha original body.\n\n![Probe](assets/probe.svg)' + followParagraphs), entry('Beta', 'Beta independent body.'), entry('Outside', 'Outside library but searchable.')], libraries: [library('Main', ['Alpha', 'Beta']), library('Other', ['Beta'])], relationships: [{ id: 'alpha-beta', from: 'Alpha', to: 'Beta', label: 'depends', metadata: { generator: 'macro-source-scan', isAtomic: true } }] };
 const input = join(out, 'preset.json'); writeFileSync(input, JSON.stringify(preset)); command(['init', '--input', input]);
 mkdirSync(join(workspace, '.SNL_Doc/assets')); writeFileSync(join(workspace, '.SNL_Doc/assets/probe.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40"><rect width="120" height="40" fill="teal"/></svg>');
 writeFileSync(join(workspace, '.env'), 'DO_NOT_SERVE_THIS_FILE');
 const port = process.env.SNL_WEB_PORT || '4911';
 // Deliberately use cwd, not --root: the defining bare-command behavior.
 const args = port === '4911' ? [] : ['--port', port];
-const child = spawn(process.env.SNL_TEST_BIN || process.execPath, process.env.SNL_TEST_BIN ? args : [cli, ...args], { cwd: workspace, stdio: ['ignore', 'pipe', 'pipe'], shell: process.platform === 'win32' && !!process.env.SNL_TEST_BIN });
-let stdout = '', stderr = ''; child.stderr.on('data', x => stderr += x);
-const readiness = new Promise((resolveReady, reject) => {
-  const timeout = setTimeout(() => reject(new Error('Web CLI readiness timed out: ' + stdout + stderr)), 15000);
-  child.stdout.on('data', x => { stdout += x; if (stdout.includes('Press Ctrl+C')) { clearTimeout(timeout); resolveReady(); } });
-  child.once('exit', code => { clearTimeout(timeout); reject(new Error('Web CLI exited ' + code + ': ' + stdout + stderr)); });
-});
+let child;
+let stdout = '', stderr = '';
+function startCli() {
+  const running = spawn(process.env.SNL_TEST_BIN || process.execPath, process.env.SNL_TEST_BIN ? args : [cli, ...args], { cwd: workspace, stdio: ['ignore', 'pipe', 'pipe'], shell: process.platform === 'win32' && !!process.env.SNL_TEST_BIN });
+  child = running;
+  let startup = '';
+  running.stderr.on('data', x => stderr += x);
+  return new Promise((resolveReady, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Web CLI readiness timed out: ' + stdout + stderr)), 15000);
+    running.stdout.on('data', x => { startup += x; stdout += x; if (startup.includes('Press Ctrl+C')) { clearTimeout(timeout); resolveReady(); } });
+    running.once('error', error => { clearTimeout(timeout); reject(error); });
+    running.once('exit', code => { clearTimeout(timeout); reject(new Error('Web CLI exited ' + code + ': ' + stdout + stderr)); });
+  });
+}
+const readiness = startCli();
 let browser;
 const url = `http://127.0.0.1:${port}`;
 const errors = [], requests = [], headers = [];
+let expectedDisconnect = false;
 async function checkHeader(page, route, singleRow = true) {
   await page.evaluate(() => window.scrollTo(0, 0));
   const header = page.locator('.snl-panel-header:visible');
@@ -62,10 +72,11 @@ try {
   assert.equal(info.root, workspace); assert.equal(info.libraries.length, 2);
   assert.equal((await fetch(url + '/.env')).status, 404);
   browser = await chromium.launch({ executablePath: process.env.SNL_CHROMIUM_PATH, headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage', '--no-zygote', '--renderer-process-limit=1'] });
-  const page = await browser.newPage({ viewport: { width: 1200, height: 850 } });
+  const context = await browser.newContext({ viewport: { width: 1200, height: 850 } });
+  const page = await context.newPage();
   page.on('pageerror', e => errors.push(String(e)));
-  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-  page.on('requestfailed', r => { if (r.failure()?.errorText !== 'net::ERR_ABORTED') errors.push(`${r.url()}: ${r.failure()?.errorText}`); });
+  page.on('console', message => { if (message.type() === 'error' && !(expectedDisconnect && /ERR_CONNECTION|Failed to load resource/.test(message.text()))) errors.push(message.text()); });
+  page.on('requestfailed', r => { if (r.failure()?.errorText !== 'net::ERR_ABORTED' && !(expectedDisconnect && r.url().endsWith('/__snl/api/events'))) errors.push(`${r.url()}: ${r.failure()?.errorText}`); });
   page.on('request', r => requests.push(r.url()));
   await page.goto(url);
   await page.getByText(workspace, { exact: true }).waitFor();
@@ -94,8 +105,15 @@ try {
   const listUpdate = join(out, 'list-update.json'); writeFileSync(listUpdate, JSON.stringify(other.value));
   command(['library', 'update', 'Other', '--if-match', other.revision, '--input', listUpdate]);
   const beforeRefreshSnapshots = requests.filter(u => u.includes('/api/snapshot')).length;
-  await page.getByRole('button', { name: /Refresh/ }).first().click();
-  await page.getByText(longTitle, { exact: true }).waitFor();
+  // Saving authoring files must update the open catalog without Refresh or navigation.
+  await page.getByText(longTitle, { exact: true }).waitFor({ timeout: 8000 });
+  assert.equal(requests.filter(u => u.includes('/api/snapshot')).length, beforeRefreshSnapshots);
+  const addedLibrary = join(out, 'live-library.json'); writeFileSync(addedLibrary, JSON.stringify(library('Live', ['Beta'])));
+  command(['library', 'create', '--input', addedLibrary]);
+  await libraryRow('Live library').waitFor({ timeout: 8000 });
+  const added = command(['library', 'get', 'Live']).entity;
+  command(['library', 'delete', 'Live', '--if-match', added.revision]);
+  await libraryRow('Live library').waitFor({ state: 'detached', timeout: 8000 });
   assert.equal(requests.filter(u => u.includes('/api/snapshot')).length, beforeRefreshSnapshots);
   await page.setViewportSize({ width: 360, height: 800 });
   await checkHeader(page, 'workspace-long-title-360');
@@ -199,12 +217,42 @@ try {
   await page.getByText('Beta independent body.', { exact: true }).waitFor();
   assert.equal(await page.getByText('Alpha original body.', { exact: true }).count(), 0);
   await page.goto(url + '/#/library?library=Main');
+  await page.getByText('Alpha original body.', { exact: true }).waitFor();
+  const readingUrl = page.url();
+  const sibling = await page.context().newPage();
+  sibling.on('pageerror', e => errors.push(String(e)));
+  await sibling.goto(url + '/#/entry/Alpha?library=Main');
+  await sibling.getByRole('main').getByText('Alpha original body.', { exact: true }).waitFor();
+  const siblingUrl = sibling.url();
+  writeFileSync(join(workspace, '.SNL_Doc/assets/probe.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="180" height="40"><rect width="180" height="40" fill="purple"/></svg>');
+  await page.waitForFunction(() => Array.from(document.querySelectorAll('img[alt="Probe"]')).some(img => img.getClientRects().length && img.naturalWidth === 180), null, { timeout: 8000 });
+  await sibling.waitForFunction(() => Array.from(document.querySelectorAll('img[alt="Probe"]')).some(img => img.getClientRects().length && img.naturalWidth === 180), null, { timeout: 8000 });
   const data = command(['entry', 'get', 'Alpha']).entity;
-  data.value.content.markdown = 'Alpha refreshed body.';
+  data.value.content.markdown = 'Alpha refreshed body.\n\n![Probe](assets/probe.svg)' + followParagraphs;
+  const scrollBeforeFollow = await page.evaluate(() => { window.scrollTo(0, 700); return window.scrollY; });
+  assert(scrollBeforeFollow > 600, 'Reading-position control must actually be scrolled');
   const update = join(out, 'update.json'); writeFileSync(update, JSON.stringify(data.value));
   command(['entry', 'update', 'Alpha', '--if-match', data.revision, '--input', update]);
-  await page.getByRole('button', { name: /Refresh/ }).first().click();
+  await page.getByText('Alpha refreshed body.', { exact: true }).waitFor({ timeout: 8000 });
+  await sibling.getByRole('main').getByText('Alpha refreshed body.', { exact: true }).waitFor({ timeout: 8000 });
+  assert.equal(page.url(), readingUrl); assert.equal(sibling.url(), siblingUrl);
+  await page.waitForFunction(expected => Math.abs(window.scrollY - expected) < 5, scrollBeforeFollow, { timeout: 8000 });
+  await sibling.close();
+  // Kill/restart the real owned server; recover an edit missed while disconnected.
+  expectedDisconnect = true;
+  const stopped = once(child, 'exit'); child.kill('SIGTERM'); await stopped;
+  await page.getByRole('status').filter({ hasText: /auto.*(disconnect|unavailable|retry|reconnect)/i }).waitFor({ timeout: 8000 });
   await page.getByText('Alpha refreshed body.', { exact: true }).waitFor();
+  const disconnected = command(['entry', 'get', 'Alpha']).entity;
+  disconnected.value.title = 'Alpha after reconnect';
+  const reconnectUpdate = join(out, 'reconnect-update.json'); writeFileSync(reconnectUpdate, JSON.stringify(disconnected.value));
+  command(['entry', 'update', 'Alpha', '--if-match', disconnected.revision, '--input', reconnectUpdate]);
+  await startCli();
+  await page.getByText('Alpha after reconnect', { exact: true }).first().waitFor({ timeout: 15000 });
+  await page.getByRole('status').filter({ hasText: /auto.*(disconnect|unavailable|retry|reconnect)/i }).waitFor({ state: 'detached', timeout: 8000 });
+  assert.equal(page.url(), readingUrl);
+  expectedDisconnect = false;
+  await page.screenshot({ path: join(out, 'auto-reconnected.png') });
   await page.setViewportSize({ width: 620, height: 800 });
   await checkHeader(page, 'library-620');
   await page.screenshot({ path: join(out, 'reader-narrow.png'), fullPage: true });
@@ -231,7 +279,7 @@ try {
   assert.equal(await page.getByRole('button', { name: /^(Edit|Save)$/ }).count(), 0);
   assert.deepEqual(errors, []);
   assert(requests.every(u => u.startsWith(url) || u.startsWith('data:')), 'Startup/render requested external resources');
-  writeFileSync(join(out, 'receipt.json'), JSON.stringify({ url, workspace, cli, cliSha256: createHash('sha256').update(readFileSync(cli)).digest('hex'), errors, requests, headers, stdout, ok: true }, null, 2));
+  writeFileSync(join(out, 'receipt.json'), JSON.stringify({ url, workspace, cli, cliSha256: createHash('sha256').update(readFileSync(cli)).digest('hex'), errors, requests, headers, stdout, automaticFollowing: { catalogSave: true, libraryCreateDelete: true, assetTabs: 2, contentTabs: 2, reconnectCatchup: true, readingUrl, siblingUrl, scrollBefore: scrollBeforeFollow }, ok: true }, null, 2));
   console.log('PASS local Web browser acceptance:', join(out, 'receipt.json'));
 } catch (e) {
   if (browser) for (const context of browser.contexts()) for (const page of context.pages()) await page.screenshot({ path: join(out, 'failure.png'), fullPage: true }).catch(() => {});
