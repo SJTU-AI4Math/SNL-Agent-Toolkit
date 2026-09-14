@@ -56,4 +56,4 @@ const help=JSON.parse(run(process.execPath,[cli,'--help','--json'],consumer));
 assert.equal(help.ok,true);assert.ok(!help.data.commands.includes('relationship/generate'));
 const unavailable=spawnSync(process.execPath,[cli,'relationship','generate','--root',consumer,'--json'],{encoding:'utf8'});
 assert.equal(unavailable.status,2);assert.equal(JSON.parse(unavailable.stdout).ok,false);
-console.log(JSON.stringify({packed:pack.filename,consumer,commandPublication:'BLOCKED/unavailable',rejection:JSON.parse(unavailable.stdout)}));
+console.log(JSON.stringify({packed:pack.filename,consumer,commandPublication:'INTEGRATION_PENDING/unavailable',rejection:JSON.parse(unavailable.stdout)}));

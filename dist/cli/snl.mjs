@@ -28010,11 +28010,16 @@ function supportedMode(mode, p3) {
   if (mode & 3584) throw new BatchError("workspace.unsupported-mode", `Batch refuses setuid, setgid and sticky permission bits: ${p3}.`, 2);
   return mode & 511;
 }
-async function snapshot(root) {
+function derivedPath(relative2) {
+  if (relative2 === ".cache" || relative2.startsWith(".cache/")) return true;
+  const [pool, slug, cache] = relative2.split("/");
+  return pool === "libraries" && cache === ".cache" && !!slug && slug === slug.trim() && !slug.startsWith(".") && !/[\\/:\0]/.test(slug) && !/[. ]$/.test(slug) && !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(slug);
+}
+async function snapshot(root, domain = "physical") {
   const out = /* @__PURE__ */ new Map();
   const doc = path10.join(root, ".SNL_Doc");
   async function walk(relative2) {
-    if (relative2 === DATA_WRITE_LOCK_FILENAME) return;
+    if (relative2 === DATA_WRITE_LOCK_FILENAME || domain === "authoring" && derivedPath(relative2)) return;
     const p3 = path10.join(doc, relative2);
     const s4 = await fs8.lstat(p3);
     if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
@@ -28027,10 +28032,11 @@ async function snapshot(root) {
       try {
         const opened = await handle.stat();
         const openedMode = supportedMode(opened.mode, p3);
-        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
+        const conflict2 = domain === "physical" && derivedPath(relative2) ? "batch.physical-conflict" : "batch.workspace-conflict";
+        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
         const bytes = await handle.readFile();
         const after = await handle.stat();
-        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
         out.set(relative2, { kind: "file", mode: openedMode, bytes });
       } finally {
         await handle.close();
@@ -28040,13 +28046,18 @@ async function snapshot(root) {
   await walk("");
   return out;
 }
-function revision(root, data) {
-  const hash = createHash4("sha256").update(`snl.batch.workspace/v1\0${root}\0`);
+function revision(root, data, domain = "authoring") {
+  const hash = createHash4("sha256").update(`${domain === "physical" ? "snl.batch.workspace/v1" : "snl.authoring.workspace/v2"}\0${root}\0`);
   for (const [name, node] of [...data].sort(([a4], [b4]) => compareCanonicalIds(a4, b4))) {
+    if (domain === "authoring" && derivedPath(name)) continue;
     hash.update(JSON.stringify([name, node.kind, node.mode, node.kind === "file" ? node.bytes.length : 0]) + "\0");
     if (node.kind === "file") hash.update(node.bytes);
   }
-  return hash.digest("hex");
+  return (domain === "authoring" ? "snl.authoring.workspace/v2:" : "") + hash.digest("hex");
+}
+function assertUnchanged(root, current, authoring, physical) {
+  if (revision(root, current) !== authoring) fail("batch.workspace-conflict", "Authoring revision changed; recheck the complete batch.");
+  if (revision(root, current, "physical") !== physical) fail("batch.physical-conflict", "Physical tree changed (possibly cache churn); quiesce cache writers and retry the complete batch.");
 }
 async function materialize(stage, data) {
   for (const [name, node] of data) {
@@ -28255,6 +28266,7 @@ async function checkBatch(root, raw) {
   if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
   const original = await snapshot(root);
   const expectedWorkspaceRevision = revision(root, original);
+  const originalPhysicalRevision = revision(root, original, "physical");
   const temporaryRoot = await fs8.realpath(os.tmpdir());
   const relativeTemporaryRoot = path10.relative(root, temporaryRoot);
   if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path10.sep}`) && relativeTemporaryRoot !== ".." && !path10.isAbsolute(relativeTemporaryRoot)) {
@@ -28265,7 +28277,8 @@ async function checkBatch(root, raw) {
     await materialize(stage, original);
     const prepared = await prepare(stage, original, operations);
     await assertRoot(root);
-    if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME)) || revision(root, await snapshot(root)) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace changed during preflight; check the complete batch again.");
+    if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) fail("batch.workspace-conflict", "Writer lock appeared during preflight; check the complete batch again.");
+    assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
     return { normalizedOperations: operations, checkedDigest: sha2(["snl.batch/v1", operations]), expectedWorkspaceRevision, diagnostics: prepared.diagnostics, counts: prepared.counts };
   } finally {
     await fs8.rm(stage, { recursive: true, force: true });
@@ -28279,7 +28292,8 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
     return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async () => {
       if (sha2(["snl.batch/v1", operations]) !== checkedDigest) fail("batch.digest-conflict", "checkedDigest does not match the normalized operation sequence; recheck the whole batch.");
       const original = await snapshot(root);
-      if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace revision changed; recheck the whole batch, never replay a suffix.");
+      if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Authoring revision changed or receipt uses the retired whole-tree token; recheck the whole batch with this Toolkit, never replay a suffix.");
+      const originalPhysicalRevision = revision(root, original, "physical");
       const stage = await fs8.mkdtemp(path10.join(root, ".snl-batch-"));
       const liveDoc = path10.join(root, ".SNL_Doc");
       const stagedDoc = path10.join(stage, ".SNL_Doc");
@@ -28306,19 +28320,22 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
           await lh.close();
         }
         await seal(stage, original);
-        const resultingWorkspaceRevision = revision(root, await snapshot(stage));
-        if (revision(root, await snapshot(root)) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace changed while staging; publication refused.");
-        originalInode = await fs8.stat(liveDoc);
-        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
-        journalCreated = true;
+        const candidate = await snapshot(stage);
+        const resultingWorkspaceRevision = revision(root, candidate);
+        const resultingPhysicalRevision = revision(root, candidate, "physical");
         await hooks.beforeExchange?.();
+        assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
+        originalInode = await fs8.stat(liveDoc);
+        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, originalPhysicalRevision, resultingPhysicalRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
+        journalCreated = true;
         await exchange(liveDoc, stagedDoc);
+        assertUnchanged(root, await snapshot(stage), expectedWorkspaceRevision, originalPhysicalRevision);
         await hooks.afterExchange?.();
         await hooks.beforeParentSync?.();
         await syncDir(root);
         await syncDir(stage);
         await validate(root);
-        if (revision(root, await snapshot(root)) !== resultingWorkspaceRevision) throw new BatchError("batch.readback-failed", "Published workspace does not match the validated candidate.", 2);
+        if (revision(root, await snapshot(root), "physical") !== resultingPhysicalRevision) throw new BatchError("batch.readback-failed", "Published workspace does not match the validated complete physical candidate.", 2);
         await fs8.unlink(journal);
         journalCreated = false;
         committed = true;
@@ -28338,7 +28355,7 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
             if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
             await syncDir(root);
             await syncDir(stage);
-            if (revision(root, await snapshot(root)) !== expectedWorkspaceRevision) throw new Error("Rollback revision mismatch.");
+            if (revision(root, await snapshot(root), "physical") !== originalPhysicalRevision) throw new Error("Rollback physical revision mismatch.");
             await fs8.unlink(journal);
             journalCreated = false;
           } catch (rollback) {

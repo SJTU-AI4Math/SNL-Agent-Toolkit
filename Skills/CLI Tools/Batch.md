@@ -96,10 +96,29 @@ and staging disk are proportional to the entire workspace plus candidate.
 Large unrelated `.SNL_Doc` assets are copied too, not excluded from authority.
 
 `checkedDigest` commits to the normalized sequence; `expectedWorkspaceRevision`
-commits to the canonical root and every captured path/type/mode/file byte in
-`.SNL_Doc`, including extensions and frozen backups. Only the transient shared
-writer lock is excluded. Tokens are opaque consistency guards, not signed
-credentials. Changing either operations or workspace requires a fresh check.
+commits to the canonical root and every Authoring path/type/mode/file byte in
+`.SNL_Doc`, including unknown extensions/assets and frozen backups. The transient
+shared writer lock and only the reserved `.cache` and
+`libraries/<legal-cache-slug>/.cache` subtrees are excluded. Slugs follow the pinned
+Extension cache-path segment rules; `.cache` under other author directories is
+still authority. Cache missing/corrupt/rebuilt state is not Authoring corruption.
+Opaque v2 tokens are deliberately distinct from retired whole-tree tokens; old
+receipts reject as `batch.workspace-conflict` (exit 1), including cold workspaces.
+Recheck with the upgraded Toolkit, never translate or fabricate a token.
+
+The complete physical snapshot, copy, supported-mode and symlink checks are
+separate and still include caches. Cache-only changes between check and apply
+do not stale Authoring CAS; apply copies the then-current full physical preimage.
+During check/staging, a detected Authoring change is `batch.workspace-conflict`;
+otherwise physical-tree churn is `batch.physical-conflict` (exit 1), not an
+Authoring conflict. Quiesce cache writers and retry the complete check/apply.
+Copy I/O errors remain `workspace.operation-failed` (exit 2), unsafe paths/modes
+retain their existing codes. No silent cache omission or best-effort copy is allowed.
+Post-exchange readback checks the entire physical candidate (`batch.readback-failed`),
+and rollback checks the entire physical preimage; cache-only corruption cannot
+pass either check. A changed retired preimage may require manual recovery.
+Tokens are opaque consistency guards, not signed credentials. Cache-only
+publication or a no-op batch may keep the resulting Authoring revision unchanged.
 
 ## Publication guarantee and operational limits
 
@@ -164,7 +183,12 @@ recorded process **and its Python helper** are no longer active. Inspect
 `<root>/.snl-batch-*/.SNL_Doc`. Treat journal paths as data to inspect, never as
 commands to execute. Validate that they belong to this canonical root before
 using them. The journal records original directory identity, both workspace
-revision tokens, digest and stage path.
+Authoring revision tokens, digest and stage path. New journals additionally record
+`originalPhysicalRevision` and `resultingPhysicalRevision` for complete-generation
+reconciliation. These use the legacy full-tree fingerprint domain; old journals
+lack these fields and their workspace tokens describe full-tree identity. Never
+compare old and new token domains as if interchangeable. Existing journals always
+block writes; this change does not auto-upgrade, clear or replay recovery records.
 
 Determine whether the live directory is the old or new complete generation;
 validate the selected generation and reconcile its bytes with the captured
