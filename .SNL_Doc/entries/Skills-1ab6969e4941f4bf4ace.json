@@ -9,13 +9,13 @@
     "kind": "cli",
     "title": "$\\texttt{snl batch apply}$",
     "content": {
-      "markdown": "Use `snl batch apply` to publish exactly a previously reviewed dependent batch as one atomic or explicitly guarded operation.\n\n### Agent procedure\n1. Run `snl batch check` on the exact unchanged input immediately before apply.\n2. Apply once and inspect the structured per-operation result; on conflict, rebuild and recheck the whole batch rather than replaying a suffix.\n3. Run `snl validate --root <path> --json` after the write and stop if it reports an error.\n\n### Machine-use contract\nInvoke `snl batch apply` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
+      "markdown": "Use `snl batch apply` to publish exactly a previously reviewed dependent batch as one atomic or explicitly guarded operation.\n\n### Agent procedure\n1. Run `snl batch check` on the exact unchanged input immediately before apply.\n2. Apply once and inspect the structured per-operation result; on conflict, rebuild and recheck the whole batch rather than replaying a suffix.\n3. Distinguish rollback, recovery-required, and committed-cleanup outcomes before retrying. `batch.recovery-required` (exit 2) means the old generation is not guaranteed live: stop writes and preserve the journal, lock and retained directory for inspection. `batch.committed-cleanup-failed` (exit 2) means the batch already committed; inspect the resulting revision and clean up only after reconciliation, never replay blindly. A success warning `batch.backup-cleanup-failed` likewise means committed data with retained backup.\n4. Run `snl validate --root <path> --json` after success or an explicit recovery decision; validation alone does not determine whether to roll back or retain a generation. Resolve journal/lock residue before resuming ordinary writes.\n5. Use the failure model in `CLI.snl-batch-apply` and the detailed `Skills/CLI Tools/Batch.md` procedure. The current Linux directory exchange is not unlocked-reader snapshot isolation or guaranteed rollback after process/power loss. Quiesce multi-file readers during publication and refresh afterwards.\n\n### Machine-use contract\nInvoke `snl batch apply` with an explicit `--root` and `--json`. Treat returned IDs and revisions as opaque. Branch on the structured status and exit code; do not scrape human-formatted output or edit `.SNL_Doc` files directly."
     },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/CLI Tools/SKILL.md",
       "mode": "lines",
-      "line": 590
+      "line": 594
     }
   }
 }
