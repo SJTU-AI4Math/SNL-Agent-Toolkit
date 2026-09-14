@@ -3477,6 +3477,9 @@ function isLocalizedLabel(value, required) {
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertCurrentEntryPayload(value, label) {
+  if (Object.hasOwn(value, "tags") && (!Array.isArray(value.tags) || !Array.from(value.tags).every((tag) => typeof tag === "string"))) {
+    throw new Error(`${label}#tags must be an array of strings when present.`);
+  }
   if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }

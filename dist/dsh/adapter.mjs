@@ -19131,6 +19131,9 @@ function isLocalizedLabel(value, required) {
   return values.length > 0 && values.every((item) => typeof item === "string") && (!required || values.some((item) => item.trim()));
 }
 function assertCurrentEntryPayload(value, label) {
+  if (Object.hasOwn(value, "tags") && (!Array.isArray(value.tags) || !Array.from(value.tags).every((tag) => typeof tag === "string"))) {
+    throw new Error(`${label}#tags must be an array of strings when present.`);
+  }
   if (typeof value.kind !== "string" || !value.kind.trim() || value.kind !== value.kind.trim() || !isLocalizedLabel(value.title, false) || !isRecord2(value.content) || !Object.hasOwn(value, "contribution_info") || !Object.hasOwn(value, "pointer")) {
     throw new Error(`${label} is not a valid schema-1 Entry payload.`);
   }
@@ -19987,6 +19990,14 @@ function lintEntry(raw, ctx) {
     return { issues };
   }
   const e2 = raw;
+  if (Object.hasOwn(e2, "tags") && (!Array.isArray(e2.tags) || !Array.from(e2.tags).every((tag) => typeof tag === "string"))) {
+    issues.push({
+      severity: "error",
+      code: "entry.bad-tags",
+      message: "Field `tags` must be an array of strings when present.",
+      path: "tags"
+    });
+  }
   if (typeof e2.id !== "string" || e2.id.trim() === "") {
     issues.push({
       severity: "error",
@@ -24275,7 +24286,8 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
     await options.afterRevisionCheck?.();
     if (operation === "update") {
-      const value = requireRecord(input, type);
+      const supplied = requireRecord(input, type);
+      const value = type === "entry" && !Object.hasOwn(supplied, "tags") && Object.hasOwn(current.value, "tags") ? { ...supplied, tags: current.value.tags } : supplied;
       const problem = await validationMessage(root, type, value, id);
       if (problem)
         return invalid(problem);

@@ -92,6 +92,16 @@ read/maintenance compatibility for `0.0.6` and older aggregate workspaces, never
 merges frozen aggregate backups into current live entities, and rejects unknown
 future workspace or entity schema versions instead of guessing.
 
+Entry payloads support optional `tags: string[]` under the existing schema-1
+and storage-version-1 envelope. Missing tags mean no tags; valid arrays retain
+exact values, authored order and duplicates (including empty strings, punctuation
+and `__proto__`). Present null/scalar/mixed values are rejected before writing.
+Entry updates omitting `tags` preserve existing tags; an explicit `[]` clears
+them. Create/read, copy-by-create, rename and Package moves preserve tags.
+Untouched untagged Entries are not rewritten; this additive field introduces no
+migration, tag registry or version bump. The unified CLI and MCP adapters use
+the same validated CRUD core; upgrade older writers before editing tagged data.
+
 ## Related repositories
 
 - [`SNL-Basics`](https://github.com/SJTU-AI4Math/SNL-Basics) — parser and renderer.

@@ -102,6 +102,17 @@ export function lintEntry(
   }
   const e = raw as Partial<EntryData>;
 
+  // Entry tags are raw identities, not Macro/Style selector syntax.
+  if (Object.hasOwn(e, 'tags') &&
+      (!Array.isArray(e.tags) || !Array.from(e.tags).every(tag => typeof tag === 'string'))) {
+    issues.push({
+      severity: 'error',
+      code: 'entry.bad-tags',
+      message: 'Field `tags` must be an array of strings when present.',
+      path: 'tags',
+    });
+  }
+
   // id
   if (typeof e.id !== 'string' || e.id.trim() === '') {
     issues.push({
