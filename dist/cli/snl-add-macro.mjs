@@ -17888,8 +17888,22 @@ async function readLock(lockPath) {
     return null;
   }
 }
+var sameIdentity = (a3, b3) => a3.dev === b3.dev && a3.ino === b3.ino;
+async function isCanonicalAcquisition(handle, lockPath, parent) {
+  try {
+    const currentParent = await lstat(path4.dirname(lockPath), { bigint: true });
+    const current = await lstat(lockPath, { bigint: true });
+    const held = await handle.stat({ bigint: true });
+    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && sameIdentity(held, current);
+  } catch (error) {
+    if (errorCode(error) === "ENOENT" || errorCode(error) === "ENOTDIR") return false;
+    throw error;
+  }
+}
 async function acquireLock(workspaceRoot, purpose) {
   const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
+  const parent = await lstat(path4.dirname(lockPath), { bigint: true });
+  if (!parent.isDirectory()) throw new Error("SNL workspace lock parent must be a non-symlink directory.");
   const record = {
     version: 1,
     pid: process.pid,
@@ -17904,10 +17918,16 @@ async function acquireLock(workspaceRoot, purpose) {
       await handle.writeFile(`${JSON.stringify(record)}
 `, "utf8");
       await handle.sync();
-      return { handle, lockPath, record };
+      return { handle, lockPath, record, parent };
     } catch (error) {
-      await handle.close();
-      await unlink(lockPath).catch(() => void 0);
+      try {
+        if (await isCanonicalAcquisition(handle, lockPath, parent) && !await hasBatchJournal(workspaceRoot)) {
+          await unlink(lockPath);
+        }
+      } catch {
+      } finally {
+        await handle.close();
+      }
       throw error;
     }
   } catch (error) {
@@ -17928,6 +17948,9 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   const acquired = await acquireLock(workspaceRoot, purpose);
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
+    if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) || (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
+      throw new Error("SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.");
+    }
     return await task();
   } finally {
     await acquired.handle.close();

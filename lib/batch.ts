@@ -123,6 +123,12 @@ async function assertRoot(root: string) {
   }
   if (await exists(path.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError('batch.recovery-required', `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
 }
+function supportedMode(mode: number, p: string): number {
+  // Whole-tree copying has no ownership policy for setuid/setgid/sticky bits.
+  // Reject rather than silently strip them (including for empty batches).
+  if (mode & 0o7000) throw new BatchError('workspace.unsupported-mode', `Batch refuses setuid, setgid and sticky permission bits: ${p}.`, 2);
+  return mode & 0o777;
+}
 async function snapshot(root: string): Promise<Snapshot> {
   const out: Snapshot = new Map();
   const doc = path.join(root, '.SNL_Doc');
@@ -131,18 +137,20 @@ async function snapshot(root: string): Promise<Snapshot> {
     const p = path.join(doc, relative);
     const s = await fs.lstat(p);
     if (s.isSymbolicLink() || (!s.isDirectory() && !s.isFile())) throw new BatchError('workspace.unsafe-path', `Batch refuses symlinks and special files: ${p}.`, 2);
+    const mode = supportedMode(s.mode, p);
     if (s.isDirectory()) {
-      out.set(relative, { kind: 'directory', mode: s.mode & 0o777 });
+      out.set(relative, { kind: 'directory', mode });
       for (const name of (await fs.readdir(p)).sort(compareCanonicalIds)) await walk(relative ? `${relative}/${name}` : name);
     } else {
       const handle = await fs.open(p, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
       try {
         const opened = await handle.stat();
-        if (!opened.isFile() || opened.ino !== s.ino || opened.dev !== s.dev) throw new BatchError('batch.workspace-conflict', `${p} changed during capture.`);
+        const openedMode = supportedMode(opened.mode, p);
+        if (!opened.isFile() || opened.ino !== s.ino || opened.dev !== s.dev || opened.mode !== s.mode) throw new BatchError('batch.workspace-conflict', `${p} changed during capture.`);
         const bytes = await handle.readFile();
         const after = await handle.stat();
-        if (after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError('batch.workspace-conflict', `${p} changed during capture.`);
-        out.set(relative, { kind: 'file', mode: opened.mode & 0o777, bytes });
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError('batch.workspace-conflict', `${p} changed during capture.`);
+        out.set(relative, { kind: 'file', mode: openedMode, bytes });
       } finally { await handle.close(); }
     }
   }

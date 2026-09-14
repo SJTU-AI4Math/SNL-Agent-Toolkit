@@ -21359,8 +21359,22 @@ async function readLock(lockPath) {
     return null;
   }
 }
+var sameIdentity = (a4, b4) => a4.dev === b4.dev && a4.ino === b4.ino;
+async function isCanonicalAcquisition(handle, lockPath, parent) {
+  try {
+    const currentParent = await (0, import_promises.lstat)(path4.dirname(lockPath), { bigint: true });
+    const current = await (0, import_promises.lstat)(lockPath, { bigint: true });
+    const held = await handle.stat({ bigint: true });
+    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && sameIdentity(held, current);
+  } catch (error) {
+    if (errorCode(error) === "ENOENT" || errorCode(error) === "ENOTDIR") return false;
+    throw error;
+  }
+}
 async function acquireLock(workspaceRoot, purpose) {
   const lockPath = path4.join(workspaceRoot, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME);
+  const parent = await (0, import_promises.lstat)(path4.dirname(lockPath), { bigint: true });
+  if (!parent.isDirectory()) throw new Error("SNL workspace lock parent must be a non-symlink directory.");
   const record4 = {
     version: 1,
     pid: process.pid,
@@ -21375,10 +21389,16 @@ async function acquireLock(workspaceRoot, purpose) {
       await handle.writeFile(`${JSON.stringify(record4)}
 `, "utf8");
       await handle.sync();
-      return { handle, lockPath, record: record4 };
+      return { handle, lockPath, record: record4, parent };
     } catch (error) {
-      await handle.close();
-      await (0, import_promises.unlink)(lockPath).catch(() => void 0);
+      try {
+        if (await isCanonicalAcquisition(handle, lockPath, parent) && !await hasBatchJournal(workspaceRoot)) {
+          await (0, import_promises.unlink)(lockPath);
+        }
+      } catch {
+      } finally {
+        await handle.close();
+      }
       throw error;
     }
   } catch (error) {
@@ -21399,6 +21419,9 @@ async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   const acquired = await acquireLock(workspaceRoot, purpose);
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
+    if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) || (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
+      throw new Error("SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.");
+    }
     return await task();
   } finally {
     await acquired.handle.close();
@@ -27775,6 +27798,10 @@ async function assertRoot(root) {
   }
   if (await exists(import_node_path5.default.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
 }
+function supportedMode(mode, p3) {
+  if (mode & 3584) throw new BatchError("workspace.unsupported-mode", `Batch refuses setuid, setgid and sticky permission bits: ${p3}.`, 2);
+  return mode & 511;
+}
 async function snapshot(root) {
   const out = /* @__PURE__ */ new Map();
   const doc = import_node_path5.default.join(root, ".SNL_Doc");
@@ -27783,18 +27810,20 @@ async function snapshot(root) {
     const p3 = import_node_path5.default.join(doc, relative2);
     const s4 = await import_node_fs9.promises.lstat(p3);
     if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
+    const mode = supportedMode(s4.mode, p3);
     if (s4.isDirectory()) {
-      out.set(relative2, { kind: "directory", mode: s4.mode & 511 });
+      out.set(relative2, { kind: "directory", mode });
       for (const name of (await import_node_fs9.promises.readdir(p3)).sort(compareCanonicalIds)) await walk(relative2 ? `${relative2}/${name}` : name);
     } else {
       const handle = await import_node_fs9.promises.open(p3, import_node_fs9.constants.O_RDONLY | import_node_fs9.constants.O_NOFOLLOW | import_node_fs9.constants.O_NONBLOCK);
       try {
         const opened = await handle.stat();
-        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
+        const openedMode = supportedMode(opened.mode, p3);
+        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
         const bytes = await handle.readFile();
         const after = await handle.stat();
-        if (after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
-        out.set(relative2, { kind: "file", mode: opened.mode & 511, bytes });
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
+        out.set(relative2, { kind: "file", mode: openedMode, bytes });
       } finally {
         await handle.close();
       }

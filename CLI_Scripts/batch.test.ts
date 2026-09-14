@@ -23,7 +23,7 @@ async function tree(root: string) {
   async function visit(dir: string) {
     for (const item of (await readdir(path.join(root, dir), { withFileTypes: true })).sort((a, b) => a.name < b.name ? -1 : 1)) {
       const name = path.join(dir, item.name);
-      const mode = (await lstat(path.join(root, name))).mode & 0o777;
+      const mode = (await lstat(path.join(root, name))).mode; // Full st_mode, including special bits.
       if (item.isDirectory()) { result.push([name, `directory:${mode}`]); await visit(name); }
       else if (item.isSymbolicLink()) result.push([name, `link:${await readlink(path.join(root, name))}`]);
       else { assert.ok(item.isFile()); result.push([name, `${mode}:${(await readFile(path.join(root, name))).toString('base64')}`]); }
@@ -98,6 +98,40 @@ function failure(result: Awaited<ReturnType<typeof call>>, code?: string, exit?:
   if (code) assert.equal(result.response.error.code, code, result.response.error.message);
   if (exit) assert.equal(result.exitCode, exit);
 }
+
+for (const [relative, mode] of [
+  ['entries', 0o2775], ['', 0o1777], ['config.json', 0o4755],
+  ['config.json', 0o2644], ['config.json', 0o1644],
+] as const) {
+  for (const ops of [[], operations]) {
+    test(`special mode ${mode.toString(8)} on ${relative || '.SNL_Doc'} rejects check and stale apply (${ops.length} operations) without side effects`, async () => {
+      const root = await fixture();
+      const target = path.join(root, '.SNL_Doc', relative);
+      await chmod(target, mode & 0o777);
+      const good = receipt(success(await call(root, 'batch/check', { operations: ops })));
+      await chmod(target, mode);
+      assert.equal((await lstat(target)).mode & 0o7777, mode, 'filesystem must actually retain the special bits');
+      const before = await tree(root);
+      // Apply the receipt from before a special-bit-only mode change first: a
+      // false success publishes and strips the bit, visible to the full oracle.
+      const applied = await call(root, 'batch/apply', good);
+      assert.deepEqual(await tree(root), before, JSON.stringify(applied.response));
+      failure(applied, 'workspace.unsupported-mode', 2);
+      failure(await call(root, 'batch/check', { operations: ops }), 'workspace.unsupported-mode', 2);
+      assert.deepEqual(await tree(root), before);
+    });
+  }
+}
+
+test('plain-mode empty batch preserves complete tree and modes', async () => {
+  const root = await fixture();
+  await chmod(path.join(root, '.SNL_Doc', 'entries'), 0o775);
+  await chmod(path.join(root, '.SNL_Doc', 'config.json'), 0o640);
+  const before = await tree(root);
+  const checked = success(await call(root, 'batch/check', { operations: [] }));
+  success(await call(root, 'batch/apply', receipt(checked)));
+  assert.deepEqual(await tree(root), before);
+});
 
 test('discovery preserves current init and reader, with exactly seven creates and no generation', async () => {
   const root = await fixture();

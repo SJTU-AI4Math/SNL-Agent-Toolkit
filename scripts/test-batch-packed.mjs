@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
-import { cp, mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, readdir, readFile, rm, chmod, lstat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 const consumer = path.resolve(process.argv[2] ?? '.');
@@ -24,8 +24,9 @@ async function tree(root) {
   async function visit(dir) {
     for (const item of (await readdir(path.join(root, dir), { withFileTypes: true })).sort((a,b) => a.name < b.name ? -1 : 1)) {
       const name = path.join(dir, item.name);
-      if (item.isDirectory()) { out.push([name, 'directory']); await visit(name); }
-      else { assert.ok(item.isFile()); out.push([name, (await readFile(path.join(root, name))).toString('base64')]); }
+      const mode = (await lstat(path.join(root, name))).mode;
+      if (item.isDirectory()) { out.push([name, `directory:${mode}`]); await visit(name); }
+      else { assert.ok(item.isFile()); out.push([name, `${mode}:${(await readFile(path.join(root, name))).toString('base64')}`]); }
     }
   }
   await visit(''); return out;
@@ -67,7 +68,27 @@ for (const adapter of ['cli', 'dist/mcp/server.cjs', 'agent-plugin/dist/mcp/serv
       { command: 'relationship/create', arguments: { value: { id: 'packed.depends', from: 'packed.dependent', to: 'entry.localized', label: 'depends', metadata: { manual: true } } } },
       { command: 'entry-package/create', arguments: { value: { id: 'Packed' } } },
     ];
+    for (const [relative, mode] of [['entries', 0o2775], ['', 0o1777], ['config.json', 0o4755]]) {
+      const target = path.join(root, '.SNL_Doc', relative);
+      const originalMode = (await lstat(target)).mode & 0o7777;
+      await chmod(target, mode & 0o777);
+      const emptyReceipt = receipt(ok(await call('batch/check', { operations: [] })));
+      await chmod(target, mode);
+      assert.equal((await lstat(target)).mode & 0o7777, mode);
+      const specialTree = await tree(root);
+      const check = await call('batch/check', { operations: [] });
+      assert.equal(check.ok, false, `${adapter} check accepted unsupported ${mode.toString(8)}`);
+      assert.equal(check.error.code, 'workspace.unsupported-mode');
+      const apply = await call('batch/apply', emptyReceipt);
+      assert.equal(apply.ok, false);
+      assert.equal(apply.error.code, 'workspace.unsupported-mode');
+      assert.deepEqual(await tree(root), specialTree);
+      await chmod(target, originalMode);
+    }
     const before = await tree(root);
+    const empty = receipt(ok(await call('batch/check', { operations: [] })));
+    ok(await call('batch/apply', empty));
+    assert.deepEqual(await tree(root), before);
     const checked = ok(await call('batch/check', { operations }));
     assert.deepEqual(await tree(root), before);
     const bad = await call('batch/apply', { ...receipt(checked), checkedDigest: 'tampered' });
@@ -101,7 +122,7 @@ for (const adapter of ['cli', 'dist/mcp/server.cjs', 'agent-plugin/dist/mcp/serv
     assert.equal(ok(await call('validate', { scope: 'workspace' })).valid, true);
     assert.deepEqual(await readdir(root), ['.SNL_Doc']);
     assert.ok(!(await readdir(path.join(root, '.SNL_Doc'))).includes('.data-write.lock'));
-    evidence.push({ adapter, ok: true, publication: applied.publication, cases: ['discovery','dependent-create','read-only-check','digest-tamper','stale-revision','replay','Library-reject','duplicate-reject','invalid-tags','tag-preservation-and-clear','old-entity-revision','no-residue','validation'] });
+    evidence.push({ adapter, ok: true, publication: applied.publication, cases: ['special-modes-check-reject','special-only-stale-apply-reject','empty-batch-full-mode-preservation','discovery','dependent-create','read-only-check','digest-tamper','stale-revision','replay','Library-reject','duplicate-reject','invalid-tags','tag-preservation-and-clear','old-entity-revision','no-residue','validation'] });
   } finally { await rm(root, { recursive: true, force: true }); }
 }
 console.log(JSON.stringify({ packageRoot, evidence }, null, 2));

@@ -110,11 +110,19 @@ credentials. Changing either operations or workspace requires a fresh check.
   paths, **Linux**, `python3` with standard-library `ctypes`, and a filesystem
   supporting `renameat2(RENAME_EXCHANGE)`. Unsupported exchange is probed and
   rejected before live mutation; there is **no sequential-rename fallback**.
-- Apply rederives both tokens under the Extension-compatible shared writer
-  lock, stages and validates a whole tree in a private sibling directory,
+- Apply rederives both tokens under the existing version-1 shared writer
+  lock at `.SNL_Doc/.data-write.lock`, stages and validates a whole tree in a private sibling directory,
   syncs candidate files/directories, writes a durable recovery journal, then
   exchanges the complete `.SNL_Doc` directory in one kernel operation.
-  Both generations carry the same lock token across the exchange.
+  Both generations carry the same lock token across the exchange. Toolkit also
+  verifies the acquired fd, canonical lock/token and captured parent identity
+  before task admission; an O_EXCL success in a retired parent is not a lock on
+  the live tree. Failed initialization only removes a matching canonical inode.
+  **Older Extension/Toolkit writers must be stopped throughout batch and recovery.**
+  Extension must implement the same identity-safe admission/failed-acquisition
+  cleanup and pre-acquisition/pre-admission journal gates before mixed-writer
+  isolation can be certified. The unchanged lock location/record is wire
+  compatibility, not proof that old clients safely handle directory exchange.
 - After exchange it syncs both parent directories, runs whole-workspace
   validation, and checks the exact resulting tree revision before the commit
   point (recovery-journal unlink). Detected pre-commit failures exchange the
@@ -135,8 +143,13 @@ credentials. Changing either operations or workspace requires a fresh check.
 - The lock coordinates cooperating writers only. Hostile same-UID pathname
   replacement, open external writers, hardlink aliases, xattrs/ACLs, arbitrary
   hardware failure and guaranteed rollback after `SIGKILL`/power loss are not
-  certified. Ordinary file bytes and permission bits are copied, not inode
-  identities/timestamps/ACLs. Symlinks and special files fail closed.
+  certified. Ordinary file bytes and low-nine rwx permission bits are copied,
+  not inode identities, ownership, timestamps or ACLs. Symlinks and special
+  files fail closed. Any setuid, setgid or sticky bit on a captured file or
+  directory is rejected by check/apply with `workspace.unsupported-mode` (exit 2),
+  even for empty batches or a special-bit-only change after check. Do not strip
+  the bits merely to make batch pass: make an explicit permission/ownership
+  decision or use another supported workflow.
 - The canonical tree and exchange parents are synced before commit. Journal
   garbage-collection unlink is not a separate durable transaction: a journal
   may reappear after a crash. A surviving journal is a recovery stop, not proof

@@ -52,11 +52,30 @@ async function readLock(lockPath: string): Promise<LockRecord | null> {
   }
 }
 
+type Identity = { dev: bigint; ino: bigint };
+const sameIdentity = (a: Identity, b: Identity) => a.dev === b.dev && a.ino === b.ino;
+
+/** An O_EXCL success can belong to a parent retired by a directory exchange. */
+async function isCanonicalAcquisition(handle: FileHandle, lockPath: string, parent: Identity): Promise<boolean> {
+  try {
+    const currentParent = await lstat(path.dirname(lockPath), { bigint: true });
+    const current = await lstat(lockPath, { bigint: true });
+    const held = await handle.stat({ bigint: true });
+    return currentParent.isDirectory() && sameIdentity(parent, currentParent) &&
+      current.isFile() && held.isFile() && sameIdentity(held, current);
+  } catch (error) {
+    if (errorCode(error) === 'ENOENT' || errorCode(error) === 'ENOTDIR') return false;
+    throw error;
+  }
+}
+
 async function acquireLock(
   workspaceRoot: string,
   purpose: string,
-): Promise<{ handle: FileHandle; lockPath: string; record: LockRecord }> {
+): Promise<{ handle: FileHandle; lockPath: string; record: LockRecord; parent: Identity }> {
   const lockPath = path.join(workspaceRoot, '.SNL_Doc', DATA_WRITE_LOCK_FILENAME);
+  const parent = await lstat(path.dirname(lockPath), { bigint: true });
+  if (!parent.isDirectory()) throw new Error('SNL workspace lock parent must be a non-symlink directory.');
   const record: LockRecord = {
     version: 1,
     pid: process.pid,
@@ -70,10 +89,16 @@ async function acquireLock(
     try {
       await handle.writeFile(`${JSON.stringify(record)}\n`, 'utf8');
       await handle.sync();
-      return { handle, lockPath, record };
+      return { handle, lockPath, record, parent };
     } catch (error) {
-      await handle.close();
-      await unlink(lockPath).catch(() => undefined);
+      // Initialization may have failed on a retired fd. Never unlink a newer
+      // canonical owner's lock, even if our partial record cannot be parsed.
+      try {
+        if (await isCanonicalAcquisition(handle, lockPath, parent) && !await hasBatchJournal(workspaceRoot)) {
+          await unlink(lockPath);
+        }
+      } catch { /* Preserve the initialization error; uncertain residue is retained. */ }
+      finally { await handle.close(); }
       throw error;
     }
   } catch (error) {
@@ -104,9 +129,15 @@ export async function withWorkspaceDataLock<T>(
   const acquired = await acquireLock(workspaceRoot, purpose);
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
+    if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) ||
+        (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
+      throw new Error('SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.');
+    }
     return await task();
   } finally {
     await acquired.handle.close();
+    // An admitted batch intentionally exchanges the parent and copies its token
+    // to a new inode. Release by token, not pre-exchange inode, after the task.
     const current = await readLock(acquired.lockPath);
     if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
