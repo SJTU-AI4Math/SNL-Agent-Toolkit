@@ -59,6 +59,10 @@
   "author": "SJTU-AI4Math",
   "license": "MIT",
   "exports": {
+    "./relationship-generation": {
+      "types": "./lib/relationship-generation.ts",
+      "import": "./dist/relationship-generation.mjs"
+    },
     "./dsh": "./dist/dsh/adapter.mjs",
     "./package.json": "./package.json"
   },
@@ -67,6 +71,7 @@
     "Skills",
     "!Skills/__deprecated__/**",
     "examples",
+    "docs/relationship-generation.md",
     "dist",
     "plugin",
     "agent-plugin",

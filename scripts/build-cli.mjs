@@ -10,6 +10,15 @@ export async function buildCli() {
   await mkdir(resolve(root, 'dist/cli'), { recursive: true });
   await build({
     absWorkingDir: root,
+    entryPoints: ['lib/relationship-generation.ts'],
+    outfile: 'dist/relationship-generation.mjs',
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    target: 'node20',
+  });
+  await build({
+    absWorkingDir: root,
     entryPoints: {
       snl: 'src/cli/snl.ts',
       'snl-add-entry': 'src/cli/add-entry.ts',
