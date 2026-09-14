@@ -50,7 +50,7 @@ test('loads an official workspace read-only and refreshes the complete raw data'
   const root = await fixture();
   const before = await bytes(root); const cwd = process.cwd();
   const reader = await createWorkspaceReader(root, model);
-  assert.deepEqual(await reader.getWorkspace(), { id: 'local', name: path.basename(root), root: await realpath(root), libraries: [{ slug: 'book', title: 'Book' }], capabilities: { edit: false } });
+  assert.deepEqual(await reader.getWorkspace(), { id: 'local', name: path.basename(root), root: await realpath(root), libraries: [{ slug: 'book', title: 'Book', entryCount: 1, relationshipCount: 0 }], capabilities: { edit: false } });
   const snapshot = await reader.getSnapshot('book');
   assert.deepEqual(snapshot.entries.map(e => e.id).sort(), ['Elsewhere', 'Root']);
   assert.equal(snapshot.relationships.length, 1);
@@ -66,6 +66,24 @@ test('loads an official workspace read-only and refreshes the complete raw data'
   const changed = await updateManagedEntity(root, 'entry', 'Elsewhere', { ...entity.value, title: 'Fresh title' }, entity.revision);
   assert.equal(changed.status, 'ok', JSON.stringify(changed));
   assert.equal((await reader.getSnapshot('book')).entries.find(e => e.id === 'Elsewhere')?.title, 'Fresh title');
+});
+
+test('Library table statistics track graph occurrences and refresh without building snapshots', async () => {
+  const root = await fixture();
+  const reader = await createWorkspaceReader(root, { ...model, buildWorkspaceReaderSnapshot() { throw new Error('catalog must not build snapshots'); } });
+  const entity = await getManagedEntity(root, 'library', 'book'); assert.ok(entity);
+  const changed = await updateManagedEntity(root, 'library', 'book', { ...entity.value, graph: {
+    nodes: [
+      { id: 'one', label: 'Entry', props: { entryId: 'Root' } },
+      { id: 'two', label: 'Entry', props: { entryId: 'Root' } },
+      { id: 'placeholder', label: 'Entry', props: {} },
+    ], relationships: [{ from: 'one', to: 'two', label: 'branch' }, { from: 'two', to: 'placeholder', label: 'branch' }],
+  } }, entity.revision);
+  assert.equal(changed.status, 'ok', JSON.stringify(changed));
+  assert.deepEqual((await reader.getWorkspace()).libraries, [{ slug: 'book', title: 'Book', entryCount: 3, relationshipCount: 2 }]);
+  const updated = await getManagedEntity(root, 'library', 'book'); assert.ok(updated);
+  assert.equal((await updateManagedEntity(root, 'library', 'book', { ...updated.value, graph: { nodes: [], relationships: [] } }, updated.revision)).status, 'ok');
+  assert.deepEqual((await reader.getWorkspace()).libraries, [{ slug: 'book', title: 'Book', entryCount: 0, relationshipCount: 0 }]);
 });
 
 test('rejects invalid roots and Library slugs without exposing repository paths', async () => {

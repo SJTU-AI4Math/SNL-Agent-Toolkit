@@ -39,7 +39,7 @@ export interface WorkspaceReaderModel {
   readerAssetPaths(snapshot: WorkspaceReaderSnapshot): string[];
 }
 export interface LocalWorkspace {
-  id: 'local'; name: string; root: string; libraries: Array<{ slug: string; title: string }>; capabilities: { edit: false };
+  id: 'local'; name: string; root: string; libraries: Array<{ slug: string; title: string; entryCount: number | null; relationshipCount: number | null }>; capabilities: { edit: false };
 }
 export interface WorkspaceReader {
   getWorkspace(): Promise<LocalWorkspace>;
@@ -63,7 +63,11 @@ export async function createWorkspaceReader(root: string, modelSource: string | 
     return (await listManagedEntities(root, 'library')).map(({ id, value }) => {
       assertSlug(id);
       const title = (value.meta as LibraryMetaFile | undefined)?.title;
-      return { slug: id, title: title || id };
+      // Match Dashboard's Library table: occurrence IDs and structural edges,
+      // not shared Entry identities or workspace semantic relationships.
+      const graph = value.graph as LibraryGraph | undefined;
+      const entryCount = graph ? new Set(graph.nodes.filter(node => node.label === 'Entry').map(node => node.id)).size : null;
+      return { slug: id, title: title || id, entryCount, relationshipCount: graph?.relationships.length ?? null };
     });
   };
   return {
