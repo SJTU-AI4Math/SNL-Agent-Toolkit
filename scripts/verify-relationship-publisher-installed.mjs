@@ -6,7 +6,8 @@ import { mkdir, mkdtemp, readFile, writeFile, realpath, rm } from 'node:fs/promi
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { run, cleanEnvironment, protectedHashes, privateNpm, authorNonemptyFixture, sha256 } from './publisher-test-support.mjs';
-import { buildNativeReader, nativeReadback } from './publisher-native-reader.mjs';
+import { buildNativeReader, reuseNativeReader, nativeReadback } from './publisher-native-reader.mjs';
+import { setupActivation, authoringHashes } from './publisher-activation-fixture.mjs';
 const repo = path.resolve(import.meta.dirname, '..');
 const evidence = path.resolve(process.argv[2]); await mkdir(evidence, { recursive: true });
 const protectedBefore = await protectedHashes(repo);
@@ -23,14 +24,17 @@ try {
   assert.equal(await realpath(installed), installed);
   const closure = {};
   for (const relative of ['dist/cli/snl.mjs', 'dist/mcp/server.cjs', 'dist/dsh/adapter.mjs', 'agent-plugin/dist/mcp/server.cjs',
-    'lib/relationship-publisher.ts', 'lib/dependency-cache-descriptor.ts', 'lib/dependency-cache-storage.ts']) {
+    'lib/relationship-publisher.ts', 'lib/dependency-cache-descriptor.ts', 'lib/dependency-cache-storage.ts', 'lib/snl-doc.ts']) {
     const source = await readFile(path.join(repo, relative));
     const unpacked = Buffer.from(run('tar', ['-xOf', path.join(evidence, packed.filename), `package/${relative}`]));
     assert.deepEqual(await readFile(path.join(installed, relative)), source, relative);
     assert.deepEqual(unpacked, source, `tarball ${relative}`);
     closure[relative] = sha256(source);
   }
-  const { native, receipt: nativeSource } = await buildNativeReader(path.resolve(process.argv[3]), evidence);
+  const { native, receipt: nativeSource } = process.argv[4]
+    ? await reuseNativeReader(path.resolve(process.argv[4]))
+    : await buildNativeReader(path.resolve(process.argv[3]), evidence);
+  await writeFile(path.join(evidence, 'native-source-receipt.json'), JSON.stringify(nativeSource, null, 2));
   const root = path.join(consumer, 'workspace'); await mkdir(root);
   const cli = path.join(installed, 'dist/cli/snl.mjs');
   function command(args, input) {
@@ -51,6 +55,9 @@ try {
   command(['init']);
   const authoring = await authorNonemptyFixture(op);
   await writeFile(path.join(evidence, 'public-authoring-receipts.json'), JSON.stringify(authoring, null, 2));
+  const activationSetup = await setupActivation(root, evidence, undefined);
+  await writeFile(path.join(evidence, 'activation-setup.json'), JSON.stringify(activationSetup, null, 2));
+  const authoringBefore = await authoringHashes(root);
   assert.ok(command(['--help']).data.commands.includes('relationship/generate'));
   assert.ok(command(['relationship']).data.some(d => d.command === 'relationship/generate' && d.arguments.scope.required));
   const preview = command(['relationship', 'generate', '--scope', '{}', '--dry-run']).data;
@@ -96,7 +103,8 @@ try {
   } }, { signal: new AbortController().signal });
   assert.equal(stale.ok, false); assert.equal(stale.error.code, 'relationship.workspace-conflict');
   assert.equal(command(['validate']).data.valid, true);
-  result = { status: 'PASS', consumer, packed, npmIsolation, closure, nativeCommit: nativeSource.commit,
+  assert.deepEqual(await authoringHashes(root), authoringBefore, 'four transports and native reads preserve all Authoring bytes');
+  result = { status: 'PASS', activationSetup, authoringUnchanged: true, consumer, packed, npmIsolation, closure, nativeCommit: nativeSource.commit,
     transports: ['installed-cli', 'installed-mcp', 'installed-agent-plugin-mcp', 'installed-dsh'], preview, applied, dsh, nativeReceipts };
 } finally {
   const protectedAfter = await protectedHashes(repo);

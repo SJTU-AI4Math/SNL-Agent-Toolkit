@@ -612,9 +612,11 @@ function isRecord(value: unknown): value is Record<string, any> {
 }
 
 /**
- * Flatten every macro across every package into a `name → entry` map,
- * respecting `config.active_macro_packages` (missing = all active).
- * Later-active packages overwrite earlier ones on name collision.
+ * Flatten effective active Macros into a `name → entry` map. In entity storage,
+ * the system Package is never active (fixed native Reader semantics). Missing
+ * activation selects all regular Packages; [] selects none. Canonical Package
+ * filename order, not activation order, determines name-collision precedence.
+ * readAllMacroPackages remains the complete strict CRUD/management catalog.
  */
 export async function readActiveMacros(
   workspaceRoot: string,
@@ -639,6 +641,9 @@ export async function readActiveMacros(
   for (const pkgName of Object.keys(packages).sort(
     (left, right) => `${left}.json`.localeCompare(`${right}.json`),
   )) {
+    // Filter only after strict catalog admission: never hide malformed system
+    // envelopes or I/O failures, and never remove them from management reads.
+    if (usesEntityStorage(config) && pkgName === UNPACKAGED_PACKAGE_ID) continue;
     if (active && !active.has(pkgName)) continue;
     const pkg = packages[pkgName];
     if (!pkg?.macros) continue;

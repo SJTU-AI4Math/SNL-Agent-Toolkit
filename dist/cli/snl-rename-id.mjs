@@ -4264,6 +4264,7 @@ async function readActiveMacros(workspaceRoot) {
   for (const pkgName of Object.keys(packages).sort(
     (left, right) => `${left}.json`.localeCompare(`${right}.json`)
   )) {
+    if (usesEntityStorage(config) && pkgName === UNPACKAGED_PACKAGE_ID) continue;
     if (active && !active.has(pkgName)) continue;
     const pkg = packages[pkgName];
     if (!pkg?.macros) continue;

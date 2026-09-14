@@ -6,6 +6,18 @@ import { pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 import { run, privateNpm, sha256 } from './publisher-test-support.mjs';
 export const nativeCommit = '76acedbc05f0523b8ad2a2e99ebfeb01591f4647';
+export async function reuseNativeReader(evidence) {
+  const receipt = JSON.parse(await readFile(path.join(evidence, 'native-source-receipt.json'), 'utf8'));
+  assert.equal(receipt.commit, nativeCommit);
+  const source = path.join(evidence, 'fixed76-source');
+  const outfile = path.join(source, 'out/fixed76-native.cjs');
+  assert.equal(sha256(await readFile(outfile)), receipt.bundle);
+  assert.equal(sha256(await readFile(path.join(evidence, 'fixed76.tar'))), receipt.archive);
+  for (const [file, hash] of Object.entries(receipt.sourceHashes)) {
+    if (file !== 'harness-entrypoint') assert.equal(sha256(await readFile(path.resolve(source, file))), hash, file);
+  }
+  return { native: await import(pathToFileURL(outfile).href), receipt };
+}
 export async function buildNativeReader(reference, evidence) {
   assert.equal(run('git', ['rev-parse', 'HEAD'], { cwd: reference }).trim(), nativeCommit);
   assert.equal(run('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: reference }).trim(), '');
