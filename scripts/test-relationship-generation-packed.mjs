@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Run under the caller's bounded admission wrapper. All children are synchronous.
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile } from 'node:fs/promises';
+import { privateNpm, protectedHashes, cleanEnvironment } from './publisher-test-support.mjs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 
@@ -10,17 +11,25 @@ if (!base || !path.isAbsolute(base)) throw new Error('Pass an absolute owned evi
 await mkdir(base,{recursive:true});
 const root = path.resolve(import.meta.dirname,'..');
 const run=(cmd,args,cwd=root,input)=>{
-  const r=spawnSync(cmd,args,{cwd,input,encoding:'utf8',env:process.env,maxBuffer:16*1024*1024});
+  const r=spawnSync(cmd,args,{cwd,input,encoding:'utf8',env:cleanEnvironment(),timeout:180000,maxBuffer:16*1024*1024});
   console.log(JSON.stringify({command:[cmd,...args],cwd,status:r.status,stdout:r.stdout,stderr:r.stderr}));
   assert.equal(r.status,0,r.stdout+r.stderr);return r.stdout;
 };
-const pack=JSON.parse(run('npm',['pack','--ignore-scripts','--json','--pack-destination',base,'--cache',path.join(base,'npm-cache')]))[0];
+const beforeProtected = await protectedHashes(root);
+try {
+const consumer=await mkdtemp(path.join(base,'consumer-'));
+await writeFile(path.join(consumer,'package.json'),JSON.stringify({private:true,type:'module'}));
+const { npm } = await privateNpm(consumer);
+const pack=JSON.parse(npm(['pack',root,'--ignore-scripts','--json','--pack-destination',base]))[0];
 assert.ok(pack.files.some(f=>f.path==='dist/relationship-generation.mjs'));
 assert.ok(pack.files.some(f=>f.path==='lib/relationship-generation.ts'));
 assert.ok(!pack.files.some(f=>/relationship-oracle|result\.json|logs\//.test(f.path)));
-const consumer=await mkdtemp(path.join(base,'consumer-'));
-await writeFile(path.join(consumer,'package.json'),JSON.stringify({private:true,type:'module'}));
-run('npm',['install','--ignore-scripts','--no-audit','--no-fund','--cache',path.join(base,'npm-cache'),path.join(base,pack.filename)],consumer);
+npm(['install','--ignore-scripts','--no-audit','--no-fund',path.join(base,pack.filename)]);
+assert.equal(npm(['prefix']).trim(), consumer);
+// Own compiler and Node declarations: do not mask unpublished types with donor typeRoots.
+const typescript = JSON.parse(await readFile(path.join(root,'node_modules/typescript/package.json'),'utf8')).version;
+const nodeTypes = JSON.parse(await readFile(path.join(root,'node_modules/@types/node/package.json'),'utf8')).version;
+npm(['install','--ignore-scripts','--no-audit','--no-fund','--save-dev',`typescript@${typescript}`,`@types/node@${nodeTypes}`]);
 await writeFile(path.join(consumer,'consume.mjs'),`
 import assert from 'node:assert/strict';
 import { planComposedDependencyRelationships as plan, computeAtomicityInPlace } from '@snl-doc/agent-toolkit/relationship-generation';
@@ -50,10 +59,15 @@ const destination: 'memory-only' = result.destination;
 const publication: false = result.publicationSupported;
 console.log(destination,publication);
 `);
-run(process.execPath,[path.join(root,'node_modules/typescript/bin/tsc'),'--noEmit','--strict','--module','NodeNext','--moduleResolution','NodeNext','--target','ES2022','--skipLibCheck','--allowImportingTsExtensions','--typeRoots',path.join(root,'node_modules/@types'),'public-types.ts'],consumer);
+run(process.execPath,[path.join(consumer,'node_modules/typescript/bin/tsc'),'--noEmit','--strict','--module','NodeNext','--moduleResolution','NodeNext','--target','ES2022','--allowImportingTsExtensions','public-types.ts'],consumer);
 const cli=path.join(consumer,'node_modules/@snl-doc/agent-toolkit/dist/cli/snl.mjs');
 const help=JSON.parse(run(process.execPath,[cli,'--help','--json'],consumer));
-assert.equal(help.ok,true);assert.ok(!help.data.commands.includes('relationship/generate'));
-const unavailable=spawnSync(process.execPath,[cli,'relationship','generate','--root',consumer,'--json'],{encoding:'utf8'});
-assert.equal(unavailable.status,2);assert.equal(JSON.parse(unavailable.stdout).ok,false);
-console.log(JSON.stringify({packed:pack.filename,consumer,commandPublication:'INTEGRATION_PENDING/unavailable',rejection:JSON.parse(unavailable.stdout)}));
+assert.equal(help.ok,true);assert.ok(help.data.commands.includes('relationship/generate'));
+const missingScope=spawnSync(process.execPath,[cli,'relationship','generate','--root',consumer,'--json'],{encoding:'utf8',env:cleanEnvironment(),timeout:30000});
+assert.equal(missingScope.status,2);const rejected=JSON.parse(missingScope.stdout);assert.equal(rejected.ok,false);assert.match(rejected.error.message,/scope/i);
+console.log(JSON.stringify({packed:pack.filename,consumer,commandPublication:'AVAILABLE',pureSDK:'memory-only',isolatedTypes:true,rejection:rejected}));
+} finally {
+  const afterProtected = await protectedHashes(root);
+  await writeFile(path.join(base,'protected-metadata.json'),JSON.stringify({before:beforeProtected,after:afterProtected},null,2));
+  assert.deepEqual(afterProtected,beforeProtected);
+}
