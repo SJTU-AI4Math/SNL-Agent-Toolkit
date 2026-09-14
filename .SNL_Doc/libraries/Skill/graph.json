@@ -4,14 +4,16 @@
       "id": "n_3",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.SNLeco"
+        "entryId": "Skill.SNLeco",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
       "id": "n_5",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.SKILL.md-SNLeco"
+        "entryId": "Skill.SKILL.md-SNLeco",
+        "counterId": "2e7669af-6c4b-48ba-b3c4-bc9a04d3e56c"
       }
     },
     {
@@ -375,7 +377,8 @@
       "id": "n_2",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Init"
+        "entryId": "Skill.Init",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -410,7 +413,8 @@
       "id": "n_61",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Plan"
+        "entryId": "Skill.Plan",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -424,7 +428,8 @@
       "id": "n_63",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Author"
+        "entryId": "Skill.Author",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -438,7 +443,8 @@
       "id": "n_7",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Refinery"
+        "entryId": "Skill.Refinery",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -452,7 +458,8 @@
       "id": "n_66",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Maintain"
+        "entryId": "Skill.Maintain",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -466,7 +473,8 @@
       "id": "n_68",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.Read"
+        "entryId": "Skill.Read",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -480,7 +488,8 @@
       "id": "n_70",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.VerifyFix"
+        "entryId": "Skill.VerifyFix",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -494,7 +503,8 @@
       "id": "n_4",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.CLI"
+        "entryId": "Skill.CLI",
+        "counterId": "964e341a-082e-4b8a-95f6-84c15840e8fe"
       }
     },
     {
@@ -508,7 +518,8 @@
       "id": "n_73",
       "label": "Entry",
       "props": {
-        "entryId": "Skill.DSL_manual.md"
+        "entryId": "Skill.DSL_manual.md",
+        "counterId": "2e7669af-6c4b-48ba-b3c4-bc9a04d3e56c"
       }
     },
     {

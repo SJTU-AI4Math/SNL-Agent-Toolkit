@@ -15,7 +15,9 @@
         "zh-CN": "条目类型名称"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%To indicate the classification of the #0 in it.%(Concept.Entry[plural])"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

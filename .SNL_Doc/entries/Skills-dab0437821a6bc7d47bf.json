@@ -15,7 +15,9 @@
         "zh-CN": "条目类型描述"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%To describe the classification criteria of this #0.%(Concept.EntryKind)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

@@ -15,7 +15,9 @@
         "zh-CN": "条目类型 ID"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%Unique, to record the classification name in the storage.%"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

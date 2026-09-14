@@ -1,3 +1,17 @@
 {
-  "counters": []
+  "counters": [
+    {
+      "id": "964e341a-082e-4b8a-95f6-84c15840e8fe",
+      "name": "root",
+      "numbering": "1",
+      "children": [
+        {
+          "id": "2e7669af-6c4b-48ba-b3c4-bc9a04d3e56c",
+          "name": "file",
+          "numbering": "a",
+          "children": []
+        }
+      ]
+    }
+  ]
 }

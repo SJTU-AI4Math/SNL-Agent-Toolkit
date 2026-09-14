@@ -15,7 +15,9 @@
         "zh-CN": "计数器"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%When #0 are organized in a #1, the library can maintain #2s for each entry. These #2s are used to track the number of times an instance of some particular #3s has been referenced in the #1. Subcounters are permitted to be created and maintained for each #2. The style of a #2 can be customized by setting the display format, such as a number, a Latin letter, or a Roman numeral. If an #4 in the library has a #2, the #2 will be displayed next to the #5 in the #6.%(Concept.Entry[plural], Concept.Library, Concept.Counter, Concept.EntryKind, Concept.Entry, Concept.EntryTitle, Concept.InfoView)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

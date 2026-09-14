@@ -15,7 +15,9 @@
         "zh-CN": "条目类型配色"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%A hex numeral string that encodes the color of this #0 displayed in the #1.%(Concept.EntryKind, Concept.InfoView)"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

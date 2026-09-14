@@ -15,7 +15,9 @@
         "zh-CN": "条目类型"
       }
     },
-    "content": {},
+    "content": {
+      "snl": "%The #0 is used to classify all the #1 by some criteria.%(Concept.EntryKind, Concept.Entry[plural])"
+    },
     "contribution_info": null,
     "pointer": {
       "file": "Skills/SNL Ecosystem/SKILL.md",

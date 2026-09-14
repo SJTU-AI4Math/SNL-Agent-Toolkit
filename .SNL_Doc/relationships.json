@@ -2,6 +2,71 @@
   "version": 1,
   "relationships": [
     {
+      "id": "dep.Skill.SNLeco.cpt.Counter.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.Counter",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": false
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.Counter.Skill.SNLeco.cpt.EntryKind",
+      "from": "Skill.SNLeco.cpt.Counter",
+      "to": "Skill.SNLeco.cpt.EntryKind",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryKind"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.Counter.Skill.SNLeco.cpt.EntryTitle",
+      "from": "Skill.SNLeco.cpt.Counter",
+      "to": "Skill.SNLeco.cpt.EntryTitle",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryTitle"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.Counter.Skill.SNLeco.cpt.InfoView",
+      "from": "Skill.SNLeco.cpt.Counter",
+      "to": "Skill.SNLeco.cpt.InfoView",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.InfoView"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.Counter.Skill.SNLeco.cpt.Library",
+      "from": "Skill.SNLeco.cpt.Counter",
+      "to": "Skill.SNLeco.cpt.Library",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Library"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
       "id": "dep.Skill.SNLeco.cpt.EntryContent.Skill.SNLeco.cpt.Entry",
       "from": "Skill.SNLeco.cpt.EntryContent",
       "to": "Skill.SNLeco.cpt.Entry",
@@ -89,6 +154,71 @@
         "generator": "macro-source-scan",
         "macros": [
           "Concept.EntryPackage"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryKind.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.EntryKind",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryKindColoring.Skill.SNLeco.cpt.EntryKind",
+      "from": "Skill.SNLeco.cpt.EntryKindColoring",
+      "to": "Skill.SNLeco.cpt.EntryKind",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryKind"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryKindColoring.Skill.SNLeco.cpt.InfoView",
+      "from": "Skill.SNLeco.cpt.EntryKindColoring",
+      "to": "Skill.SNLeco.cpt.InfoView",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.InfoView"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryKindDescription.Skill.SNLeco.cpt.EntryKind",
+      "from": "Skill.SNLeco.cpt.EntryKindDescription",
+      "to": "Skill.SNLeco.cpt.EntryKind",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.EntryKind"
+        ],
+        "isAtomic": true
+      }
+    },
+    {
+      "id": "dep.Skill.SNLeco.cpt.EntryKindName.Skill.SNLeco.cpt.Entry",
+      "from": "Skill.SNLeco.cpt.EntryKindName",
+      "to": "Skill.SNLeco.cpt.Entry",
+      "label": "depends",
+      "metadata": {
+        "generator": "macro-source-scan",
+        "macros": [
+          "Concept.Entry"
         ],
         "isAtomic": true
       }
