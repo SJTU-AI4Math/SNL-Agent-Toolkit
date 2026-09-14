@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/SJTU-AI4Math/SNL-Doc-Extension",
+  "revision": "76acedbc05f0523b8ad2a2e99ebfeb01591f4647",
+  "files": {
+    "dependencyCache.ts": "8461a3392fec9de81110c1c5ccefb019e329df2ea75add404fe594a410c95792",
+    "snlReferences.ts": "c656d5bcc5bdfb61c42c351e7480cc8de1e15a48ae5b23968d4f43aa6bce6827"
+  }
+}

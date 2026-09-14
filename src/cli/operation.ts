@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { generateRelationships, RelationshipPublishError } from '../../lib/relationship-publisher.ts';
 import {
   createManagedEntity,
   deleteManagedEntity,
@@ -37,13 +38,14 @@ export const COMMAND_PATHS = Object.freeze([
   'batch', 'batch/check', 'batch/apply',
   ...Object.keys(ENTITY_DOMAINS).flatMap(domain => [domain, ...ENTITY_ACTIONS.map(action => `${domain}/${action}`)]),
   'snoogl', 'entry/latex', 'entry/references', 'macro/usages', 'repair/package-entry-ids',
-  'entry/rename', 'macro/rename',
+  'entry/rename', 'macro/rename', 'relationship/generate',
 ]);
 type CommandDescriptor = { command: string; access: 'read' | 'write'; arguments: Record<string, { type: string; required: boolean }>; summary: string };
 const field = (type: string, required: boolean) => ({ type, required });
 function describeCommand(command: string): CommandDescriptor {
   if (command === 'batch/check') return { command, access: 'read', arguments: { operations: field('array<{command,arguments:{value}}> (create-only)', true) }, summary: 'Validate a complete dependent create batch without workspace writes; return digest and workspace revision.' };
   if (command === 'batch/apply') return { command, access: 'write', arguments: { operations: field('array<{command,arguments:{value}}> (create-only)', true), checkedDigest: field('string', true), expectedWorkspaceRevision: field('string', true) }, summary: 'Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required).' };
+  if (command === 'relationship/generate') return { command, access: 'write', arguments: { scope: field('empty object (global)', true), dryRun: field('boolean', false), expectedWorkspaceRevision: field('string (required for apply; use dry-run receipt)', false) }, summary: 'Generate global dependencies; dry-run writes nothing, apply publishes only the existing dependencies cache under fresh Authoring CAS.' };
   const action = command.split('/').at(-1);
   if (action === 'list') return { command, access: 'read', arguments: { query: field('string|null', false), limit: field('integer', false), cursor: field('string|null', false) }, summary: 'List one managed entity family with stable pagination.' };
   if (action === 'get') return { command, access: 'read', arguments: { id: field('string', true) }, summary: 'Read one exact managed entity and its revision.' };
@@ -82,6 +84,16 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
       return operationFailure(command || 'unknown', 2, 'operation.invalid-request', 'Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.');
     if (!path.isAbsolute(request.root)) return operationFailure(command, 2, 'workspace.root-not-absolute', 'root must be an absolute path.');
     const tokens = command.split('/');
+    if (command === 'relationship/generate') {
+      const args = request.arguments;
+      exactArguments(args, ['scope', 'dryRun', 'expectedWorkspaceRevision']);
+      if (!isRecord(args.scope) || Object.keys(args.scope).length !== 0) throw new TypeError('scope must be exactly {} (global complete workspace).');
+      if (own(args, 'dryRun') && typeof args.dryRun !== 'boolean') throw new TypeError('dryRun must be a boolean when present.');
+      const dryRun = args.dryRun === true;
+      if ((!dryRun || own(args, 'expectedWorkspaceRevision')) && (typeof args.expectedWorkspaceRevision !== 'string' || !args.expectedWorkspaceRevision))
+        throw new TypeError('expectedWorkspaceRevision must be a non-empty fresh dry-run token for apply.');
+      return succeed(command, await generateRelationships(request.root, dryRun, args.expectedWorkspaceRevision as string | undefined));
+    }
     if (command === 'batch') {
       exactArguments(request.arguments, []);
       return succeed(command, { commands: ['batch/check', 'batch/apply'].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map(type => `${type}/create`) });
@@ -290,6 +302,7 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
     }
     return operationFailure(command, 2, 'command.unknown', `Unknown command ${JSON.stringify(command)}.`);
   } catch (error) {
+    if (error instanceof RelationshipPublishError) return operationFailure(command, error.exitCode, error.code, error.message, error.details);
     if (error instanceof BatchError) return operationFailure(command, error.exitCode, error.code, error.message, error.details);
     const message = error instanceof Error ? error.message : String(error);
     if (/batch recovery required/i.test(message)) return operationFailure(command, 2, 'batch.recovery-required', message);

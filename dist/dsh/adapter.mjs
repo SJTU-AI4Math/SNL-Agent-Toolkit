@@ -111,8 +111,8 @@ var require_react_production = __commonJS({
     function cloneAndReplaceKey(oldElement, newKey) {
       return ReactElement(oldElement.type, newKey, oldElement.props);
     }
-    function isValidElement(object2) {
-      return "object" === typeof object2 && null !== object2 && object2.$$typeof === REACT_ELEMENT_TYPE;
+    function isValidElement(object3) {
+      return "object" === typeof object3 && null !== object3 && object3.$$typeof === REACT_ELEMENT_TYPE;
     }
     function escape2(key) {
       var escaperLookup = { "=": "=0", ":": "=2" };
@@ -686,8 +686,8 @@ var require_react_development = __commonJS({
       function validateChildKeys(node) {
         isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
-      function isValidElement(object2) {
-        return "object" === typeof object2 && null !== object2 && object2.$$typeof === REACT_ELEMENT_TYPE;
+      function isValidElement(object3) {
+        return "object" === typeof object3 && null !== object3 && object3.$$typeof === REACT_ELEMENT_TYPE;
       }
       function escape2(key) {
         var escaperLookup = { "=": "=0", ":": "=2" };
@@ -893,21 +893,21 @@ var require_react_development = __commonJS({
         );
         actScopeDepth = prevActScopeDepth;
       }
-      function recursivelyFlushAsyncActWork(returnValue, resolve5, reject) {
+      function recursivelyFlushAsyncActWork(returnValue, resolve6, reject) {
         var queue = ReactSharedInternals.actQueue;
         if (null !== queue)
           if (0 !== queue.length)
             try {
               flushActQueue(queue);
               enqueueTask(function() {
-                return recursivelyFlushAsyncActWork(returnValue, resolve5, reject);
+                return recursivelyFlushAsyncActWork(returnValue, resolve6, reject);
               });
               return;
             } catch (error) {
               ReactSharedInternals.thrownErrors.push(error);
             }
           else ReactSharedInternals.actQueue = null;
-        0 < ReactSharedInternals.thrownErrors.length ? (queue = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, reject(queue)) : resolve5(returnValue);
+        0 < ReactSharedInternals.thrownErrors.length ? (queue = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, reject(queue)) : resolve6(returnValue);
       }
       function flushActQueue(queue) {
         if (!isFlushing) {
@@ -1094,7 +1094,7 @@ var require_react_development = __commonJS({
             ));
           });
           return {
-            then: function(resolve5, reject) {
+            then: function(resolve6, reject) {
               didAwaitActCall = true;
               thenable.then(
                 function(returnValue) {
@@ -1104,7 +1104,7 @@ var require_react_development = __commonJS({
                       flushActQueue(queue), enqueueTask(function() {
                         return recursivelyFlushAsyncActWork(
                           returnValue,
-                          resolve5,
+                          resolve6,
                           reject
                         );
                       });
@@ -1118,7 +1118,7 @@ var require_react_development = __commonJS({
                       ReactSharedInternals.thrownErrors.length = 0;
                       reject(_thrownError);
                     }
-                  } else resolve5(returnValue);
+                  } else resolve6(returnValue);
                 },
                 function(error) {
                   popActScope(prevActQueue, prevActScopeDepth);
@@ -1140,15 +1140,15 @@ var require_react_development = __commonJS({
         if (0 < ReactSharedInternals.thrownErrors.length)
           throw callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
         return {
-          then: function(resolve5, reject) {
+          then: function(resolve6, reject) {
             didAwaitActCall = true;
             0 === prevActScopeDepth ? (ReactSharedInternals.actQueue = queue, enqueueTask(function() {
               return recursivelyFlushAsyncActWork(
                 returnValue$jscomp$0,
-                resolve5,
+                resolve6,
                 reject
               );
-            })) : resolve5(returnValue$jscomp$0);
+            })) : resolve6(returnValue$jscomp$0);
           }
         };
       };
@@ -1694,8 +1694,8 @@ var require_react_jsx_runtime_development = __commonJS({
       function validateChildKeys(node) {
         isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
-      function isValidElement(object2) {
-        return "object" === typeof object2 && null !== object2 && object2.$$typeof === REACT_ELEMENT_TYPE;
+      function isValidElement(object3) {
+        return "object" === typeof object3 && null !== object3 && object3.$$typeof === REACT_ELEMENT_TYPE;
       }
       var React = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
         return null;
@@ -2314,22 +2314,22 @@ function scalarMatches(type, value) {
   }
 }
 var ONE_OF_SIBLING_KEYWORDS = ["properties", "required", "additionalProperties", "items", "enum", "const"];
-function checkObjectSchemaTail(node, path12, properties, violations) {
+function checkObjectSchemaTail(node, path14, properties, violations) {
   const hasRequired = Object.hasOwn(node, "required");
   const required = hasRequired ? node.required : void 0;
   if (hasRequired) {
     if (!isPlainJsonArray(required) || required.some((entry) => typeof entry !== "string")) {
-      violations.push(`${path12}.required must be an array of strings`);
+      violations.push(`${path14}.required must be an array of strings`);
     } else {
       const declared = isJsonSchemaRecord(properties) ? properties : {};
       for (const key of required) {
         if (!Object.hasOwn(declared, key))
-          violations.push(`${path12}.required names "${key}" which is not in properties`);
+          violations.push(`${path14}.required names "${key}" which is not in properties`);
       }
     }
   }
   if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") {
-    violations.push(`${path12}.additionalProperties must be a boolean`);
+    violations.push(`${path14}.additionalProperties must be a boolean`);
   }
 }
 function checkSchemaNode(root, rootPath, violations, seen) {
@@ -2350,13 +2350,13 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       checkObjectSchemaTail(task.node, task.path, task.properties, violations);
       continue;
     }
-    const { node, path: path12 } = task;
+    const { node, path: path14 } = task;
     if (!isJsonSchemaRecord(node)) {
-      violations.push(`${path12} must be a schema object`);
+      violations.push(`${path14} must be a schema object`);
       continue;
     }
     if (seen.has(node)) {
-      violations.push(`${path12} is circular`);
+      violations.push(`${path14} is circular`);
       continue;
     }
     seen.add(node);
@@ -2367,48 +2367,48 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       if (ANNOTATION_KEYWORDS.has(key)) {
         try {
           if (!isJsonValue(node[key]))
-            violations.push(`${path12}.${key} annotation must be lossless JSON data`);
+            violations.push(`${path14}.${key} annotation must be lossless JSON data`);
         } catch {
-          violations.push(`${path12}.${key} annotation must be lossless JSON data`);
+          violations.push(`${path14}.${key} annotation must be lossless JSON data`);
         }
         continue;
       }
-      violations.push(`${path12}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
+      violations.push(`${path14}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
     }
     if (Object.hasOwn(node, "description") && typeof node.description !== "string") {
-      violations.push(`${path12}.description must be a string`);
+      violations.push(`${path14}.description must be a string`);
     }
     if (Object.hasOwn(node, "title") && typeof node.title !== "string") {
-      violations.push(`${path12}.title must be a string`);
+      violations.push(`${path14}.title must be a string`);
     }
     const hasType = Object.hasOwn(node, "type");
     const hasOneOf = Object.hasOwn(node, "oneOf");
     if (hasType && hasOneOf) {
-      violations.push(`${path12} cannot declare both type and oneOf`);
+      violations.push(`${path14} cannot declare both type and oneOf`);
       continue;
     }
     if (!hasType && !hasOneOf) {
       for (const key of ONE_OF_SIBLING_KEYWORDS) {
         if (Object.hasOwn(node, key))
-          violations.push(`${path12}.${key} requires type or oneOf`);
+          violations.push(`${path14}.${key} requires type or oneOf`);
       }
       continue;
     }
     if (hasOneOf) {
       const oneOf = node.oneOf;
-      tasks.push({ kind: "one-of-tail", node, path: path12 });
+      tasks.push({ kind: "one-of-tail", node, path: path14 });
       if (!isPlainJsonArray(oneOf) || oneOf.length < 2) {
-        violations.push(`${path12}.oneOf must be an array of at least two schemas`);
+        violations.push(`${path14}.oneOf must be an array of at least two schemas`);
       } else {
         for (let index = oneOf.length - 1; index >= 0; index--) {
-          tasks.push({ kind: "enter", node: oneOf[index], path: `${path12}.oneOf[${index}]` });
+          tasks.push({ kind: "enter", node: oneOf[index], path: `${path14}.oneOf[${index}]` });
         }
       }
       continue;
     }
     const type = node.type;
     if (typeof type !== "string" || !SCHEMA_TYPES.includes(type)) {
-      violations.push(Array.isArray(type) ? `${path12}.type must be a single type string (type arrays are not supported)` : `${path12}.type must be one of ${SCHEMA_TYPES.join("/")}`);
+      violations.push(Array.isArray(type) ? `${path14}.type must be a single type string (type arrays are not supported)` : `${path14}.type must be one of ${SCHEMA_TYPES.join("/")}`);
       continue;
     }
     const schemaType = type;
@@ -2422,23 +2422,23 @@ function checkSchemaNode(root, rootPath, violations, seen) {
     };
     for (const [key, types] of Object.entries(allowedFor)) {
       if (Object.hasOwn(node, key) && !types.includes(schemaType)) {
-        violations.push(`${path12}.${key} is not supported on type "${schemaType}"`);
+        violations.push(`${path14}.${key} is not supported on type "${schemaType}"`);
       }
     }
     switch (schemaType) {
       case "object": {
         const properties = Object.hasOwn(node, "properties") ? node.properties : void 0;
-        tasks.push({ kind: "object-tail", node, path: path12, properties });
+        tasks.push({ kind: "object-tail", node, path: path14, properties });
         if (Object.hasOwn(node, "properties")) {
           if (!isJsonSchemaRecord(properties)) {
-            violations.push(`${path12}.properties must be an object of schemas`);
+            violations.push(`${path14}.properties must be an object of schemas`);
           } else {
             const entries = Object.entries(properties);
             for (let index = entries.length - 1; index >= 0; index--) {
               const entry = entries[index];
               if (entry === void 0)
                 continue;
-              tasks.push({ kind: "enter", node: entry[1], path: `${path12}.properties.${entry[0]}` });
+              tasks.push({ kind: "enter", node: entry[1], path: `${path14}.properties.${entry[0]}` });
             }
           }
         }
@@ -2446,7 +2446,7 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       }
       case "array": {
         if (Object.hasOwn(node, "items"))
-          tasks.push({ kind: "enter", node: node.items, path: `${path12}.items` });
+          tasks.push({ kind: "enter", node: node.items, path: `${path14}.items` });
         break;
       }
       case "string":
@@ -2458,16 +2458,16 @@ function checkSchemaNode(root, rootPath, violations, seen) {
         const allowed = hasEnum ? node.enum : void 0;
         const enumValid = isPlainJsonArray(allowed) && allowed.length > 0 && allowed.every((entry) => scalarMatches(schemaType, entry));
         if (hasEnum && !enumValid) {
-          violations.push(`${path12}.enum must be a non-empty array of ${schemaType} values`);
+          violations.push(`${path14}.enum must be a non-empty array of ${schemaType} values`);
         }
         const hasConst = Object.hasOwn(node, "const");
         const declaredConst = hasConst ? node.const : void 0;
         const constValid = scalarMatches(schemaType, declaredConst);
         if (hasConst) {
           if (!constValid) {
-            violations.push(`${path12}.const must be a ${schemaType} value`);
+            violations.push(`${path14}.const must be a ${schemaType} value`);
           } else if (enumValid && !allowed.includes(declaredConst)) {
-            violations.push(`${path12}.const must be one of ${path12}.enum when both are declared`);
+            violations.push(`${path14}.const must be one of ${path14}.enum when both are declared`);
           }
         }
         break;
@@ -2491,24 +2491,24 @@ function safelyIsJsonValue(value) {
     return false;
   }
 }
-function diagnosticPath(path12) {
-  return path12 === "" ? "arguments" : path12;
+function diagnosticPath(path14) {
+  return path14 === "" ? "arguments" : path14;
 }
-function propertyPath(path12, key) {
-  return path12 === "" ? key : `${path12}.${key}`;
+function propertyPath(path14, key) {
+  return path14 === "" ? key : `${path14}.${key}`;
 }
-function losslessValueViolation(path12) {
-  return [`"${diagnosticPath(path12)}" must be a lossless JSON value`];
+function losslessValueViolation(path14) {
+  return [`"${diagnosticPath(path14)}" must be a lossless JSON value`];
 }
 function appendViolations(target, source) {
   for (const violation of source)
     target.push(violation);
 }
-function valueFrame(node, value, path12) {
+function valueFrame(node, value, path14) {
   return {
     node,
     value,
-    path: path12,
+    path: path14,
     catches: false,
     phase: "start",
     children: [],
@@ -2518,18 +2518,18 @@ function valueFrame(node, value, path12) {
     matches: 0
   };
 }
-function checkScalarValue(node, value, path12) {
+function checkScalarValue(node, value, path14) {
   const allowed = Object.hasOwn(node, "enum") ? node.enum : void 0;
   if (allowed !== void 0 && !allowed.includes(value)) {
-    return [`"${diagnosticPath(path12)}" must be one of ${JSON.stringify(allowed)}`];
+    return [`"${diagnosticPath(path14)}" must be one of ${JSON.stringify(allowed)}`];
   }
   if (Object.hasOwn(node, "const") && value !== node.const) {
-    return [`"${diagnosticPath(path12)}" must be ${JSON.stringify(node.const)}`];
+    return [`"${diagnosticPath(path14)}" must be ${JSON.stringify(node.const)}`];
   }
   return [];
 }
-function checkValue(schema, value, path12) {
-  const frames = [valueFrame(schema, value, path12)];
+function checkValue(schema, value, path14) {
+  const frames = [valueFrame(schema, value, path14)];
   let rootResult;
   const receive = (result) => {
     const parent = frames.at(-1);
@@ -2668,10 +2668,10 @@ function checkValue(schema, value, path12) {
       receive(losslessValueViolation(failed.path));
     }
   }
-  return rootResult ?? losslessValueViolation(path12);
+  return rootResult ?? losslessValueViolation(path14);
 }
-function validateJsonSchemaValue(schema, value, path12 = "value") {
-  return checkValue(schema, value, path12);
+function validateJsonSchemaValue(schema, value, path14 = "value") {
+  return checkValue(schema, value, path14);
 }
 
 // node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js
@@ -2689,10 +2689,10 @@ function copyAnnotations(source, target) {
   if (Object.hasOwn(source, "examples"))
     target.examples = source.examples;
 }
-function assertAuthorKeys(source, path12, allowed) {
+function assertAuthorKeys(source, path14, allowed) {
   for (const key of Object.keys(source)) {
     if (!allowed.includes(key))
-      authorError(`${path12}.${key} is not supported by the value schema DSL`);
+      authorError(`${path14}.${key} is not supported by the value schema DSL`);
   }
 }
 function assignCompiledNode(destination, node) {
@@ -2783,22 +2783,22 @@ function runSchemaCompiler(initial) {
       }
       continue;
     }
-    const { input, path: path12 } = task;
+    const { input, path: path14 } = task;
     if (!isJsonSchemaRecord(input))
-      authorError(`${path12} must be a value schema object`);
+      authorError(`${path14} must be a value schema object`);
     if (seen.has(input))
-      authorError(`${path12} is circular`);
+      authorError(`${path14} is circular`);
     seen.add(input);
     const authorKeys = [...ANNOTATION_KEYS, ...task.allowRequired ? ["required"] : []];
     const node = {};
     assignCompiledNode(task.destination, node);
     tasks.push({ kind: "leave", input });
     if (Object.hasOwn(input, "oneOf")) {
-      assertAuthorKeys(input, path12, [...authorKeys, "oneOf", "type"]);
+      assertAuthorKeys(input, path14, [...authorKeys, "oneOf", "type"]);
       if (Object.hasOwn(input, "type"))
-        authorError(`${path12} cannot declare both type and oneOf`);
+        authorError(`${path14} cannot declare both type and oneOf`);
       if (!isPlainJsonArray(input.oneOf))
-        authorError(`${path12}.oneOf must be an array of at least two value schemas`);
+        authorError(`${path14}.oneOf must be an array of at least two value schemas`);
       const branches = [];
       node.oneOf = branches;
       copyAnnotations(input, node);
@@ -2806,7 +2806,7 @@ function runSchemaCompiler(initial) {
         tasks.push({
           kind: "value",
           input: input.oneOf[index],
-          path: `${path12}.oneOf[${index}]`,
+          path: `${path14}.oneOf[${index}]`,
           allowRequired: false,
           destination: { kind: "one-of", target: branches, index }
         });
@@ -2816,13 +2816,13 @@ function runSchemaCompiler(initial) {
     const inputType = Object.hasOwn(input, "type") ? input.type : void 0;
     switch (inputType) {
       case "json":
-        assertAuthorKeys(input, path12, [...authorKeys, "type"]);
+        assertAuthorKeys(input, path14, [...authorKeys, "type"]);
         copyAnnotations(input, node);
         break;
       case "object":
-        assertAuthorKeys(input, path12, [...authorKeys, "type", "properties", "additionalProperties"]);
+        assertAuthorKeys(input, path14, [...authorKeys, "type", "properties", "additionalProperties"]);
         if (!Object.hasOwn(input, "additionalProperties") || typeof input.additionalProperties !== "boolean") {
-          authorError(`${path12}.additionalProperties must be explicitly true or false`);
+          authorError(`${path14}.additionalProperties must be explicitly true or false`);
         }
         node.type = "object";
         copyAnnotations(input, node);
@@ -2831,20 +2831,20 @@ function runSchemaCompiler(initial) {
           tasks.push({
             kind: "property-map",
             input: input.properties,
-            path: `${path12}.properties`,
+            path: `${path14}.properties`,
             destination: { kind: "object", target: node }
           });
         }
         break;
       case "array":
-        assertAuthorKeys(input, path12, [...authorKeys, "type", "items"]);
+        assertAuthorKeys(input, path14, [...authorKeys, "type", "items"]);
         node.type = "array";
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "items")) {
           tasks.push({
             kind: "value",
             input: input.items,
-            path: `${path12}.items`,
+            path: `${path14}.items`,
             allowRequired: false,
             destination: { kind: "item", target: node }
           });
@@ -2855,31 +2855,31 @@ function runSchemaCompiler(initial) {
       case "integer":
       case "boolean":
       case "null":
-        assertAuthorKeys(input, path12, [...authorKeys, "type", "enum", "const"]);
+        assertAuthorKeys(input, path14, [...authorKeys, "type", "enum", "const"]);
         node.type = inputType;
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "enum")) {
           if (!isPlainJsonArray(input.enum))
-            authorError(`${path12}.enum must be a non-empty array of scalar values`);
+            authorError(`${path14}.enum must be a non-empty array of scalar values`);
           node.enum = Array.from(input.enum, (entry) => entry);
         }
         if (Object.hasOwn(input, "const"))
           node.const = input.const;
         break;
       default:
-        authorError(`${path12}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
+        authorError(`${path14}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
     }
   }
 }
-function compilePropertyMap(input, path12) {
+function compilePropertyMap(input, path14) {
   const holder = {};
-  runSchemaCompiler({ kind: "property-map", input, path: path12, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path12} did not compile`);
+  runSchemaCompiler({ kind: "property-map", input, path: path14, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path14} did not compile`);
 }
-function compileValueSchema(input, path12) {
+function compileValueSchema(input, path14) {
   const holder = {};
-  runSchemaCompiler({ kind: "value", input, path: path12, allowRequired: false, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path12} did not compile`);
+  runSchemaCompiler({ kind: "value", input, path: path14, allowRequired: false, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path14} did not compile`);
 }
 function valueSchemaSpecToJsonSchema(spec) {
   const schema = compileValueSchema(spec, "schema");
@@ -2918,7 +2918,7 @@ function defineTool(options) {
   }
   const parameters = parameterSchemaSpecToJsonSchema(options.parameters);
   const outputSchema = valueSchemaSpecToJsonSchema(options.output.schema);
-  const validate2 = (args) => validateJsonSchemaValue(parameters, args, "");
+  const validate3 = (args) => validateJsonSchemaValue(parameters, args, "");
   const tool = {
     name: options.name,
     description: options.description,
@@ -2936,7 +2936,7 @@ function defineTool(options) {
     },
     ...options.timeoutMs !== void 0 ? { timeoutMs: options.timeoutMs } : {},
     async execute(args, exec) {
-      const violations = validate2(args);
+      const violations = validate3(args);
       if (violations.length > 0)
         throw new ToolArgsError(violations);
       return userExecute(args, exec);
@@ -2947,21 +2947,21 @@ function defineTool(options) {
   }
   if (userPresentCall) {
     tool.presentCall = (args) => {
-      if (validate2(args).length > 0)
+      if (validate3(args).length > 0)
         return void 0;
       return userPresentCall(args);
     };
   }
   if (userPresentResult) {
     tool.presentResult = (args, result) => {
-      if (validate2(args).length > 0)
+      if (validate3(args).length > 0)
         return void 0;
       return userPresentResult(args, result);
     };
   }
   if (userIsConcurrencySafe) {
     tool.isConcurrencySafe = (args) => {
-      if (validate2(args).length > 0)
+      if (validate3(args).length > 0)
         return false;
       return userIsConcurrencySafe(args);
     };
@@ -3173,8 +3173,8 @@ function createToolkitTools(adapter) {
         required: ["root", "command", "arguments"],
         properties: {
           root: baseProperties.root,
-          command: { type: "string", description: "Canonical command path such as entry/get or validate." },
-          arguments: { type: "object", additionalProperties: true, description: "Command-specific argument object." }
+          command: { type: "string", description: "Canonical command path such as entry/get, validate, or relationship/generate. Use help or relationship to discover strict command arguments." },
+          arguments: { type: "object", additionalProperties: true, description: "Command-specific argument object. relationship/generate requires scope:{} (global); dryRun:true returns expectedWorkspaceRevision, which apply requires. Explicit nulls/unknown keys are rejected." }
         }
       },
       async execute(raw) {
@@ -3202,7 +3202,7 @@ function createToolkitTools(adapter) {
 
 // plugin-src/mcp-server.ts
 import { pathToFileURL } from "node:url";
-import { resolve as resolve4 } from "node:path";
+import { resolve as resolve5 } from "node:path";
 
 // node_modules/@sjtu-ai4math/snl-basics/dist-lib/chunks/semantic-resolver-BM9_sSrv.js
 function t(e2, t4) {
@@ -4372,27 +4372,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path12 = "";
+  var path14 = "";
   switch (size) {
     case "sqrtMain":
-      path12 = sqrtMain(extraVinculum, hLinePad);
+      path14 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path12 = sqrtSize1(extraVinculum, hLinePad);
+      path14 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path12 = sqrtSize2(extraVinculum, hLinePad);
+      path14 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path12 = sqrtSize3(extraVinculum, hLinePad);
+      path14 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path12 = sqrtSize4(extraVinculum, hLinePad);
+      path14 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path12 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path14 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path12;
+  return path14;
 };
 var innerPath = function innerPath2(name2, height) {
   switch (name2) {
@@ -8575,8 +8575,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path12 = new PathNode(pathName);
-  var svgNode = new SvgNode([path12], {
+  var path14 = new PathNode(pathName);
+  var svgNode = new SvgNode([path14], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9745,8 +9745,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path12 = new PathNode(pathName);
-      var svgNode = new SvgNode([path12], {
+      var path14 = new PathNode(pathName);
+      var svgNode = new SvgNode([path14], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -11043,8 +11043,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path12 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path12], {
+  var path14 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path14], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -11213,10 +11213,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path12 = new PathNode(svgLabel, pathStr);
+    var path14 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path12], {
+    var svg = new SvgNode([path14], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -11257,8 +11257,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path12 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path12);
+  var path14 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path14);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11765,8 +11765,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path12 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path12)], {
+    var path14 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path14)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18977,7 +18977,7 @@ function assertPackageId(packageId2) {
   }
 }
 function entityIdentityHash(kind, ...segments) {
-  if (segments.some((segment) => segment.includes("\0"))) {
+  if (segments.some((segment2) => segment2.includes("\0"))) {
     throw new Error("Entity identities may not contain NUL characters.");
   }
   return createHash("sha256").update(Buffer.from(`snl-doc/v1\0${kind}\0${segments.join("\0")}`, "utf8")).digest("hex").slice(0, 20);
@@ -19490,6 +19490,7 @@ async function readActiveMacros(workspaceRoot) {
   for (const pkgName of Object.keys(packages).sort(
     (left, right) => `${left}.json`.localeCompare(`${right}.json`)
   )) {
+    if (usesEntityStorage(config) && pkgName === UNPACKAGED_PACKAGE_ID) continue;
     if (active && !active.has(pkgName)) continue;
     const pkg = packages[pkgName];
     if (!pkg?.macros) continue;
@@ -20319,12 +20320,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path12 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
+            const path14 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path12} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path12,
+              message: `${path14} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path14,
               position: result.position
             });
           }
@@ -20338,43 +20339,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
-  const path12 = `macros.${name2}`;
+  const path14 = `macros.${name2}`;
   if (!isRecord4(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path12}: macro entry must be an object.`, path: path12 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path14}: macro entry must be an object.`, path: path14 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path12}.description must be a string (may be empty).`, path: `${path12}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path14}.description must be a string (may be empty).`, path: `${path14}.description` });
   }
   if (!isRecord4(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path12}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path12}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path14}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path14}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path12}.dynamic_arity must be a boolean.`, path: `${path12}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path14}.dynamic_arity must be a boolean.`, path: `${path14}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path12}.kind must be a string when present.`, path: `${path12}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path14}.kind must be a string when present.`, path: `${path14}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path12}.tags must be a string array (may be empty).`, path: `${path12}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path14}.tags must be a string array (may be empty).`, path: `${path14}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path12}.tags must not contain backslashes.`, path: `${path12}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path14}.tags must not contain backslashes.`, path: `${path14}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path12}.default_style must be a language \u2192 style-name object.`, path: `${path12}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path14}.default_style must be a language \u2192 style-name object.`, path: `${path14}.default_style` });
   } else if (!isRecord4(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path12}.default_style must map language keys to style-name strings.`, path: `${path12}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style must map language keys to style-name strings.`, path: `${path14}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path12}.styles must be a non-empty array.`, path: `${path12}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path14}.styles must be a non-empty array.`, path: `${path14}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path12}.styles[${index}]`;
+    const stylePath = `${path14}.styles[${index}]`;
     if (!isRecord4(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -20438,12 +20439,12 @@ function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
   if (isRecord4(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path12}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path12}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path14}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path12}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path12}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path14}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path14}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -21500,19 +21501,19 @@ function parseTree3(text3, errors = [], options = ParseOptions.DEFAULT) {
   }
   return result;
 }
-function findNodeAtLocation(root, path12) {
+function findNodeAtLocation(root, path14) {
   if (!root) {
     return void 0;
   }
   let node = root;
-  for (let segment of path12) {
-    if (typeof segment === "string") {
+  for (let segment2 of path14) {
+    if (typeof segment2 === "string") {
       if (node.type !== "object" || !Array.isArray(node.children)) {
         return void 0;
       }
       let found = false;
       for (const propertyNode of node.children) {
-        if (Array.isArray(propertyNode.children) && propertyNode.children[0].value === segment && propertyNode.children.length === 2) {
+        if (Array.isArray(propertyNode.children) && propertyNode.children[0].value === segment2 && propertyNode.children.length === 2) {
           node = propertyNode.children[1];
           found = true;
           break;
@@ -21522,7 +21523,7 @@ function findNodeAtLocation(root, path12) {
         return void 0;
       }
     } else {
-      const index = segment;
+      const index = segment2;
       if (node.type !== "array" || index < 0 || !Array.isArray(node.children) || index >= node.children.length) {
         return void 0;
       }
@@ -21859,14 +21860,14 @@ function getNodeType(value) {
 
 // node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text3, originalPath, value, options) {
-  const path12 = originalPath.slice();
+  const path14 = originalPath.slice();
   const errors = [];
   const root = parseTree3(text3, errors);
   let parent = void 0;
   let lastSegment = void 0;
-  while (path12.length > 0) {
-    lastSegment = path12.pop();
-    parent = findNodeAtLocation(root, path12);
+  while (path14.length > 0) {
+    lastSegment = path14.pop();
+    parent = findNodeAtLocation(root, path14);
     if (parent === void 0 && value !== void 0) {
       if (typeof lastSegment === "string") {
         value = { [lastSegment]: value };
@@ -22090,8 +22091,8 @@ function printParseErrorCode(code) {
   }
   return "<unknown ParseErrorCode>";
 }
-function modify(text3, path12, value, options) {
-  return setProperty(text3, path12, value, options);
+function modify(text3, path14, value, options) {
+  return setProperty(text3, path14, value, options);
 }
 function applyEdits(text3, edits) {
   let sortedEdits = edits.slice(0).sort((a4, b4) => {
@@ -24933,9 +24934,9 @@ function indexCounterPaths(counters) {
     ids.add(counter.id);
     names.add(counter.name);
     visiting.add(counter);
-    const path12 = [...parents, counter];
-    paths.set(counter, path12);
-    for (const child of counter.children) visit2(child, path12);
+    const path14 = [...parents, counter];
+    paths.set(counter, path14);
+    for (const child of counter.children) visit2(child, path14);
     visiting.delete(counter);
   };
   for (const counter of counters) visit2(counter, []);
@@ -24988,15 +24989,15 @@ function numberNodes(index, entries, kinds, counters, paths) {
   for (const nodeId of index.readingOrder) {
     const node = index.nodesById.get(nodeId);
     const counter = resolveCounter(node, entries, kinds, counters);
-    const path12 = counter ? paths.get(counter) : void 0;
-    if (!counter || !path12) {
+    const path14 = counter ? paths.get(counter) : void 0;
+    if (!counter || !path14) {
       numbers.set(nodeId, null);
       continue;
     }
     values.set(counter, (values.get(counter) ?? 0) + 1);
     resetDescendants(counter);
     const segments = [];
-    for (const level of path12) {
+    for (const level of path14) {
       const value = values.get(level);
       if (value === void 0) {
         segments.length = 0;
@@ -25070,7 +25071,1054 @@ function singleLine(value) {
 }
 
 // src/cli/operation.ts
-import path11 from "node:path";
+import path13 from "node:path";
+
+// lib/relationship-publisher.ts
+import { isDeepStrictEqual as isDeepStrictEqual2 } from "node:util";
+import path10 from "node:path";
+
+// lib/batch.ts
+import { constants as constants6, promises as fs6 } from "node:fs";
+import path8 from "node:path";
+import os from "node:os";
+import { createHash as createHash4 } from "node:crypto";
+import { execFile } from "node:child_process";
+import { promisify, types as utilTypes } from "node:util";
+var BATCH_CREATE_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship"];
+var BatchError = class extends Error {
+  constructor(code, message, exitCode = 1, details) {
+    super(message);
+    this.code = code;
+    this.exitCode = exitCode;
+    this.details = details;
+  }
+  code;
+  exitCode;
+  details;
+};
+var record = (v3) => !!v3 && typeof v3 === "object" && !Array.isArray(v3);
+var sha2 = (v3) => createHash4("sha256").update(JSON.stringify(v3)).digest("hex");
+var fail = (code, message) => {
+  throw new BatchError(code, message);
+};
+function exact(value, fields, label) {
+  const extra = Object.keys(value).filter((k5) => !fields.includes(k5));
+  if (extra.length) throw new TypeError(`${label}: unknown keys ${extra.join(", ")}.`);
+}
+function text2(v3, key) {
+  const s4 = v3[key];
+  if (typeof s4 !== "string" || !s4 || s4 !== s4.trim() || s4.includes("\0")) fail("batch.invalid", `${key} must be a non-empty canonical string without NUL.`);
+  return s4;
+}
+function packageId(value) {
+  try {
+    assertPackageId(value);
+  } catch (error) {
+    fail("batch.invalid", error instanceof Error ? error.message : String(error));
+  }
+}
+function canonical(value) {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "object" && value !== null && utilTypes.isProxy(value)) throw new TypeError("Batch JSON must not contain Proxies.");
+  if (Array.isArray(value)) {
+    const keys = Reflect.ownKeys(value);
+    if (keys.length !== value.length + 1) throw new TypeError("Batch arrays must be dense JSON arrays without extra keys.");
+    return Array.from({ length: value.length }, (_2, index) => {
+      const d3 = Object.getOwnPropertyDescriptor(value, String(index));
+      if (!d3 || !("value" in d3) || !d3.enumerable) throw new TypeError("Batch arrays must contain inert own values.");
+      return canonical(d3.value);
+    });
+  }
+  if (record(value) && [Object.prototype, null].includes(Object.getPrototypeOf(value))) {
+    if (Reflect.ownKeys(value).length !== Object.keys(value).length) throw new TypeError("Batch JSON must not contain symbol or non-enumerable keys.");
+    return Object.fromEntries(Object.keys(value).sort(compareCanonicalIds).map((k5) => {
+      const d3 = Object.getOwnPropertyDescriptor(value, k5);
+      if (!("value" in d3)) throw new TypeError("Batch JSON must not contain accessors.");
+      return [k5, canonical(d3.value)];
+    }));
+  }
+  throw new TypeError("Batch accepts only finite JSON data.");
+}
+function normalize(raw) {
+  if (!Array.isArray(raw)) throw new TypeError("operations must be an array.");
+  return canonical(raw).map((item, index) => {
+    if (!record(item)) throw new TypeError(`operations[${index}] must be an object.`);
+    exact(item, ["command", "arguments"], `operations[${index}]`);
+    if (!BATCH_CREATE_TYPES.some((type) => item.command === `${type}/create`)) throw new TypeError(`Unsupported batch command ${JSON.stringify(item.command)}; only advertised create commands are accepted.`);
+    if (!record(item.arguments)) throw new TypeError(`operations[${index}].arguments must be an object.`);
+    exact(item.arguments, ["value"], `operations[${index}].arguments`);
+    if (!record(item.arguments.value)) fail("batch.invalid", `operations[${index}].arguments.value must be an object.`);
+    let value = canonical(item.arguments.value);
+    if (item.command === "entry/create") value = normalizeEntryDraft(value);
+    if (item.command === "macro/create") {
+      const packageId2 = value.package;
+      const body = Object.fromEntries(Object.entries(value).filter(([k5]) => k5 !== "package"));
+      value = { ...normalizeMacroDraft(body, true), package: packageId2 };
+    }
+    if (item.command === "entry-package/create" || item.command === "macro-package/create") {
+      const id = typeof value.id === "string" ? value.id.trim() : value.id;
+      value = {
+        ...value,
+        id,
+        name: value.name === void 0 ? id : typeof value.name === "string" ? value.name.trim() : value.name,
+        description: value.description === void 0 ? "" : typeof value.description === "string" ? value.description.trim() : value.description
+      };
+      for (const [key, expected] of Object.entries({ format: "snl-package", version: PACKAGE_STORAGE_VERSION, schema_version: CURRENT_PACKAGE_SCHEMA_VERSION })) {
+        if (Object.hasOwn(value, key) && value[key] !== expected) fail("batch.invalid", `Package ${key} must be ${JSON.stringify(expected)}.`);
+      }
+      if (Object.hasOwn(value, "macros") || Object.hasOwn(value, "entry_ids") && (!Array.isArray(value.entry_ids) || value.entry_ids.length)) {
+        fail("batch.invalid", "Create Package membership through separate Entry/Macro operations, not embedded macros or nonempty entry_ids.");
+      }
+    }
+    return canonical({ command: item.command, arguments: { value } });
+  });
+}
+async function exists(p3) {
+  try {
+    await fs6.lstat(p3);
+    return true;
+  } catch (e2) {
+    if (e2.code === "ENOENT") return false;
+    throw e2;
+  }
+}
+async function assertRoot(root) {
+  for (const p3 of [root, path8.join(root, ".SNL_Doc")]) {
+    const s4 = await fs6.lstat(p3);
+    if (!s4.isDirectory() || s4.isSymbolicLink() || await fs6.realpath(p3) !== p3) throw new BatchError("workspace.unsafe-path", `${p3} must be a canonical non-symlink directory.`, 2);
+  }
+  if (await exists(path8.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
+}
+function supportedMode(mode, p3) {
+  if (mode & 3584) throw new BatchError("workspace.unsupported-mode", `Batch refuses setuid, setgid and sticky permission bits: ${p3}.`, 2);
+  return mode & 511;
+}
+function derivedPath(relative2) {
+  if (relative2 === ".cache" || relative2.startsWith(".cache/")) return true;
+  const [pool, slug, cache] = relative2.split("/");
+  return pool === "libraries" && cache === ".cache" && !!slug && slug === slug.trim() && !slug.startsWith(".") && !/[\\/:\0]/.test(slug) && !/[. ]$/.test(slug) && !/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(slug);
+}
+async function snapshot(root, domain = "physical") {
+  const out = /* @__PURE__ */ new Map();
+  const doc = path8.join(root, ".SNL_Doc");
+  async function walk(relative2) {
+    if (relative2 === DATA_WRITE_LOCK_FILENAME || domain === "authoring" && derivedPath(relative2)) return;
+    const p3 = path8.join(doc, relative2);
+    const s4 = await fs6.lstat(p3);
+    if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
+    const mode = supportedMode(s4.mode, p3);
+    if (s4.isDirectory()) {
+      out.set(relative2, { kind: "directory", mode });
+      for (const name2 of (await fs6.readdir(p3)).sort(compareCanonicalIds)) await walk(relative2 ? `${relative2}/${name2}` : name2);
+    } else {
+      const handle = await fs6.open(p3, constants6.O_RDONLY | constants6.O_NOFOLLOW | constants6.O_NONBLOCK);
+      try {
+        const opened = await handle.stat();
+        const openedMode = supportedMode(opened.mode, p3);
+        const conflict2 = domain === "physical" && derivedPath(relative2) ? "batch.physical-conflict" : "batch.workspace-conflict";
+        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
+        const bytes = await handle.readFile();
+        const after = await handle.stat();
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
+        out.set(relative2, { kind: "file", mode: openedMode, bytes });
+      } finally {
+        await handle.close();
+      }
+    }
+  }
+  await walk("");
+  return out;
+}
+function revision(root, data, domain = "authoring") {
+  const hash = createHash4("sha256").update(`${domain === "physical" ? "snl.batch.workspace/v1" : "snl.authoring.workspace/v2"}\0${root}\0`);
+  for (const [name2, node] of [...data].sort(([a4], [b4]) => compareCanonicalIds(a4, b4))) {
+    if (domain === "authoring" && derivedPath(name2)) continue;
+    hash.update(JSON.stringify([name2, node.kind, node.mode, node.kind === "file" ? node.bytes.length : 0]) + "\0");
+    if (node.kind === "file") hash.update(node.bytes);
+  }
+  return (domain === "authoring" ? "snl.authoring.workspace/v2:" : "") + hash.digest("hex");
+}
+function assertUnchanged(root, current, authoring, physical) {
+  if (revision(root, current) !== authoring) fail("batch.workspace-conflict", "Authoring revision changed; recheck the complete batch.");
+  if (revision(root, current, "physical") !== physical) fail("batch.physical-conflict", "Physical tree changed (possibly cache churn); quiesce cache writers and retry the complete batch.");
+}
+async function materialize(stage, data) {
+  for (const [name2, node] of data) {
+    const p3 = path8.join(stage, ".SNL_Doc", name2);
+    if (node.kind === "directory") await fs6.mkdir(p3, { mode: 448 });
+    else {
+      await fs6.writeFile(p3, node.bytes, { flag: "wx", mode: node.mode });
+      await fs6.chmod(p3, node.mode);
+    }
+  }
+}
+async function validate(root) {
+  const result = await validateManagedWorkspace(root);
+  if (!result.valid) {
+    const unsupported = result.issues.some((i5) => /unsupported|newer than this Toolkit|no registered migration|must carry current Package manifest/.test(i5.message));
+    throw new BatchError(unsupported ? "workspace.unsupported-schema" : "batch.workspace-invalid", "Whole-workspace validation failed.", unsupported ? 2 : 1, result);
+  }
+  return result;
+}
+function readJson3(data, name2) {
+  const node = data.get(name2);
+  if (!node || node.kind !== "file") fail("batch.workspace-invalid", `Missing regular file ${name2}.`);
+  const value = JSON.parse(node.bytes.toString("utf8"));
+  if (!record(value)) fail("batch.workspace-invalid", `${name2} must be an object.`);
+  return value;
+}
+async function prepare(stage, original, operations) {
+  const config = readJson3(original, "config.json");
+  if (config.version !== "0.1.0") throw new BatchError("workspace.unsupported-schema", "Batch v1 requires workspace data 0.1.0; migrate explicitly first.", 2);
+  await validate(stage);
+  const packages = /* @__PURE__ */ new Map();
+  const entries = /* @__PURE__ */ new Set();
+  const macros2 = /* @__PURE__ */ new Set();
+  for (const [name2, node] of original) {
+    if (node.kind !== "file" || !name2.endsWith(".json")) continue;
+    if (name2.startsWith("packages/")) {
+      const v3 = readJson3(original, name2);
+      packages.set(text2(v3, "id"), v3);
+    }
+    if (name2.startsWith("entries/")) entries.add(text2(readJson3(original, name2).entry, "id"));
+    if (name2.startsWith("macros/")) {
+      const v3 = readJson3(original, name2);
+      macros2.add(`${v3.package}\0${text2(v3.macro, "name")}`);
+    }
+  }
+  const packageIds = new Set([...packages.keys()].map((id) => id.toLowerCase()));
+  const active = new Set(Array.isArray(config.active_macro_packages) ? config.active_macro_packages : [...packages.keys()].filter((id) => id !== "_unpackaged"));
+  const kinds = new Map(["entry-kind", "macro-kind"].map((type) => [type, new Set(config[type === "entry-kind" ? "entry_kinds" : "macro_kinds"].map((v3) => text2(v3, "id")))]));
+  const relationships = original.has("relationships.json") ? readJson3(original, "relationships.json") : { relationships: [] };
+  const relationRows = relationships.relationships;
+  const relationIds = new Set(relationRows.map((v3) => text2(v3, "id")));
+  const pending = /* @__PURE__ */ new Map();
+  const changedPackages = /* @__PURE__ */ new Set();
+  const identities = [];
+  const addedEntries = /* @__PURE__ */ new Map();
+  let configChanged = false;
+  let activationChanged = false;
+  let relationsChanged = false;
+  for (let index = 0; index < operations.length; index++) {
+    const op2 = operations[index];
+    const type = op2.command.split("/")[0];
+    const value = op2.arguments.value;
+    const id = text2(value, type === "macro" ? "name" : "id");
+    let file = "";
+    const duplicate = () => fail("batch.already-exists", `operations[${index}]: ${type} ${JSON.stringify(id)} already exists or was created twice.`);
+    if (type === "entry-kind" || type === "macro-kind") {
+      if (kinds.get(type).has(id)) duplicate();
+      kinds.get(type).add(id);
+      config[type === "entry-kind" ? "entry_kinds" : "macro_kinds"].push(value);
+      configChanged = true;
+      file = "config.json";
+    } else if (type === "entry-package" || type === "macro-package") {
+      packageId(id);
+      if (id === "_unpackaged" || packageIds.has(id.toLowerCase())) duplicate();
+      if (typeof value.name !== "string" || !value.name || typeof value.description !== "string") fail("batch.invalid", "Package requires nonempty name and string description.");
+      packageIds.add(id.toLowerCase());
+      packages.set(id, { ...value, format: "snl-package", version: PACKAGE_STORAGE_VERSION, schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] });
+      changedPackages.add(id);
+      active.add(id);
+      configChanged = true;
+      activationChanged = true;
+      file = packageManifestPath(id);
+    } else if (type === "entry") {
+      if (entries.has(id)) duplicate();
+      entries.add(id);
+      const pkg = text2(value, "package");
+      packageId(pkg);
+      file = entryEntityPath(pkg, id);
+      pending.set(file, { format: "snl-entry", version: ENTRY_STORAGE_VERSION, schema_version: CURRENT_ENTRY_SCHEMA_VERSION, package: pkg, entry: value });
+      const added = addedEntries.get(pkg) ?? [];
+      added.push(id);
+      addedEntries.set(pkg, added);
+    } else if (type === "macro") {
+      const pkg = text2(value, "package");
+      packageId(pkg);
+      if (macros2.has(`${pkg}\0${id}`)) duplicate();
+      if (/[@#$%\s()[\]{}]/u.test(id)) fail("macro.bad-name", "Macro name contains forbidden syntax.");
+      macros2.add(`${pkg}\0${id}`);
+      file = macroEntityPath(pkg, id);
+      const macro2 = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
+      pending.set(file, { format: "snl-macro", version: MACRO_STORAGE_VERSION, schema_version: CURRENT_MACRO_SCHEMA_VERSION, package: pkg, macro: macro2 });
+    } else if (type === "relationship") {
+      if (relationIds.has(id)) duplicate();
+      relationIds.add(id);
+      relationRows.push(value);
+      relationsChanged = true;
+      file = "relationships.json";
+    }
+    identities.push({ type, id: type === "macro" ? `${value.package}::${id}` : id, file });
+  }
+  for (const [pkg, ids] of addedEntries) {
+    const manifest = packages.get(pkg);
+    if (!manifest) fail("batch.missing-package", `Entry Package ${JSON.stringify(pkg)} does not exist in the resulting batch.`);
+    manifest.entry_ids = [...manifest.entry_ids, ...ids].sort(compareCanonicalIds);
+    changedPackages.add(pkg);
+  }
+  for (const pkg of changedPackages) pending.set(packageManifestPath(pkg), packages.get(pkg));
+  if (configChanged) {
+    if (activationChanged) config.active_macro_packages = [...active].sort(compareCanonicalIds);
+    pending.set("config.json", config);
+  }
+  if (relationsChanged) pending.set("relationships.json", relationships);
+  for (const [name2, value] of pending) {
+    const target = path8.join(stage, ".SNL_Doc", name2);
+    if (original.has(name2)) await fs6.writeFile(target, jsonText(value));
+    else await installNewJson(target, value);
+  }
+  const validation = await validate(stage);
+  const [finalEntries, finalConfig, activeMacros, macroPackages] = await Promise.all([readEntries(stage), readConfig(stage), readActiveMacros(stage), readAllMacroPackages(stage)]);
+  const binders = /* @__PURE__ */ new Map();
+  for (const entry of finalEntries) {
+    try {
+      binders.set(entry.id, t3(entry.content?.snl ?? ""));
+    } catch {
+      binders.set(entry.id, /* @__PURE__ */ new Set());
+    }
+  }
+  const diagnostics = [...validation.issues];
+  for (let i5 = 0; i5 < operations.length; i5++) {
+    const { command, arguments: { value } } = operations[i5];
+    let issues = [];
+    if (command === "entry/create") {
+      issues = lintEntry(value, { entryKinds: finalConfig.entry_kinds ?? [], macros: activeMacros, siblingEntries: [], exportedBinders: binders }).issues;
+    } else if (command === "macro/create") {
+      const body = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "name" && key !== "package"));
+      issues = lintPackage({ version: "11", name: value.package, description: "", macros: { [String(value.name)]: body } }, { checkKatex: true }).issues;
+      const source = value.source;
+      for (const id of source.entries ?? []) if (!entries.has(id)) issues.push({ severity: "error", code: "macro.source-dangling", message: `Macro source.entries refers to missing Entry ${JSON.stringify(id)}.` });
+      if (!kinds.get("macro-kind").has(String(value.kind))) issues.push({ severity: "error", code: "macro.unknown-kind", message: `Unknown Macro Kind ${JSON.stringify(value.kind)}.` });
+    }
+    diagnostics.push(...issues.map((issue) => ({ ...issue, path: `operations[${i5}]${issue.path ? `.${issue.path}` : ""}` })));
+  }
+  if (diagnostics.some((i5) => i5.severity === "error")) throw new BatchError("batch.validation-failed", "Batch schema, syntax/semantic, or workspace-reference validation failed.", 1, { diagnostics });
+  const results = identities.map(({ type, id, file }, index) => {
+    let value = operations[index].arguments.value;
+    let source = value;
+    if (type === "entry" || type === "macro") source = pending.get(file);
+    if (type === "entry-package" || type === "macro-package") {
+      value = packages.get(id);
+      if (type === "macro-package") {
+        value = { ...value, macros: macroPackages[id].macros };
+      }
+      source = value;
+    }
+    return { operation: "create", entity: { type, id, revision: sha2(source), value } };
+  });
+  return { diagnostics, results, counts: validation.counts };
+}
+async function syncDir(p3) {
+  const h3 = await fs6.open(p3, constants6.O_RDONLY | constants6.O_DIRECTORY | constants6.O_NOFOLLOW);
+  try {
+    await h3.sync();
+  } finally {
+    await h3.close();
+  }
+}
+async function seal(stage, original) {
+  const tree = await snapshot(stage);
+  for (const [name2, node] of tree) {
+    const p3 = path8.join(stage, ".SNL_Doc", name2);
+    if (node.kind === "file") {
+      const h3 = await fs6.open(p3, constants6.O_RDONLY | constants6.O_NOFOLLOW);
+      try {
+        await h3.sync();
+      } finally {
+        await h3.close();
+      }
+    }
+  }
+  for (const [name2, node] of [...tree].reverse()) if (node.kind === "directory") {
+    const p3 = path8.join(stage, ".SNL_Doc", name2);
+    await fs6.chmod(p3, original.get(name2)?.mode ?? node.mode);
+    await syncDir(p3);
+  }
+  await syncDir(stage);
+}
+var run = promisify(execFile);
+var EXCHANGE = "import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n";
+async function exchange(a4, b4) {
+  if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.", 2);
+  await run("python3", ["-I", "-c", EXCHANGE, a4, b4]);
+}
+async function captureWorkspaceRevision(root, allowWriterLock = false) {
+  await assertRoot(root);
+  if (!allowWriterLock && await exists(path8.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock.", 2);
+  return revision(root, await snapshot(root, "authoring"));
+}
+async function checkBatch(root, raw) {
+  const operations = normalize(raw);
+  await assertRoot(root);
+  if (await exists(path8.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
+  const original = await snapshot(root);
+  const expectedWorkspaceRevision = revision(root, original);
+  const originalPhysicalRevision = revision(root, original, "physical");
+  const temporaryRoot = await fs6.realpath(os.tmpdir());
+  const relativeTemporaryRoot = path8.relative(root, temporaryRoot);
+  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path8.sep}`) && relativeTemporaryRoot !== ".." && !path8.isAbsolute(relativeTemporaryRoot)) {
+    throw new BatchError("batch.unsafe-temp-directory", "The check temporary directory must be outside the workspace; set TMPDIR to an external directory.", 2);
+  }
+  const stage = await fs6.mkdtemp(path8.join(temporaryRoot, "snl-batch-check-"));
+  try {
+    await materialize(stage, original);
+    const prepared = await prepare(stage, original, operations);
+    await assertRoot(root);
+    if (await exists(path8.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) fail("batch.workspace-conflict", "Writer lock appeared during preflight; check the complete batch again.");
+    assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
+    return { normalizedOperations: operations, checkedDigest: sha2(["snl.batch/v1", operations]), expectedWorkspaceRevision, diagnostics: prepared.diagnostics, counts: prepared.counts };
+  } finally {
+    await fs6.rm(stage, { recursive: true, force: true });
+  }
+}
+async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, hooks = {}) {
+  const operations = normalize(raw);
+  await assertRoot(root);
+  let committedRevision;
+  try {
+    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async () => {
+      if (sha2(["snl.batch/v1", operations]) !== checkedDigest) fail("batch.digest-conflict", "checkedDigest does not match the normalized operation sequence; recheck the whole batch.");
+      const original = await snapshot(root);
+      if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Authoring revision changed or receipt uses the retired whole-tree token; recheck the whole batch with this Toolkit, never replay a suffix.");
+      const originalPhysicalRevision = revision(root, original, "physical");
+      const stage = await fs6.mkdtemp(path8.join(root, ".snl-batch-"));
+      const liveDoc = path8.join(root, ".SNL_Doc");
+      const stagedDoc = path8.join(stage, ".SNL_Doc");
+      const journal = path8.join(root, BATCH_JOURNAL_FILENAME);
+      let retain = false;
+      let journalCreated = false;
+      let committed = false;
+      let originalInode;
+      try {
+        await materialize(stage, original);
+        const prepared = await prepare(stage, original, operations);
+        const a4 = path8.join(stage, "probe-a"), b4 = path8.join(stage, "probe-b");
+        await fs6.mkdir(a4);
+        await fs6.mkdir(b4);
+        await exchange(a4, b4);
+        await fs6.rmdir(a4);
+        await fs6.rmdir(b4);
+        const lock = await fs6.readFile(path8.join(liveDoc, DATA_WRITE_LOCK_FILENAME));
+        await fs6.writeFile(path8.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
+        const lh = await fs6.open(path8.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), "r");
+        try {
+          await lh.sync();
+        } finally {
+          await lh.close();
+        }
+        await seal(stage, original);
+        const candidate = await snapshot(stage);
+        const resultingWorkspaceRevision = revision(root, candidate);
+        const resultingPhysicalRevision = revision(root, candidate, "physical");
+        await hooks.beforeExchange?.();
+        assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
+        originalInode = await fs6.stat(liveDoc);
+        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, originalPhysicalRevision, resultingPhysicalRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
+        journalCreated = true;
+        await exchange(liveDoc, stagedDoc);
+        assertUnchanged(root, await snapshot(stage), expectedWorkspaceRevision, originalPhysicalRevision);
+        await hooks.afterExchange?.();
+        await hooks.beforeParentSync?.();
+        await syncDir(root);
+        await syncDir(stage);
+        await validate(root);
+        if (revision(root, await snapshot(root), "physical") !== resultingPhysicalRevision) throw new BatchError("batch.readback-failed", "Published workspace does not match the validated complete physical candidate.", 2);
+        await fs6.unlink(journal);
+        journalCreated = false;
+        committed = true;
+        committedRevision = resultingWorkspaceRevision;
+        const diagnostics = [...prepared.diagnostics];
+        try {
+          await fs6.rm(stage, { recursive: true, force: true });
+        } catch {
+          retain = true;
+          diagnostics.push({ severity: "warning", code: "batch.backup-cleanup-failed", message: `Commit completed; retained transaction backup at ${stage}.` });
+        }
+        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics, publication: "linux-directory-exchange", recoveryPath: retain ? stage : null };
+      } catch (error) {
+        if (journalCreated && originalInode) {
+          try {
+            const now = await fs6.stat(liveDoc);
+            if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
+            await syncDir(root);
+            await syncDir(stage);
+            if (revision(root, await snapshot(root), "physical") !== originalPhysicalRevision) throw new Error("Rollback physical revision mismatch.");
+            await fs6.unlink(journal);
+            journalCreated = false;
+          } catch (rollback) {
+            retain = true;
+            throw new BatchError("batch.recovery-required", `Batch failed and rollback is uncertain. Preserve ${stage} and ${journal}; inspect both complete generations before removing any lock.`, 2, { primary: String(error), rollback: String(rollback) });
+          }
+        }
+        throw error;
+      } finally {
+        if (!committed && !retain && !journalCreated) await fs6.rm(stage, { recursive: true, force: true });
+      }
+    });
+  } catch (error) {
+    if (committedRevision) throw new BatchError("batch.committed-cleanup-failed", "The complete batch committed, but lock/resource cleanup failed. Do not replay; inspect the resulting workspace and remaining lock.", 2, { resultingWorkspaceRevision: committedRevision, cause: String(error) });
+    throw error;
+  }
+}
+
+// lib/relationship-generation.ts
+import { isDeepStrictEqual } from "node:util";
+var AUTO_GENERATOR_TAG = "macro-source-scan";
+var AUTO_LABEL = "depends";
+var AUTO_LABELS = ["depends", "uses_context"];
+var AUTO_LABEL_USES_CONTEXT = "uses_context";
+function extractSnlReferences(snl) {
+  const macros2 = /* @__PURE__ */ new Set();
+  const contextSrcs = /* @__PURE__ */ new Set();
+  if (!snl) return { macros: [], contextSrcs: [] };
+  let i5 = 0;
+  const n4 = snl.length;
+  const isIdStart = (c3) => /[A-Za-z_.]/.test(c3);
+  const isIdCont = (c3) => /[A-Za-z0-9_.]/.test(c3);
+  while (i5 < n4) {
+    const c3 = snl[i5];
+    if (/\s|[(),\[\]]/.test(c3)) {
+      i5 += 1;
+      continue;
+    }
+    if (c3 === "%") {
+      i5 += 1;
+      while (i5 < n4 && snl[i5] !== "%") i5 += 1;
+      i5 += 1;
+      continue;
+    }
+    if (c3 === "$") {
+      const isDisplay = snl[i5 + 1] === "$";
+      const delim = isDisplay ? "$$" : "$";
+      i5 += delim.length;
+      while (i5 < n4 && snl.substr(i5, delim.length) !== delim) i5 += 1;
+      i5 += delim.length;
+      continue;
+    }
+    if (c3 === "@") {
+      i5 += 1;
+      if (i5 < n4 && (snl[i5] === "%" || snl[i5] === "$")) continue;
+      while (i5 < n4 && isIdCont(snl[i5])) i5 += 1;
+      continue;
+    }
+    if (isIdStart(c3)) {
+      let j4 = i5 + 1;
+      while (j4 < n4 && isIdCont(snl[j4])) j4 += 1;
+      macros2.add(snl.slice(i5, j4));
+      i5 = j4;
+      if (i5 < n4 && snl[i5] === "[") {
+        while (i5 < n4 && snl[i5] !== "]") i5 += 1;
+        if (i5 < n4) i5 += 1;
+      }
+      if (i5 < n4 && snl[i5] === "@") {
+        i5 += 1;
+        const start = i5;
+        while (i5 < n4 && isIdCont(snl[i5])) i5 += 1;
+        if (i5 > start) contextSrcs.add(snl.slice(start, i5));
+      }
+      continue;
+    }
+    i5 += 1;
+  }
+  return { macros: Array.from(macros2), contextSrcs: Array.from(contextSrcs) };
+}
+function reconcileDependencyRelationships(entries, macros2, existing, scope) {
+  const poolIds = new Set(entries.map((entry) => entry.id));
+  const isSystemAutoRow = (relationship) => AUTO_LABELS.includes(relationship.label) && relationship.metadata !== null && typeof relationship.metadata === "object" && relationship.metadata.generator === AUTO_GENERATOR_TAG;
+  const isManagedDependencyRow = (relationship) => relationship.label === AUTO_LABEL && isSystemAutoRow(relationship);
+  const preservedRows = [];
+  const inScopeAuto = /* @__PURE__ */ new Map();
+  for (const relationship of existing) {
+    const inScope = scope.entryIds === null || scope.entryIds.has(relationship.from);
+    if (isManagedDependencyRow(relationship) && inScope) {
+      inScopeAuto.set(JSON.stringify([relationship.label, relationship.from, relationship.to]), relationship);
+    } else {
+      preservedRows.push(relationship);
+    }
+  }
+  const preservedUser = preservedRows.filter(
+    (relationship) => !isSystemAutoRow(relationship)
+  ).length;
+  const generated = /* @__PURE__ */ new Map();
+  const idPrefix = {
+    [AUTO_LABEL]: "dep",
+    [AUTO_LABEL_USES_CONTEXT]: "ctx"
+  };
+  const witnessField = {
+    [AUTO_LABEL]: "macros",
+    [AUTO_LABEL_USES_CONTEXT]: "postfixes"
+  };
+  const allocatedIds = new Set(preservedRows.map(({ id }) => id));
+  const allocateGeneratedId = (label, from, to, previous) => {
+    if (previous && !allocatedIds.has(previous.id)) {
+      allocatedIds.add(previous.id);
+      return previous.id;
+    }
+    const base = `${idPrefix[label]}.${from}.${to}`;
+    let candidate = base;
+    let suffix = 1;
+    while (allocatedIds.has(candidate)) candidate = `${base}.${suffix++}`;
+    allocatedIds.add(candidate);
+    return candidate;
+  };
+  const upsert = (label, from, to, witness) => {
+    if (!to || from === to || !poolIds.has(to)) return;
+    const key = JSON.stringify([label, from, to]);
+    let bucket = generated.get(key);
+    if (!bucket) {
+      const previous = inScopeAuto.get(key);
+      bucket = {
+        rel: {
+          id: allocateGeneratedId(label, from, to, previous),
+          from,
+          to,
+          label,
+          metadata: {
+            generator: AUTO_GENERATOR_TAG,
+            [witnessField[label]]: [],
+            isAtomic: true
+          }
+        },
+        witnesses: /* @__PURE__ */ new Set()
+      };
+      generated.set(key, bucket);
+    }
+    bucket.witnesses.add(witness);
+  };
+  for (const entry of entries) {
+    if (scope.entryIds !== null && !scope.entryIds.has(entry.id)) continue;
+    const snl = entry.content?.snl ?? "";
+    if (!snl.trim()) continue;
+    const references = extractSnlReferences(snl);
+    for (const name2 of references.macros) {
+      const macro2 = Object.hasOwn(macros2, name2) ? macros2[name2] : void 0;
+      if (!macro2 || !Array.isArray(macro2.source?.entries)) continue;
+      for (const source of macro2.source.entries) upsert(AUTO_LABEL, entry.id, source, name2);
+    }
+  }
+  for (const bucket of generated.values()) {
+    const metadata = bucket.rel.metadata;
+    metadata[witnessField[bucket.rel.label]] = Array.from(bucket.witnesses).sort();
+  }
+  const relationships = [...preservedRows, ...Array.from(generated.values(), ({ rel: rel2 }) => rel2)];
+  const generatedRows = new Set(Array.from(generated.values(), ({ rel: rel2 }) => rel2));
+  computeAtomicityInPlace(relationships, (relationship) => generatedRows.has(relationship));
+  relationships.sort(
+    (left, right) => left.id < right.id ? -1 : left.id > right.id ? 1 : 0
+  );
+  let added = 0;
+  let updated = 0;
+  for (const key of generated.keys()) {
+    if (inScopeAuto.has(key)) updated += 1;
+    else added += 1;
+  }
+  let removed = 0;
+  for (const key of inScopeAuto.keys()) {
+    if (!generated.has(key)) removed += 1;
+  }
+  return {
+    relationships,
+    report: {
+      added,
+      removed,
+      updated,
+      preservedUser,
+      totalDepends: relationships.filter(({ label }) => label === AUTO_LABEL).length,
+      totalUsesContext: relationships.filter(({ label }) => label === AUTO_LABEL_USES_CONTEXT).length,
+      atomicCount: relationships.filter(
+        (relationship) => AUTO_LABELS.includes(relationship.label) && relationship.metadata !== null && typeof relationship.metadata === "object" && relationship.metadata.isAtomic === true
+      ).length
+    }
+  };
+}
+function computeAtomicityInPlace(rels, shouldUpdate = () => true) {
+  for (const label of AUTO_LABELS) {
+    const bucket = rels.filter((rel2) => rel2.label === label);
+    const selected = bucket.map((rel2) => shouldUpdate(rel2));
+    if (!selected.some(Boolean)) continue;
+    const ids = /* @__PURE__ */ new Map();
+    const vertex = (id) => {
+      let index = ids.get(id);
+      if (index === void 0) {
+        index = ids.size;
+        ids.set(id, index);
+      }
+      return index;
+    };
+    const edges = bucket.map((rel2) => ({ from: vertex(rel2.from), to: vertex(rel2.to) }));
+    const adjacency = Array.from({ length: ids.size }, () => []);
+    const indegree = new Uint32Array(ids.size);
+    edges.forEach(({ from, to }, index) => {
+      adjacency[from].push(index);
+      indegree[to] += 1;
+    });
+    const order = [];
+    indegree.forEach((degree, index) => {
+      if (degree === 0) order.push(index);
+    });
+    for (let cursor = 0; cursor < order.length; cursor += 1) {
+      for (const index of adjacency[order[cursor]]) {
+        const to = edges[index].to;
+        indegree[to] -= 1;
+        if (indegree[to] === 0) order.push(to);
+      }
+    }
+    const atomic = new Uint8Array(edges.length);
+    const words = Math.ceil(ids.size / 32);
+    if (order.length === ids.size && ids.size * words * 4 <= 64 * 1024 * 1024) {
+      const rank = new Uint32Array(ids.size);
+      order.forEach((id, index) => {
+        rank[id] = index;
+      });
+      const reachable = new Uint32Array(ids.size * words);
+      for (let cursor = order.length - 1; cursor >= 0; cursor -= 1) {
+        const from = order[cursor];
+        const offset = from * words;
+        const outgoing = adjacency[from].sort((a4, b4) => rank[edges[a4].to] - rank[edges[b4].to]);
+        for (let i5 = 0; i5 < outgoing.length; ) {
+          const to = edges[outgoing[i5]].to;
+          let end = i5 + 1;
+          while (end < outgoing.length && edges[outgoing[end]].to === to) end += 1;
+          const word = to >>> 5;
+          const bit = 1 << (to & 31);
+          const covered = (reachable[offset + word] & bit) !== 0;
+          if (!covered) for (let j4 = i5; j4 < end; j4 += 1) atomic[outgoing[j4]] = 1;
+          if (!covered) {
+            const targetOffset = to * words;
+            for (let w4 = 0; w4 < words; w4 += 1) reachable[offset + w4] |= reachable[targetOffset + w4];
+            reachable[offset + word] |= bit;
+          }
+          i5 = end;
+        }
+      }
+    } else {
+      const seen = new Uint32Array(ids.size);
+      edges.forEach(({ from, to }, thisIndex) => {
+        if (!selected[thisIndex]) return;
+        const stamp = thisIndex + 1;
+        const queue = [from];
+        seen[from] = stamp;
+        let hit = false;
+        for (let cursor = 0; cursor < queue.length && !hit; cursor += 1) {
+          const current = queue[cursor];
+          for (const index of adjacency[current]) {
+            if (current === from && edges[index].to === to) continue;
+            const next = edges[index].to;
+            if (next === to) {
+              hit = true;
+              break;
+            }
+            if (seen[next] !== stamp) {
+              seen[next] = stamp;
+              queue.push(next);
+            }
+          }
+        }
+        atomic[thisIndex] = hit ? 0 : 1;
+      });
+    }
+    bucket.forEach((rel2, index) => {
+      if (!selected[index]) return;
+      const md = rel2.metadata ?? {};
+      md.isAtomic = atomic[index] === 1;
+      rel2.metadata = md;
+    });
+  }
+}
+var RELATIONSHIP_GENERATION_PROVENANCE = Object.freeze({
+  generator: "macro-source-scan",
+  repository: "https://github.com/SJTU-AI4Math/SNL-Doc-Extension",
+  revision: "76acedbc05f0523b8ad2a2e99ebfeb01591f4647",
+  path: "src/dependencyCache.ts",
+  sourceSha256: "8461a3392fec9de81110c1c5ccefb019e329df2ea75add404fe594a410c95792",
+  tokenizerPath: "src/snlReferences.ts",
+  tokenizerSha256: "c656d5bcc5bdfb61c42c351e7480cc8de1e15a48ae5b23968d4f43aa6bce6827",
+  functions: Object.freeze(["extractSnlReferences", "reconcileDependencyRelationships", "computeAtomicityInPlace"]),
+  atomicity: "exact-direct-endpoint-exclusion/dag-bitset-or-traversal"
+});
+function planDependencyRelationships(entries, activeMacros, existing, scope) {
+  const result = reconcileDependencyRelationships(entries, activeMacros, existing, scope);
+  const before = new Map(existing.map((rel2) => [rel2.id, rel2]));
+  const after = new Map(result.relationships.map((rel2) => [rel2.id, rel2]));
+  const changes = { added: [], removed: [], updated: [] };
+  for (const rel2 of result.relationships) {
+    const previous = before.get(rel2.id);
+    if (!previous) changes.added.push(rel2);
+    else if (!isDeepStrictEqual(previous, rel2)) changes.updated.push({ before: previous, after: rel2 });
+  }
+  for (const rel2 of existing) if (!after.has(rel2.id)) changes.removed.push(rel2);
+  changes.removed.sort((a4, b4) => a4.id < b4.id ? -1 : a4.id > b4.id ? 1 : 0);
+  return { ...result, changes, provenance: RELATIONSHIP_GENERATION_PROVENANCE };
+}
+function isAutomaticDependency(relationship) {
+  return relationship.label === "depends" && relationship.metadata !== null && typeof relationship.metadata === "object" && relationship.metadata.generator === AUTO_GENERATOR_TAG;
+}
+function planComposedDependencyRelationships(entries, activeMacros, authored) {
+  const seen = /* @__PURE__ */ new Set();
+  if (!Array.isArray(authored)) throw new TypeError("Authored relationships must be an array.");
+  for (const row of authored) {
+    if (!row || typeof row !== "object" || Array.isArray(row)) throw new TypeError("Relationship must be an object.");
+    for (const key of ["id", "from", "to", "label"]) {
+      if (typeof row[key] !== "string" || !row[key] || row[key].trim() !== row[key]) throw new TypeError(`Relationship ${key} must be a canonical non-empty string.`);
+    }
+    if (seen.has(row.id)) throw new TypeError(`Duplicate relationship id ${JSON.stringify(row.id)}.`);
+    seen.add(row.id);
+  }
+  const compareId2 = (a4, b4) => a4.id < b4.id ? -1 : a4.id > b4.id ? 1 : 0;
+  const input = JSON.parse(JSON.stringify({
+    entries: entries.map((e2) => ({ id: e2.id, content: { snl: e2.content?.snl ?? "" } })).sort(compareId2),
+    macros: Object.fromEntries(Object.keys(activeMacros).sort().map((name2) => [name2, { source: { entries: activeMacros[name2].source?.entries ?? [] } }])),
+    relationships: [...authored].sort(compareId2)
+  }));
+  const plan = planDependencyRelationships(input.entries, input.macros, input.relationships, { entryIds: null });
+  const generated = plan.relationships.filter(isAutomaticDependency);
+  return { ...plan, generated, destination: "memory-only", publicationSupported: false };
+}
+
+// lib/dependency-cache-descriptor.ts
+var compareId = (a4, b4) => a4.id < b4.id ? -1 : a4.id > b4.id ? 1 : 0;
+function dependencyCacheDescriptor(snapshot2) {
+  const input = JSON.parse(JSON.stringify({
+    entries: snapshot2.entries.map((e2) => ({ id: e2.id, content: { snl: e2.content?.snl ?? "" } })).sort(compareId),
+    macros: Object.fromEntries(Object.keys(snapshot2.macros).sort().map((name2) => [name2, { source: { entries: snapshot2.macros[name2].source?.entries ?? [] } }])),
+    relationships: [...snapshot2.relationships].sort(compareId)
+  }));
+  const pool = new Set(input.entries.map((e2) => e2.id));
+  const reserved = new Set(input.relationships.filter((r3) => !isAutomaticDependency(r3)).map((r3) => r3.id));
+  return {
+    id: "dependencies",
+    version: "1",
+    input,
+    validate(value) {
+      if (!Array.isArray(value)) return false;
+      const ids = /* @__PURE__ */ new Set();
+      const pairs = /* @__PURE__ */ new Set();
+      return value.every((r3) => {
+        if (!r3 || typeof r3 !== "object" || typeof r3.id !== "string" || !r3.id || r3.id !== r3.id.trim() || !isAutomaticDependency(r3) || !pool.has(r3.from) || !pool.has(r3.to) || r3.from === r3.to || reserved.has(r3.id) || ids.has(r3.id) || typeof r3.metadata?.isAtomic !== "boolean" || !Array.isArray(r3.metadata.macros) || !r3.metadata.macros.every((m3) => typeof m3 === "string")) return false;
+        const pair = JSON.stringify([r3.from, r3.to]);
+        if (pairs.has(pair)) return false;
+        ids.add(r3.id);
+        pairs.add(pair);
+        return true;
+      });
+    }
+  };
+}
+
+// lib/dependency-cache-storage.ts
+import { constants as constants7, promises as fs7 } from "node:fs";
+import { createHash as createHash5, randomUUID as randomUUID4 } from "node:crypto";
+import * as path9 from "node:path";
+var MAX_BYTES = 64 * 1024 * 1024;
+var object2 = (v3) => v3 !== null && typeof v3 === "object" && !Array.isArray(v3);
+function cacheFingerprint(value) {
+  const ancestors = /* @__PURE__ */ new Set();
+  const canonical2 = (v3) => {
+    if (v3 === null || typeof v3 === "string" || typeof v3 === "boolean") return v3;
+    if (typeof v3 === "number" && Number.isFinite(v3)) return v3;
+    if (v3 === void 0) return null;
+    if (typeof v3 !== "object") throw new Error("Cache inputs must be JSON data");
+    if (ancestors.has(v3)) throw new Error("Cyclic cache input");
+    ancestors.add(v3);
+    let out;
+    if (Array.isArray(v3)) out = v3.map(canonical2);
+    else {
+      if (Object.getPrototypeOf(v3) !== Object.prototype && Object.getPrototypeOf(v3) !== null) throw new Error("Cache inputs must be plain JSON objects");
+      const values = /* @__PURE__ */ Object.create(null);
+      for (const key of Object.keys(v3).sort()) {
+        const val = v3[key];
+        if (val !== void 0) values[key] = canonical2(val);
+      }
+      out = values;
+    }
+    ancestors.delete(v3);
+    return out;
+  };
+  return createHash5("sha256").update(JSON.stringify(canonical2(value))).digest("hex");
+}
+function segment(value) {
+  if (!value || value !== value.trim() || value.startsWith(".") || /[\\/:\0]/.test(value) || /[. ]$/.test(value) || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(value)) {
+    throw new Error("Invalid cache path segment");
+  }
+}
+function cachePath(root, id, scope) {
+  segment(id);
+  if (scope) segment(scope.library);
+  const base = scope ? path9.join(root, ".SNL_Doc", "libraries", scope.library) : path9.join(root, ".SNL_Doc");
+  return path9.resolve(base, ".cache", id, "result.json");
+}
+async function checkDirectory(directory, create) {
+  try {
+    const stat = await fs7.lstat(directory);
+    if (stat.isSymbolicLink() || !stat.isDirectory()) throw new Error("Unsafe cache directory");
+  } catch (error) {
+    if (error.code !== "ENOENT" || !create) throw error;
+    try {
+      await fs7.mkdir(directory);
+    } catch (error2) {
+      if (error2.code !== "EEXIST") throw error2;
+    }
+    await checkDirectory(directory, false);
+  }
+}
+async function guard(root, id, scope, create) {
+  const file = cachePath(root, id, scope);
+  let current = path9.resolve(root, ".SNL_Doc");
+  await checkDirectory(current, false);
+  if (scope) {
+    current = path9.join(current, "libraries");
+    await checkDirectory(current, false);
+    current = path9.join(current, scope.library);
+    await checkDirectory(current, false);
+  }
+  current = path9.join(current, ".cache");
+  await checkDirectory(current, create);
+  await checkDirectory(path9.join(current, id), create);
+  try {
+    const stat = await fs7.lstat(file);
+    if (stat.isSymbolicLink() || !stat.isFile()) throw new Error("Unsafe cache file");
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  return file;
+}
+async function readCache(root, descriptor) {
+  try {
+    const file = await guard(root, descriptor.id, descriptor.scope, false);
+    const handle = await fs7.open(file, constants7.O_RDONLY | (constants7.O_NOFOLLOW ?? 0));
+    let text3;
+    try {
+      const stat = await handle.stat();
+      if (!stat.isFile() || stat.size > MAX_BYTES) return void 0;
+      text3 = await handle.readFile("utf8");
+    } finally {
+      await handle.close();
+    }
+    const envelope = JSON.parse(text3);
+    if (!object2(envelope) || envelope.format !== "snl-derived-cache" || envelope.schema !== 1 || envelope.generator !== descriptor.id || envelope.version !== descriptor.version || envelope.library !== (descriptor.scope?.library ?? null) || envelope.inputHash !== cacheFingerprint(descriptor.input) || !descriptor.validate(envelope.value) || envelope.valueHash !== cacheFingerprint(envelope.value)) return void 0;
+    return envelope.value;
+  } catch {
+    return void 0;
+  }
+}
+async function writeCache(root, descriptor, value, beforeRename) {
+  if (!descriptor.validate(value)) throw new Error("Invalid generated cache value");
+  const text3 = JSON.stringify({
+    format: "snl-derived-cache",
+    schema: 1,
+    generator: descriptor.id,
+    version: descriptor.version,
+    library: descriptor.scope?.library ?? null,
+    inputHash: cacheFingerprint(descriptor.input),
+    valueHash: cacheFingerprint(value),
+    value
+  });
+  if (Buffer.byteLength(text3) > MAX_BYTES) throw new Error("Cache output exceeds size limit");
+  const file = await guard(root, descriptor.id, descriptor.scope, true);
+  const temporary = path9.join(path9.dirname(file), `.${randomUUID4()}.tmp`);
+  try {
+    const handle = await fs7.open(temporary, "wx", 384);
+    try {
+      await handle.writeFile(text3 + "\n");
+      await handle.sync();
+    } finally {
+      await handle.close();
+    }
+    await beforeRename();
+    await guard(root, descriptor.id, descriptor.scope, false);
+    await fs7.rename(temporary, file);
+    const directory = await fs7.open(path9.dirname(file), constants7.O_RDONLY);
+    try {
+      await directory.sync();
+    } finally {
+      await directory.close();
+    }
+  } finally {
+    await fs7.unlink(temporary).catch((error) => {
+      if (error.code !== "ENOENT") throw error;
+    });
+  }
+}
+
+// lib/relationship-publisher.ts
+var RelationshipPublishError = class extends Error {
+  constructor(code, message, exitCode = 1, details) {
+    super(message);
+    this.code = code;
+    this.exitCode = exitCode;
+    this.details = details;
+  }
+  code;
+  exitCode;
+  details;
+};
+async function inputs(root) {
+  const [entries, macros2, rows] = await Promise.all([readEntries(root), readActiveMacros(root), listManagedEntities(root, "relationship")]);
+  return { entries, macros: macros2, relationships: rows.map((row) => row.value) };
+}
+async function validate2(root) {
+  const result = await validateManagedWorkspace(root);
+  if (result.issues.some((issue) => /unsupported (?:future )?(?:workspace|schema|entity_storage)|newer than this Toolkit supports|no registered migration|must carry current Package manifest schema_version/i.test(issue.message)))
+    throw new RelationshipPublishError("workspace.unsupported-schema", "Workspace or entity schema is not supported by this Toolkit.", 2, result);
+  if (!result.valid) throw new RelationshipPublishError("workspace.invalid", "Workspace validation reported errors.", 1, result);
+  return result;
+}
+async function generateRelationships(root, dryRun, expectedWorkspaceRevision, hooks = {}) {
+  await readRegularText(path10.join(root, ".SNL_Doc/config.json"));
+  if (!usesEntityStorage(await readConfig(root))) throw new RelationshipPublishError("workspace.unsupported-schema", "Generation requires current entity storage.", 2);
+  const run2 = async () => {
+    const revision2 = await captureWorkspaceRevision(root, !dryRun);
+    if (expectedWorkspaceRevision !== void 0 && expectedWorkspaceRevision !== revision2)
+      throw new RelationshipPublishError("relationship.workspace-conflict", "Authoring revision changed; run a new global dry-run and review it.");
+    const snapshot2 = await inputs(root);
+    await validate2(root);
+    const descriptor = dependencyCacheDescriptor(snapshot2);
+    const inputHash = cacheFingerprint(descriptor.input);
+    const plan = planComposedDependencyRelationships(snapshot2.entries, snapshot2.macros, snapshot2.relationships);
+    const recheck = async () => {
+      const current = dependencyCacheDescriptor(await inputs(root));
+      if (cacheFingerprint(current.input) !== inputHash || await captureWorkspaceRevision(root, !dryRun) !== revision2)
+        throw new RelationshipPublishError("relationship.workspace-conflict", "Complete Authoring input changed during generation; review a fresh dry-run.");
+    };
+    const result = {
+      relationships: plan.relationships,
+      generated: plan.generated,
+      report: plan.report,
+      changes: plan.changes,
+      provenance: plan.provenance,
+      effectiveScope: "global",
+      inputHash,
+      expectedWorkspaceRevision: revision2,
+      destination: ".SNL_Doc/.cache/dependencies/result.json",
+      published: false,
+      dryRun
+    };
+    if (dryRun) {
+      await recheck();
+      return result;
+    }
+    await hooks.beforePublish?.();
+    await recheck();
+    try {
+      await writeCache(root, descriptor, plan.generated, recheck);
+    } catch (error) {
+      if (error instanceof RelationshipPublishError) throw error;
+      throw new RelationshipPublishError("relationship.publication-failed", error instanceof Error ? error.message : String(error), 2);
+    }
+    await hooks.afterPublish?.();
+    await recheck();
+    const saved = await readCache(root, descriptor);
+    const composed = saved && [...snapshot2.relationships.filter((row) => !isAutomaticDependency(row)), ...saved].sort((a4, b4) => a4.id < b4.id ? -1 : a4.id > b4.id ? 1 : 0);
+    if (!isDeepStrictEqual2(saved, plan.generated) || !isDeepStrictEqual2(composed, plan.relationships))
+      throw new RelationshipPublishError("relationship.readback-failed", "Published cache was cleared, replaced, or failed same-input readback; no Authoring was written.", 2);
+    const validation = await validate2(root);
+    await recheck();
+    return { ...result, published: true, resultingWorkspaceRevision: revision2, readback: { valid: true, path: cachePath(root, "dependencies") }, validation };
+  };
+  return dryRun ? run2() : withWorkspaceDataLock(root, "relationship-generate", run2);
+}
 
 // node_modules/fuse.js/dist/fuse.mjs
 function isArray(value) {
@@ -25143,14 +26191,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path12 = null;
+  let path14 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path12 = createKeyPath(key);
+    path14 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -25160,12 +26208,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name2)));
     }
-    path12 = createKeyPath(name2);
+    path14 = createKeyPath(name2);
     id = createKeyId(name2);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path12,
+    path: path14,
     id,
     weight,
     src,
@@ -25178,29 +26226,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path12) {
+function get(obj, path14) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path13, index, arrayIndex) => {
+  const deepGet = (obj2, path15, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path13[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path15[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path13[index]];
+      const value = obj2[path15[index]];
       if (!isDefined(value)) return;
-      if (index === path13.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path15.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path13, index + 1, i5);
-      } else if (path13.length) deepGet(value, path13, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path15, index + 1, i5);
+      } else if (path15.length) deepGet(value, path15, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path12) ? path12.split(".") : path12, 0);
+  deepGet(obj, isString(path14) ? path14.split(".") : path14, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -26633,7 +27681,7 @@ function tokenizeSnoogleQuery(query) {
 }
 function expandSnoogleToken(token) {
   if (!token.includes(".")) return [{ text: token, tiers: ALL_TIERS }];
-  const segments = token.split(".").map((segment) => segment.trim()).filter(Boolean);
+  const segments = token.split(".").map((segment2) => segment2.trim()).filter(Boolean);
   if (segments.length <= 1) return segments.length === 0 ? [] : [{ text: segments[0], tiers: ALL_TIERS }];
   return [
     { text: segments.at(-1), tiers: TAIL_TIERS },
@@ -26717,7 +27765,7 @@ var SnoogleSearchIndex = class {
   }
 };
 function splitSnoogleNamespace(id) {
-  const segments = id.split(".").map((segment) => segment.trim()).filter(Boolean);
+  const segments = id.split(".").map((segment2) => segment2.trim()).filter(Boolean);
   return { tail: segments.at(-1) ?? id, middle: segments.slice(0, -1) };
 }
 function createSnoogleSearchDocument({ id, value, labels = [] }) {
@@ -26768,9 +27816,9 @@ async function querySnoogl(workspaceRoot, mode, query) {
 }
 
 // lib/init-workspace.ts
-import { randomUUID as randomUUID4 } from "node:crypto";
-import { constants as constants6, promises as fs6 } from "node:fs";
-import path8 from "node:path";
+import { randomUUID as randomUUID5 } from "node:crypto";
+import { constants as constants8, promises as fs8 } from "node:fs";
+import path11 from "node:path";
 
 // lib/init-preset-packages/fulcrum-math-notes.json
 var fulcrum_math_notes_default = {
@@ -28057,7 +29105,7 @@ var ARRAY_KEYS = [
   "relationships",
   "libraries"
 ];
-function record(value) {
+function record2(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 function uniqueBy(values, identity, label) {
@@ -28139,7 +29187,7 @@ function assertPackageMembership(preset) {
   }
 }
 function normalizeInitPreset(value) {
-  if (!record(value)) throw new TypeError("Init Preset Package must be an object.");
+  if (!record2(value)) throw new TypeError("Init Preset Package must be an object.");
   const unknown = Object.keys(value).filter((key) => !PRESET_KEYS.includes(key));
   if (unknown.length) throw new TypeError(`Init Preset Package has unknown key(s): ${unknown.join(", ")}.`);
   if (value.schema !== "snl.init-preset" || value.version !== 1 || typeof value.id !== "string" || !value.id.trim() || value.id !== value.id.trim()) {
@@ -28148,7 +29196,7 @@ function normalizeInitPreset(value) {
   const normalized = { schema: value.schema, version: value.version, id: value.id };
   for (const key of ARRAY_KEYS) {
     const items = value[key] ?? [];
-    if (!Array.isArray(items) || items.some((item) => !record(item))) throw new TypeError(`${key} must be an array of objects.`);
+    if (!Array.isArray(items) || items.some((item) => !record2(item))) throw new TypeError(`${key} must be an array of objects.`);
     normalized[key] = structuredClone(items);
   }
   const preset = normalized;
@@ -28222,7 +29270,7 @@ var InitWorkspaceError = class extends Error {
 };
 async function pathKind(target) {
   try {
-    await fs6.lstat(target);
+    await fs8.lstat(target);
     return "present";
   } catch (error) {
     if (error.code === "ENOENT") return "missing";
@@ -28230,17 +29278,17 @@ async function pathKind(target) {
   }
 }
 async function canonicalExistingDirectory(root) {
-  const resolved = path8.resolve(root);
+  const resolved = path11.resolve(root);
   let stat;
   try {
-    stat = await fs6.lstat(resolved);
+    stat = await fs8.lstat(resolved);
   } catch (error) {
     if (error.code === "ENOENT") {
       throw new InitWorkspaceError("workspace.root-not-found", 2, `Workspace root ${resolved} does not exist.`);
     }
     throw error;
   }
-  if (!stat.isDirectory() || stat.isSymbolicLink() || await fs6.realpath(resolved) !== resolved) {
+  if (!stat.isDirectory() || stat.isSymbolicLink() || await fs8.realpath(resolved) !== resolved) {
     throw new InitWorkspaceError(
       "workspace.root-not-canonical",
       2,
@@ -28250,23 +29298,23 @@ async function canonicalExistingDirectory(root) {
   return resolved;
 }
 async function writeJson(file, value) {
-  await fs6.mkdir(path8.dirname(file), { recursive: true });
-  await fs6.writeFile(file, jsonText(value), { encoding: "utf8", flag: "wx", mode: 420 });
+  await fs8.mkdir(path11.dirname(file), { recursive: true });
+  await fs8.writeFile(file, jsonText(value), { encoding: "utf8", flag: "wx", mode: 420 });
 }
 async function listRelativeFiles(root, current = root) {
-  const names = await fs6.readdir(current, { withFileTypes: true });
+  const names = await fs8.readdir(current, { withFileTypes: true });
   const out = [];
   for (const item of names.sort((left, right) => left.name.localeCompare(right.name))) {
-    const absolute = path8.join(current, item.name);
+    const absolute = path11.join(current, item.name);
     if (item.isDirectory()) out.push(...await listRelativeFiles(root, absolute));
-    else out.push(path8.relative(root, absolute).split(path8.sep).join("/"));
+    else out.push(path11.relative(root, absolute).split(path11.sep).join("/"));
   }
   return out;
 }
 async function releaseOwnedLock(lockPath, token) {
   try {
-    if (await fs6.readFile(lockPath, "utf8") === `${token}
-`) await fs6.unlink(lockPath);
+    if (await fs8.readFile(lockPath, "utf8") === `${token}
+`) await fs8.unlink(lockPath);
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
@@ -28330,7 +29378,7 @@ function resolvePreset(presetId, presetValue) {
 async function initializeWorkspace(root, presetId, presetValue) {
   const preset = resolvePreset(presetId, presetValue);
   const canonicalRoot = await canonicalExistingDirectory(root);
-  const targetDoc = path8.join(canonicalRoot, ".SNL_Doc");
+  const targetDoc = path11.join(canonicalRoot, ".SNL_Doc");
   if (await pathKind(targetDoc) === "present") {
     throw new InitWorkspaceError(
       "workspace.already-initialized",
@@ -28338,11 +29386,11 @@ async function initializeWorkspace(root, presetId, presetValue) {
       `${targetDoc} already exists; snl init never reinitializes or overwrites a workspace.`
     );
   }
-  const token = randomUUID4();
-  const lockPath = path8.join(canonicalRoot, ".SNL_Doc.init.lock");
+  const token = randomUUID5();
+  const lockPath = path11.join(canonicalRoot, ".SNL_Doc.init.lock");
   let lock;
   try {
-    lock = await fs6.open(lockPath, constants6.O_CREAT | constants6.O_EXCL | constants6.O_WRONLY, 384);
+    lock = await fs8.open(lockPath, constants8.O_CREAT | constants8.O_EXCL | constants8.O_WRONLY, 384);
     await lock.writeFile(`${token}
 `, "utf8");
     await lock.sync();
@@ -28357,8 +29405,8 @@ async function initializeWorkspace(root, presetId, presetValue) {
     }
     throw error;
   }
-  const stageRoot = path8.join(canonicalRoot, `.snl-init-stage-${token}`);
-  const stageDoc = path8.join(stageRoot, ".SNL_Doc");
+  const stageRoot = path11.join(canonicalRoot, `.snl-init-stage-${token}`);
+  const stageDoc = path11.join(stageRoot, ".SNL_Doc");
   let published = false;
   try {
     if (await pathKind(targetDoc) === "present") {
@@ -28368,20 +29416,20 @@ async function initializeWorkspace(root, presetId, presetValue) {
         `${targetDoc} appeared while initialization was starting; refusing to overwrite it.`
       );
     }
-    await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs6.mkdir(path8.join(stageDoc, directory), { recursive: true })));
+    await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs8.mkdir(path11.join(stageDoc, directory), { recursive: true })));
     await Promise.all([
-      ...["entries", "macros", "libraries"].map((directory) => fs6.writeFile(path8.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
-      ...defaultPackageManifests().map((item) => writeJson(path8.join(stageDoc, item.relativePath), item.value)),
-      ...defaultMacroEnvelopes().map((item) => writeJson(path8.join(stageDoc, item.relativePath), item.value)),
-      writeJson(path8.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
+      ...["entries", "macros", "libraries"].map((directory) => fs8.writeFile(path11.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
+      ...defaultPackageManifests().map((item) => writeJson(path11.join(stageDoc, item.relativePath), item.value)),
+      ...defaultMacroEnvelopes().map((item) => writeJson(path11.join(stageDoc, item.relativePath), item.value)),
+      writeJson(path11.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
     ]);
     const config = defaultConfig(preset);
-    await writeJson(path8.join(stageDoc, "config.json"), config);
+    await writeJson(path11.join(stageDoc, "config.json"), config);
     if (preset) {
       await createPresetEntities(stageRoot, preset);
       const macroPackages = [...new Set(preset.macros.map((value) => value.package).filter((value) => typeof value === "string"))].filter((value) => value !== "BasicMacros").sort((left, right) => left.localeCompare(right));
       config.active_macro_packages = ["BasicMacros", ...macroPackages];
-      await fs6.writeFile(path8.join(stageDoc, "config.json"), jsonText(config), "utf8");
+      await fs8.writeFile(path11.join(stageDoc, "config.json"), jsonText(config), "utf8");
     }
     const validation = await validateManagedWorkspace(stageRoot);
     if (!validation.valid) {
@@ -28399,7 +29447,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
         `${targetDoc} appeared before publication; refusing to overwrite it.`
       );
     }
-    await fs6.rename(stageDoc, targetDoc);
+    await fs8.rename(stageDoc, targetDoc);
     published = true;
     const createdPaths = (await listRelativeFiles(targetDoc)).map((item) => `.SNL_Doc/${item}`);
     return {
@@ -28412,7 +29460,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
     };
   } finally {
     await lock.close().catch(() => void 0);
-    await fs6.rm(stageRoot, { recursive: true, force: true }).catch(() => void 0);
+    await fs8.rm(stageRoot, { recursive: true, force: true }).catch(() => void 0);
     await releaseOwnedLock(lockPath, token);
     if (!published && await pathKind(targetDoc) === "present") {
     }
@@ -28420,9 +29468,9 @@ async function initializeWorkspace(root, presetId, presetValue) {
 }
 
 // lib/package-membership-repair.ts
-import { promises as fs7 } from "node:fs";
-import path9 from "node:path";
-function record2(value, label) {
+import { promises as fs9 } from "node:fs";
+import path12 from "node:path";
+function record3(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
   return value;
 }
@@ -28434,19 +29482,19 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
       throw new Error("Package entry_ids repair requires the current per-entity workspace schema.");
     }
     const doc = snlDocRoot(workspaceRoot);
-    const manifestFile = path9.join(doc, packageManifestPath(packageId2));
+    const manifestFile = path12.join(doc, packageManifestPath(packageId2));
     const original = await readRegularText(manifestFile);
-    const manifest = record2(JSON.parse(original.text), "Package manifest");
+    const manifest = record3(JSON.parse(original.text), "Package manifest");
     if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId2 || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
       throw new Error(`Package ${JSON.stringify(packageId2)} is not a current canonical Package manifest.`);
     }
     const entryIds = [];
     const seen = /* @__PURE__ */ new Set();
-    const entriesDir = path9.join(doc, "entries");
-    for (const name2 of (await fs7.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
+    const entriesDir = path12.join(doc, "entries");
+    for (const name2 of (await fs9.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
       const relative2 = `entries/${name2}`;
-      const envelope = record2(JSON.parse((await readRegularText(path9.join(entriesDir, name2))).text), relative2);
-      const entry = record2(envelope.entry, `${relative2}#entry`);
+      const envelope = record3(JSON.parse((await readRegularText(path12.join(entriesDir, name2))).text), relative2);
+      const entry = record3(envelope.entry, `${relative2}#entry`);
       if (envelope.format !== "snl-entry" || envelope.version !== ENTRY_STORAGE_VERSION || envelope.schema_version !== CURRENT_ENTRY_SCHEMA_VERSION || typeof envelope.package !== "string" || entry.package !== envelope.package || typeof entry.id !== "string" || !entry.id) {
         throw new Error(`${relative2} is not a current canonical Entry envelope.`);
       }
@@ -28480,470 +29528,6 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
   });
 }
 
-// lib/batch.ts
-import { constants as constants7, promises as fs8 } from "node:fs";
-import path10 from "node:path";
-import os from "node:os";
-import { createHash as createHash4 } from "node:crypto";
-import { execFile } from "node:child_process";
-import { promisify, types as utilTypes } from "node:util";
-var BATCH_CREATE_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship"];
-var BatchError = class extends Error {
-  constructor(code, message, exitCode = 1, details) {
-    super(message);
-    this.code = code;
-    this.exitCode = exitCode;
-    this.details = details;
-  }
-  code;
-  exitCode;
-  details;
-};
-var record3 = (v3) => !!v3 && typeof v3 === "object" && !Array.isArray(v3);
-var sha2 = (v3) => createHash4("sha256").update(JSON.stringify(v3)).digest("hex");
-var fail = (code, message) => {
-  throw new BatchError(code, message);
-};
-function exact(value, fields, label) {
-  const extra = Object.keys(value).filter((k5) => !fields.includes(k5));
-  if (extra.length) throw new TypeError(`${label}: unknown keys ${extra.join(", ")}.`);
-}
-function text2(v3, key) {
-  const s4 = v3[key];
-  if (typeof s4 !== "string" || !s4 || s4 !== s4.trim() || s4.includes("\0")) fail("batch.invalid", `${key} must be a non-empty canonical string without NUL.`);
-  return s4;
-}
-function packageId(value) {
-  try {
-    assertPackageId(value);
-  } catch (error) {
-    fail("batch.invalid", error instanceof Error ? error.message : String(error));
-  }
-}
-function canonical(value) {
-  if (value === null || typeof value === "string" || typeof value === "boolean") return value;
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "object" && value !== null && utilTypes.isProxy(value)) throw new TypeError("Batch JSON must not contain Proxies.");
-  if (Array.isArray(value)) {
-    const keys = Reflect.ownKeys(value);
-    if (keys.length !== value.length + 1) throw new TypeError("Batch arrays must be dense JSON arrays without extra keys.");
-    return Array.from({ length: value.length }, (_2, index) => {
-      const d3 = Object.getOwnPropertyDescriptor(value, String(index));
-      if (!d3 || !("value" in d3) || !d3.enumerable) throw new TypeError("Batch arrays must contain inert own values.");
-      return canonical(d3.value);
-    });
-  }
-  if (record3(value) && [Object.prototype, null].includes(Object.getPrototypeOf(value))) {
-    if (Reflect.ownKeys(value).length !== Object.keys(value).length) throw new TypeError("Batch JSON must not contain symbol or non-enumerable keys.");
-    return Object.fromEntries(Object.keys(value).sort(compareCanonicalIds).map((k5) => {
-      const d3 = Object.getOwnPropertyDescriptor(value, k5);
-      if (!("value" in d3)) throw new TypeError("Batch JSON must not contain accessors.");
-      return [k5, canonical(d3.value)];
-    }));
-  }
-  throw new TypeError("Batch accepts only finite JSON data.");
-}
-function normalize(raw) {
-  if (!Array.isArray(raw)) throw new TypeError("operations must be an array.");
-  return canonical(raw).map((item, index) => {
-    if (!record3(item)) throw new TypeError(`operations[${index}] must be an object.`);
-    exact(item, ["command", "arguments"], `operations[${index}]`);
-    if (!BATCH_CREATE_TYPES.some((type) => item.command === `${type}/create`)) throw new TypeError(`Unsupported batch command ${JSON.stringify(item.command)}; only advertised create commands are accepted.`);
-    if (!record3(item.arguments)) throw new TypeError(`operations[${index}].arguments must be an object.`);
-    exact(item.arguments, ["value"], `operations[${index}].arguments`);
-    if (!record3(item.arguments.value)) fail("batch.invalid", `operations[${index}].arguments.value must be an object.`);
-    let value = canonical(item.arguments.value);
-    if (item.command === "entry/create") value = normalizeEntryDraft(value);
-    if (item.command === "macro/create") {
-      const packageId2 = value.package;
-      const body = Object.fromEntries(Object.entries(value).filter(([k5]) => k5 !== "package"));
-      value = { ...normalizeMacroDraft(body, true), package: packageId2 };
-    }
-    if (item.command === "entry-package/create" || item.command === "macro-package/create") {
-      const id = typeof value.id === "string" ? value.id.trim() : value.id;
-      value = {
-        ...value,
-        id,
-        name: value.name === void 0 ? id : typeof value.name === "string" ? value.name.trim() : value.name,
-        description: value.description === void 0 ? "" : typeof value.description === "string" ? value.description.trim() : value.description
-      };
-      for (const [key, expected] of Object.entries({ format: "snl-package", version: PACKAGE_STORAGE_VERSION, schema_version: CURRENT_PACKAGE_SCHEMA_VERSION })) {
-        if (Object.hasOwn(value, key) && value[key] !== expected) fail("batch.invalid", `Package ${key} must be ${JSON.stringify(expected)}.`);
-      }
-      if (Object.hasOwn(value, "macros") || Object.hasOwn(value, "entry_ids") && (!Array.isArray(value.entry_ids) || value.entry_ids.length)) {
-        fail("batch.invalid", "Create Package membership through separate Entry/Macro operations, not embedded macros or nonempty entry_ids.");
-      }
-    }
-    return canonical({ command: item.command, arguments: { value } });
-  });
-}
-async function exists(p3) {
-  try {
-    await fs8.lstat(p3);
-    return true;
-  } catch (e2) {
-    if (e2.code === "ENOENT") return false;
-    throw e2;
-  }
-}
-async function assertRoot(root) {
-  for (const p3 of [root, path10.join(root, ".SNL_Doc")]) {
-    const s4 = await fs8.lstat(p3);
-    if (!s4.isDirectory() || s4.isSymbolicLink() || await fs8.realpath(p3) !== p3) throw new BatchError("workspace.unsafe-path", `${p3} must be a canonical non-symlink directory.`, 2);
-  }
-  if (await exists(path10.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
-}
-function supportedMode(mode, p3) {
-  if (mode & 3584) throw new BatchError("workspace.unsupported-mode", `Batch refuses setuid, setgid and sticky permission bits: ${p3}.`, 2);
-  return mode & 511;
-}
-async function snapshot(root) {
-  const out = /* @__PURE__ */ new Map();
-  const doc = path10.join(root, ".SNL_Doc");
-  async function walk(relative2) {
-    if (relative2 === DATA_WRITE_LOCK_FILENAME) return;
-    const p3 = path10.join(doc, relative2);
-    const s4 = await fs8.lstat(p3);
-    if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
-    const mode = supportedMode(s4.mode, p3);
-    if (s4.isDirectory()) {
-      out.set(relative2, { kind: "directory", mode });
-      for (const name2 of (await fs8.readdir(p3)).sort(compareCanonicalIds)) await walk(relative2 ? `${relative2}/${name2}` : name2);
-    } else {
-      const handle = await fs8.open(p3, constants7.O_RDONLY | constants7.O_NOFOLLOW | constants7.O_NONBLOCK);
-      try {
-        const opened = await handle.stat();
-        const openedMode = supportedMode(opened.mode, p3);
-        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
-        const bytes = await handle.readFile();
-        const after = await handle.stat();
-        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError("batch.workspace-conflict", `${p3} changed during capture.`);
-        out.set(relative2, { kind: "file", mode: openedMode, bytes });
-      } finally {
-        await handle.close();
-      }
-    }
-  }
-  await walk("");
-  return out;
-}
-function revision(root, data) {
-  const hash = createHash4("sha256").update(`snl.batch.workspace/v1\0${root}\0`);
-  for (const [name2, node] of [...data].sort(([a4], [b4]) => compareCanonicalIds(a4, b4))) {
-    hash.update(JSON.stringify([name2, node.kind, node.mode, node.kind === "file" ? node.bytes.length : 0]) + "\0");
-    if (node.kind === "file") hash.update(node.bytes);
-  }
-  return hash.digest("hex");
-}
-async function materialize(stage, data) {
-  for (const [name2, node] of data) {
-    const p3 = path10.join(stage, ".SNL_Doc", name2);
-    if (node.kind === "directory") await fs8.mkdir(p3, { mode: 448 });
-    else {
-      await fs8.writeFile(p3, node.bytes, { flag: "wx", mode: node.mode });
-      await fs8.chmod(p3, node.mode);
-    }
-  }
-}
-async function validate(root) {
-  const result = await validateManagedWorkspace(root);
-  if (!result.valid) {
-    const unsupported = result.issues.some((i5) => /unsupported|newer than this Toolkit|no registered migration|must carry current Package manifest/.test(i5.message));
-    throw new BatchError(unsupported ? "workspace.unsupported-schema" : "batch.workspace-invalid", "Whole-workspace validation failed.", unsupported ? 2 : 1, result);
-  }
-  return result;
-}
-function readJson3(data, name2) {
-  const node = data.get(name2);
-  if (!node || node.kind !== "file") fail("batch.workspace-invalid", `Missing regular file ${name2}.`);
-  const value = JSON.parse(node.bytes.toString("utf8"));
-  if (!record3(value)) fail("batch.workspace-invalid", `${name2} must be an object.`);
-  return value;
-}
-async function prepare(stage, original, operations) {
-  const config = readJson3(original, "config.json");
-  if (config.version !== "0.1.0") throw new BatchError("workspace.unsupported-schema", "Batch v1 requires workspace data 0.1.0; migrate explicitly first.", 2);
-  await validate(stage);
-  const packages = /* @__PURE__ */ new Map();
-  const entries = /* @__PURE__ */ new Set();
-  const macros2 = /* @__PURE__ */ new Set();
-  for (const [name2, node] of original) {
-    if (node.kind !== "file" || !name2.endsWith(".json")) continue;
-    if (name2.startsWith("packages/")) {
-      const v3 = readJson3(original, name2);
-      packages.set(text2(v3, "id"), v3);
-    }
-    if (name2.startsWith("entries/")) entries.add(text2(readJson3(original, name2).entry, "id"));
-    if (name2.startsWith("macros/")) {
-      const v3 = readJson3(original, name2);
-      macros2.add(`${v3.package}\0${text2(v3.macro, "name")}`);
-    }
-  }
-  const packageIds = new Set([...packages.keys()].map((id) => id.toLowerCase()));
-  const active = new Set(Array.isArray(config.active_macro_packages) ? config.active_macro_packages : [...packages.keys()].filter((id) => id !== "_unpackaged"));
-  const kinds = new Map(["entry-kind", "macro-kind"].map((type) => [type, new Set(config[type === "entry-kind" ? "entry_kinds" : "macro_kinds"].map((v3) => text2(v3, "id")))]));
-  const relationships = original.has("relationships.json") ? readJson3(original, "relationships.json") : { relationships: [] };
-  const relationRows = relationships.relationships;
-  const relationIds = new Set(relationRows.map((v3) => text2(v3, "id")));
-  const pending = /* @__PURE__ */ new Map();
-  const changedPackages = /* @__PURE__ */ new Set();
-  const identities = [];
-  const addedEntries = /* @__PURE__ */ new Map();
-  let configChanged = false;
-  let activationChanged = false;
-  let relationsChanged = false;
-  for (let index = 0; index < operations.length; index++) {
-    const op2 = operations[index];
-    const type = op2.command.split("/")[0];
-    const value = op2.arguments.value;
-    const id = text2(value, type === "macro" ? "name" : "id");
-    let file = "";
-    const duplicate = () => fail("batch.already-exists", `operations[${index}]: ${type} ${JSON.stringify(id)} already exists or was created twice.`);
-    if (type === "entry-kind" || type === "macro-kind") {
-      if (kinds.get(type).has(id)) duplicate();
-      kinds.get(type).add(id);
-      config[type === "entry-kind" ? "entry_kinds" : "macro_kinds"].push(value);
-      configChanged = true;
-      file = "config.json";
-    } else if (type === "entry-package" || type === "macro-package") {
-      packageId(id);
-      if (id === "_unpackaged" || packageIds.has(id.toLowerCase())) duplicate();
-      if (typeof value.name !== "string" || !value.name || typeof value.description !== "string") fail("batch.invalid", "Package requires nonempty name and string description.");
-      packageIds.add(id.toLowerCase());
-      packages.set(id, { ...value, format: "snl-package", version: PACKAGE_STORAGE_VERSION, schema_version: CURRENT_PACKAGE_SCHEMA_VERSION, entry_ids: [] });
-      changedPackages.add(id);
-      active.add(id);
-      configChanged = true;
-      activationChanged = true;
-      file = packageManifestPath(id);
-    } else if (type === "entry") {
-      if (entries.has(id)) duplicate();
-      entries.add(id);
-      const pkg = text2(value, "package");
-      packageId(pkg);
-      file = entryEntityPath(pkg, id);
-      pending.set(file, { format: "snl-entry", version: ENTRY_STORAGE_VERSION, schema_version: CURRENT_ENTRY_SCHEMA_VERSION, package: pkg, entry: value });
-      const added = addedEntries.get(pkg) ?? [];
-      added.push(id);
-      addedEntries.set(pkg, added);
-    } else if (type === "macro") {
-      const pkg = text2(value, "package");
-      packageId(pkg);
-      if (macros2.has(`${pkg}\0${id}`)) duplicate();
-      if (/[@#$%\s()[\]{}]/u.test(id)) fail("macro.bad-name", "Macro name contains forbidden syntax.");
-      macros2.add(`${pkg}\0${id}`);
-      file = macroEntityPath(pkg, id);
-      const macro2 = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "package"));
-      pending.set(file, { format: "snl-macro", version: MACRO_STORAGE_VERSION, schema_version: CURRENT_MACRO_SCHEMA_VERSION, package: pkg, macro: macro2 });
-    } else if (type === "relationship") {
-      if (relationIds.has(id)) duplicate();
-      relationIds.add(id);
-      relationRows.push(value);
-      relationsChanged = true;
-      file = "relationships.json";
-    }
-    identities.push({ type, id: type === "macro" ? `${value.package}::${id}` : id, file });
-  }
-  for (const [pkg, ids] of addedEntries) {
-    const manifest = packages.get(pkg);
-    if (!manifest) fail("batch.missing-package", `Entry Package ${JSON.stringify(pkg)} does not exist in the resulting batch.`);
-    manifest.entry_ids = [...manifest.entry_ids, ...ids].sort(compareCanonicalIds);
-    changedPackages.add(pkg);
-  }
-  for (const pkg of changedPackages) pending.set(packageManifestPath(pkg), packages.get(pkg));
-  if (configChanged) {
-    if (activationChanged) config.active_macro_packages = [...active].sort(compareCanonicalIds);
-    pending.set("config.json", config);
-  }
-  if (relationsChanged) pending.set("relationships.json", relationships);
-  for (const [name2, value] of pending) {
-    const target = path10.join(stage, ".SNL_Doc", name2);
-    if (original.has(name2)) await fs8.writeFile(target, jsonText(value));
-    else await installNewJson(target, value);
-  }
-  const validation = await validate(stage);
-  const [finalEntries, finalConfig, activeMacros, macroPackages] = await Promise.all([readEntries(stage), readConfig(stage), readActiveMacros(stage), readAllMacroPackages(stage)]);
-  const binders = /* @__PURE__ */ new Map();
-  for (const entry of finalEntries) {
-    try {
-      binders.set(entry.id, t3(entry.content?.snl ?? ""));
-    } catch {
-      binders.set(entry.id, /* @__PURE__ */ new Set());
-    }
-  }
-  const diagnostics = [...validation.issues];
-  for (let i5 = 0; i5 < operations.length; i5++) {
-    const { command, arguments: { value } } = operations[i5];
-    let issues = [];
-    if (command === "entry/create") {
-      issues = lintEntry(value, { entryKinds: finalConfig.entry_kinds ?? [], macros: activeMacros, siblingEntries: [], exportedBinders: binders }).issues;
-    } else if (command === "macro/create") {
-      const body = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "name" && key !== "package"));
-      issues = lintPackage({ version: "11", name: value.package, description: "", macros: { [String(value.name)]: body } }, { checkKatex: true }).issues;
-      const source = value.source;
-      for (const id of source.entries ?? []) if (!entries.has(id)) issues.push({ severity: "error", code: "macro.source-dangling", message: `Macro source.entries refers to missing Entry ${JSON.stringify(id)}.` });
-      if (!kinds.get("macro-kind").has(String(value.kind))) issues.push({ severity: "error", code: "macro.unknown-kind", message: `Unknown Macro Kind ${JSON.stringify(value.kind)}.` });
-    }
-    diagnostics.push(...issues.map((issue) => ({ ...issue, path: `operations[${i5}]${issue.path ? `.${issue.path}` : ""}` })));
-  }
-  if (diagnostics.some((i5) => i5.severity === "error")) throw new BatchError("batch.validation-failed", "Batch schema, syntax/semantic, or workspace-reference validation failed.", 1, { diagnostics });
-  const results = identities.map(({ type, id, file }, index) => {
-    let value = operations[index].arguments.value;
-    let source = value;
-    if (type === "entry" || type === "macro") source = pending.get(file);
-    if (type === "entry-package" || type === "macro-package") {
-      value = packages.get(id);
-      if (type === "macro-package") {
-        value = { ...value, macros: macroPackages[id].macros };
-      }
-      source = value;
-    }
-    return { operation: "create", entity: { type, id, revision: sha2(source), value } };
-  });
-  return { diagnostics, results, counts: validation.counts };
-}
-async function syncDir(p3) {
-  const h3 = await fs8.open(p3, constants7.O_RDONLY | constants7.O_DIRECTORY | constants7.O_NOFOLLOW);
-  try {
-    await h3.sync();
-  } finally {
-    await h3.close();
-  }
-}
-async function seal(stage, original) {
-  const tree = await snapshot(stage);
-  for (const [name2, node] of tree) {
-    const p3 = path10.join(stage, ".SNL_Doc", name2);
-    if (node.kind === "file") {
-      const h3 = await fs8.open(p3, constants7.O_RDONLY | constants7.O_NOFOLLOW);
-      try {
-        await h3.sync();
-      } finally {
-        await h3.close();
-      }
-    }
-  }
-  for (const [name2, node] of [...tree].reverse()) if (node.kind === "directory") {
-    const p3 = path10.join(stage, ".SNL_Doc", name2);
-    await fs8.chmod(p3, original.get(name2)?.mode ?? node.mode);
-    await syncDir(p3);
-  }
-  await syncDir(stage);
-}
-var run = promisify(execFile);
-var EXCHANGE = "import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n";
-async function exchange(a4, b4) {
-  if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.", 2);
-  await run("python3", ["-I", "-c", EXCHANGE, a4, b4]);
-}
-async function checkBatch(root, raw) {
-  const operations = normalize(raw);
-  await assertRoot(root);
-  if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
-  const original = await snapshot(root);
-  const expectedWorkspaceRevision = revision(root, original);
-  const temporaryRoot = await fs8.realpath(os.tmpdir());
-  const relativeTemporaryRoot = path10.relative(root, temporaryRoot);
-  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path10.sep}`) && relativeTemporaryRoot !== ".." && !path10.isAbsolute(relativeTemporaryRoot)) {
-    throw new BatchError("batch.unsafe-temp-directory", "The check temporary directory must be outside the workspace; set TMPDIR to an external directory.", 2);
-  }
-  const stage = await fs8.mkdtemp(path10.join(temporaryRoot, "snl-batch-check-"));
-  try {
-    await materialize(stage, original);
-    const prepared = await prepare(stage, original, operations);
-    await assertRoot(root);
-    if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME)) || revision(root, await snapshot(root)) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace changed during preflight; check the complete batch again.");
-    return { normalizedOperations: operations, checkedDigest: sha2(["snl.batch/v1", operations]), expectedWorkspaceRevision, diagnostics: prepared.diagnostics, counts: prepared.counts };
-  } finally {
-    await fs8.rm(stage, { recursive: true, force: true });
-  }
-}
-async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, hooks = {}) {
-  const operations = normalize(raw);
-  await assertRoot(root);
-  let committedRevision;
-  try {
-    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async () => {
-      if (sha2(["snl.batch/v1", operations]) !== checkedDigest) fail("batch.digest-conflict", "checkedDigest does not match the normalized operation sequence; recheck the whole batch.");
-      const original = await snapshot(root);
-      if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace revision changed; recheck the whole batch, never replay a suffix.");
-      const stage = await fs8.mkdtemp(path10.join(root, ".snl-batch-"));
-      const liveDoc = path10.join(root, ".SNL_Doc");
-      const stagedDoc = path10.join(stage, ".SNL_Doc");
-      const journal = path10.join(root, BATCH_JOURNAL_FILENAME);
-      let retain = false;
-      let journalCreated = false;
-      let committed = false;
-      let originalInode;
-      try {
-        await materialize(stage, original);
-        const prepared = await prepare(stage, original, operations);
-        const a4 = path10.join(stage, "probe-a"), b4 = path10.join(stage, "probe-b");
-        await fs8.mkdir(a4);
-        await fs8.mkdir(b4);
-        await exchange(a4, b4);
-        await fs8.rmdir(a4);
-        await fs8.rmdir(b4);
-        const lock = await fs8.readFile(path10.join(liveDoc, DATA_WRITE_LOCK_FILENAME));
-        await fs8.writeFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
-        const lh = await fs8.open(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), "r");
-        try {
-          await lh.sync();
-        } finally {
-          await lh.close();
-        }
-        await seal(stage, original);
-        const resultingWorkspaceRevision = revision(root, await snapshot(stage));
-        if (revision(root, await snapshot(root)) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Workspace changed while staging; publication refused.");
-        originalInode = await fs8.stat(liveDoc);
-        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
-        journalCreated = true;
-        await hooks.beforeExchange?.();
-        await exchange(liveDoc, stagedDoc);
-        await hooks.afterExchange?.();
-        await hooks.beforeParentSync?.();
-        await syncDir(root);
-        await syncDir(stage);
-        await validate(root);
-        if (revision(root, await snapshot(root)) !== resultingWorkspaceRevision) throw new BatchError("batch.readback-failed", "Published workspace does not match the validated candidate.", 2);
-        await fs8.unlink(journal);
-        journalCreated = false;
-        committed = true;
-        committedRevision = resultingWorkspaceRevision;
-        const diagnostics = [...prepared.diagnostics];
-        try {
-          await fs8.rm(stage, { recursive: true, force: true });
-        } catch {
-          retain = true;
-          diagnostics.push({ severity: "warning", code: "batch.backup-cleanup-failed", message: `Commit completed; retained transaction backup at ${stage}.` });
-        }
-        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics, publication: "linux-directory-exchange", recoveryPath: retain ? stage : null };
-      } catch (error) {
-        if (journalCreated && originalInode) {
-          try {
-            const now = await fs8.stat(liveDoc);
-            if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
-            await syncDir(root);
-            await syncDir(stage);
-            if (revision(root, await snapshot(root)) !== expectedWorkspaceRevision) throw new Error("Rollback revision mismatch.");
-            await fs8.unlink(journal);
-            journalCreated = false;
-          } catch (rollback) {
-            retain = true;
-            throw new BatchError("batch.recovery-required", `Batch failed and rollback is uncertain. Preserve ${stage} and ${journal}; inspect both complete generations before removing any lock.`, 2, { primary: String(error), rollback: String(rollback) });
-          }
-        }
-        throw error;
-      } finally {
-        if (!committed && !retain && !journalCreated) await fs8.rm(stage, { recursive: true, force: true });
-      }
-    });
-  } catch (error) {
-    if (committedRevision) throw new BatchError("batch.committed-cleanup-failed", "The complete batch committed, but lock/resource cleanup failed. Do not replay; inspect the resulting workspace and remaining lock.", 2, { resultingWorkspaceRevision: committedRevision, cause: String(error) });
-    throw error;
-  }
-}
-
 // src/cli/operation.ts
 var OPERATION_PROTOCOL = "snl.operation/v1";
 var RESULT_PROTOCOL = "snl.result/v1";
@@ -28973,12 +29557,14 @@ var COMMAND_PATHS = Object.freeze([
   "macro/usages",
   "repair/package-entry-ids",
   "entry/rename",
-  "macro/rename"
+  "macro/rename",
+  "relationship/generate"
 ]);
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
   if (command === "batch/check") return { command, access: "read", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true) }, summary: "Validate a complete dependent create batch without workspace writes; return digest and workspace revision." };
   if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required)." };
+  if (command === "relationship/generate") return { command, access: "write", arguments: { scope: field("empty object (global)", true), dryRun: field("boolean", false), expectedWorkspaceRevision: field("string (required for apply; use dry-run receipt)", false) }, summary: "Generate global dependencies; dry-run writes nothing, apply publishes only the existing dependencies cache under fresh Authoring CAS." };
   const action = command.split("/").at(-1);
   if (action === "list") return { command, access: "read", arguments: { query: field("string|null", false), limit: field("integer", false), cursor: field("string|null", false) }, summary: "List one managed entity family with stable pagination." };
   if (action === "get") return { command, access: "read", arguments: { id: field("string", true) }, summary: "Read one exact managed entity and its revision." };
@@ -29014,8 +29600,18 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path11.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path13.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
+    if (command === "relationship/generate") {
+      const args2 = request.arguments;
+      exactArguments(args2, ["scope", "dryRun", "expectedWorkspaceRevision"]);
+      if (!isRecord8(args2.scope) || Object.keys(args2.scope).length !== 0) throw new TypeError("scope must be exactly {} (global complete workspace).");
+      if (own(args2, "dryRun") && typeof args2.dryRun !== "boolean") throw new TypeError("dryRun must be a boolean when present.");
+      const dryRun = args2.dryRun === true;
+      if ((!dryRun || own(args2, "expectedWorkspaceRevision")) && (typeof args2.expectedWorkspaceRevision !== "string" || !args2.expectedWorkspaceRevision))
+        throw new TypeError("expectedWorkspaceRevision must be a non-empty fresh dry-run token for apply.");
+      return succeed(command, await generateRelationships(request.root, dryRun, args2.expectedWorkspaceRevision));
+    }
     if (command === "batch") {
       exactArguments(request.arguments, []);
       return succeed(command, { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) });
@@ -29033,7 +29629,7 @@ async function executeOperation(request) {
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path12) => path12 !== "help"),
+        commands: COMMAND_PATHS.filter((path14) => path14 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
         batch: { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) },
         web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
@@ -29076,7 +29672,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path11.resolve(request.root),
+        root: path13.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,
@@ -29220,6 +29816,7 @@ async function executeOperation(request) {
     }
     return operationFailure(command, 2, "command.unknown", `Unknown command ${JSON.stringify(command)}.`);
   } catch (error) {
+    if (error instanceof RelationshipPublishError) return operationFailure(command, error.exitCode, error.code, error.message, error.details);
     if (error instanceof BatchError) return operationFailure(command, error.exitCode, error.code, error.message, error.details);
     const message = error instanceof Error ? error.message : String(error);
     if (/batch recovery required/i.test(message)) return operationFailure(command, 2, "batch.recovery-required", message);
@@ -29320,7 +29917,7 @@ function createEntityAdapter() {
 // plugin-src/mcp-server.ts
 async function loadEntityAdapter(specifier = process.env.SNL_ENTITY_ADAPTER_MODULE) {
   if (!specifier) return createEntityAdapter();
-  const url = specifier.startsWith("file:") || specifier.startsWith("data:") || specifier.startsWith("node:") ? specifier : pathToFileURL(resolve4(specifier)).href;
+  const url = specifier.startsWith("file:") || specifier.startsWith("data:") || specifier.startsWith("node:") ? specifier : pathToFileURL(resolve5(specifier)).href;
   const loaded = await import(url);
   const candidate = loaded.createEntityAdapter ? await loaded.createEntityAdapter() : typeof loaded.default === "function" ? await loaded.default() : loaded.default;
   if (!candidate || !["list", "get", "apply", "validate"].every((name2) => typeof candidate[name2] === "function")) {

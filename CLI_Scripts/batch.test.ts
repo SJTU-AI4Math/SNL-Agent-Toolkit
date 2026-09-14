@@ -133,7 +133,7 @@ test('plain-mode empty batch preserves complete tree and modes', async () => {
   assert.deepEqual(await tree(root), before);
 });
 
-test('discovery preserves current init and reader, with exactly seven creates and no generation', async () => {
+test('discovery preserves current init and reader, with exactly seven batch creates and cache generation', async () => {
   const root = await fixture();
   const data = success(await call(root, 'batch'));
   assert.deepEqual(data.operationCommands, ['entry-kind/create','macro-kind/create','entry-package/create','macro-package/create','entry/create','macro/create','relationship/create']);
@@ -142,8 +142,9 @@ test('discovery preserves current init and reader, with exactly seven creates an
   assert.equal(help.web.readOnly, true);
   assert.ok(help.initHelp.defaultEntryKinds.includes('entry'));
   assert.ok(help.commands.includes('batch/check'));
-  assert.ok(!help.commands.includes('relationship/generate'));
-  failure(await call(root, 'relationship/generate'), 'command.unknown', 2);
+  assert.ok(help.commands.includes('relationship/generate'));
+  assert.ok(!data.operationCommands.includes('relationship/generate')); // Not a batch create operation.
+  failure(await call(root, 'relationship/generate'), 'operation.invalid-arguments', 2);
 });
 
 test('digest tampering, operation tampering, stale workspace receipt and replay reject without residue', async () => {
