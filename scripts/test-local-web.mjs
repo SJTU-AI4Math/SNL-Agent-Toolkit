@@ -38,7 +38,24 @@ const readiness = new Promise((resolveReady, reject) => {
 });
 let browser;
 const url = `http://127.0.0.1:${port}`;
-const errors = [], requests = [];
+const errors = [], requests = [], headers = [];
+async function checkHeader(page, route, singleRow = true) {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const header = page.locator('.snl-panel-header:visible');
+  assert.equal(await header.count(), 1, `${route}: require one visible shared PanelHeader`);
+  const geometry = await header.evaluate(node => {
+    const box = node.getBoundingClientRect();
+    const groups = [...node.children].filter(n => n.getBoundingClientRect().width > 0).map(n => {
+      const r = n.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height, cy: r.y + r.height / 2 };
+    });
+    return { top: box.top, height: box.height, groups, width: innerWidth, scrollWidth: document.documentElement.scrollWidth };
+  });
+  assert(geometry.top <= 32 && geometry.top >= 0, `${route}: extra shell rows above PanelHeader: ${geometry.top}`);
+  if (singleRow) assert(Math.max(...geometry.groups.map(g => g.cy)) - Math.min(...geometry.groups.map(g => g.cy)) <= 3, `${route}: header groups wrapped`);
+  assert(geometry.scrollWidth <= geometry.width + 1, `${route}: document overflows horizontally`);
+  headers.push({ route, ...geometry });
+}
+
 try {
   await readiness;
   const info = await (await fetch(url + '/__snl/api/workspace')).json();
@@ -52,14 +69,34 @@ try {
   page.on('request', r => requests.push(r.url()));
   await page.goto(url);
   await page.getByText(workspace, { exact: true }).waitFor();
+  await checkHeader(page, 'workspace');
   await page.getByRole('link', { name: 'Main library', exact: true }).click();
   await page.getByText('Alpha original body.', { exact: true }).waitFor();
   assert(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('library') === 'Main');
+  await checkHeader(page, 'library');
+  await page.screenshot({ path: join(out, 'reader-desktop.png') });
+  await page.getByRole('button', { name: 'Reading preferences', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('dark');
+  await page.waitForFunction(() => document.documentElement.dataset.snlColorScheme === 'dark');
+  await page.getByRole('button', { name: 'Reading preferences', exact: true }).click();
+  await checkHeader(page, 'library-dark');
+  await page.screenshot({ path: join(out, 'reader-dark.png') });
+  await page.getByRole('button', { name: /^Interface language:/ }).click();
+  await page.getByRole('menuitemradio').filter({ hasText: '简体中文' }).click();
+  await page.waitForFunction(() => document.documentElement.lang === 'zh-CN');
+  await checkHeader(page, 'library-zh-dark');
+  await page.getByRole('button', { name: /^界面语言:/ }).click();
+  await page.getByRole('menuitemradio', { name: /English/ }).click();
+  await page.waitForFunction(() => document.documentElement.lang === 'en');
+  await page.getByRole('button', { name: 'Reading preferences', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('light');
+  await page.getByRole('button', { name: 'Reading preferences', exact: true }).click();
   const image = page.getByRole('img', { name: 'Probe' });
   await image.waitFor(); assert(await image.evaluate(n => n.complete && n.naturalWidth > 0));
   await page.getByRole('button', { name: 'SNoogL', exact: true }).click();
   const searchInput = page.getByPlaceholder(/Search entries/);
   await searchInput.waitFor();
+  await checkHeader(page, 'search');
   const contrast = await searchInput.evaluate(node => {
     const style = getComputedStyle(node);
     const luminance = color => {
@@ -90,10 +127,17 @@ try {
   await searchInput.fill('Outside'); await searchInput.press('Enter');
   await page.getByRole('option').filter({ hasText: 'Outside' }).first().click();
   await page.getByText('Outside library but searchable.', { exact: true }).waitFor();
+  await checkHeader(page, 'entry');
   await page.goBack(); await page.getByRole('combobox').first().waitFor();
-  await page.getByRole('button', { name: 'Relationship graph', exact: true }).click();
+  await page.getByRole('button', { name: /^(Relationship graph|View Graph)$/ }).click();
   await page.locator('svg g[role="button"]').first().waitFor();
+  await checkHeader(page, 'graph');
   await page.screenshot({ path: join(out, 'graph.png'), fullPage: true });
+  const snapshot = await (await fetch(url + '/__snl/api/snapshot?library=Main')).json();
+  const macroName = Object.keys(snapshot.macros)[0]; assert(macroName, 'Public initialized fixture must contain an active Macro');
+  await page.goto(url + '/#/macro/' + encodeURIComponent(macroName) + '?library=Main');
+  await page.getByText('Source Entries', { exact: true }).waitFor();
+  await checkHeader(page, 'macro');
   // Same occurrence id in a different Library must resolve to that Library's Entry.
   await page.goto(url + '/#/node/occurrence-0?library=Other');
   await page.getByText('Beta independent body.', { exact: true }).waitFor();
@@ -106,11 +150,32 @@ try {
   await page.getByRole('button', { name: /Refresh/ }).first().click();
   await page.getByText('Alpha refreshed body.', { exact: true }).waitFor();
   await page.setViewportSize({ width: 620, height: 800 });
+  await checkHeader(page, 'library-620');
   await page.screenshot({ path: join(out, 'reader-narrow.png'), fullPage: true });
+  await page.setViewportSize({ width: 360, height: 800 });
+  await checkHeader(page, 'library-360');
+  await page.screenshot({ path: join(out, 'reader-mobile.png'), fullPage: true });
+  const overflow = page.getByRole('button', { name: 'Panel actions', exact: true });
+  await overflow.click();
+  await page.getByRole('button', { name: 'SNoogL', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Reading preferences', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('dark');
+  await page.waitForFunction(() => document.documentElement.dataset.snlColorScheme === 'dark');
+  await page.getByRole('button', { name: 'Reading preferences', exact: true }).click();
+  await page.keyboard.press('Escape');
+  assert.equal(await overflow.getAttribute('aria-expanded'), 'false');
+  assert(await overflow.evaluate(node => node === document.activeElement), 'Escape restores overflow trigger focus');
+  await overflow.click();
+  await Promise.all([
+    page.waitForResponse(response => response.url().includes('/__snl/api/snapshot') && response.ok()),
+    page.getByRole('button', { name: /Refresh this panel/ }).click()
+  ]);
+  await page.getByText('Alpha refreshed body.', { exact: true }).waitFor();
+  await checkHeader(page, 'library-360-refreshed');
   assert.equal(await page.getByRole('button', { name: /^(Edit|Save)$/ }).count(), 0);
   assert.deepEqual(errors, []);
   assert(requests.every(u => u.startsWith(url) || u.startsWith('data:')), 'Startup/render requested external resources');
-  writeFileSync(join(out, 'receipt.json'), JSON.stringify({ url, workspace, cli, cliSha256: createHash('sha256').update(readFileSync(cli)).digest('hex'), errors, requests, stdout, ok: true }, null, 2));
+  writeFileSync(join(out, 'receipt.json'), JSON.stringify({ url, workspace, cli, cliSha256: createHash('sha256').update(readFileSync(cli)).digest('hex'), errors, requests, headers, stdout, ok: true }, null, 2));
   console.log('PASS local Web browser acceptance:', join(out, 'receipt.json'));
 } catch (e) {
   if (browser) for (const context of browser.contexts()) for (const page of context.pages()) await page.screenshot({ path: join(out, 'failure.png'), fullPage: true }).catch(() => {});
