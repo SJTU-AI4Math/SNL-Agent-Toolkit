@@ -19169,6 +19169,7 @@ async function computeEntryBareLatex(root, id) {
 // lib/entity-crud.ts
 var import_node_crypto5 = require("node:crypto");
 var import_node_fs6 = require("node:fs");
+var import_node_child_process = require("node:child_process");
 var import_node_path2 = __toESM(require("node:path"), 1);
 
 // lib/snl-parser.ts
@@ -22958,10 +22959,39 @@ async function captureDirectorySnapshot(directory) {
   }
   return items;
 }
+async function publishDirectoryNoReplace(sourceParent, source, targetParent, target) {
+  const script2 = `import ctypes, os, sys
+libc = ctypes.CDLL(None, use_errno=True)
+rename = libc.renameat2
+rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+rename.restype = ctypes.c_int
+if rename(3, os.fsencode(sys.argv[1]), 4, os.fsencode(sys.argv[2]), 1) != 0:
+    error = ctypes.get_errno()
+    raise OSError(error, os.strerror(error))
+`;
+  await new Promise((resolve6, reject) => {
+    const child = (0, import_node_child_process.spawn)("python3", ["-I", "-S", "-c", script2, source, target], {
+      stdio: ["ignore", "ignore", "pipe", sourceParent.fd, targetParent.fd]
+    });
+    let diagnostic = "";
+    child.stderr.on("data", (chunk) => {
+      diagnostic = (diagnostic + String(chunk)).slice(-4096);
+    });
+    child.once("error", reject);
+    child.once("close", (code) => code === 0 ? resolve6() : reject(new Error(
+      `Library child publication refused (renameat2 no-replace): ${diagnostic.trim() || `exit ${code}`}`
+    )));
+  });
+}
 async function installDirectorySnapshot(targetHandle, snapshot2) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
   const directories = /* @__PURE__ */ new Map([["", targetHandle]]);
+  const admitted = /* @__PURE__ */ new Map();
+  const checkAdmissions = async () => {
+    for (const { destination, identity } of admitted.values())
+      await assertDirectoryIdentity(destination, identity);
+  };
   const replay = async (handle, item) => {
     await handle.chmod(item.mode);
     await handle.utimes(item.atimeMs / 1e3, item.mtimeMs / 1e3);
@@ -22971,14 +23001,24 @@ async function installDirectorySnapshot(targetHandle, snapshot2) {
     await targetHandle.chmod(448);
     for (const item of snapshot2) {
       if (!item.relativePath) continue;
+      await checkAdmissions();
       const parentPath = import_node_path2.default.dirname(item.relativePath);
       const parent = directories.get(parentPath === "." ? "" : parentPath);
       if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
       const destination = import_node_path2.default.join(`/proc/self/fd/${parent.fd}`, import_node_path2.default.basename(item.relativePath));
       if (item.kind === "directory") {
-        await import_node_fs6.promises.mkdir(destination, { mode: 448 });
-        const child = await import_node_fs6.promises.open(destination, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
+        const staged = await import_node_fs6.promises.mkdtemp(import_node_path2.default.join(`/proc/self/fd/${targetHandle.fd}`, ".snl-restore-child-"));
+        const identity = await readDirectoryIdentity(staged);
+        const child = await import_node_fs6.promises.open(staged, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
         directories.set(item.relativePath, child);
+        const opened = await child.stat();
+        if (opened.dev !== identity.dev || opened.ino !== identity.ino)
+          throw new Error(`${item.relativePath} changed before private child admission.`);
+        await assertDirectoryIdentity(staged, identity);
+        await publishDirectoryNoReplace(targetHandle, import_node_path2.default.basename(staged), parent, import_node_path2.default.basename(item.relativePath));
+        await assertDirectoryIdentity(destination, identity);
+        admitted.set(item.relativePath, { destination, identity });
+        await checkAdmissions();
         await child.chmod(448);
       } else {
         const file = await import_node_fs6.promises.open(destination, import_node_fs6.constants.O_WRONLY | import_node_fs6.constants.O_CREAT | import_node_fs6.constants.O_EXCL | import_node_fs6.constants.O_NOFOLLOW, 384);
@@ -22991,8 +23031,10 @@ async function installDirectorySnapshot(targetHandle, snapshot2) {
       }
     }
     for (const item of [...snapshot2].reverse()) {
+      await checkAdmissions();
       if (item.kind === "directory") await replay(directories.get(item.relativePath), item);
     }
+    await checkAdmissions();
   } finally {
     for (const [relative2, handle] of directories) if (relative2) await handle.close();
   }
@@ -24316,7 +24358,7 @@ var import_node_fs7 = require("node:fs");
 var import_node_path3 = __toESM(require("node:path"), 1);
 var import_node_os2 = __toESM(require("node:os"), 1);
 var import_node_crypto6 = require("node:crypto");
-var import_node_child_process = require("node:child_process");
+var import_node_child_process2 = require("node:child_process");
 var import_node_util = require("node:util");
 var BATCH_CREATE_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship"];
 var BatchError = class extends Error {
@@ -24672,7 +24714,7 @@ async function seal(stage, original) {
   }
   await syncDir(stage);
 }
-var run = (0, import_node_util.promisify)(import_node_child_process.execFile);
+var run = (0, import_node_util.promisify)(import_node_child_process2.execFile);
 var EXCHANGE = "import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n";
 async function exchange(a4, b4) {
   if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.", 2);

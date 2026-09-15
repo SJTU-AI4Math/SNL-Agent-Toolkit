@@ -19964,6 +19964,7 @@ async function computeEntryBareLatex(root, id) {
 // lib/entity-crud.ts
 import { createHash as createHash3, randomUUID as randomUUID3 } from "node:crypto";
 import { constants as constants5, promises as fs5 } from "node:fs";
+import { spawn } from "node:child_process";
 import path7 from "node:path";
 
 // lib/snl-parser.ts
@@ -23753,10 +23754,39 @@ async function captureDirectorySnapshot(directory) {
   }
   return items;
 }
+async function publishDirectoryNoReplace(sourceParent, source, targetParent, target) {
+  const script2 = `import ctypes, os, sys
+libc = ctypes.CDLL(None, use_errno=True)
+rename = libc.renameat2
+rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+rename.restype = ctypes.c_int
+if rename(3, os.fsencode(sys.argv[1]), 4, os.fsencode(sys.argv[2]), 1) != 0:
+    error = ctypes.get_errno()
+    raise OSError(error, os.strerror(error))
+`;
+  await new Promise((resolve6, reject) => {
+    const child = spawn("python3", ["-I", "-S", "-c", script2, source, target], {
+      stdio: ["ignore", "ignore", "pipe", sourceParent.fd, targetParent.fd]
+    });
+    let diagnostic = "";
+    child.stderr.on("data", (chunk) => {
+      diagnostic = (diagnostic + String(chunk)).slice(-4096);
+    });
+    child.once("error", reject);
+    child.once("close", (code) => code === 0 ? resolve6() : reject(new Error(
+      `Library child publication refused (renameat2 no-replace): ${diagnostic.trim() || `exit ${code}`}`
+    )));
+  });
+}
 async function installDirectorySnapshot(targetHandle, snapshot2) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
   const directories = /* @__PURE__ */ new Map([["", targetHandle]]);
+  const admitted = /* @__PURE__ */ new Map();
+  const checkAdmissions = async () => {
+    for (const { destination, identity } of admitted.values())
+      await assertDirectoryIdentity(destination, identity);
+  };
   const replay = async (handle, item) => {
     await handle.chmod(item.mode);
     await handle.utimes(item.atimeMs / 1e3, item.mtimeMs / 1e3);
@@ -23766,14 +23796,24 @@ async function installDirectorySnapshot(targetHandle, snapshot2) {
     await targetHandle.chmod(448);
     for (const item of snapshot2) {
       if (!item.relativePath) continue;
+      await checkAdmissions();
       const parentPath = path7.dirname(item.relativePath);
       const parent = directories.get(parentPath === "." ? "" : parentPath);
       if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
       const destination = path7.join(`/proc/self/fd/${parent.fd}`, path7.basename(item.relativePath));
       if (item.kind === "directory") {
-        await fs5.mkdir(destination, { mode: 448 });
-        const child = await fs5.open(destination, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
+        const staged = await fs5.mkdtemp(path7.join(`/proc/self/fd/${targetHandle.fd}`, ".snl-restore-child-"));
+        const identity = await readDirectoryIdentity(staged);
+        const child = await fs5.open(staged, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
         directories.set(item.relativePath, child);
+        const opened = await child.stat();
+        if (opened.dev !== identity.dev || opened.ino !== identity.ino)
+          throw new Error(`${item.relativePath} changed before private child admission.`);
+        await assertDirectoryIdentity(staged, identity);
+        await publishDirectoryNoReplace(targetHandle, path7.basename(staged), parent, path7.basename(item.relativePath));
+        await assertDirectoryIdentity(destination, identity);
+        admitted.set(item.relativePath, { destination, identity });
+        await checkAdmissions();
         await child.chmod(448);
       } else {
         const file = await fs5.open(destination, constants5.O_WRONLY | constants5.O_CREAT | constants5.O_EXCL | constants5.O_NOFOLLOW, 384);
@@ -23786,8 +23826,10 @@ async function installDirectorySnapshot(targetHandle, snapshot2) {
       }
     }
     for (const item of [...snapshot2].reverse()) {
+      await checkAdmissions();
       if (item.kind === "directory") await replay(directories.get(item.relativePath), item);
     }
+    await checkAdmissions();
   } finally {
     for (const [relative2, handle] of directories) if (relative2) await handle.close();
   }

@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { constants, promises as fs } from "node:fs";
+import { spawn } from "node:child_process";
 import path from "node:path";
 import { CURRENT_ENTRY_SCHEMA_VERSION, CURRENT_MACRO_SCHEMA_VERSION, CURRENT_PACKAGE_SCHEMA_VERSION, ENTRY_STORAGE_VERSION, MACRO_STORAGE_VERSION, PACKAGE_STORAGE_VERSION, packageManifestPath, entryEntityPath, macroEntityPath } from "./entity-storage.ts";
 import { assertCurrentKindCatalogs, readActiveMacros, readAllMacroPackages, readConfig, readEntries, readEntryKinds, usesCurrentEntitySchemas, usesEntityStorage } from "./snl-doc.ts";
@@ -129,11 +130,46 @@ async function captureDirectorySnapshot(directory: string): Promise<DirectorySna
     return items;
 }
 
+// Node has no directory link / rename-noreplace primitive. Linux restoration
+// uses exactly renameat2(RENAME_NOREPLACE), not check-then-rename or pathname cp.
+// Python's stdlib ctypes is a deliberately fail-closed syscall bridge: missing
+// python3/libc support leaves the captured tree and reservation intact. No shell,
+// PATH-controlled script, fallback rename, recursive cleanup, or ambient dirfd.
+async function publishDirectoryNoReplace(
+    sourceParent: Awaited<ReturnType<typeof fs.open>>, source: string,
+    targetParent: Awaited<ReturnType<typeof fs.open>>, target: string,
+): Promise<void> {
+    const script = `import ctypes, os, sys
+libc = ctypes.CDLL(None, use_errno=True)
+rename = libc.renameat2
+rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+rename.restype = ctypes.c_int
+if rename(3, os.fsencode(sys.argv[1]), 4, os.fsencode(sys.argv[2]), 1) != 0:
+    error = ctypes.get_errno()
+    raise OSError(error, os.strerror(error))
+`;
+    await new Promise<void>((resolve, reject) => {
+        const child = spawn("python3", ["-I", "-S", "-c", script, source, target], {
+            stdio: ["ignore", "ignore", "pipe", sourceParent.fd, targetParent.fd],
+        });
+        let diagnostic = "";
+        child.stderr!.on("data", chunk => { diagnostic = (diagnostic + String(chunk)).slice(-4096); });
+        child.once("error", reject);
+        child.once("close", code => code === 0 ? resolve() : reject(new Error(
+            `Library child publication refused (renameat2 no-replace): ${diagnostic.trim() || `exit ${code}`}`)));
+    });
+}
+
 async function installDirectorySnapshot(targetHandle: Awaited<ReturnType<typeof fs.open>>, snapshot: DirectorySnapshotItem[]): Promise<void> {
     if (process.platform !== "linux")
         throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
     type Handle = Awaited<ReturnType<typeof fs.open>>;
     const directories = new Map<string, Handle>([["", targetHandle]]);
+    const admitted = new Map<string, { destination: string; identity: DirectoryIdentity }>();
+    const checkAdmissions = async (): Promise<void> => {
+        for (const { destination, identity } of admitted.values())
+            await assertDirectoryIdentity(destination, identity);
+    };
     const replay = async (handle: Handle, item: SnapshotMetadata): Promise<void> => {
         await handle.chmod(item.mode);
         await handle.utimes(item.atimeMs / 1000, item.mtimeMs / 1000);
@@ -146,14 +182,27 @@ async function installDirectorySnapshot(targetHandle: Awaited<ReturnType<typeof 
         await targetHandle.chmod(0o700);
         for (const item of snapshot) {
             if (!item.relativePath) continue;
+            await checkAdmissions();
             const parentPath = path.dirname(item.relativePath);
             const parent = directories.get(parentPath === "." ? "" : parentPath);
             if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
             const destination = path.join(`/proc/self/fd/${parent.fd}`, path.basename(item.relativePath));
             if (item.kind === "directory") {
-                await fs.mkdir(destination, { mode: 0o700 });
-                const child = await fs.open(destination, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
+                // Admit an unpredictable, unpublished directory under the same
+                // reservation contract as the root, and pin it BEFORE publication.
+                // Never open a public child name to acquire ownership after mkdir.
+                const staged = await fs.mkdtemp(path.join(`/proc/self/fd/${targetHandle.fd}`, ".snl-restore-child-"));
+                const identity = await readDirectoryIdentity(staged);
+                const child = await fs.open(staged, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
                 directories.set(item.relativePath, child);
+                const opened = await child.stat();
+                if (opened.dev !== identity.dev || opened.ino !== identity.ino)
+                    throw new Error(`${item.relativePath} changed before private child admission.`);
+                await assertDirectoryIdentity(staged, identity);
+                await publishDirectoryNoReplace(targetHandle, path.basename(staged), parent, path.basename(item.relativePath));
+                await assertDirectoryIdentity(destination, identity);
+                admitted.set(item.relativePath, { destination, identity });
+                await checkAdmissions();
                 await child.chmod(0o700);
             } else {
                 const file = await fs.open(destination, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
@@ -164,8 +213,10 @@ async function installDirectorySnapshot(targetHandle: Awaited<ReturnType<typeof 
         // Child installation changes parent timestamps: replay directories only
         // after all children, deepest first and including the canonical root.
         for (const item of [...snapshot].reverse()) {
+            await checkAdmissions();
             if (item.kind === "directory") await replay(directories.get(item.relativePath)!, item);
         }
+        await checkAdmissions();
     } finally {
         for (const [relative, handle] of directories) if (relative) await handle.close();
     }
