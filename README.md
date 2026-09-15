@@ -90,6 +90,13 @@ not single-entity loops. Its first edition supports dependent creates with one
 digest/revision receipt and Linux directory-exchange publication (`python3`
 required), with explicit guarded recovery and documented crash/reader limits.
 
+Library deletion recovery also has a Linux-only runtime requirement: restoring
+captured child directories requires a trusted `python3` on PATH, Python stdlib
+`ctypes`, libc `renameat2(RENAME_NOREPLACE)`, and accessible `/proc/self/fd`.
+These host facilities are not installed by npm. If they are unavailable,
+recovery fails closed, retains the hidden captured tree and any partial
+reservation, and does not fall back to an overwriting rename or recursive copy.
+
 ## Schema ownership
 
 The authoritative product and data contracts live in `.SNL_Doc`; Toolkit compatibility types live in `lib/snl-doc-schema.ts`. The on-disk schema implementation is shared with `SNL-Doc-Extension` and must fail closed on unsupported versions.
