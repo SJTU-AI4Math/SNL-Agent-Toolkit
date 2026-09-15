@@ -2089,6 +2089,9 @@ async function restoreCapturedPath(captured, target) {
   await fs.rm(captured);
 }
 async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  return replaceTextIfUnchanged(file, expected, jsonText(value), hooks);
+}
+async function replaceTextIfUnchanged(file, expected, text2, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = path.dirname(file);
@@ -2102,7 +2105,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   try {
     handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
     await handle.chmod(current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
+    await handle.writeFile(text2, "utf8");
     await handle.sync();
     await handle.close();
     handle = void 0;
@@ -17566,11 +17569,11 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
 async function readEntries(workspaceRoot) {
   return readEntriesWithPackageRepair(workspaceRoot);
 }
-async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
+async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId, pendingMembership = false) {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId);
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId, pendingMembership);
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
@@ -17611,6 +17614,7 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
         membership.set(entry.package, owned);
       }
       for (const manifest of manifests.values()) {
+        if (pendingMembership && manifest.id === repairingPackageId) continue;
         const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
@@ -17715,7 +17719,7 @@ async function readEntityMacroPackages(workspaceRoot) {
   }
   return out;
 }
-async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId) {
+async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId, pendingMembership = false) {
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
@@ -17729,7 +17733,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
+      if (!(pendingMembership && value.id === repairingPackageId) && (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0))) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );
@@ -20702,12 +20706,16 @@ async function syncDirectoryDurably(directory, beforeSync, expected) {
     await handle.close();
   }
 }
+function snapshotMetadata(stat) {
+  return { mode: stat.mode & 4095, atimeMs: stat.atimeMs, mtimeMs: stat.mtimeMs };
+}
 async function captureDirectorySnapshot(directory) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library snapshot is unavailable on this platform.");
   const items = [];
   const root = await fs5.open(directory, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
   const walk = async (handle, relativeBase) => {
+    items.push({ kind: "directory", relativePath: relativeBase, ...snapshotMetadata(await handle.stat()) });
     const pinned = `/proc/self/fd/${handle.fd}`;
     const names = (await fs5.readdir(pinned)).sort((a4, b3) => a4.localeCompare(b3));
     for (const name of names) {
@@ -20721,7 +20729,6 @@ async function captureDirectorySnapshot(directory) {
           const observed = await child.stat();
           if (observed.dev !== before.dev || observed.ino !== before.ino)
             throw new Error(`${relativePath} changed during Library snapshot.`);
-          items.push({ kind: "directory", relativePath, mode: observed.mode });
           await walk(child, relativePath);
         } finally {
           await child.close();
@@ -20738,7 +20745,7 @@ async function captureDirectorySnapshot(directory) {
         const after = await file.stat();
         if (after.dev !== opened.dev || after.ino !== opened.ino || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs)
           throw new Error(`${relativePath} changed while its Library snapshot was read.`);
-        items.push({ kind: "file", relativePath, mode: opened.mode, bytes });
+        items.push({ kind: "file", relativePath, ...snapshotMetadata(opened), bytes });
       } finally {
         await file.close();
       }
@@ -20754,18 +20761,40 @@ async function captureDirectorySnapshot(directory) {
 async function installDirectorySnapshot(targetHandle, snapshot) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
-  const pinned = `/proc/self/fd/${targetHandle.fd}`;
-  for (const item of snapshot.filter((item2) => item2.kind === "directory"))
-    await fs5.mkdir(path7.join(pinned, item.relativePath), { mode: item.mode });
-  for (const item of snapshot.filter((item2) => item2.kind === "file")) {
-    const destination = path7.join(pinned, item.relativePath);
-    const file = await fs5.open(destination, constants5.O_WRONLY | constants5.O_CREAT | constants5.O_EXCL | constants5.O_NOFOLLOW, item.mode);
-    try {
-      await file.writeFile(item.bytes);
-      await file.sync();
-    } finally {
-      await file.close();
+  const directories = /* @__PURE__ */ new Map([["", targetHandle]]);
+  const replay = async (handle, item) => {
+    await handle.chmod(item.mode);
+    await handle.utimes(item.atimeMs / 1e3, item.mtimeMs / 1e3);
+    await handle.sync();
+  };
+  try {
+    await targetHandle.chmod(448);
+    for (const item of snapshot) {
+      if (!item.relativePath) continue;
+      const parentPath = path7.dirname(item.relativePath);
+      const parent = directories.get(parentPath === "." ? "" : parentPath);
+      if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
+      const destination = path7.join(`/proc/self/fd/${parent.fd}`, path7.basename(item.relativePath));
+      if (item.kind === "directory") {
+        await fs5.mkdir(destination, { mode: 448 });
+        const child = await fs5.open(destination, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
+        directories.set(item.relativePath, child);
+        await child.chmod(448);
+      } else {
+        const file = await fs5.open(destination, constants5.O_WRONLY | constants5.O_CREAT | constants5.O_EXCL | constants5.O_NOFOLLOW, 384);
+        try {
+          await file.writeFile(item.bytes);
+          await replay(file, item);
+        } finally {
+          await file.close();
+        }
+      }
     }
+    for (const item of [...snapshot].reverse()) {
+      if (item.kind === "directory") await replay(directories.get(item.relativePath), item);
+    }
+  } finally {
+    for (const [relative2, handle] of directories) if (relative2) await handle.close();
   }
 }
 async function restoreCapturedDirectory(captured, target, hooks = {}) {

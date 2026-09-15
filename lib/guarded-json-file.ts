@@ -160,6 +160,16 @@ export async function replaceJsonIfUnchanged(
   file: string,
   expected: string,
   value: unknown,
+  hooks: Parameters<typeof replaceTextIfUnchanged>[3] = {},
+): Promise<void> {
+  return replaceTextIfUnchanged(file, expected, jsonText(value), hooks);
+}
+
+/** The same guarded transaction, with exact UTF-8 preimage replay for rollback. */
+export async function replaceTextIfUnchanged(
+  file: string,
+  expected: string,
+  text: string,
   hooks: { beforeCapture?: () => void | Promise<void>; afterParentCheckBeforeCapture?: () => void | Promise<void>; afterCapture?: () => void | Promise<void>; beforeDirectorySync?: () => void | Promise<void>; beforeRollbackQuarantine?: () => void | Promise<void> } = {},
 ): Promise<void> {
   const current = await readRegularText(file);
@@ -177,7 +187,7 @@ export async function replaceJsonIfUnchanged(
     // fs.open applies the process umask even when an exact existing mode is
     // supplied. Restore the captured mode explicitly before publication.
     await handle.chmod(current.mode);
-    await handle.writeFile(jsonText(value), 'utf8');
+    await handle.writeFile(text, 'utf8');
     await handle.sync();
     await handle.close();
     handle = undefined;

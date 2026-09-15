@@ -2,14 +2,14 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import {
   CURRENT_ENTRY_SCHEMA_VERSION,
-  CURRENT_PACKAGE_SCHEMA_VERSION,
   ENTRY_STORAGE_VERSION,
+  entryEntityPath,
+  CURRENT_PACKAGE_SCHEMA_VERSION,
   PACKAGE_STORAGE_VERSION,
   compareCanonicalIds,
-  entryEntityPath,
   packageManifestPath,
 } from './entity-storage.ts';
-import { jsonText, readRegularText, replaceJsonIfUnchanged } from './guarded-json-file.ts';
+import { jsonText, readRegularText, replaceJsonIfUnchanged, replaceTextIfUnchanged } from './guarded-json-file.ts';
 import { readConfig, readEntriesForPackageRepair, snlDocRoot, usesCurrentEntitySchemas } from './snl-doc.ts';
 import { withWorkspaceDataLock } from './workspace-data-lock.ts';
 
@@ -57,7 +57,9 @@ export async function repairPackageEntryIds(
       throw new Error(`Package ${JSON.stringify(packageId)} is not a current canonical Package manifest.`);
     }
 
-    const entryIds: string[] = [];
+    // Retain repair's canonical-envelope admission and diagnostics (including
+    // mandatory markers on 0.0.11). Payload/kind and sibling validation belong
+    // to the authoritative reader below, never a second permissive validator.
     const seen = new Set<string>();
     const entriesDir = path.join(doc, 'entries');
     for (const name of (await fs.readdir(entriesDir)).filter((item) => item.endsWith('.json')).sort()) {
@@ -80,9 +82,9 @@ export async function repairPackageEntryIds(
       }
       if (seen.has(entry.id)) throw new Error(`Duplicate Entry identity ${JSON.stringify(entry.id)}.`);
       seen.add(entry.id);
-      if (envelope.package === packageId) entryIds.push(entry.id);
     }
-    entryIds.sort(compareCanonicalIds);
+    const entries = await readEntriesForPackageRepair(workspaceRoot, packageId, 'before-write');
+    const entryIds = entries.filter(entry => entry.package === packageId).map(entry => entry.id).sort(compareCanonicalIds);
 
     const next = { ...manifest, entry_ids: entryIds };
     if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
@@ -100,7 +102,7 @@ export async function repairPackageEntryIds(
         throw new Error(`Package ${JSON.stringify(packageId)} changed during repair verification.`);
       }
     } catch (error) {
-      await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
+      await replaceTextIfUnchanged(manifestFile, jsonText(next), original.text);
       throw error;
     }
     return { packageId, changed: true, entryIds };

@@ -342,17 +342,21 @@ export async function readEntries(workspaceRoot: string): Promise<EntryData[]> {
   return readEntriesWithPackageRepair(workspaceRoot);
 }
 
-/** Repair-only verification: other Package indexes may differ in order, never membership. */
-export async function readEntriesForPackageRepair(workspaceRoot: string, packageId: string): Promise<EntryData[]> {
+/** Repair-only read: siblings may differ only in order. Before publication,
+ * only the target membership index is pending reconstruction; all payload,
+ * kind, Package schema, identity and filesystem checks remain authoritative. */
+export async function readEntriesForPackageRepair(
+  workspaceRoot: string, packageId: string, phase: 'before-write' | 'after-write' = 'after-write',
+): Promise<EntryData[]> {
   packageManifestPath(packageId);
-  return readEntriesWithPackageRepair(workspaceRoot, packageId);
+  return readEntriesWithPackageRepair(workspaceRoot, packageId, phase === 'before-write');
 }
 
-async function readEntriesWithPackageRepair(workspaceRoot: string, repairingPackageId?: string): Promise<EntryData[]> {
+async function readEntriesWithPackageRepair(workspaceRoot: string, repairingPackageId?: string, pendingMembership = false): Promise<EntryData[]> {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId);
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId, pendingMembership);
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const entryKindIds = new Set((config.entry_kinds ?? []).map(kind => kind.id));
     const ids = new Set<string>();
@@ -396,6 +400,7 @@ async function readEntriesWithPackageRepair(workspaceRoot: string, repairingPack
         membership.set(entry.package, owned);
       }
       for (const manifest of manifests.values()) {
+        if (pendingMembership && manifest.id === repairingPackageId) continue;
         const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== undefined && manifest.id !== repairingPackageId
           ? [...manifest.entry_ids!].sort(compareCanonicalIds)
@@ -526,6 +531,7 @@ async function readEntityPackageManifests(
   workspaceRoot: string,
   requireCurrentSchema = false,
   repairingPackageId?: string,
+  pendingMembership = false,
 ): Promise<Map<string, PackageManifest>> {
   const manifests = new Map<string, PackageManifest>();
   const foldedIds = new Set<string>();
@@ -542,7 +548,7 @@ async function readEntityPackageManifests(
         );
       }
       const entryIds = value.entry_ids;
-      if (
+      if (!(pendingMembership && value.id === repairingPackageId) && (
         !Array.isArray(entryIds) ||
         entryIds.some((entryId: unknown) =>
           typeof entryId !== 'string' || !entryId || entryId !== entryId.trim()) ||
@@ -550,7 +556,7 @@ async function readEntityPackageManifests(
         ((repairingPackageId === undefined || value.id === repairingPackageId) &&
           entryIds.some((entryId: string, index: number) =>
             index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0))
-      ) {
+      )) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`,
         );

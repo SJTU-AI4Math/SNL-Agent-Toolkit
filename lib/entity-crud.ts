@@ -74,9 +74,13 @@ async function syncDirectoryDurably(
     finally { await handle.close(); }
 }
 
-type DirectorySnapshotItem =
-    | { kind: "directory"; relativePath: string; mode: number }
-    | { kind: "file"; relativePath: string; mode: number; bytes: Buffer };
+type SnapshotMetadata = { mode: number; atimeMs: number; mtimeMs: number };
+type DirectorySnapshotItem = SnapshotMetadata & (
+    | { kind: "directory"; relativePath: string }
+    | { kind: "file"; relativePath: string; bytes: Buffer });
+function snapshotMetadata(stat: SnapshotMetadata): SnapshotMetadata {
+    return { mode: stat.mode & 0o7777, atimeMs: stat.atimeMs, mtimeMs: stat.mtimeMs };
+}
 
 async function captureDirectorySnapshot(directory: string): Promise<DirectorySnapshotItem[]> {
     if (process.platform !== "linux")
@@ -84,6 +88,8 @@ async function captureDirectorySnapshot(directory: string): Promise<DirectorySna
     const items: DirectorySnapshotItem[] = [];
     const root = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
     const walk = async (handle: Awaited<ReturnType<typeof fs.open>>, relativeBase: string): Promise<void> => {
+        // Capture directory atime before readdir, including the snapshot root.
+        items.push({ kind: "directory", relativePath: relativeBase, ...snapshotMetadata(await handle.stat()) });
         const pinned = `/proc/self/fd/${handle.fd}`;
         const names = (await fs.readdir(pinned)).sort((a, b) => a.localeCompare(b));
         for (const name of names) {
@@ -97,7 +103,6 @@ async function captureDirectorySnapshot(directory: string): Promise<DirectorySna
                     const observed = await child.stat();
                     if (observed.dev !== before.dev || observed.ino !== before.ino)
                         throw new Error(`${relativePath} changed during Library snapshot.`);
-                    items.push({ kind: "directory", relativePath, mode: observed.mode });
                     await walk(child, relativePath);
                 }
                 finally { await child.close(); }
@@ -114,7 +119,7 @@ async function captureDirectorySnapshot(directory: string): Promise<DirectorySna
                 if (after.dev !== opened.dev || after.ino !== opened.ino || after.size !== opened.size ||
                     after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs)
                     throw new Error(`${relativePath} changed while its Library snapshot was read.`);
-                items.push({ kind: "file", relativePath, mode: opened.mode, bytes });
+                items.push({ kind: "file", relativePath, ...snapshotMetadata(opened), bytes });
             }
             finally { await file.close(); }
         }
@@ -127,14 +132,42 @@ async function captureDirectorySnapshot(directory: string): Promise<DirectorySna
 async function installDirectorySnapshot(targetHandle: Awaited<ReturnType<typeof fs.open>>, snapshot: DirectorySnapshotItem[]): Promise<void> {
     if (process.platform !== "linux")
         throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
-    const pinned = `/proc/self/fd/${targetHandle.fd}`;
-    for (const item of snapshot.filter(item => item.kind === "directory"))
-        await fs.mkdir(path.join(pinned, item.relativePath), { mode: item.mode });
-    for (const item of snapshot.filter((item): item is Extract<DirectorySnapshotItem, { kind: "file" }> => item.kind === "file")) {
-        const destination = path.join(pinned, item.relativePath);
-        const file = await fs.open(destination, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, item.mode);
-        try { await file.writeFile(item.bytes); await file.sync(); }
-        finally { await file.close(); }
+    type Handle = Awaited<ReturnType<typeof fs.open>>;
+    const directories = new Map<string, Handle>([["", targetHandle]]);
+    const replay = async (handle: Handle, item: SnapshotMetadata): Promise<void> => {
+        await handle.chmod(item.mode);
+        await handle.utimes(item.atimeMs / 1000, item.mtimeMs / 1000);
+        await handle.sync();
+    };
+    try {
+        // Keep each immediate parent pinned; metadata never follows a mutable
+        // multi-component pathname. Temporary owner access permits child install
+        // even when the captured directory's final permissions are read-only.
+        await targetHandle.chmod(0o700);
+        for (const item of snapshot) {
+            if (!item.relativePath) continue;
+            const parentPath = path.dirname(item.relativePath);
+            const parent = directories.get(parentPath === "." ? "" : parentPath);
+            if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
+            const destination = path.join(`/proc/self/fd/${parent.fd}`, path.basename(item.relativePath));
+            if (item.kind === "directory") {
+                await fs.mkdir(destination, { mode: 0o700 });
+                const child = await fs.open(destination, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
+                directories.set(item.relativePath, child);
+                await child.chmod(0o700);
+            } else {
+                const file = await fs.open(destination, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
+                try { await file.writeFile(item.bytes); await replay(file, item); }
+                finally { await file.close(); }
+            }
+        }
+        // Child installation changes parent timestamps: replay directories only
+        // after all children, deepest first and including the canonical root.
+        for (const item of [...snapshot].reverse()) {
+            if (item.kind === "directory") await replay(directories.get(item.relativePath)!, item);
+        }
+    } finally {
+        for (const [relative, handle] of directories) if (relative) await handle.close();
     }
 }
 

@@ -17268,6 +17268,9 @@ async function restoreCapturedPath(captured, target) {
   await fs.rm(captured);
 }
 async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  return replaceTextIfUnchanged(file, expected, jsonText(value), hooks);
+}
+async function replaceTextIfUnchanged(file, expected, text2, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = path2.dirname(file);
@@ -17281,7 +17284,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   try {
     handle = await fs.open(temp, constants.O_CREAT | constants.O_EXCL | constants.O_WRONLY, current.mode);
     await handle.chmod(current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
+    await handle.writeFile(text2, "utf8");
     await handle.sync();
     await handle.close();
     handle = void 0;
@@ -17621,11 +17624,11 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
 async function readEntries(workspaceRoot) {
   return readEntriesWithPackageRepair(workspaceRoot);
 }
-async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
+async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId, pendingMembership = false) {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId);
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId, pendingMembership);
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
@@ -17666,6 +17669,7 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
         membership.set(entry.package, owned);
       }
       for (const manifest of manifests.values()) {
+        if (pendingMembership && manifest.id === repairingPackageId) continue;
         const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
@@ -17770,7 +17774,7 @@ async function readEntityMacroPackages(workspaceRoot) {
   }
   return out;
 }
-async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId) {
+async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId, pendingMembership = false) {
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
@@ -17784,7 +17788,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
+      if (!(pendingMembership && value.id === repairingPackageId) && (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0))) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );

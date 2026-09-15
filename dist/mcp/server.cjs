@@ -17931,6 +17931,9 @@ async function restoreCapturedPath(captured, target) {
   await import_node_fs.promises.rm(captured);
 }
 async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
+  return replaceTextIfUnchanged(file, expected, jsonText(value), hooks);
+}
+async function replaceTextIfUnchanged(file, expected, text3, hooks = {}) {
   const current = await readRegularText(file);
   if (current.text !== expected) throw new Error(`${file} changed concurrently; refusing to overwrite it.`);
   const directory = import_node_path.default.dirname(file);
@@ -17944,7 +17947,7 @@ async function replaceJsonIfUnchanged(file, expected, value, hooks = {}) {
   try {
     handle = await import_node_fs.promises.open(temp, import_node_fs.constants.O_CREAT | import_node_fs.constants.O_EXCL | import_node_fs.constants.O_WRONLY, current.mode);
     await handle.chmod(current.mode);
-    await handle.writeFile(jsonText(value), "utf8");
+    await handle.writeFile(text3, "utf8");
     await handle.sync();
     await handle.close();
     handle = void 0;
@@ -18455,15 +18458,15 @@ async function assertEntityStorageTopology(workspaceRoot, config) {
 async function readEntries(workspaceRoot) {
   return readEntriesWithPackageRepair(workspaceRoot);
 }
-async function readEntriesForPackageRepair(workspaceRoot, packageId2) {
+async function readEntriesForPackageRepair(workspaceRoot, packageId2, phase = "after-write") {
   packageManifestPath(packageId2);
-  return readEntriesWithPackageRepair(workspaceRoot, packageId2);
+  return readEntriesWithPackageRepair(workspaceRoot, packageId2, phase === "before-write");
 }
-async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
+async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId, pendingMembership = false) {
   const config = await readConfig(workspaceRoot);
   if (usesEntityStorage(config)) {
     await assertEntityStorageTopology(workspaceRoot, config);
-    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId);
+    const manifests = await readEntityPackageManifests(workspaceRoot, usesCurrentEntitySchemas(config), repairingPackageId, pendingMembership);
     const records = await readJsonDirectory(entryEntitiesDir(workspaceRoot), true);
     const entryKindIds = new Set((config.entry_kinds ?? []).map((kind) => kind.id));
     const ids = /* @__PURE__ */ new Set();
@@ -18504,6 +18507,7 @@ async function readEntriesWithPackageRepair(workspaceRoot, repairingPackageId) {
         membership.set(entry.package, owned);
       }
       for (const manifest of manifests.values()) {
+        if (pendingMembership && manifest.id === repairingPackageId) continue;
         const actual = (membership.get(manifest.id) ?? []).sort(compareCanonicalIds);
         const indexed = repairingPackageId !== void 0 && manifest.id !== repairingPackageId ? [...manifest.entry_ids].sort(compareCanonicalIds) : manifest.entry_ids;
         if (JSON.stringify(indexed) !== JSON.stringify(actual)) {
@@ -18608,7 +18612,7 @@ async function readEntityMacroPackages(workspaceRoot) {
   }
   return out;
 }
-async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId) {
+async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = false, repairingPackageId, pendingMembership = false) {
   const manifests = /* @__PURE__ */ new Map();
   const foldedIds = /* @__PURE__ */ new Set();
   for (const { relativePath, value } of await readJsonDirectory(packageManifestsDir(workspaceRoot), true)) {
@@ -18622,7 +18626,7 @@ async function readEntityPackageManifests(workspaceRoot, requireCurrentSchema = 
         );
       }
       const entryIds = value.entry_ids;
-      if (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0)) {
+      if (!(pendingMembership && value.id === repairingPackageId) && (!Array.isArray(entryIds) || entryIds.some((entryId) => typeof entryId !== "string" || !entryId || entryId !== entryId.trim()) || new Set(entryIds).size !== entryIds.length || (repairingPackageId === void 0 || value.id === repairingPackageId) && entryIds.some((entryId, index) => index > 0 && compareCanonicalIds(entryIds[index - 1], entryId) > 0))) {
         throw new Error(
           `${relativePath}#entry_ids must be a present sorted array of unique, non-empty canonical Entry ids.`
         );
@@ -22902,12 +22906,16 @@ async function syncDirectoryDurably(directory, beforeSync, expected) {
     await handle.close();
   }
 }
+function snapshotMetadata(stat) {
+  return { mode: stat.mode & 4095, atimeMs: stat.atimeMs, mtimeMs: stat.mtimeMs };
+}
 async function captureDirectorySnapshot(directory) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library snapshot is unavailable on this platform.");
   const items = [];
   const root = await import_node_fs6.promises.open(directory, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
   const walk = async (handle, relativeBase) => {
+    items.push({ kind: "directory", relativePath: relativeBase, ...snapshotMetadata(await handle.stat()) });
     const pinned = `/proc/self/fd/${handle.fd}`;
     const names = (await import_node_fs6.promises.readdir(pinned)).sort((a4, b4) => a4.localeCompare(b4));
     for (const name of names) {
@@ -22921,7 +22929,6 @@ async function captureDirectorySnapshot(directory) {
           const observed = await child.stat();
           if (observed.dev !== before.dev || observed.ino !== before.ino)
             throw new Error(`${relativePath} changed during Library snapshot.`);
-          items.push({ kind: "directory", relativePath, mode: observed.mode });
           await walk(child, relativePath);
         } finally {
           await child.close();
@@ -22938,7 +22945,7 @@ async function captureDirectorySnapshot(directory) {
         const after = await file.stat();
         if (after.dev !== opened.dev || after.ino !== opened.ino || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs)
           throw new Error(`${relativePath} changed while its Library snapshot was read.`);
-        items.push({ kind: "file", relativePath, mode: opened.mode, bytes });
+        items.push({ kind: "file", relativePath, ...snapshotMetadata(opened), bytes });
       } finally {
         await file.close();
       }
@@ -22954,18 +22961,40 @@ async function captureDirectorySnapshot(directory) {
 async function installDirectorySnapshot(targetHandle, snapshot2) {
   if (process.platform !== "linux")
     throw new Error("Safe descriptor-relative Library restoration is unavailable on this platform.");
-  const pinned = `/proc/self/fd/${targetHandle.fd}`;
-  for (const item of snapshot2.filter((item2) => item2.kind === "directory"))
-    await import_node_fs6.promises.mkdir(import_node_path2.default.join(pinned, item.relativePath), { mode: item.mode });
-  for (const item of snapshot2.filter((item2) => item2.kind === "file")) {
-    const destination = import_node_path2.default.join(pinned, item.relativePath);
-    const file = await import_node_fs6.promises.open(destination, import_node_fs6.constants.O_WRONLY | import_node_fs6.constants.O_CREAT | import_node_fs6.constants.O_EXCL | import_node_fs6.constants.O_NOFOLLOW, item.mode);
-    try {
-      await file.writeFile(item.bytes);
-      await file.sync();
-    } finally {
-      await file.close();
+  const directories = /* @__PURE__ */ new Map([["", targetHandle]]);
+  const replay = async (handle, item) => {
+    await handle.chmod(item.mode);
+    await handle.utimes(item.atimeMs / 1e3, item.mtimeMs / 1e3);
+    await handle.sync();
+  };
+  try {
+    await targetHandle.chmod(448);
+    for (const item of snapshot2) {
+      if (!item.relativePath) continue;
+      const parentPath = import_node_path2.default.dirname(item.relativePath);
+      const parent = directories.get(parentPath === "." ? "" : parentPath);
+      if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
+      const destination = import_node_path2.default.join(`/proc/self/fd/${parent.fd}`, import_node_path2.default.basename(item.relativePath));
+      if (item.kind === "directory") {
+        await import_node_fs6.promises.mkdir(destination, { mode: 448 });
+        const child = await import_node_fs6.promises.open(destination, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
+        directories.set(item.relativePath, child);
+        await child.chmod(448);
+      } else {
+        const file = await import_node_fs6.promises.open(destination, import_node_fs6.constants.O_WRONLY | import_node_fs6.constants.O_CREAT | import_node_fs6.constants.O_EXCL | import_node_fs6.constants.O_NOFOLLOW, 384);
+        try {
+          await file.writeFile(item.bytes);
+          await replay(file, item);
+        } finally {
+          await file.close();
+        }
+      }
     }
+    for (const item of [...snapshot2].reverse()) {
+      if (item.kind === "directory") await replay(directories.get(item.relativePath), item);
+    }
+  } finally {
+    for (const [relative2, handle] of directories) if (relative2) await handle.close();
   }
 }
 async function restoreCapturedDirectory(captured, target, hooks = {}) {
@@ -28693,7 +28722,6 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
     if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId2 || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
       throw new Error(`Package ${JSON.stringify(packageId2)} is not a current canonical Package manifest.`);
     }
-    const entryIds = [];
     const seen = /* @__PURE__ */ new Set();
     const entriesDir = import_node_path6.default.join(doc, "entries");
     for (const name of (await import_node_fs10.promises.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
@@ -28708,9 +28736,9 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
       }
       if (seen.has(entry.id)) throw new Error(`Duplicate Entry identity ${JSON.stringify(entry.id)}.`);
       seen.add(entry.id);
-      if (envelope.package === packageId2) entryIds.push(entry.id);
     }
-    entryIds.sort(compareCanonicalIds);
+    const entries = await readEntriesForPackageRepair(workspaceRoot, packageId2, "before-write");
+    const entryIds = entries.filter((entry) => entry.package === packageId2).map((entry) => entry.id).sort(compareCanonicalIds);
     const next = { ...manifest, entry_ids: entryIds };
     if (JSON.stringify(manifest.entry_ids) === JSON.stringify(entryIds)) {
       await readEntriesForPackageRepair(workspaceRoot, packageId2);
@@ -28726,7 +28754,7 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
         throw new Error(`Package ${JSON.stringify(packageId2)} changed during repair verification.`);
       }
     } catch (error) {
-      await replaceJsonIfUnchanged(manifestFile, jsonText(next), manifest);
+      await replaceTextIfUnchanged(manifestFile, jsonText(next), original.text);
       throw error;
     }
     return { packageId: packageId2, changed: true, entryIds };
