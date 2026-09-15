@@ -69,3 +69,24 @@ After full prepack, run `scripts/verify-relationship-publisher-installed.mjs <fr
 The fixture is authored through installed public CLI `init`, `batch check/apply`, and fresh-CAS `entry update`. It includes two regular Packages with a duplicate Macro name, reverse creation order, a system-Package Macro created by public batch, four Entries, and a preserved manual relationship. All four installed transports must publish a nonempty, closed graph. The independently archived fixed76 native `snlDoc` (not a Toolkit-supplied input oracle) reads the same physical workspace with only a VSCode platform shim. Both `readDependencyCache` and unsupplied-snapshot `readRelationships` must consume the artifact without rewriting it. Source/tarball/installed closure hashes and complete native input snapshots are retained.
 
 The installed harness now exercises missing activation through an explicitly authorized, exclusive-fixture-only config setup after public authoring. This is not evidence of a public config setter: only `active_macro_packages` is deleted/replaced, with full before/after byte hashes and structural diff, and all other Authoring bytes checked unchanged. Optional fourth argument reuses a lane-owned sealed fixed76 native build (archive, source and bundle hashes verified), avoiding a second native dependency installation. `scripts/verify-publisher-activation.mjs <fresh-evidence-dir> <sealed-fixed76-build-dir>` under tsx exercises missing, empty, regular subset, canonical duplicate-name winner, reverse and duplicate activation against actual native full collectors, plus the Toolkit HTML Reader's actual local model. Explicit system activation remains a rejected Toolkit config, even though native ignores it; these are negative admission cases, not newly accepted workspace states. No all-pool fallback or validator relaxation is used. No cross-product mixed-writer, browser or Extension Host UI certification is claimed.
+
+## Portable author regression coverage
+
+`CLI_Scripts/relationship-generation-author-regressions.test.ts` preserves the
+formerly local graph-generator experiments as ordinary `npm test` regressions.
+Its oracle is the checksum-verified current Extension fixture under
+`CLI_Scripts/fixtures/relationship-oracle`, not an absolute path into another
+checkout. It covers all 4,096 loop-free directed four-vertex graphs, seeded
+scoped snapshots, mixed-label multigraphs, selected updates, 180-node multi-word
+closure, the 64 MiB fallback, dotted-ID collisions, and 10,000 Entries producing
+50,000 retained edges with an exact sampled oracle. The large case also checks
+every edge's expected atomicity; timings are observations, not CI thresholds.
+
+These are current-contract characterizations. Direct parallel endpoints follow
+the pinned endpoint-exclusion rule, not the older edge-instance rule. Macro
+activation and schema/Package precedence are exercised separately through real
+current CRUD in `relationship-generation.test.ts` and
+`publisher-activation.test.ts`; the obsolete storage receipt fixture is not a
+second supported schema. Mutation sensitivity is checked by disabling atomic
+marking in the DAG fast path: both the exhaustive and large-scale assertions
+fail, while the restored implementation passes.

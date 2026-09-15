@@ -1,3 +1,4 @@
+import { promises as fs } from 'node:fs';
 import assert from 'node:assert/strict';
 import { cp, lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -128,6 +129,96 @@ describe('unified CRUD on workspace v0.1.0', () => {
       entryIds: ['entry.localized', '墨翟', '黄歇'],
     });
     assert.equal((await validateManagedWorkspace(root)).valid, true);
+  });
+
+  it('repairs two legacy-unsorted Packages sequentially through the public operation', async () => {
+    const root = await fixtureCopy();
+    const packages = ['_unpackaged', 'Logic'];
+    for (const packageId of packages) {
+      for (const suffix of ['黄歇', '墨翟']) {
+        const id = `${packageId}.${suffix}`;
+        assert.equal((await createManagedEntity(root, 'entry', {
+          id, package: packageId, kind: 'definition', title: id,
+          content: {}, contribution_info: null, pointer: null,
+        })).status, 'ok');
+      }
+    }
+    const files = packages.map(id => path.join(root, '.SNL_Doc', packageManifestPath(id)));
+    for (const file of files) await mutateJson(file, manifest => {
+      (manifest.entry_ids as string[]).reverse();
+      manifest.vendor_extension = { keep: true };
+    });
+    const siblingBefore = await readFile(files[1], 'utf8');
+    await assert.rejects(() => listManagedEntities(root, 'entry'), /sorted array/);
+    for (const [index, id] of packages.entries()) {
+      const response = await executeOperation({
+        protocol: OPERATION_PROTOCOL, command: 'repair/package-entry-ids', root, arguments: { id },
+      });
+      assert.equal(response.exitCode, 0, JSON.stringify(response.response));
+      const manifest = JSON.parse(await readFile(files[index], 'utf8'));
+      assert.deepEqual(manifest.entry_ids, [...manifest.entry_ids].sort());
+      assert.deepEqual(manifest.vendor_extension, { keep: true });
+      if (index === 0) {
+        assert.equal(await readFile(files[1], 'utf8'), siblingBefore);
+        assert.deepEqual(await repairPackageEntryIds(root, id), {
+          packageId: id, changed: false, entryIds: manifest.entry_ids,
+        });
+        await assert.rejects(() => listManagedEntities(root, 'entry'), /sorted array/);
+      }
+    }
+    assert.equal((await validateManagedWorkspace(root)).valid, true);
+  });
+
+  it('keeps repair fail-closed for invalid Entry envelopes and payloads', async () => {
+    const mutations: Array<(value: Record<string, unknown>) => void> = [
+      value => { value.schema_version = 2; },
+      value => { value.format = 'invalid'; },
+      value => { delete (value.entry as Record<string, unknown>).title; },
+      value => { (value.entry as Record<string, unknown>).kind = 'missing-kind'; },
+      value => { (value.entry as Record<string, unknown>).id = 'wrong-path'; },
+      value => { (value.entry as Record<string, unknown>).package = 'Logic'; },
+    ];
+    for (const mutation of mutations) {
+      const root = await fixtureCopy();
+      const file = path.join(root, '.SNL_Doc', packageManifestPath('_unpackaged'));
+      await mutateJson(file, value => { value.entry_ids = []; });
+      const before = await readFile(file, 'utf8');
+      await mutateJson(path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized')), mutation);
+      await assert.rejects(() => repairPackageEntryIds(root, '_unpackaged'), /Entry|identity/);
+      assert.equal(await readFile(file, 'utf8'), before);
+    }
+    const root = await fixtureCopy();
+    const envelope = JSON.parse(await readFile(path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized')), 'utf8'));
+    envelope.package = envelope.entry.package = 'Logic';
+    await writeFile(path.join(root, '.SNL_Doc', entryEntityPath('Logic', 'entry.localized')), JSON.stringify(envelope));
+    await assert.rejects(() => repairPackageEntryIds(root, '_unpackaged'), /Duplicate Entry identity/);
+  });
+
+  it('rolls back failed local repair validation without clobbering foreign edits', async (t) => {
+    for (const foreignEdit of [false, true]) {
+      const root = await fixtureCopy();
+      const file = path.join(root, '.SNL_Doc', packageManifestPath('_unpackaged'));
+      await mutateJson(file, value => { value.entry_ids = []; });
+      const before = await readFile(file, 'utf8');
+      const link = fs.link;
+      let injected = false;
+      const mocked = t.mock.method(fs, 'link', async (...[source, destination]: Parameters<typeof fs.link>) => {
+        await link(source, destination);
+        if (destination === file && !injected) {
+          injected = true;
+          await mutateJson(path.join(root, '.SNL_Doc', entryEntityPath('_unpackaged', 'entry.localized')), value => {
+            delete (value.entry as Record<string, unknown>).title;
+          });
+          if (foreignEdit) await mutateJson(file, value => { value.description = 'external'; });
+        }
+      });
+      try {
+        await assert.rejects(() => repairPackageEntryIds(root, '_unpackaged'), /Entry payload|changed concurrently/);
+        assert.equal(injected, true);
+        if (foreignEdit) assert.equal(JSON.parse(await readFile(file, 'utf8')).description, 'external');
+        else assert.equal(await readFile(file, 'utf8'), before);
+      } finally { mocked.mock.restore(); }
+    }
   });
 
   it('exposes Package membership repair through the unified operation protocol', async () => {
