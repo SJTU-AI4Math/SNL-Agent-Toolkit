@@ -147,6 +147,28 @@ describe('guarded JSON path capture', () => {
     assert.equal(JSON.parse(await readFile(path.join(parked, 'entity.json'), 'utf8')).owner, 'mine');
   });
 
+  // Retain the symlink variant from cca9b9ab alongside the directory-replacement control above.
+  it('does not report create success when the canonical parent becomes a symlink before directory sync', async () => {
+    const { root } = await scratch();
+    const live = path.join(root, 'create-live');
+    const parked = path.join(root, 'create-parked');
+    const external = path.join(root, 'create-external');
+    await mkdir(live);
+    await mkdir(external);
+    const file = path.join(live, 'entity.json');
+    await assert.rejects(
+      () => installNewJson(file, { owner: 'mine' }, {
+        beforeDirectorySync: async () => {
+          await rename(live, parked);
+          await symlink(external, live, 'dir');
+        },
+      }),
+      /canonical|symlink|changed concurrently/i,
+    );
+    await assert.rejects(() => readFile(path.join(external, 'entity.json'), 'utf8'), /ENOENT/);
+    assert.equal(JSON.parse(await readFile(path.join(parked, 'entity.json'), 'utf8')).owner, 'mine');
+  });
+
   it('never overwrites a new canonical file created after capture', async () => {
     const { root, file } = await scratch();
     const original = '{"owner":"original"}\n';
