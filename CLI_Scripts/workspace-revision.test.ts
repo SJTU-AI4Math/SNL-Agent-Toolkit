@@ -54,6 +54,9 @@ test('all reserved global and Library cache lifecycles leave Authoring identity 
 
 test('unknown author assets, cache-like paths, genuine entity content and modes remain authority', async () => {
   const root = await fixture();
+  // Establish distinct preimages; checkout/archive modes are not portable fixtures.
+  await chmod(path.join(root, '.SNL_Doc/config.json'), 0o644);
+  await chmod(path.join(root, '.SNL_Doc/entries'), 0o755);
   const library = success(await publicCall(root, 'library/list', {})).entities[0].id;
   let previous = await captureWorkspaceRevision(root);
   for (const relative of ['assets/.cache/dependencies/result.json', '.cache-like/result.json', 'unknown/author.txt', `libraries/${library}/assets/.cache/result.json`, 'libraries/not-a-library/deeper/.cache/result.json', 'libraries/.hidden/.cache/result.json']) {
@@ -113,6 +116,7 @@ test('old whole-tree receipt is rejected explicitly even cold; fresh no-op batch
 
 for (const target of ['.cache/dependencies/result.json', 'config.json']) test(`pre-exchange ${target} churn is accurately classified and never discarded`, async () => {
   const root = await fixture(); await put(root, '.cache/dependencies/result.json', 'old');
+  await chmod(path.join(root, '.SNL_Doc', target), 0o644);
   const checked = await checkBatch(root, operations);
   await assert.rejects(applyBatch(root, checked.normalizedOperations, checked.checkedDigest, checked.expectedWorkspaceRevision, {
     beforeExchange: async () => { await chmod(path.join(root, '.SNL_Doc', target), 0o600); },

@@ -105,7 +105,7 @@ export async function main(argv=process.argv.slice(2)): Promise<number> {
   try {
     const input=parsed.request.arguments.input;
     if(typeof input==='string'){
-      const value = await readInput(input, parsed.request.command.startsWith('batch/'));
+      const value = await readInput(input, parsed.request.command.startsWith('batch/') || parsed.request.command === 'relationship/generate');
       delete parsed.request.arguments.input;
       if (parsed.request.command === 'batch/check') parsed.request.arguments.operations = value;
       else if (parsed.request.command === 'relationship/generate') {
