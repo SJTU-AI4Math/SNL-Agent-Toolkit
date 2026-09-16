@@ -54,4 +54,17 @@
 * **Dashboard (仪表盘)**
 * **Info View (信息视图)**
 
+## Syntax Conventions (语法约定)
+
+These are the authoring rules the parser enforces and the rules it silently does
+not. Each one is a failure mode with a diagnosis, not a style preference.
+
+* **SNL Root (SNL 根节点)**
+  * **Text Node Boundary (文本节点边界)**
+* **Formula Node (公式节点)**
+* **Declaration Arity (声明元数)**
+* **Pointwise Application (点态应用)**
+* **Structure Declaration (结构声明)**
+* **Syntax Tree Fidelity (语法树忠实度)**
+
 ## Data Schema (数据模式)

@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.DeclarationArity",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Declaration Arity",
+        "zh-CN": "声明元数"
+      }
+    },
+    "content": {
+      "snl": "__list__(%Context is expressed by a dedicated context container whose first argument holds the declarations and hypotheses, and whose second argument holds the body in that context%(DeclarationArity, EntryContent), %A declaration macro expresses the declaration itself and takes no hypothesis argument, so composed context-carrying declaration macros are not introduced%(DeclarationArity), %A definition declaration has fixed arity three, and the meaning of each argument is invariant under every style%(DeclarationArity, TermMacroStyle), %Unwritten information is an explicit empty argument slot and never a guessed type or an invented body%(DeclarationArity))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*Declaration\\ Arity\\ \\(声明元数\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

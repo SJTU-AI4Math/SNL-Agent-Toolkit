@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.TextNodeBoundary",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Text Node Boundary",
+        "zh-CN": "文本节点边界"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A #0 is a leaf, so terminal punctuation belongs inside its delimiters, while a bare punctuation character outside them is read as syntax%(TextNodeBoundary, SNLRoot), %An operator that could live inside a formula node is never parked between two nodes%(TextNodeBoundary), %A placeholder inside a text node names an entry of the params table and is not a literal, and pure-text rendering leaves it unfilled because the fill happens in the formula layer%(TextNodeBoundary), %A #0 carries no language projection, so a literal text node is never localized and never claimed to be%(TextNodeBoundary, I18N))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\ \\ \\* \\*\\*Text\\ Node\\ Boundary\\ \\(文本节点边界\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

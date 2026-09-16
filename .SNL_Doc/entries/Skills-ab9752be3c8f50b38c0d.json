@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.FormulaNode",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Formula Node",
+        "zh-CN": "公式节点"
+      }
+    },
+    "content": {
+      "snl": "__list__(%Every mathematical symbol is written as a #0 and never as a bare non-ASCII character%(FormulaNode), %A bare non-ASCII character is an identifier character, so it reaches generated code and rendered output as a literal codepoint instead of a symbol definition%(FormulaNode), %The two forms may render identically, so the violation is found in the stored source rather than in the rendering%(FormulaNode), %Binder and source syntax keep their sigils around the formula node%(FormulaNode, EntryContent))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*Formula\\ Node\\ \\(公式节点\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

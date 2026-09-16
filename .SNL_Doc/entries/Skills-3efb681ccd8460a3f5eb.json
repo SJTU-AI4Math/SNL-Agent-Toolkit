@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.SyntaxTreeFidelity",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Syntax Tree Fidelity",
+        "zh-CN": "语法树忠实度"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A tree whose shape is a string is not a refinement, and a structure index does not detect it because a string-shaped tree can score well%(SyntaxTreeFidelity), %When a passage resists a syntactic decision, the honest response is an accepted low structure index rather than a blind decomposition%(SyntaxTreeFidelity), %Promoting every phrase to a constant macro with an absent or wrong source inflates the index and turns macro management into a liability%(SyntaxTreeFidelity, TermMacroSource))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*Syntax\\ Tree\\ Fidelity\\ \\(语法树忠实度\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

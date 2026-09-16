@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.SNLRoot",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "SNL Root",
+        "zh-CN": "SNL 根节点"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A #0 is the unique top-level node of one #1, and the parser must reach end of input after it%(SNLRoot, EntryContent), %Two text nodes written as siblings at the top level are two roots rather than one tree, and the second one is rejected at parse time%(SNLRoot), %Multi-part prose is written as a single variadic text macro whose body is a dynamic argument list, so that the whole passage stays one root%(SNLRoot), %Adjacent text nodes with nothing between them do not stay two nodes: they fuse into one node and the later segment is dropped without any error%(SNLRoot))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*SNL\\ Root\\ \\(SNL\\ 根节点\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.PointwiseApplication",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Pointwise Application",
+        "zh-CN": "点态应用"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A #0 carries at most one argument list, so an expression that applies a result to a further argument is not a single node%(PointwiseApplication), %Entry-level statements are therefore written at function level, and pointwise formulas belong to the prose body%(PointwiseApplication, EntryContent), %A bound variable is the exception, because its first application is legal for the binder is the binding site%(PointwiseApplication), %Granularity follows the mathematical structure and not the order in which a source document presents it%(PointwiseApplication, Entry))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*Pointwise\\ Application\\ \\(点态应用\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

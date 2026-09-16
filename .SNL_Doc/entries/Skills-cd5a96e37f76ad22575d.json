@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.SNLeco.cpt.StructureDeclaration",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Structure Declaration",
+        "zh-CN": "结构声明"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A multi-clause definition is declared with a structure macro and never as nested conjunctions, which erase the labels a reader needs%(StructureDeclaration), %A structure declaration enumerates its members, each member pairing a label with a condition, and the rendered form lists those labelled members%(StructureDeclaration), %A property of a structure is named by qualifying the structure with the property, and it stays in the package that owns the structure%(StructureDeclaration, MacroPackage))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "mode": "regex",
+      "pattern": "^\\* \\*\\*Structure\\ Declaration\\ \\(结构声明\\)\\*\\*$",
+      "flags": "m"
+    }
+  }
+}

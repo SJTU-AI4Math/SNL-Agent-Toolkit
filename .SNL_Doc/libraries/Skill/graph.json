@@ -1235,6 +1235,62 @@
       "props": {
         "entryId": "Skill.Maintain.sec.RenameID"
       }
+    },
+    {
+      "id": "n_88",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.subsec.SyntaxConventions"
+      }
+    },
+    {
+      "id": "n_89",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.SNLRoot"
+      }
+    },
+    {
+      "id": "n_90",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.TextNodeBoundary"
+      }
+    },
+    {
+      "id": "n_91",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.FormulaNode"
+      }
+    },
+    {
+      "id": "n_92",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.DeclarationArity"
+      }
+    },
+    {
+      "id": "n_93",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.PointwiseApplication"
+      }
+    },
+    {
+      "id": "n_94",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.StructureDeclaration"
+      }
+    },
+    {
+      "id": "n_95",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SNLeco.cpt.SyntaxTreeFidelity"
+      }
     }
   ],
   "relationships": [
@@ -2066,6 +2122,46 @@
     {
       "from": "n_67",
       "to": "n_87",
+      "label": "branch"
+    },
+    {
+      "from": "n_5",
+      "to": "n_88",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_89",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_90",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_91",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_92",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_93",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_94",
+      "label": "branch"
+    },
+    {
+      "from": "n_88",
+      "to": "n_95",
       "label": "branch"
     }
   ]
