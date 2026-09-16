@@ -4,6 +4,46 @@ This manual records the normative CLI product surface. A command is currently im
 
 JSON files used only as command input are local execution artifacts, not repository content. Keep them at a local-only path covered by `.gitignore`, or create them in an operating-system temporary directory outside the working repository and remove them after use. Never stage or commit such payloads merely because an `snl` command consumed them.
 
+## Command Identity Form (命令身份形式)
+
+An identity positional is the string that names one entity. **The accepted form
+is not uniform across command families.**
+
+| command | accepted form | example |
+|---|---|---|
+| `entry get` / `entry rename` / `entry delete` | bare id | `DG.def.curvature` |
+| `macro get` / `macro usages` | package-qualified | `DifferentialGeometry::DG.def.curvature` |
+| `macro rename` / `macro update` / `macro delete` | package-qualified | `DifferentialGeometry::DG.def.curvature` |
+
+A macro mutation resolves its target by splitting on `::`, so a bare identifier
+never reaches the lookup. A wrong form reports `entity.not-found`, which presents
+an argument error as a missing entity — do not read that as the entity being
+absent. When a read fails, retry the other form before concluding the entity does
+not exist.
+
+## Launcher Freshness (启动器新鲜度)
+
+The `snl` on `PATH` may be a copy taken earlier rather than the shipped bundle. A
+stale launcher validates an **older contract**: it accepts data the current build
+rejects, reports a clean workspace, and the reader then refuses that same
+workspace. The result is a source-versus-behaviour contradiction that looks like
+a code or workspace bug and is neither.
+
+Resolve the executing path before suspecting anything else:
+
+```bash
+which snl; readlink -f $(which snl)
+```
+
+The repository ships its build output, so refreshing the launcher is a pointer
+replacement, never a build step:
+
+```bash
+cp -p ~/.local/bin/snl.mjs ~/.local/bin/snl.mjs.bak-$(date +%Y%m%d)
+ln -sfn ~/workspace/cat/SNL-Agent-Toolkit/dist/cli/snl.mjs ~/.local/bin/snl.mjs
+readlink -f ~/.local/bin/snl.mjs
+```
+
 ## `snl init`
 
 * `--root <path>`; optionally choose `--preset <built-in-preset-id>` or `--input <file|->`

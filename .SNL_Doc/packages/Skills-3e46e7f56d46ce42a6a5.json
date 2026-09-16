@@ -11,6 +11,8 @@
     "Skill.Author.sec.Library",
     "Skill.Author.sec.Macro",
     "Skill.CLI",
+    "Skill.CLI.cpt.IdentityForm",
+    "Skill.CLI.cpt.LauncherFreshness",
     "Skill.CLI.snl-batch",
     "Skill.CLI.snl-batch-apply",
     "Skill.CLI.snl-batch-check",

@@ -622,6 +622,20 @@
       "props": {
         "entryId": "CLI.snl-batch-apply"
       }
+    },
+    {
+      "id": "n_1",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.cpt.IdentityForm"
+      }
+    },
+    {
+      "id": "n_2",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.CLI.cpt.LauncherFreshness"
+      }
     }
   ],
   "relationships": [

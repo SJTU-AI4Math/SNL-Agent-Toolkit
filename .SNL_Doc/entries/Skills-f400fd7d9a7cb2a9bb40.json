@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.CLI.cpt.LauncherFreshness",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Launcher Freshness",
+        "zh-CN": "启动器新鲜度"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A #0 is the executing entry point resolved from the search path, and it may be a copy taken earlier instead of the shipped bundle%(LauncherFreshness), %A stale launcher validates an older contract: it accepts data the current build rejects and reports a clean workspace while the reader refuses the same workspace entirely%(LauncherFreshness, EntryTag), %A source-versus-behaviour contradiction is therefore diagnosed by resolving the executing path before suspecting the code or the workspace%(LauncherFreshness), %The repository ships its build output, so refreshing the launcher is a pointer replacement and never a build step%(LauncherFreshness), %A launcher outside the repository must be re-pointed rather than copied, so that it tracks the shipped bundle%(LauncherFreshness))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/CLI Tools/SKILL.md",
+      "mode": "regex",
+      "pattern": "^## Launcher\\ Freshness\\ \\(启动器新鲜度\\)$",
+      "flags": "m"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.CLI.cpt.IdentityForm",
+    "package": "Skills",
+    "kind": "entry-kind.concept",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Command Identity Form",
+        "zh-CN": "命令身份形式"
+      }
+    },
+    "content": {
+      "snl": "__list__(%A #0 is the string a command accepts to name one entity, and the accepted form differs between command families rather than being uniform%(IdentityForm), %A macro read requires the package-qualified form, while an Entry read takes the bare identifier; the same tree therefore uses two spellings for two lookups%(IdentityForm, MacroPackage), %A macro mutation identifies its target through the package separator inside the stored identity, so a bare identifier never reaches the lookup%(IdentityForm), %An unrecognized form is reported as a missing entity rather than as a malformed identity, which presents an argument error as absence%(IdentityForm), %An author resolves this by trying the bare form first and switching to the qualified form on not-found, because no single documented form covers both%(IdentityForm))"
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/CLI Tools/SKILL.md",
+      "mode": "regex",
+      "pattern": "^## Command\\ Identity\\ Form\\ \\(命令身份形式\\)$",
+      "flags": "m"
+    }
+  }
+}
