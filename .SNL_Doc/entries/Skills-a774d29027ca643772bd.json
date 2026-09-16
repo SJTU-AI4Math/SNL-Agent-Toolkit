@@ -4,26 +4,26 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
+    "content": {
+      "snl": "__list__(%An #0 is an optional own field of #1, carrying a string array that categorizes #1 and groups #1 by some criterion so as to facilitate search.%(Concept.EntryTag, Concept.Entry[plural]), %Identity: a #0 is an exact and case-sensitive string.%(Concept.EntryTag), %No reader may split, trim, case-fold, or infer #0 from #1, #2, #3, or #4.%(Concept.EntryTag, Concept.EntryTitle, Concept.EntryKind, Concept.TermMacro, Concept.TermMacroStyle), %Authored order, authored values, and duplicates are preserved as authored, and duplicate values carry no additional meaning.%(Concept.EntryTag), %An absent #0 means no #0.%(Concept.EntryTag), %An absent-tag #0 stays valid and is never eagerly rewritten.%(Concept.Entry), %An update that omits #0 preserves the current #0, while an explicit empty array clears it.%(Concept.EntryTag), %A present #0 that is not an array of strings is rejected before any byte is published, leaving the workspace unchanged.%(Concept.EntryTag), %No tag registry, no per-tag entity, no implicit inheritance, and no batch rewrite are introduced.%(Concept.EntryTag), %This is an additive optional field under the existing envelope and version, changing no storage topology and claiming no migration.%(Concept.EntryTag))"
+    },
+    "contribution_info": null,
     "id": "Skill.SNLeco.cpt.EntryTag",
-    "package": "Skills",
     "kind": "entry-kind.concept",
+    "package": "Skills",
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "flags": "m",
+      "mode": "regex",
+      "pattern": "^  \\* \\*\\*Entry Tag \\(条目标签\\)\\*\\*$"
+    },
     "title": {
-      "type": "i18n",
       "default_language": "en",
+      "type": "i18n",
       "values": {
         "en": "Entry Tag",
         "zh-CN": "条目标签"
       }
-    },
-    "content": {
-      "snl": "%An #0 is a string that is used to categorize #1. It can be used to group #1 by some criteria so as to facilitate searching.%(Concept.EntryTag, Concept.Entry[plural])"
-    },
-    "contribution_info": null,
-    "pointer": {
-      "file": "Skills/SNL Ecosystem/SKILL.md",
-      "mode": "regex",
-      "pattern": "^  \\* \\*\\*Entry Tag \\(条目标签\\)\\*\\*$",
-      "flags": "m"
     }
   }
 }

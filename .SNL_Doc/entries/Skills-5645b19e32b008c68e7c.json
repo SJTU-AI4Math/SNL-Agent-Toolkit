@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "content": {
+      "snl": "__list__(%An absent Entry Tag means no tag at all, and an Entry without tags stays valid forever.%(Concept.EntryTagOmission), %No reader or writer may eagerly rewrite an absent-tag Entry to add an empty array.%(Concept.EntryTagOmission), %When an update omits the field, the current tags are preserved rather than deleted; an explicit empty array is what clears them.%(Concept.EntryTagOmission))"
+    },
+    "contribution_info": null,
+    "id": "Skill.SNLeco.cpt.EntryTagOmission",
+    "kind": "entry-kind.concept",
+    "package": "Skills",
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "flags": "m",
+      "mode": "regex",
+      "pattern": "^    \\* \\*\\*Entry Tag Omission \\(条目标签缺省\\)\\*\\*$"
+    },
+    "title": {
+      "default_language": "en",
+      "type": "i18n",
+      "values": {
+        "en": "Entry Tag Omission",
+        "zh-CN": "条目标签缺省"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "content": {
+      "snl": "__list__(%The #0 of an Entry Tag is the exact authored string as stored, compared by case-sensitive equality and never normalized.%(Concept.EntryTagIdentity), %Splitting on separators, trimming whitespace, case folding, and inference from an Entry Title, an Entry Kind, a Term Macro, or a Term Macro Style are all forbidden.%(Concept.EntryTagIdentity), %Authored order, authored values, and duplicates are preserved as authored.%(Concept.EntryTagIdentity))"
+    },
+    "contribution_info": null,
+    "id": "Skill.SNLeco.cpt.EntryTagIdentity",
+    "kind": "entry-kind.concept",
+    "package": "Skills",
+    "pointer": {
+      "file": "Skills/SNL Ecosystem/SKILL.md",
+      "flags": "m",
+      "mode": "regex",
+      "pattern": "^    \\* \\*\\*Entry Tag Identity \\(条目标签身份\\)\\*\\*$"
+    },
+    "title": {
+      "default_language": "en",
+      "type": "i18n",
+      "values": {
+        "en": "Entry Tag Identity",
+        "zh-CN": "条目标签身份"
+      }
+    }
+  }
+}

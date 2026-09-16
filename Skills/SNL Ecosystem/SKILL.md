@@ -10,6 +10,9 @@
   * **Entry UUID (条目 UUID)**
   * **Entry Content (条目内容)**
   * **Entry Tag (条目标签)**
+    * **Entry Tag Identity (条目标签身份)**
+    * **Entry Tag Omission (条目标签缺省)**
+    * **Entry Tag Non-goals (条目标签非目标)**
   * **Pointer (指针)**
 * **Term Macro (术语宏)**
   * **Macro Package (宏包)**
