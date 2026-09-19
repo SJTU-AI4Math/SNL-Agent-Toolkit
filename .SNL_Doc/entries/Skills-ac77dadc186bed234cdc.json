@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Report.sec.Examples",
+    "package": "Skills",
+    "kind": "2bef5063-2d07-4f35-8f54-e15d7a1c5e59",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Examples",
+        "zh-CN": "示例"
+      }
+    },
+    "content": {
+      "markdown": "Three lightweight examples with fictional IDs: a planned addition, a one-sided macro revision, and a directory maintenance move."
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/Report/SKILL.md",
+      "mode": "regex",
+      "pattern": "^## Examples$",
+      "flags": "m"
+    }
+  }
+}

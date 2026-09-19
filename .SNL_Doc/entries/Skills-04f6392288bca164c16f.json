@@ -4,23 +4,21 @@
   "schema_version": 1,
   "package": "Skills",
   "entry": {
-    "id": "Skill.Plan",
+    "id": "Skill.SKILL.md-Report",
     "package": "Skills",
-    "kind": "Skill",
+    "kind": "file",
     "title": {
       "type": "i18n",
       "default_language": "en",
       "values": {
-        "en": "Plan",
-        "zh-CN": "规划"
+        "en": "$\\texttt{SKILL.md}$ of Report",
+        "zh-CN": "汇报的 $\\texttt{SKILL.md}$"
       }
     },
-    "content": {
-      "markdown": "Change reporting for SNL library edits is specified by @Skill.Report (`Skills/Report/SKILL.md`); this Entry's own planning workflow is not written yet."
-    },
+    "content": {},
     "contribution_info": null,
     "pointer": {
-      "file": "Skills/Plan/SKILL.md",
+      "file": "Skills/Report/SKILL.md",
       "mode": "lines",
       "line": 1
     }

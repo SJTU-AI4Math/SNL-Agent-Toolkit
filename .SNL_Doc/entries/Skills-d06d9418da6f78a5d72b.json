@@ -1,0 +1,29 @@
+{
+  "format": "snl-entry",
+  "version": 1,
+  "schema_version": 1,
+  "package": "Skills",
+  "entry": {
+    "id": "Skill.Report",
+    "package": "Skills",
+    "kind": "Skill",
+    "title": {
+      "type": "i18n",
+      "default_language": "en",
+      "values": {
+        "en": "Report",
+        "zh-CN": "汇报"
+      }
+    },
+    "content": {
+      "markdown": "Shared reporting contract for SNL library changes. This Entry covers reporting only; it is not a complete planning, authoring, or maintenance workflow."
+    },
+    "contribution_info": null,
+    "pointer": {
+      "file": "Skills/Report/SKILL.md",
+      "mode": "regex",
+      "pattern": "^# SNL Library Change Reporting$",
+      "flags": "m"
+    }
+  }
+}

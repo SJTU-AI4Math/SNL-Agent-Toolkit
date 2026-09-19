@@ -1291,6 +1291,55 @@
       "props": {
         "entryId": "Skill.SNLeco.cpt.SyntaxTreeFidelity"
       }
+    },
+    {
+      "id": "n_96",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Report"
+      }
+    },
+    {
+      "id": "n_97",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.SKILL.md-Report"
+      }
+    },
+    {
+      "id": "n_98",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Report.sec.Blocks"
+      }
+    },
+    {
+      "id": "n_99",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Report.sec.OneSided"
+      }
+    },
+    {
+      "id": "n_100",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Report.sec.Semantics"
+      }
+    },
+    {
+      "id": "n_101",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Report.sec.Identity"
+      }
+    },
+    {
+      "id": "n_102",
+      "label": "Entry",
+      "props": {
+        "entryId": "Skill.Report.sec.Examples"
+      }
     }
   ],
   "relationships": [
@@ -2162,6 +2211,36 @@
     {
       "from": "n_88",
       "to": "n_95",
+      "label": "branch"
+    },
+    {
+      "from": "n_96",
+      "to": "n_97",
+      "label": "branch"
+    },
+    {
+      "from": "n_97",
+      "to": "n_98",
+      "label": "branch"
+    },
+    {
+      "from": "n_97",
+      "to": "n_99",
+      "label": "branch"
+    },
+    {
+      "from": "n_97",
+      "to": "n_100",
+      "label": "branch"
+    },
+    {
+      "from": "n_97",
+      "to": "n_101",
+      "label": "branch"
+    },
+    {
+      "from": "n_97",
+      "to": "n_102",
       "label": "branch"
     }
   ]
