@@ -35,7 +35,7 @@ test('installed harness refuses npm until a private consumer manifest exists', a
   }
 });
 
-test('public batch installed fixture has a nonempty canonical-winner graph and reachable system Macro', { skip: process.platform !== 'linux' }, async () => {
+test('public batch installed fixture has a nonempty canonical-winner graph and reachable system Macro', { skip: !['linux', 'win32'].includes(process.platform) }, async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'snl-native-fixture-'));
   const op = async (command: string, args: Record<string, unknown>) => {
     const result = await executeOperation({ protocol: OPERATION_PROTOCOL, root, command, arguments: args });

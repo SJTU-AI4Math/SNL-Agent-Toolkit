@@ -622,7 +622,7 @@ publishes no partial rename.
 ## `snl batch`
 
 Implemented create-only batch commands, input/receipt schemas, supported entity
-families, and Linux publication/recovery limits are documented in
+families, and Linux and Windows publication and recovery requirements are documented in
 [Batch.md](Batch.md). Calling the namespace itself is read-only discovery.
 
 ### `snl batch check`

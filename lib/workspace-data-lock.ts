@@ -124,19 +124,23 @@ async function acquireLock(
 export async function withWorkspaceDataLock<T>(
   workspaceRoot: string,
   purpose: string,
-  task: () => Promise<T>,
+  task: (lock: { contents: string; closeHandle(): Promise<void> }) => Promise<T>,
 ): Promise<T> {
   if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
+  let closingHandle: Promise<void> | undefined;
+  const closeHandle = () => closingHandle ??= acquired.handle.close();
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) ||
         (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
       throw new Error('SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.');
     }
-    return await task();
+    // Windows directory publication cannot move a tree with an open child.
+    // Closing the descriptor keeps the exclusive pathname/token admission.
+    return await task({ contents: `${JSON.stringify(acquired.record)}\n`, closeHandle });
   } finally {
-    await acquired.handle.close();
+    await closeHandle();
     // An admitted batch intentionally exchanges the parent and copies its token
     // to a new inode. Release by token, not pre-exchange inode, after the task.
     const current = await readLock(acquired.lockPath);

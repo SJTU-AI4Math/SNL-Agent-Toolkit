@@ -78,7 +78,7 @@ test('unknown author assets, cache-like paths, genuine entity content and modes 
   assert.notEqual(await captureWorkspaceRevision(root), previous);
 });
 
-for (const mutation of ['create', 'update', 'delete'] as const) test(`public checked batch accepts intervening cache ${mutation} and preserves the current full cache tree`, { skip: process.platform !== 'linux' }, async () => {
+for (const mutation of ['create', 'update', 'delete'] as const) test(`public checked batch accepts intervening cache ${mutation} and preserves the current full cache tree`, { skip: !['linux', 'win32'].includes(process.platform) }, async () => {
   const root = await fixture();
   const library = success(await publicCall(root, 'library/list', {})).entities[0].id;
   const paths = ['.cache/dependencies/result.json', `libraries/${library}/.cache/graph-layout/result.json`];
@@ -97,7 +97,7 @@ for (const mutation of ['create', 'update', 'delete'] as const) test(`public che
   assert.deepEqual(await readdir(root), ['.SNL_Doc']);
 });
 
-test('old whole-tree receipt is rejected explicitly even cold; fresh no-op batch is stable', { skip: process.platform !== 'linux' }, async () => {
+test('old whole-tree receipt is rejected explicitly even cold; fresh no-op batch is stable', { skip: !['linux', 'win32'].includes(process.platform) }, async () => {
   const root = await fixture(); const checked = await checkBatch(root, []);
   // Independent legacy-v1 serialization oracle on actual full st_mode/bytes.
   const hash = createHash('sha256').update(`snl.batch.workspace/v1\0${root}\0`);

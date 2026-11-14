@@ -2314,22 +2314,22 @@ function scalarMatches(type, value) {
   }
 }
 var ONE_OF_SIBLING_KEYWORDS = ["properties", "required", "additionalProperties", "items", "enum", "const"];
-function checkObjectSchemaTail(node, path15, properties, violations) {
+function checkObjectSchemaTail(node, path16, properties, violations) {
   const hasRequired = Object.hasOwn(node, "required");
   const required = hasRequired ? node.required : void 0;
   if (hasRequired) {
     if (!isPlainJsonArray(required) || required.some((entry) => typeof entry !== "string")) {
-      violations.push(`${path15}.required must be an array of strings`);
+      violations.push(`${path16}.required must be an array of strings`);
     } else {
       const declared = isJsonSchemaRecord(properties) ? properties : {};
       for (const key of required) {
         if (!Object.hasOwn(declared, key))
-          violations.push(`${path15}.required names "${key}" which is not in properties`);
+          violations.push(`${path16}.required names "${key}" which is not in properties`);
       }
     }
   }
   if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") {
-    violations.push(`${path15}.additionalProperties must be a boolean`);
+    violations.push(`${path16}.additionalProperties must be a boolean`);
   }
 }
 function checkSchemaNode(root, rootPath, violations, seen) {
@@ -2350,13 +2350,13 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       checkObjectSchemaTail(task.node, task.path, task.properties, violations);
       continue;
     }
-    const { node, path: path15 } = task;
+    const { node, path: path16 } = task;
     if (!isJsonSchemaRecord(node)) {
-      violations.push(`${path15} must be a schema object`);
+      violations.push(`${path16} must be a schema object`);
       continue;
     }
     if (seen.has(node)) {
-      violations.push(`${path15} is circular`);
+      violations.push(`${path16} is circular`);
       continue;
     }
     seen.add(node);
@@ -2367,48 +2367,48 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       if (ANNOTATION_KEYWORDS.has(key)) {
         try {
           if (!isJsonValue(node[key]))
-            violations.push(`${path15}.${key} annotation must be lossless JSON data`);
+            violations.push(`${path16}.${key} annotation must be lossless JSON data`);
         } catch {
-          violations.push(`${path15}.${key} annotation must be lossless JSON data`);
+          violations.push(`${path16}.${key} annotation must be lossless JSON data`);
         }
         continue;
       }
-      violations.push(`${path15}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
+      violations.push(`${path16}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
     }
     if (Object.hasOwn(node, "description") && typeof node.description !== "string") {
-      violations.push(`${path15}.description must be a string`);
+      violations.push(`${path16}.description must be a string`);
     }
     if (Object.hasOwn(node, "title") && typeof node.title !== "string") {
-      violations.push(`${path15}.title must be a string`);
+      violations.push(`${path16}.title must be a string`);
     }
     const hasType = Object.hasOwn(node, "type");
     const hasOneOf = Object.hasOwn(node, "oneOf");
     if (hasType && hasOneOf) {
-      violations.push(`${path15} cannot declare both type and oneOf`);
+      violations.push(`${path16} cannot declare both type and oneOf`);
       continue;
     }
     if (!hasType && !hasOneOf) {
       for (const key of ONE_OF_SIBLING_KEYWORDS) {
         if (Object.hasOwn(node, key))
-          violations.push(`${path15}.${key} requires type or oneOf`);
+          violations.push(`${path16}.${key} requires type or oneOf`);
       }
       continue;
     }
     if (hasOneOf) {
       const oneOf = node.oneOf;
-      tasks.push({ kind: "one-of-tail", node, path: path15 });
+      tasks.push({ kind: "one-of-tail", node, path: path16 });
       if (!isPlainJsonArray(oneOf) || oneOf.length < 2) {
-        violations.push(`${path15}.oneOf must be an array of at least two schemas`);
+        violations.push(`${path16}.oneOf must be an array of at least two schemas`);
       } else {
         for (let index = oneOf.length - 1; index >= 0; index--) {
-          tasks.push({ kind: "enter", node: oneOf[index], path: `${path15}.oneOf[${index}]` });
+          tasks.push({ kind: "enter", node: oneOf[index], path: `${path16}.oneOf[${index}]` });
         }
       }
       continue;
     }
     const type = node.type;
     if (typeof type !== "string" || !SCHEMA_TYPES.includes(type)) {
-      violations.push(Array.isArray(type) ? `${path15}.type must be a single type string (type arrays are not supported)` : `${path15}.type must be one of ${SCHEMA_TYPES.join("/")}`);
+      violations.push(Array.isArray(type) ? `${path16}.type must be a single type string (type arrays are not supported)` : `${path16}.type must be one of ${SCHEMA_TYPES.join("/")}`);
       continue;
     }
     const schemaType = type;
@@ -2422,23 +2422,23 @@ function checkSchemaNode(root, rootPath, violations, seen) {
     };
     for (const [key, types] of Object.entries(allowedFor)) {
       if (Object.hasOwn(node, key) && !types.includes(schemaType)) {
-        violations.push(`${path15}.${key} is not supported on type "${schemaType}"`);
+        violations.push(`${path16}.${key} is not supported on type "${schemaType}"`);
       }
     }
     switch (schemaType) {
       case "object": {
         const properties = Object.hasOwn(node, "properties") ? node.properties : void 0;
-        tasks.push({ kind: "object-tail", node, path: path15, properties });
+        tasks.push({ kind: "object-tail", node, path: path16, properties });
         if (Object.hasOwn(node, "properties")) {
           if (!isJsonSchemaRecord(properties)) {
-            violations.push(`${path15}.properties must be an object of schemas`);
+            violations.push(`${path16}.properties must be an object of schemas`);
           } else {
             const entries = Object.entries(properties);
             for (let index = entries.length - 1; index >= 0; index--) {
               const entry = entries[index];
               if (entry === void 0)
                 continue;
-              tasks.push({ kind: "enter", node: entry[1], path: `${path15}.properties.${entry[0]}` });
+              tasks.push({ kind: "enter", node: entry[1], path: `${path16}.properties.${entry[0]}` });
             }
           }
         }
@@ -2446,7 +2446,7 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       }
       case "array": {
         if (Object.hasOwn(node, "items"))
-          tasks.push({ kind: "enter", node: node.items, path: `${path15}.items` });
+          tasks.push({ kind: "enter", node: node.items, path: `${path16}.items` });
         break;
       }
       case "string":
@@ -2458,16 +2458,16 @@ function checkSchemaNode(root, rootPath, violations, seen) {
         const allowed = hasEnum ? node.enum : void 0;
         const enumValid = isPlainJsonArray(allowed) && allowed.length > 0 && allowed.every((entry) => scalarMatches(schemaType, entry));
         if (hasEnum && !enumValid) {
-          violations.push(`${path15}.enum must be a non-empty array of ${schemaType} values`);
+          violations.push(`${path16}.enum must be a non-empty array of ${schemaType} values`);
         }
         const hasConst = Object.hasOwn(node, "const");
         const declaredConst = hasConst ? node.const : void 0;
         const constValid = scalarMatches(schemaType, declaredConst);
         if (hasConst) {
           if (!constValid) {
-            violations.push(`${path15}.const must be a ${schemaType} value`);
+            violations.push(`${path16}.const must be a ${schemaType} value`);
           } else if (enumValid && !allowed.includes(declaredConst)) {
-            violations.push(`${path15}.const must be one of ${path15}.enum when both are declared`);
+            violations.push(`${path16}.const must be one of ${path16}.enum when both are declared`);
           }
         }
         break;
@@ -2491,24 +2491,24 @@ function safelyIsJsonValue(value) {
     return false;
   }
 }
-function diagnosticPath(path15) {
-  return path15 === "" ? "arguments" : path15;
+function diagnosticPath(path16) {
+  return path16 === "" ? "arguments" : path16;
 }
-function propertyPath(path15, key) {
-  return path15 === "" ? key : `${path15}.${key}`;
+function propertyPath(path16, key) {
+  return path16 === "" ? key : `${path16}.${key}`;
 }
-function losslessValueViolation(path15) {
-  return [`"${diagnosticPath(path15)}" must be a lossless JSON value`];
+function losslessValueViolation(path16) {
+  return [`"${diagnosticPath(path16)}" must be a lossless JSON value`];
 }
 function appendViolations(target, source) {
   for (const violation of source)
     target.push(violation);
 }
-function valueFrame(node, value, path15) {
+function valueFrame(node, value, path16) {
   return {
     node,
     value,
-    path: path15,
+    path: path16,
     catches: false,
     phase: "start",
     children: [],
@@ -2518,18 +2518,18 @@ function valueFrame(node, value, path15) {
     matches: 0
   };
 }
-function checkScalarValue(node, value, path15) {
+function checkScalarValue(node, value, path16) {
   const allowed = Object.hasOwn(node, "enum") ? node.enum : void 0;
   if (allowed !== void 0 && !allowed.includes(value)) {
-    return [`"${diagnosticPath(path15)}" must be one of ${JSON.stringify(allowed)}`];
+    return [`"${diagnosticPath(path16)}" must be one of ${JSON.stringify(allowed)}`];
   }
   if (Object.hasOwn(node, "const") && value !== node.const) {
-    return [`"${diagnosticPath(path15)}" must be ${JSON.stringify(node.const)}`];
+    return [`"${diagnosticPath(path16)}" must be ${JSON.stringify(node.const)}`];
   }
   return [];
 }
-function checkValue(schema, value, path15) {
-  const frames = [valueFrame(schema, value, path15)];
+function checkValue(schema, value, path16) {
+  const frames = [valueFrame(schema, value, path16)];
   let rootResult;
   const receive = (result) => {
     const parent = frames.at(-1);
@@ -2668,10 +2668,10 @@ function checkValue(schema, value, path15) {
       receive(losslessValueViolation(failed.path));
     }
   }
-  return rootResult ?? losslessValueViolation(path15);
+  return rootResult ?? losslessValueViolation(path16);
 }
-function validateJsonSchemaValue(schema, value, path15 = "value") {
-  return checkValue(schema, value, path15);
+function validateJsonSchemaValue(schema, value, path16 = "value") {
+  return checkValue(schema, value, path16);
 }
 
 // node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js
@@ -2689,10 +2689,10 @@ function copyAnnotations(source, target) {
   if (Object.hasOwn(source, "examples"))
     target.examples = source.examples;
 }
-function assertAuthorKeys(source, path15, allowed) {
+function assertAuthorKeys(source, path16, allowed) {
   for (const key of Object.keys(source)) {
     if (!allowed.includes(key))
-      authorError(`${path15}.${key} is not supported by the value schema DSL`);
+      authorError(`${path16}.${key} is not supported by the value schema DSL`);
   }
 }
 function assignCompiledNode(destination, node) {
@@ -2783,22 +2783,22 @@ function runSchemaCompiler(initial) {
       }
       continue;
     }
-    const { input, path: path15 } = task;
+    const { input, path: path16 } = task;
     if (!isJsonSchemaRecord(input))
-      authorError(`${path15} must be a value schema object`);
+      authorError(`${path16} must be a value schema object`);
     if (seen.has(input))
-      authorError(`${path15} is circular`);
+      authorError(`${path16} is circular`);
     seen.add(input);
     const authorKeys = [...ANNOTATION_KEYS, ...task.allowRequired ? ["required"] : []];
     const node = {};
     assignCompiledNode(task.destination, node);
     tasks.push({ kind: "leave", input });
     if (Object.hasOwn(input, "oneOf")) {
-      assertAuthorKeys(input, path15, [...authorKeys, "oneOf", "type"]);
+      assertAuthorKeys(input, path16, [...authorKeys, "oneOf", "type"]);
       if (Object.hasOwn(input, "type"))
-        authorError(`${path15} cannot declare both type and oneOf`);
+        authorError(`${path16} cannot declare both type and oneOf`);
       if (!isPlainJsonArray(input.oneOf))
-        authorError(`${path15}.oneOf must be an array of at least two value schemas`);
+        authorError(`${path16}.oneOf must be an array of at least two value schemas`);
       const branches = [];
       node.oneOf = branches;
       copyAnnotations(input, node);
@@ -2806,7 +2806,7 @@ function runSchemaCompiler(initial) {
         tasks.push({
           kind: "value",
           input: input.oneOf[index],
-          path: `${path15}.oneOf[${index}]`,
+          path: `${path16}.oneOf[${index}]`,
           allowRequired: false,
           destination: { kind: "one-of", target: branches, index }
         });
@@ -2816,13 +2816,13 @@ function runSchemaCompiler(initial) {
     const inputType = Object.hasOwn(input, "type") ? input.type : void 0;
     switch (inputType) {
       case "json":
-        assertAuthorKeys(input, path15, [...authorKeys, "type"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type"]);
         copyAnnotations(input, node);
         break;
       case "object":
-        assertAuthorKeys(input, path15, [...authorKeys, "type", "properties", "additionalProperties"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type", "properties", "additionalProperties"]);
         if (!Object.hasOwn(input, "additionalProperties") || typeof input.additionalProperties !== "boolean") {
-          authorError(`${path15}.additionalProperties must be explicitly true or false`);
+          authorError(`${path16}.additionalProperties must be explicitly true or false`);
         }
         node.type = "object";
         copyAnnotations(input, node);
@@ -2831,20 +2831,20 @@ function runSchemaCompiler(initial) {
           tasks.push({
             kind: "property-map",
             input: input.properties,
-            path: `${path15}.properties`,
+            path: `${path16}.properties`,
             destination: { kind: "object", target: node }
           });
         }
         break;
       case "array":
-        assertAuthorKeys(input, path15, [...authorKeys, "type", "items"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type", "items"]);
         node.type = "array";
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "items")) {
           tasks.push({
             kind: "value",
             input: input.items,
-            path: `${path15}.items`,
+            path: `${path16}.items`,
             allowRequired: false,
             destination: { kind: "item", target: node }
           });
@@ -2855,31 +2855,31 @@ function runSchemaCompiler(initial) {
       case "integer":
       case "boolean":
       case "null":
-        assertAuthorKeys(input, path15, [...authorKeys, "type", "enum", "const"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type", "enum", "const"]);
         node.type = inputType;
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "enum")) {
           if (!isPlainJsonArray(input.enum))
-            authorError(`${path15}.enum must be a non-empty array of scalar values`);
+            authorError(`${path16}.enum must be a non-empty array of scalar values`);
           node.enum = Array.from(input.enum, (entry) => entry);
         }
         if (Object.hasOwn(input, "const"))
           node.const = input.const;
         break;
       default:
-        authorError(`${path15}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
+        authorError(`${path16}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
     }
   }
 }
-function compilePropertyMap(input, path15) {
+function compilePropertyMap(input, path16) {
   const holder = {};
-  runSchemaCompiler({ kind: "property-map", input, path: path15, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path15} did not compile`);
+  runSchemaCompiler({ kind: "property-map", input, path: path16, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path16} did not compile`);
 }
-function compileValueSchema(input, path15) {
+function compileValueSchema(input, path16) {
   const holder = {};
-  runSchemaCompiler({ kind: "value", input, path: path15, allowRequired: false, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path15} did not compile`);
+  runSchemaCompiler({ kind: "value", input, path: path16, allowRequired: false, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path16} did not compile`);
 }
 function valueSchemaSpecToJsonSchema(spec) {
   const schema = compileValueSchema(spec, "schema");
@@ -4325,11 +4325,11 @@ var scriptData = [{
 }];
 function scriptFromCodepoint(codepoint) {
   for (var i5 = 0; i5 < scriptData.length; i5++) {
-    var script3 = scriptData[i5];
-    for (var _i6 = 0; _i6 < script3.blocks.length; _i6++) {
-      var block = script3.blocks[_i6];
+    var script4 = scriptData[i5];
+    for (var _i6 = 0; _i6 < script4.blocks.length; _i6++) {
+      var block = script4.blocks[_i6];
       if (codepoint >= block[0] && codepoint <= block[1]) {
-        return script3.name;
+        return script4.name;
       }
     }
   }
@@ -4372,27 +4372,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path15 = "";
+  var path16 = "";
   switch (size) {
     case "sqrtMain":
-      path15 = sqrtMain(extraVinculum, hLinePad);
+      path16 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path15 = sqrtSize1(extraVinculum, hLinePad);
+      path16 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path15 = sqrtSize2(extraVinculum, hLinePad);
+      path16 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path15 = sqrtSize3(extraVinculum, hLinePad);
+      path16 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path15 = sqrtSize4(extraVinculum, hLinePad);
+      path16 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path15 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path16 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path15;
+  return path16;
 };
 var innerPath = function innerPath2(name2, height) {
   switch (name2) {
@@ -4834,9 +4834,9 @@ var SymbolNode = class {
     this.classes = classes || [];
     this.style = style2 || {};
     this.maxFontSize = 0;
-    var script3 = scriptFromCodepoint(this.text.charCodeAt(0));
-    if (script3) {
-      this.classes.push(script3 + "_fallback");
+    var script4 = scriptFromCodepoint(this.text.charCodeAt(0));
+    if (script4) {
+      this.classes.push(script4 + "_fallback");
     }
     if (/[îïíì]/.test(this.text)) {
       this.text = iCombinations[this.text];
@@ -8575,8 +8575,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path15 = new PathNode(pathName);
-  var svgNode = new SvgNode([path15], {
+  var path16 = new PathNode(pathName);
+  var svgNode = new SvgNode([path16], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9745,8 +9745,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path15 = new PathNode(pathName);
-      var svgNode = new SvgNode([path15], {
+      var path16 = new PathNode(pathName);
+      var svgNode = new SvgNode([path16], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -11043,8 +11043,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path15 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path15], {
+  var path16 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path16], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -11213,10 +11213,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path15 = new PathNode(svgLabel, pathStr);
+    var path16 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path15], {
+    var svg = new SvgNode([path16], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -11257,8 +11257,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path15 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path15);
+  var path16 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path16);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11765,8 +11765,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path15 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path15)], {
+    var path16 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path16)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18648,7 +18648,7 @@ async function readRegularBytes(file, limit) {
 }
 async function readRegularFile(file, read) {
   const directory = path2.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const directoryIdentity2 = await assertCanonicalDirectory(directory);
   const before = await fs.lstat(file, { bigint: true });
   if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
@@ -18656,7 +18656,7 @@ async function readRegularFile(file, read) {
     handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
     const stat = await handle.stat({ bigint: true });
     const current = await fs.lstat(file, { bigint: true });
-    await assertCanonicalDirectory(directory, directoryIdentity);
+    await assertCanonicalDirectory(directory, directoryIdentity2);
     if (!stat.isFile() || !current.isFile() || current.dev !== before.dev || !matchesPathFileIdentity(before, stat) || !matchesPathFileIdentity(current, stat))
       throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
@@ -18664,8 +18664,8 @@ async function readRegularFile(file, read) {
       mode: Number(stat.mode & 0o777n),
       dev: stat.dev,
       ino: stat.ino,
-      directoryDev: directoryIdentity.dev,
-      directoryIno: directoryIdentity.ino
+      directoryDev: directoryIdentity2.dev,
+      directoryIno: directoryIdentity2.ino
     };
   } catch (error) {
     if (error.code === "ELOOP")
@@ -18719,7 +18719,7 @@ async function quarantineAndRemoveOwnedPath(file, ownedLink) {
 }
 async function installNewJson(file, value, hooks = {}) {
   const directory = path2.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const directoryIdentity2 = await assertCanonicalDirectory(directory);
   const temp = path2.join(
     directory,
     `.${path2.basename(file)}.snl-create-${process.pid}-${randomUUID()}.tmp`
@@ -18732,11 +18732,11 @@ async function installNewJson(file, value, hooks = {}) {
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await assertCanonicalDirectory(directory, directoryIdentity);
+    await assertCanonicalDirectory(directory, directoryIdentity2);
     await fs.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
+      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity2);
     } catch (error) {
       await hooks.beforeRollbackQuarantine?.();
       if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
@@ -20361,12 +20361,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path15 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
+            const path16 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path15} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path15,
+              message: `${path16} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path16,
               position: result.position
             });
           }
@@ -20380,43 +20380,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
-  const path15 = `macros.${name2}`;
+  const path16 = `macros.${name2}`;
   if (!isRecord4(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path15}: macro entry must be an object.`, path: path15 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path16}: macro entry must be an object.`, path: path16 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path15}.description must be a string (may be empty).`, path: `${path15}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path16}.description must be a string (may be empty).`, path: `${path16}.description` });
   }
   if (!isRecord4(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path15}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path15}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path16}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path16}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path15}.dynamic_arity must be a boolean.`, path: `${path15}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path16}.dynamic_arity must be a boolean.`, path: `${path16}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path15}.kind must be a string when present.`, path: `${path15}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path16}.kind must be a string when present.`, path: `${path16}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path15}.tags must be a string array (may be empty).`, path: `${path15}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path16}.tags must be a string array (may be empty).`, path: `${path16}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path15}.tags must not contain backslashes.`, path: `${path15}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path16}.tags must not contain backslashes.`, path: `${path16}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path15}.default_style must be a language \u2192 style-name object.`, path: `${path15}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path16}.default_style must be a language \u2192 style-name object.`, path: `${path16}.default_style` });
   } else if (!isRecord4(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path15}.default_style must map language keys to style-name strings.`, path: `${path15}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path16}.default_style must map language keys to style-name strings.`, path: `${path16}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path15}.styles must be a non-empty array.`, path: `${path15}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path16}.styles must be a non-empty array.`, path: `${path16}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path15}.styles[${index}]`;
+    const stylePath = `${path16}.styles[${index}]`;
     if (!isRecord4(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -20480,12 +20480,12 @@ function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
   if (isRecord4(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path15}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path15}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path16}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path16}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path15}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path15}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path16}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path16}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -21542,12 +21542,12 @@ function parseTree3(text3, errors = [], options = ParseOptions.DEFAULT) {
   }
   return result;
 }
-function findNodeAtLocation(root, path15) {
+function findNodeAtLocation(root, path16) {
   if (!root) {
     return void 0;
   }
   let node = root;
-  for (let segment2 of path15) {
+  for (let segment2 of path16) {
     if (typeof segment2 === "string") {
       if (node.type !== "object" || !Array.isArray(node.children)) {
         return void 0;
@@ -21901,14 +21901,14 @@ function getNodeType(value) {
 
 // node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text3, originalPath, value, options) {
-  const path15 = originalPath.slice();
+  const path16 = originalPath.slice();
   const errors = [];
   const root = parseTree3(text3, errors);
   let parent = void 0;
   let lastSegment = void 0;
-  while (path15.length > 0) {
-    lastSegment = path15.pop();
-    parent = findNodeAtLocation(root, path15);
+  while (path16.length > 0) {
+    lastSegment = path16.pop();
+    parent = findNodeAtLocation(root, path16);
     if (parent === void 0 && value !== void 0) {
       if (typeof lastSegment === "string") {
         value = { [lastSegment]: value };
@@ -22132,8 +22132,8 @@ function printParseErrorCode(code) {
   }
   return "<unknown ParseErrorCode>";
 }
-function modify(text3, path15, value, options) {
-  return setProperty(text3, path15, value, options);
+function modify(text3, path16, value, options) {
+  return setProperty(text3, path16, value, options);
 }
 function applyEdits(text3, edits) {
   let sortedEdits = edits.slice(0).sort((a4, b4) => {
@@ -22254,14 +22254,17 @@ async function acquireLock(workspaceRoot, purpose) {
 async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
+  let closingHandle;
+  const closeHandle = () => closingHandle ??= acquired.handle.close();
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) || (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
       throw new Error("SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.");
     }
-    return await task();
+    return await task({ contents: `${JSON.stringify(acquired.record)}
+`, closeHandle });
   } finally {
-    await acquired.handle.close();
+    await closeHandle();
     const current = await readLock(acquired.lockPath);
     if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
@@ -23997,7 +24000,7 @@ async function captureDirectorySnapshot(directory) {
   return items;
 }
 async function publishDirectoryNoReplace(sourceParent, source, targetParent, target) {
-  const script3 = `import ctypes, os, sys
+  const script4 = `import ctypes, os, sys
 libc = ctypes.CDLL(None, use_errno=True)
 rename = libc.renameat2
 rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
@@ -24007,7 +24010,7 @@ if rename(3, os.fsencode(sys.argv[1]), 4, os.fsencode(sys.argv[2]), 1) != 0:
     raise OSError(error, os.strerror(error))
 `;
   await new Promise((resolve6, reject) => {
-    const child = spawn2("python3", ["-I", "-S", "-c", script3, source, target], {
+    const child = spawn2("python3", ["-I", "-S", "-c", script4, source, target], {
       stdio: ["ignore", "ignore", "pipe", sourceParent.fd, targetParent.fd]
     });
     let diagnostic = "";
@@ -24539,7 +24542,7 @@ async function createDirect(root, type, input, options = {}) {
       }
       librariesDirectoryIdentity = await readDirectoryIdentity(librariesDir2);
       await fs5.mkdir(dir, { recursive: false });
-      const directoryIdentity = await readDirectoryIdentity(dir);
+      const directoryIdentity2 = await readDirectoryIdentity(dir);
       const resources = [
         { file: path8.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
         { file: path8.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
@@ -24549,7 +24552,7 @@ async function createDirect(root, type, input, options = {}) {
       try {
         for (const resource of resources) {
           await options.beforeLibraryCreateResource?.(path8.basename(resource.file));
-          await assertDirectoryIdentity(dir, directoryIdentity);
+          await assertDirectoryIdentity(dir, directoryIdentity2);
           await installNewJson(resource.file, resource.value);
           installed.push(resource);
         }
@@ -24557,7 +24560,7 @@ async function createDirect(root, type, input, options = {}) {
       } catch (error) {
         const cleanupErrors = [];
         try {
-          await assertDirectoryIdentity(dir, directoryIdentity);
+          await assertDirectoryIdentity(dir, directoryIdentity2);
         } catch (identityError) {
           throw new Error(
             `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; cleanup refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
@@ -24576,7 +24579,7 @@ async function createDirect(root, type, input, options = {}) {
           const recovery = path8.join(librariesDir2, `.${id}.snl-entity-${process.pid}-${randomUUID3()}.create-failed`);
           await fs5.rename(dir, recovery);
           const capturedIdentity = await readDirectoryIdentity(recovery);
-          if (capturedIdentity.dev === directoryIdentity.dev && capturedIdentity.ino === directoryIdentity.ino) {
+          if (capturedIdentity.dev === directoryIdentity2.dev && capturedIdentity.ino === directoryIdentity2.ino) {
             await fs5.rmdir(recovery);
             await syncDirectoryDurably(librariesDir2, void 0, librariesDirectoryIdentity);
           } else {
@@ -24685,7 +24688,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         });
       } else if (type === "library") {
         const dir = path8.join(docRoot(root), "libraries", id);
-        const directoryIdentity = await readDirectoryIdentity(dir);
+        const directoryIdentity2 = await readDirectoryIdentity(dir);
         const resources = [
           { file: path8.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
           { file: path8.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
@@ -24711,9 +24714,9 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         const installed = [];
         try {
           await options.beforeEntityInstall?.();
-          await assertDirectoryIdentity(dir, directoryIdentity);
+          await assertDirectoryIdentity(dir, directoryIdentity2);
           for (const resource of originals) {
-            await assertDirectoryIdentity(dir, directoryIdentity);
+            await assertDirectoryIdentity(dir, directoryIdentity2);
             if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
             else await installNewJson(resource.file, resource.next);
             installed.push(resource);
@@ -24721,7 +24724,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         } catch (error) {
           const rollbackErrors = [];
           try {
-            await assertDirectoryIdentity(dir, directoryIdentity);
+            await assertDirectoryIdentity(dir, directoryIdentity2);
           } catch (identityError) {
             throw new Error(
               `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; rollback refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
@@ -25282,9 +25285,9 @@ function indexCounterPaths(counters) {
     ids.add(counter.id);
     names.add(counter.name);
     visiting.add(counter);
-    const path15 = [...parents, counter];
-    paths.set(counter, path15);
-    for (const child of counter.children) visit2(child, path15);
+    const path16 = [...parents, counter];
+    paths.set(counter, path16);
+    for (const child of counter.children) visit2(child, path16);
     visiting.delete(counter);
   };
   for (const counter of counters) visit2(counter, []);
@@ -25337,15 +25340,15 @@ function numberNodes(index, entries, kinds, counters, paths) {
   for (const nodeId of index.readingOrder) {
     const node = index.nodesById.get(nodeId);
     const counter = resolveCounter(node, entries, kinds, counters);
-    const path15 = counter ? paths.get(counter) : void 0;
-    if (!counter || !path15) {
+    const path16 = counter ? paths.get(counter) : void 0;
+    if (!counter || !path16) {
       numbers.set(nodeId, null);
       continue;
     }
     values.set(counter, (values.get(counter) ?? 0) + 1);
     resetDescendants(counter);
     const segments = [];
-    for (const level of path15) {
+    for (const level of path16) {
       const value = values.get(level);
       if (value === void 0) {
         segments.length = 0;
@@ -25419,19 +25422,157 @@ function singleLine(value) {
 }
 
 // src/cli/operation.ts
-import path14 from "node:path";
+import path15 from "node:path";
 
 // lib/relationship-publisher.ts
 import { isDeepStrictEqual as isDeepStrictEqual2 } from "node:util";
-import path11 from "node:path";
+import path12 from "node:path";
 
 // lib/batch.ts
 import { constants as constants6, promises as fs6 } from "node:fs";
-import path9 from "node:path";
+import path10 from "node:path";
 import os from "node:os";
 import { createHash as createHash4 } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify, types as utilTypes } from "node:util";
+
+// lib/windows-batch-exchange.ts
+import { spawn as spawn3 } from "node:child_process";
+import path9 from "node:path";
+import { createInterface } from "node:readline";
+var script3 = String.raw`
+$ErrorActionPreference = 'Stop'
+$phase = 'open'
+try {
+  Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+
+public static class SnlBatchExchange {
+    [DllImport("ktmw32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    static extern SafeFileHandle CreateTransaction(IntPtr security, IntPtr uow, uint options,
+        uint isolation, uint flags, uint timeout, string description);
+    [DllImport("ktmw32.dll", SetLastError = true)]
+    static extern bool CommitTransaction(SafeFileHandle transaction);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    static extern bool MoveFileTransactedW(string source, string destination, IntPtr progress,
+        IntPtr data, uint flags, SafeFileHandle transaction);
+
+    public static SafeFileHandle Open(string live, string staged) {
+        var drive = new DriveInfo(Path.GetPathRoot(live));
+        if (!String.Equals(drive.Name, Path.GetPathRoot(staged), StringComparison.OrdinalIgnoreCase) ||
+            drive.DriveType != DriveType.Fixed || !String.Equals(drive.DriveFormat, "NTFS", StringComparison.OrdinalIgnoreCase))
+            throw new Win32Exception(50);
+        var tx = CreateTransaction(IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 300000, "SNL batch exchange");
+        if (!tx.IsInvalid) return tx;
+        int error = Marshal.GetLastWin32Error();
+        tx.Dispose();
+        throw new Win32Exception(error);
+    }
+
+    public static void Move(string from, string to, SafeFileHandle tx) {
+        // No copy, replace or delayed operation flags.
+        if (!MoveFileTransactedW(from, to, IntPtr.Zero, IntPtr.Zero, 0, tx))
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+    }
+
+    public static void Commit(SafeFileHandle tx) {
+        if (!CommitTransaction(tx)) throw new Win32Exception(Marshal.GetLastWin32Error());
+    }
+}
+'@
+  $request = [Console]::In.ReadLine() | ConvertFrom-Json
+  $tx = [SnlBatchExchange]::Open($request.live, $request.staged)
+  try {
+    $phase = 'prepare'
+    [SnlBatchExchange]::Move($request.live, $request.temporary, $tx)
+    [SnlBatchExchange]::Move($request.staged, $request.live, $tx)
+    [SnlBatchExchange]::Move($request.temporary, $request.staged, $tx)
+    [Console]::Out.WriteLine('prepared')
+    [Console]::Out.Flush()
+    if ([Console]::In.ReadLine() -eq 'commit') {
+      $phase = 'commit'
+      [SnlBatchExchange]::Commit($tx)
+      [Console]::Out.WriteLine('committed')
+    }
+  } finally {
+    $tx.Dispose()
+  }
+} catch {
+  $errorDetail = $_.Exception.GetBaseException()
+  $nativeCode = if ($errorDetail -is [ComponentModel.Win32Exception]) { $errorDetail.NativeErrorCode } else { -1 }
+  [Console]::Out.WriteLine("$phase $nativeCode")
+  exit 1
+}
+`;
+var WindowsBatchExchangeError = class extends Error {
+  constructor(phase, nativeCode, detail) {
+    super("Windows NTFS batch transaction failed during " + phase + " (Win32 " + nativeCode + ")" + (detail ? ": " + detail : "."));
+    this.phase = phase;
+    this.nativeCode = nativeCode;
+  }
+  phase;
+  nativeCode;
+  get unsupported() {
+    return this.phase === "open" || this.phase === "prepare" && [1, 50, 120, 6801, 6805].includes(this.nativeCode);
+  }
+};
+async function exchangeWindowsBatch(live, staged, temporary, beforeCommit) {
+  const systemRoot = process.env.SystemRoot;
+  if (!systemRoot || !/^[A-Za-z]:\\/.test(systemRoot)) throw new WindowsBatchExchangeError("open", 50);
+  const executable = path9.join(systemRoot, "System32", "WindowsPowerShell", "v1.0", "powershell.exe");
+  const command = Buffer.from(script3, "utf16le").toString("base64");
+  const child = spawn3(executable, ["-NoProfile", "-NonInteractive", "-EncodedCommand", command], {
+    windowsHide: true,
+    stdio: ["pipe", "pipe", "pipe"]
+  });
+  const lines = createInterface({ input: child.stdout, crlfDelay: Infinity });
+  const output = lines[Symbol.asyncIterator]();
+  let failure;
+  child.stdin.on("error", (error) => {
+    failure ??= error;
+  });
+  child.on("error", (error) => {
+    failure ??= error;
+  });
+  const closed = new Promise((resolve6) => child.once("close", () => resolve6()));
+  let stderr = "";
+  child.stderr.on("data", (chunk) => {
+    if (stderr.length < 2048) stderr += chunk;
+  });
+  const next = async (success, phase) => {
+    const timeout = setTimeout(() => {
+      failure = new Error("Windows transaction helper timed out.");
+      child.kill();
+    }, phase === "prepare" ? 3e4 : 3e5);
+    const { value } = await output.next().finally(() => clearTimeout(timeout));
+    if (value === success) return;
+    const result = /^(open|prepare|commit) (-?\d+)$/.exec(value ?? "");
+    if (result) throw new WindowsBatchExchangeError(result[1], Number(result[2]));
+    throw new WindowsBatchExchangeError(phase, -1, failure?.message || stderr.trim().slice(0, 300));
+  };
+  const request = JSON.stringify({ live, staged, temporary }).replace(
+    /[^\x00-\x7f]/g,
+    (char) => "\\u" + char.charCodeAt(0).toString(16).padStart(4, "0")
+  );
+  try {
+    child.stdin.write(request + "\n");
+    await next("prepared", "prepare");
+    await beforeCommit();
+    child.stdin.end("commit\n");
+    await next("committed", "commit");
+    await closed;
+  } finally {
+    if (!child.stdin.writableEnded) child.stdin.end();
+    await closed;
+    lines.close();
+  }
+}
+
+// lib/batch.ts
 var BATCH_CREATE_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship"];
 var BatchError = class extends Error {
   constructor(code, message, exitCode = 1, details) {
@@ -25532,11 +25673,11 @@ async function exists(p3) {
   }
 }
 async function assertRoot(root) {
-  for (const p3 of [root, path9.join(root, ".SNL_Doc")]) {
+  for (const p3 of [root, path10.join(root, ".SNL_Doc")]) {
     const s4 = await fs6.lstat(p3);
     if (!s4.isDirectory() || s4.isSymbolicLink() || await fs6.realpath(p3) !== p3) throw new BatchError("workspace.unsafe-path", `${p3} must be a canonical non-symlink directory.`, 2);
   }
-  if (await exists(path9.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
+  if (await exists(path10.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
 }
 function supportedMode(mode, p3) {
   if (mode & 3584) throw new BatchError("workspace.unsupported-mode", `Batch refuses setuid, setgid and sticky permission bits: ${p3}.`, 2);
@@ -25549,10 +25690,10 @@ function derivedPath(relative2) {
 }
 async function snapshot(root, domain = "physical") {
   const out = /* @__PURE__ */ new Map();
-  const doc = path9.join(root, ".SNL_Doc");
+  const doc = path10.join(root, ".SNL_Doc");
   async function walk(relative2) {
     if (relative2 === DATA_WRITE_LOCK_FILENAME || domain === "authoring" && derivedPath(relative2)) return;
-    const p3 = path9.join(doc, relative2);
+    const p3 = path10.join(doc, relative2);
     const s4 = await fs6.lstat(p3, { bigint: true });
     if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
     const mode = supportedMode(Number(s4.mode), p3);
@@ -25594,11 +25735,12 @@ function assertUnchanged(root, current, authoring, physical) {
 }
 async function materialize(stage, data) {
   for (const [name2, node] of data) {
-    const p3 = path9.join(stage, ".SNL_Doc", name2);
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
     if (node.kind === "directory") await fs6.mkdir(p3, { mode: 448 });
     else {
-      await fs6.writeFile(p3, node.bytes, { flag: "wx", mode: node.mode });
-      await fs6.chmod(p3, node.mode);
+      const mode = process.platform === "win32" ? node.mode | 128 : node.mode;
+      await fs6.writeFile(p3, node.bytes, { flag: "wx", mode });
+      await fs6.chmod(p3, mode);
     }
   }
 }
@@ -25714,7 +25856,7 @@ async function prepare(stage, original, operations) {
   }
   if (relationsChanged) pending.set("relationships.json", relationships);
   for (const [name2, value] of pending) {
-    const target = path9.join(stage, ".SNL_Doc", name2);
+    const target = path10.join(stage, ".SNL_Doc", name2);
     if (original.has(name2)) await fs6.writeFile(target, jsonText(value));
     else await installNewJson(target, value);
   }
@@ -25760,6 +25902,7 @@ async function prepare(stage, original, operations) {
   return { diagnostics, results, counts: validation.counts };
 }
 async function syncDir(p3) {
+  if (process.platform === "win32") return;
   const h3 = await fs6.open(p3, constants6.O_RDONLY | constants6.O_DIRECTORY | constants6.O_NOFOLLOW);
   try {
     await h3.sync();
@@ -25767,21 +25910,29 @@ async function syncDir(p3) {
     await h3.close();
   }
 }
+async function syncFile(p3) {
+  const flags = process.platform === "win32" ? constants6.O_RDWR : constants6.O_RDONLY;
+  const handle = await fs6.open(p3, flags | constants6.O_NOFOLLOW);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
 async function seal(stage, original) {
   const tree = await snapshot(stage);
   for (const [name2, node] of tree) {
-    const p3 = path9.join(stage, ".SNL_Doc", name2);
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
     if (node.kind === "file") {
-      const h3 = await fs6.open(p3, constants6.O_RDONLY | constants6.O_NOFOLLOW);
-      try {
-        await h3.sync();
-      } finally {
-        await h3.close();
+      await syncFile(p3);
+      if (process.platform === "win32") {
+        const previous = original.get(name2);
+        if (previous?.kind === "file" && previous.mode !== node.mode) await fs6.chmod(p3, previous.mode);
       }
     }
   }
   for (const [name2, node] of [...tree].reverse()) if (node.kind === "directory") {
-    const p3 = path9.join(stage, ".SNL_Doc", name2);
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
     await fs6.chmod(p3, original.get(name2)?.mode ?? node.mode);
     await syncDir(p3);
   }
@@ -25789,32 +25940,34 @@ async function seal(stage, original) {
 }
 var run = promisify(execFile);
 var EXCHANGE = "import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n";
-async function exchange(a4, b4) {
+async function exchangeLinux(a4, b4) {
   await run("python3", ["-I", "-c", EXCHANGE, a4, b4]);
 }
+var sameDirectory = (a4, b4) => a4.dev === b4.dev && a4.ino === b4.ino;
+var directoryIdentity = (name2) => fs6.stat(name2, { bigint: true });
 async function captureWorkspaceRevision(root, allowWriterLock = false) {
   await assertRoot(root);
-  if (!allowWriterLock && await exists(path9.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock.", 2);
+  if (!allowWriterLock && await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock.", 2);
   return revision(root, await snapshot(root, "authoring"));
 }
 async function checkBatch(root, raw) {
   const operations = normalize(raw);
   await assertRoot(root);
-  if (await exists(path9.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
+  if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
   const original = await snapshot(root);
   const expectedWorkspaceRevision = revision(root, original);
   const originalPhysicalRevision = revision(root, original, "physical");
   const temporaryRoot = await fs6.realpath(os.tmpdir());
-  const relativeTemporaryRoot = path9.relative(root, temporaryRoot);
-  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path9.sep}`) && relativeTemporaryRoot !== ".." && !path9.isAbsolute(relativeTemporaryRoot)) {
+  const relativeTemporaryRoot = path10.relative(root, temporaryRoot);
+  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path10.sep}`) && relativeTemporaryRoot !== ".." && !path10.isAbsolute(relativeTemporaryRoot)) {
     throw new BatchError("batch.unsafe-temp-directory", "The check temporary directory must be outside the workspace; set TMPDIR to an external directory.", 2);
   }
-  const stage = await fs6.mkdtemp(path9.join(temporaryRoot, "snl-batch-check-"));
+  const stage = await fs6.mkdtemp(path10.join(temporaryRoot, "snl-batch-check-"));
   try {
     await materialize(stage, original);
     const prepared = await prepare(stage, original, operations);
     await assertRoot(root);
-    if (await exists(path9.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) fail("batch.workspace-conflict", "Writer lock appeared during preflight; check the complete batch again.");
+    if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) fail("batch.workspace-conflict", "Writer lock appeared during preflight; check the complete batch again.");
     assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
     return { normalizedOperations: operations, checkedDigest: sha2(["snl.batch/v1", operations]), expectedWorkspaceRevision, diagnostics: prepared.diagnostics, counts: prepared.counts };
   } finally {
@@ -25826,47 +25979,85 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
   await assertRoot(root);
   let committedRevision;
   try {
-    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async () => {
+    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async (writerLock) => {
       if (sha2(["snl.batch/v1", operations]) !== checkedDigest) fail("batch.digest-conflict", "checkedDigest does not match the normalized operation sequence; recheck the whole batch.");
       const original = await snapshot(root);
       if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Authoring revision changed or receipt uses the retired whole-tree token; recheck the whole batch with this Toolkit, never replay a suffix.");
-      if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires a Linux workspace filesystem with renameat2(RENAME_EXCHANGE) and python3. Batch check is available on this platform.", 2);
+      const windows = process.platform === "win32";
+      if (!windows && process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires a supported Linux or Windows filesystem. Batch check is available on this platform.", 2);
       const originalPhysicalRevision = revision(root, original, "physical");
-      const stage = await fs6.mkdtemp(path9.join(root, ".snl-batch-"));
-      const liveDoc = path9.join(root, ".SNL_Doc");
-      const stagedDoc = path9.join(stage, ".SNL_Doc");
-      const journal = path9.join(root, BATCH_JOURNAL_FILENAME);
+      const stage = await fs6.mkdtemp(path10.join(root, ".snl-batch-"));
+      const liveDoc = path10.join(root, ".SNL_Doc");
+      const stagedDoc = path10.join(stage, ".SNL_Doc");
+      const exchange = windows ? (a4, b4, beforeCommit = async () => {
+      }) => exchangeWindowsBatch(a4, b4, path10.join(stage, "exchange-reservation"), beforeCommit) : exchangeLinux;
+      const journal = path10.join(root, BATCH_JOURNAL_FILENAME);
       let retain = false;
       let journalCreated = false;
       let committed = false;
       let originalInode;
+      let candidateInode;
       try {
-        await materialize(stage, original);
-        const prepared = await prepare(stage, original, operations);
-        const a4 = path9.join(stage, "probe-a"), b4 = path9.join(stage, "probe-b");
+        const a4 = path10.join(stage, "probe-a"), b4 = path10.join(stage, "probe-b");
         await fs6.mkdir(a4);
         await fs6.mkdir(b4);
-        await exchange(a4, b4);
+        try {
+          await exchange(a4, b4);
+        } catch (error) {
+          if (error instanceof WindowsBatchExchangeError && error.unsupported) {
+            throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires a local NTFS volume with Windows Transactional NTFS enabled. Batch check remains available.", 2, { nativeCode: error.nativeCode });
+          }
+          throw error;
+        }
         await fs6.rmdir(a4);
         await fs6.rmdir(b4);
-        const lock = await fs6.readFile(path9.join(liveDoc, DATA_WRITE_LOCK_FILENAME));
-        await fs6.writeFile(path9.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
-        const lh = await fs6.open(path9.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), "r");
-        try {
-          await lh.sync();
-        } finally {
-          await lh.close();
+        await materialize(stage, original);
+        const prepared = await prepare(stage, original, operations);
+        const lock = Buffer.from(writerLock.contents);
+        if (!(await fs6.readFile(path10.join(liveDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock)) {
+          fail("batch.workspace-conflict", "The shared writer lock changed while preparing the batch.");
         }
+        await fs6.writeFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
+        await syncFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME));
         await seal(stage, original);
         const candidate = await snapshot(stage);
+        candidateInode = await directoryIdentity(stagedDoc);
         const resultingWorkspaceRevision = revision(root, candidate);
         const resultingPhysicalRevision = revision(root, candidate, "physical");
         await hooks.beforeExchange?.();
         assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
-        originalInode = await fs6.stat(liveDoc);
-        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, originalPhysicalRevision, resultingPhysicalRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
+        const originalDirectory = originalInode = await directoryIdentity(liveDoc);
+        const candidateDirectory = candidateInode;
+        await installNewJson(journal, {
+          protocol: "snl.batch.recovery/v1",
+          root,
+          stage,
+          expectedWorkspaceRevision,
+          resultingWorkspaceRevision,
+          originalPhysicalRevision,
+          resultingPhysicalRevision,
+          checkedDigest,
+          originalDirectory: { dev: Number(originalDirectory.dev), ino: Number(originalDirectory.ino) },
+          ...windows ? {
+            publication: "windows-ntfs-transaction",
+            windowsFileIds: {
+              original: { dev: String(originalDirectory.dev), ino: String(originalDirectory.ino) },
+              candidate: { dev: String(candidateDirectory.dev), ino: String(candidateDirectory.ino) }
+            }
+          } : {}
+        });
         journalCreated = true;
-        await exchange(liveDoc, stagedDoc);
+        if (windows) await writerLock.closeHandle();
+        await exchange(liveDoc, stagedDoc, windows ? async () => {
+          await hooks.beforeWindowsCommit?.();
+          assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
+          if (revision(root, await snapshot(stage), "physical") !== resultingPhysicalRevision) {
+            throw new BatchError("batch.candidate-conflict", "The staged batch changed before Windows transaction commit.", 2);
+          }
+          if (!sameDirectory(await directoryIdentity(liveDoc), originalDirectory) || !sameDirectory(await directoryIdentity(stagedDoc), candidateDirectory) || !(await fs6.readFile(path10.join(liveDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock) || !(await fs6.readFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock)) {
+            throw new BatchError("batch.workspace-conflict", "The original directory or the shared writer lock changed before Windows transaction commit.", 2);
+          }
+        } : void 0);
         assertUnchanged(root, await snapshot(stage), expectedWorkspaceRevision, originalPhysicalRevision);
         await hooks.afterExchange?.();
         await hooks.beforeParentSync?.();
@@ -25885,12 +26076,26 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
           retain = true;
           diagnostics.push({ severity: "warning", code: "batch.backup-cleanup-failed", message: `Commit completed; retained transaction backup at ${stage}.` });
         }
-        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics, publication: "linux-directory-exchange", recoveryPath: retain ? stage : null };
+        return {
+          results: prepared.results,
+          resultingWorkspaceRevision,
+          workspaceRevision: resultingWorkspaceRevision,
+          diagnostics,
+          publication: windows ? "windows-ntfs-transaction" : "linux-directory-exchange",
+          recoveryPath: retain ? stage : null
+        };
       } catch (error) {
         if (journalCreated && originalInode) {
           try {
-            const now = await fs6.stat(liveDoc);
-            if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
+            const originalDirectory = originalInode;
+            const now = await directoryIdentity(liveDoc);
+            if (!sameDirectory(now, originalDirectory)) {
+              await exchange(liveDoc, stagedDoc, windows ? async () => {
+                if (!candidateInode || !sameDirectory(await directoryIdentity(liveDoc), candidateInode) || !sameDirectory(await directoryIdentity(stagedDoc), originalDirectory) || revision(root, await snapshot(stage), "physical") !== originalPhysicalRevision) {
+                  throw new Error("The original or candidate directory changed before Windows transaction rollback.");
+                }
+              } : void 0);
+            }
             await syncDir(root);
             await syncDir(stage);
             if (revision(root, await snapshot(root), "physical") !== originalPhysicalRevision) throw new Error("Rollback physical revision mismatch.");
@@ -26259,7 +26464,7 @@ function dependencyCacheDescriptor(snapshot2) {
 // lib/dependency-cache-storage.ts
 import { constants as constants7, promises as fs7 } from "node:fs";
 import { createHash as createHash5, randomUUID as randomUUID4 } from "node:crypto";
-import * as path10 from "node:path";
+import * as path11 from "node:path";
 var MAX_BYTES = 64 * 1024 * 1024;
 var object2 = (v3) => v3 !== null && typeof v3 === "object" && !Array.isArray(v3);
 function cacheFingerprint(value) {
@@ -26295,8 +26500,8 @@ function segment(value) {
 function cachePath(root, id, scope) {
   segment(id);
   if (scope) segment(scope.library);
-  const base = scope ? path10.join(root, ".SNL_Doc", "libraries", scope.library) : path10.join(root, ".SNL_Doc");
-  return path10.resolve(base, ".cache", id, "result.json");
+  const base = scope ? path11.join(root, ".SNL_Doc", "libraries", scope.library) : path11.join(root, ".SNL_Doc");
+  return path11.resolve(base, ".cache", id, "result.json");
 }
 async function checkDirectory(directory, create) {
   try {
@@ -26314,17 +26519,17 @@ async function checkDirectory(directory, create) {
 }
 async function guard(root, id, scope, create) {
   const file = cachePath(root, id, scope);
-  let current = path10.resolve(root, ".SNL_Doc");
+  let current = path11.resolve(root, ".SNL_Doc");
   await checkDirectory(current, false);
   if (scope) {
-    current = path10.join(current, "libraries");
+    current = path11.join(current, "libraries");
     await checkDirectory(current, false);
-    current = path10.join(current, scope.library);
+    current = path11.join(current, scope.library);
     await checkDirectory(current, false);
   }
-  current = path10.join(current, ".cache");
+  current = path11.join(current, ".cache");
   await checkDirectory(current, create);
-  await checkDirectory(path10.join(current, id), create);
+  await checkDirectory(path11.join(current, id), create);
   try {
     const stat = await fs7.lstat(file);
     if (stat.isSymbolicLink() || !stat.isFile()) throw new Error("Unsafe cache file");
@@ -26357,7 +26562,7 @@ async function writeCache(root, descriptor, value, beforeRename) {
   });
   if (Buffer.byteLength(text3) + 1 > MAX_BYTES) throw new Error("Cache output exceeds size limit");
   const file = await guard(root, descriptor.id, descriptor.scope, true);
-  const temporary = path10.join(path10.dirname(file), `.${randomUUID4()}.tmp`);
+  const temporary = path11.join(path11.dirname(file), `.${randomUUID4()}.tmp`);
   try {
     const handle = await fs7.open(temporary, "wx", 384);
     try {
@@ -26370,7 +26575,7 @@ async function writeCache(root, descriptor, value, beforeRename) {
     await guard(root, descriptor.id, descriptor.scope, false);
     await fs7.rename(temporary, file);
     if (process.platform !== "win32") {
-      const directory = await fs7.open(path10.dirname(file), constants7.O_RDONLY);
+      const directory = await fs7.open(path11.dirname(file), constants7.O_RDONLY);
       try {
         await directory.sync();
       } finally {
@@ -26408,7 +26613,7 @@ async function validate2(root) {
   return result;
 }
 async function generateRelationships(root, dryRun, expectedWorkspaceRevision, hooks = {}) {
-  await readRegularText(path11.join(root, ".SNL_Doc/config.json"));
+  await readRegularText(path12.join(root, ".SNL_Doc/config.json"));
   if (!usesEntityStorage(await readConfig(root))) throw new RelationshipPublishError("workspace.unsupported-schema", "Generation requires current entity storage.", 2);
   const run2 = async () => {
     const revision2 = await captureWorkspaceRevision(root, !dryRun);
@@ -26533,14 +26738,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path15 = null;
+  let path16 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path15 = createKeyPath(key);
+    path16 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -26550,12 +26755,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name2)));
     }
-    path15 = createKeyPath(name2);
+    path16 = createKeyPath(name2);
     id = createKeyId(name2);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path15,
+    path: path16,
     id,
     weight,
     src,
@@ -26568,29 +26773,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path15) {
+function get(obj, path16) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path16, index, arrayIndex) => {
+  const deepGet = (obj2, path17, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path16[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path17[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path16[index]];
+      const value = obj2[path17[index]];
       if (!isDefined(value)) return;
-      if (index === path16.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path17.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path16, index + 1, i5);
-      } else if (path16.length) deepGet(value, path16, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path17, index + 1, i5);
+      } else if (path17.length) deepGet(value, path17, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path15) ? path15.split(".") : path15, 0);
+  deepGet(obj, isString(path16) ? path16.split(".") : path16, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -28160,7 +28365,7 @@ async function querySnoogl(workspaceRoot, mode, query) {
 // lib/init-workspace.ts
 import { randomUUID as randomUUID5 } from "node:crypto";
 import { constants as constants8, promises as fs8 } from "node:fs";
-import path12 from "node:path";
+import path13 from "node:path";
 
 // lib/init-preset-packages/fulcrum-math-notes.json
 var fulcrum_math_notes_default = {
@@ -29620,7 +29825,7 @@ async function pathKind(target) {
   }
 }
 async function canonicalExistingDirectory(root) {
-  const resolved = path12.resolve(root);
+  const resolved = path13.resolve(root);
   let stat;
   try {
     stat = await fs8.lstat(resolved);
@@ -29640,16 +29845,16 @@ async function canonicalExistingDirectory(root) {
   return resolved;
 }
 async function writeJson(file, value) {
-  await fs8.mkdir(path12.dirname(file), { recursive: true });
+  await fs8.mkdir(path13.dirname(file), { recursive: true });
   await fs8.writeFile(file, jsonText(value), { encoding: "utf8", flag: "wx", mode: 420 });
 }
 async function listRelativeFiles(root, current = root) {
   const names = await fs8.readdir(current, { withFileTypes: true });
   const out = [];
   for (const item of names.sort((left, right) => left.name.localeCompare(right.name))) {
-    const absolute = path12.join(current, item.name);
+    const absolute = path13.join(current, item.name);
     if (item.isDirectory()) out.push(...await listRelativeFiles(root, absolute));
-    else out.push(path12.relative(root, absolute).split(path12.sep).join("/"));
+    else out.push(path13.relative(root, absolute).split(path13.sep).join("/"));
   }
   return out;
 }
@@ -29720,7 +29925,7 @@ function resolvePreset(presetId, presetValue) {
 async function initializeWorkspace(root, presetId, presetValue) {
   const preset = resolvePreset(presetId, presetValue);
   const canonicalRoot = await canonicalExistingDirectory(root);
-  const targetDoc = path12.join(canonicalRoot, ".SNL_Doc");
+  const targetDoc = path13.join(canonicalRoot, ".SNL_Doc");
   if (await pathKind(targetDoc) === "present") {
     throw new InitWorkspaceError(
       "workspace.already-initialized",
@@ -29729,7 +29934,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
     );
   }
   const token = randomUUID5();
-  const lockPath = path12.join(canonicalRoot, ".SNL_Doc.init.lock");
+  const lockPath = path13.join(canonicalRoot, ".SNL_Doc.init.lock");
   let lock;
   try {
     lock = await fs8.open(lockPath, constants8.O_CREAT | constants8.O_EXCL | constants8.O_WRONLY, 384);
@@ -29747,8 +29952,8 @@ async function initializeWorkspace(root, presetId, presetValue) {
     }
     throw error;
   }
-  const stageRoot = path12.join(canonicalRoot, `.snl-init-stage-${token}`);
-  const stageDoc = path12.join(stageRoot, ".SNL_Doc");
+  const stageRoot = path13.join(canonicalRoot, `.snl-init-stage-${token}`);
+  const stageDoc = path13.join(stageRoot, ".SNL_Doc");
   let published = false;
   try {
     if (await pathKind(targetDoc) === "present") {
@@ -29758,20 +29963,20 @@ async function initializeWorkspace(root, presetId, presetValue) {
         `${targetDoc} appeared while initialization was starting; refusing to overwrite it.`
       );
     }
-    await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs8.mkdir(path12.join(stageDoc, directory), { recursive: true })));
+    await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs8.mkdir(path13.join(stageDoc, directory), { recursive: true })));
     await Promise.all([
-      ...["entries", "macros", "libraries"].map((directory) => fs8.writeFile(path12.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
-      ...defaultPackageManifests().map((item) => writeJson(path12.join(stageDoc, item.relativePath), item.value)),
-      ...defaultMacroEnvelopes().map((item) => writeJson(path12.join(stageDoc, item.relativePath), item.value)),
-      writeJson(path12.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
+      ...["entries", "macros", "libraries"].map((directory) => fs8.writeFile(path13.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
+      ...defaultPackageManifests().map((item) => writeJson(path13.join(stageDoc, item.relativePath), item.value)),
+      ...defaultMacroEnvelopes().map((item) => writeJson(path13.join(stageDoc, item.relativePath), item.value)),
+      writeJson(path13.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
     ]);
     const config = defaultConfig(preset);
-    await writeJson(path12.join(stageDoc, "config.json"), config);
+    await writeJson(path13.join(stageDoc, "config.json"), config);
     if (preset) {
       await createPresetEntities(stageRoot, preset);
       const macroPackages = [...new Set(preset.macros.map((value) => value.package).filter((value) => typeof value === "string"))].filter((value) => value !== "BasicMacros").sort((left, right) => left.localeCompare(right));
       config.active_macro_packages = ["BasicMacros", ...macroPackages];
-      await fs8.writeFile(path12.join(stageDoc, "config.json"), jsonText(config), "utf8");
+      await fs8.writeFile(path13.join(stageDoc, "config.json"), jsonText(config), "utf8");
     }
     const validation = await validateManagedWorkspace(stageRoot);
     if (!validation.valid) {
@@ -29811,7 +30016,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
 
 // lib/package-membership-repair.ts
 import { promises as fs9 } from "node:fs";
-import path13 from "node:path";
+import path14 from "node:path";
 function record3(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
   return value;
@@ -29824,17 +30029,17 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
       throw new Error("Package entry_ids repair requires the current per-entity workspace schema.");
     }
     const doc = snlDocRoot(workspaceRoot);
-    const manifestFile = path13.join(doc, packageManifestPath(packageId2));
+    const manifestFile = path14.join(doc, packageManifestPath(packageId2));
     const original = await readRegularText(manifestFile);
     const manifest = record3(JSON.parse(original.text), "Package manifest");
     if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId2 || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
       throw new Error(`Package ${JSON.stringify(packageId2)} is not a current canonical Package manifest.`);
     }
     const seen = /* @__PURE__ */ new Set();
-    const entriesDir = path13.join(doc, "entries");
+    const entriesDir = path14.join(doc, "entries");
     for (const name2 of (await fs9.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
       const relative2 = `entries/${name2}`;
-      const envelope = record3(JSON.parse((await readRegularText(path13.join(entriesDir, name2))).text), relative2);
+      const envelope = record3(JSON.parse((await readRegularText(path14.join(entriesDir, name2))).text), relative2);
       const entry = record3(envelope.entry, `${relative2}#entry`);
       if (envelope.format !== "snl-entry" || envelope.version !== ENTRY_STORAGE_VERSION || envelope.schema_version !== CURRENT_ENTRY_SCHEMA_VERSION || typeof envelope.package !== "string" || entry.package !== envelope.package || typeof entry.id !== "string" || !entry.id) {
         throw new Error(`${relative2} is not a current canonical Entry envelope.`);
@@ -29904,7 +30109,7 @@ var COMMAND_PATHS = Object.freeze([
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
   if (command === "batch/check") return { command, access: "read", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true) }, summary: "Validate a complete dependent create batch without workspace writes; return digest and workspace revision." };
-  if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required)." };
+  if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange or Windows Transactional NTFS." };
   if (command === "relationship/generate") return { command, access: "write", arguments: { scope: field("empty object (global)", true), dryRun: field("boolean", false), expectedWorkspaceRevision: field("string (required for apply; use dry-run receipt)", false) }, summary: "Generate global dependencies; dry-run writes nothing, apply publishes only the existing dependencies cache under fresh Authoring CAS." };
   const action = command.split("/").at(-1);
   if (action === "list") return { command, access: "read", arguments: { query: field("string|null", false), limit: field("integer", false), cursor: field("string|null", false) }, summary: "List one managed entity family with stable pagination." };
@@ -29941,7 +30146,7 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path14.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path15.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
     if (command === "relationship/generate") {
       const args2 = request.arguments;
@@ -29970,7 +30175,7 @@ async function executeOperation(request) {
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path15) => path15 !== "help"),
+        commands: COMMAND_PATHS.filter((path16) => path16 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
         batch: { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) },
         web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
@@ -30014,7 +30219,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path14.resolve(request.root),
+        root: path15.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,

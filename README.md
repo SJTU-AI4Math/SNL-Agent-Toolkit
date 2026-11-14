@@ -113,10 +113,11 @@ browser application or write endpoints.
 
 `reader-source.json` pins an immutable Extension revision. `npm run build:web` downloads that source at build time, installs its locked build dependencies in a temporary directory, then invokes its maintained `build-local-reader.mjs`. It builds shared browser and model artifacts into ignored `dist/web/`; no UI source fork is vendored into Toolkit. `npm run build:web -- --source /path/to/extension` can instead use an already-installed, clean checkout at exactly the pinned revision. `npm pack` performs the frontend build and includes the prebuilt assets. Node, npm, network access and tar are needed when building from source; normal `snl` startup needs no network, compiler or VS Code.
 
-For dependent multi-entity imports, use the real checked [batch API](<Skills/CLI Tools/Batch.md>),
-not single-entity loops. Its first edition supports dependent creates with one
-digest/revision receipt and Linux directory-exchange publication (`python3`
-required), with explicit guarded recovery and documented crash/reader limits.
+The checked [batch API](<Skills/CLI Tools/Batch.md>) publishes dependent creates
+using Linux directory exchange (`python3` required) or a Windows transaction on
+a local NTFS volume with TxF available. Windows uses the built-in Windows
+PowerShell helper to call the kernel transaction API. Both require a checked
+digest and workspace revision and retain a journal for uncertain recovery.
 
 On Windows, regular entity writes flush the file contents before publication.
 Node does not expose a directory flush there, so a sudden power loss may

@@ -18,6 +18,7 @@ import { lintEntry } from './lint-entry.ts';
 import { lintPackage } from './lint-package.ts';
 import type { LintIssue } from './lint-report.ts';
 import { BATCH_JOURNAL_FILENAME, DATA_WRITE_LOCK_FILENAME, withWorkspaceDataLock } from './workspace-data-lock.ts';
+import { exchangeWindowsBatch, WindowsBatchExchangeError } from './windows-batch-exchange.ts';
 
 type RecordJson = Record<string, unknown>;
 export const BATCH_CREATE_TYPES = ['entry-kind', 'macro-kind', 'entry-package', 'macro-package', 'entry', 'macro', 'relationship'] as const;
@@ -188,8 +189,11 @@ async function materialize(stage: string, data: Snapshot) {
     const p = path.join(stage, '.SNL_Doc', name);
     if (node.kind === 'directory') await fs.mkdir(p, { mode: 0o700 });
     else {
-      await fs.writeFile(p, node.bytes, { flag: 'wx', mode: node.mode });
-      await fs.chmod(p, node.mode); // Preserve authored modes independently of the process umask.
+      // Windows uses the write bits for the read-only attribute. Keep private
+      // candidates writable until their data has been updated and flushed.
+      const mode = process.platform === 'win32' ? node.mode | 0o200 : node.mode;
+      await fs.writeFile(p, node.bytes, { flag: 'wx', mode });
+      await fs.chmod(p, mode); // Preserve authored modes independently of the process umask.
     }
   }
 }
@@ -335,12 +339,28 @@ async function prepare(stage: string, original: Snapshot, operations: BatchOpera
   return { diagnostics, results, counts: validation.counts };
 }
 
-async function syncDir(p: string) { const h = await fs.open(p, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW); try { await h.sync(); } finally { await h.close(); } }
+async function syncDir(p: string) {
+  // KTM owns the namespace commit on Windows. Node can only flush files.
+  if (process.platform === 'win32') return;
+  const h = await fs.open(p, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
+  try { await h.sync(); } finally { await h.close(); }
+}
+async function syncFile(p: string) {
+  const flags = process.platform === 'win32' ? constants.O_RDWR : constants.O_RDONLY;
+  const handle = await fs.open(p, flags | constants.O_NOFOLLOW);
+  try { await handle.sync(); } finally { await handle.close(); }
+}
 async function seal(stage: string, original: Snapshot) {
   const tree = await snapshot(stage);
   for (const [name, node] of tree) {
     const p = path.join(stage, '.SNL_Doc', name);
-    if (node.kind === 'file') { const h = await fs.open(p, constants.O_RDONLY | constants.O_NOFOLLOW); try { await h.sync(); } finally { await h.close(); } }
+    if (node.kind === 'file') {
+      await syncFile(p);
+      if (process.platform === 'win32') {
+        const previous = original.get(name);
+        if (previous?.kind === 'file' && previous.mode !== node.mode) await fs.chmod(p, previous.mode);
+      }
+    }
   }
   for (const [name, node] of [...tree].reverse()) if (node.kind === 'directory') {
     const p = path.join(stage, '.SNL_Doc', name);
@@ -352,12 +372,17 @@ async function seal(stage: string, original: Snapshot) {
 const run = promisify(execFile);
 // No shell, third-party dependency or non-atomic fallback. Two directories must share a filesystem.
 const EXCHANGE = 'import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n';
-async function exchange(a: string, b: string) {
+async function exchangeLinux(a: string, b: string) {
   await run('python3', ['-I', '-c', EXCHANGE, a, b]);
 }
+const sameDirectory = (a: { dev: bigint; ino: bigint }, b: { dev: bigint; ino: bigint }) =>
+  a.dev === b.dev && a.ino === b.ino;
+const directoryIdentity = (name: string) => fs.stat(name, { bigint: true });
 export interface BatchApplyHooks {
   /** Local regression seam, never accepted in an operation request. */
   beforeExchange?: () => Promise<void>;
+  /** Windows TxF has reserved both generations, but has not committed. */
+  beforeWindowsCommit?: () => Promise<void>;
   afterExchange?: () => Promise<void>;
   beforeParentSync?: () => Promise<void>;
 }
@@ -395,39 +420,81 @@ export async function applyBatch(root: string, raw: unknown, checkedDigest: stri
   await assertRoot(root);
   let committedRevision: string | undefined;
   try {
-    return await withWorkspaceDataLock(root, 'apply checked batch (inspect recovery journal before stale-lock removal)', async () => {
+    return await withWorkspaceDataLock(root, 'apply checked batch (inspect recovery journal before stale-lock removal)', async writerLock => {
       if (sha(['snl.batch/v1', operations]) !== checkedDigest) fail('batch.digest-conflict', 'checkedDigest does not match the normalized operation sequence; recheck the whole batch.');
       const original = await snapshot(root);
       if (revision(root, original) !== expectedWorkspaceRevision) fail('batch.workspace-conflict', 'Authoring revision changed or receipt uses the retired whole-tree token; recheck the whole batch with this Toolkit, never replay a suffix.');
-      if (process.platform !== 'linux') throw new BatchError('batch.publication-unsupported', 'Atomic batch apply requires a Linux workspace filesystem with renameat2(RENAME_EXCHANGE) and python3. Batch check is available on this platform.', 2);
+      const windows = process.platform === 'win32';
+      if (!windows && process.platform !== 'linux') throw new BatchError('batch.publication-unsupported', 'Atomic batch apply requires a supported Linux or Windows filesystem. Batch check is available on this platform.', 2);
       const originalPhysicalRevision = revision(root, original, 'physical');
       const stage = await fs.mkdtemp(path.join(root, '.snl-batch-'));
       const liveDoc = path.join(root, '.SNL_Doc');
       const stagedDoc = path.join(stage, '.SNL_Doc');
+      const exchange = windows
+        ? (a: string, b: string, beforeCommit = async () => {}) => exchangeWindowsBatch(a, b, path.join(stage, 'exchange-reservation'), beforeCommit)
+        : exchangeLinux;
       const journal = path.join(root, BATCH_JOURNAL_FILENAME);
       let retain = false;
       let journalCreated = false;
       let committed = false;
-      let originalInode: Awaited<ReturnType<typeof fs.stat>> | undefined;
+      let originalInode: Awaited<ReturnType<typeof directoryIdentity>> | undefined;
+      let candidateInode: Awaited<ReturnType<typeof directoryIdentity>> | undefined;
       try {
-        await materialize(stage, original);
-        const prepared = await prepare(stage, original, operations);
         // Probe platform/filesystem support before any live namespace mutation.
         const a = path.join(stage, 'probe-a'), b = path.join(stage, 'probe-b');
-        await fs.mkdir(a); await fs.mkdir(b); await exchange(a, b); await fs.rmdir(a); await fs.rmdir(b);
-        const lock = await fs.readFile(path.join(liveDoc, DATA_WRITE_LOCK_FILENAME));
+        await fs.mkdir(a); await fs.mkdir(b);
+        try { await exchange(a, b); }
+        catch (error) {
+          if (error instanceof WindowsBatchExchangeError && error.unsupported) {
+            throw new BatchError('batch.publication-unsupported', 'Atomic batch apply requires a local NTFS volume with Windows Transactional NTFS enabled. Batch check remains available.', 2, { nativeCode: error.nativeCode });
+          }
+          throw error;
+        }
+        await fs.rmdir(a); await fs.rmdir(b);
+        await materialize(stage, original);
+        const prepared = await prepare(stage, original, operations);
+        const lock = Buffer.from(writerLock.contents);
+        if (!(await fs.readFile(path.join(liveDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock)) {
+          fail('batch.workspace-conflict', 'The shared writer lock changed while preparing the batch.');
+        }
         await fs.writeFile(path.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: 'wx', mode: 0o600 });
-        const lh = await fs.open(path.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), 'r'); try { await lh.sync(); } finally { await lh.close(); }
+        await syncFile(path.join(stagedDoc, DATA_WRITE_LOCK_FILENAME));
         await seal(stage, original);
         const candidate = await snapshot(stage);
+        candidateInode = await directoryIdentity(stagedDoc);
         const resultingWorkspaceRevision = revision(root, candidate);
         const resultingPhysicalRevision = revision(root, candidate, 'physical');
         await hooks.beforeExchange?.();
         assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
-        originalInode = await fs.stat(liveDoc);
-        await installNewJson(journal, { protocol: 'snl.batch.recovery/v1', root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, originalPhysicalRevision, resultingPhysicalRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
+        const originalDirectory = originalInode = await directoryIdentity(liveDoc);
+        const candidateDirectory = candidateInode;
+        await installNewJson(journal, { protocol: 'snl.batch.recovery/v1', root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, originalPhysicalRevision, resultingPhysicalRevision, checkedDigest,
+          originalDirectory: { dev: Number(originalDirectory.dev), ino: Number(originalDirectory.ino) },
+          ...(windows ? {
+            publication: 'windows-ntfs-transaction',
+            windowsFileIds: {
+              original: { dev: String(originalDirectory.dev), ino: String(originalDirectory.ino) },
+              candidate: { dev: String(candidateDirectory.dev), ino: String(candidateDirectory.ino) },
+            },
+          } : {}),
+        });
         journalCreated = true;
-        await exchange(liveDoc, stagedDoc);
+        if (windows) await writerLock.closeHandle();
+        await exchange(liveDoc, stagedDoc, windows ? async () => {
+          // Outside readers still see pre-commit paths. Recheck both after
+          // TxF has reserved the names and denied unrelated writers.
+          await hooks.beforeWindowsCommit?.();
+          assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
+          if (revision(root, await snapshot(stage), 'physical') !== resultingPhysicalRevision) {
+            throw new BatchError('batch.candidate-conflict', 'The staged batch changed before Windows transaction commit.', 2);
+          }
+          if (!sameDirectory(await directoryIdentity(liveDoc), originalDirectory) ||
+              !sameDirectory(await directoryIdentity(stagedDoc), candidateDirectory) ||
+              !(await fs.readFile(path.join(liveDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock) ||
+              !(await fs.readFile(path.join(stagedDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock)) {
+            throw new BatchError('batch.workspace-conflict', 'The original directory or the shared writer lock changed before Windows transaction commit.', 2);
+          }
+        } : undefined);
         // The retired generation closes the last pre-exchange capture window.
         assertUnchanged(root, await snapshot(stage), expectedWorkspaceRevision, originalPhysicalRevision);
         await hooks.afterExchange?.();
@@ -443,12 +510,22 @@ export async function applyBatch(root: string, raw: unknown, checkedDigest: stri
         // reappears after power loss requires revision-based manual reconciliation.
         try { await fs.rm(stage, { recursive: true, force: true }); }
         catch { retain = true; diagnostics.push({ severity: 'warning', code: 'batch.backup-cleanup-failed', message: `Commit completed; retained transaction backup at ${stage}.` }); }
-        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics, publication: 'linux-directory-exchange', recoveryPath: retain ? stage : null };
+        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics,
+          publication: windows ? 'windows-ntfs-transaction' : 'linux-directory-exchange', recoveryPath: retain ? stage : null };
       } catch (error) {
         if (journalCreated && originalInode) {
           try {
-            const now = await fs.stat(liveDoc);
-            if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
+            const originalDirectory = originalInode;
+            const now = await directoryIdentity(liveDoc);
+            if (!sameDirectory(now, originalDirectory)) {
+              await exchange(liveDoc, stagedDoc, windows ? async () => {
+                if (!candidateInode || !sameDirectory(await directoryIdentity(liveDoc), candidateInode) ||
+                    !sameDirectory(await directoryIdentity(stagedDoc), originalDirectory) ||
+                    revision(root, await snapshot(stage), 'physical') !== originalPhysicalRevision) {
+                  throw new Error('The original or candidate directory changed before Windows transaction rollback.');
+                }
+              } : undefined);
+            }
             await syncDir(root); await syncDir(stage);
             if (revision(root, await snapshot(root), 'physical') !== originalPhysicalRevision) throw new Error('Rollback physical revision mismatch.');
             await fs.unlink(journal); journalCreated = false;

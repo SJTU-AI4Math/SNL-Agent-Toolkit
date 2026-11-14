@@ -4391,14 +4391,17 @@ async function acquireLock(workspaceRoot, purpose) {
 async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
+  let closingHandle;
+  const closeHandle = () => closingHandle ??= acquired.handle.close();
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) || (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
       throw new Error("SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.");
     }
-    return await task();
+    return await task({ contents: `${JSON.stringify(acquired.record)}
+`, closeHandle });
   } finally {
-    await acquired.handle.close();
+    await closeHandle();
     const current = await readLock(acquired.lockPath);
     if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
