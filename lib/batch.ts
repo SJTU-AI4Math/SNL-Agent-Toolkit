@@ -353,7 +353,6 @@ const run = promisify(execFile);
 // No shell, third-party dependency or non-atomic fallback. Two directories must share a filesystem.
 const EXCHANGE = 'import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n';
 async function exchange(a: string, b: string) {
-  if (process.platform !== 'linux') throw new BatchError('batch.publication-unsupported', 'Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.', 2);
   await run('python3', ['-I', '-c', EXCHANGE, a, b]);
 }
 export interface BatchApplyHooks {
@@ -400,6 +399,7 @@ export async function applyBatch(root: string, raw: unknown, checkedDigest: stri
       if (sha(['snl.batch/v1', operations]) !== checkedDigest) fail('batch.digest-conflict', 'checkedDigest does not match the normalized operation sequence; recheck the whole batch.');
       const original = await snapshot(root);
       if (revision(root, original) !== expectedWorkspaceRevision) fail('batch.workspace-conflict', 'Authoring revision changed or receipt uses the retired whole-tree token; recheck the whole batch with this Toolkit, never replay a suffix.');
+      if (process.platform !== 'linux') throw new BatchError('batch.publication-unsupported', 'Atomic batch apply requires a Linux workspace filesystem with renameat2(RENAME_EXCHANGE) and python3. Batch check is available on this platform.', 2);
       const originalPhysicalRevision = revision(root, original, 'physical');
       const stage = await fs.mkdtemp(path.join(root, '.snl-batch-'));
       const liveDoc = path.join(root, '.SNL_Doc');

@@ -117,6 +117,7 @@ export async function executeOperation(request: OperationRequest): Promise<Execu
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
         batch: { commands: ['batch/check', 'batch/apply'].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map(type => `${type}/create`) },
         web: { usage: 'snl [--root <directory>] [--port <port>] [--json]', host: '127.0.0.1', defaultPort: 4911, readOnly: true, rootDefault: '.' },
+        remoteReader: { usage: 'snl serve-remote [--root <directory>] [--host <bind IP>] [--port <port>] --tls-key <file> --tls-cert <file> [--json]', tokenEnvironment: 'SNL_READER_TOKEN', readOnly: true },
         initHelp: {
           usage: 'snl init --root <directory> [--preset <id> | --input <file|->] [--json]',
           rootDefault: '.',

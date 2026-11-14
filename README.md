@@ -83,6 +83,32 @@ The listener binds only to `127.0.0.1`. It serves an explicit frontend asset lis
 
 Reader snapshots embed at most 32 MiB of asset bytes from up to 512 distinct references. The per-file limit is 1 MiB for SVG and 10 MiB for other assets. Unavailable or oversized assets are listed in the Library warnings. Windows detects workspace changes through periodic metadata scans so the Reader can follow directory replacements without holding open directory watches.
 
+## Remote Reader service
+
+The opt-in HTTPS service exposes one workspace to authenticated readers. Set
+`SNL_READER_TOKEN` in the service environment to a random base64url token
+(32–256 characters). For example, generate one with
+`node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"`.
+
+```bash
+snl serve-remote --root /path/to/workspace --host 0.0.0.0 --port 4912 \
+  --tls-key /path/to/key.pem --tls-cert /path/to/fullchain.pem
+```
+
+The default bind address is `127.0.0.1`. For remote connections, supply a
+reachable bind address and use the hostname covered by the TLS certificate
+when connecting. Use a certificate trusted by the VS Code extension host's
+Node runtime. In the Extension, run **SNL: Open Remote Reader** and enter the
+HTTPS origin and token. A token grants read access to every Library served by
+this process. Rotate it by stopping the process and starting it with a new
+value.
+
+Clients send `Authorization: Bearer …` on GET requests to
+`/__snl/api/workspace` and `/__snl/api/snapshot?library=<slug>`. The catalog
+omits the native root path and snapshots are limited to 64 MiB per response.
+Refresh in the Reader to retrieve updates. The service serves JSON and has no
+browser application or write endpoints.
+
 ### Shared frontend build
 
 `reader-source.json` pins an immutable Extension revision. `npm run build:web` downloads that source at build time, installs its locked build dependencies in a temporary directory, then invokes its maintained `build-local-reader.mjs`. It builds shared browser and model artifacts into ignored `dist/web/`; no UI source fork is vendored into Toolkit. `npm run build:web -- --source /path/to/extension` can instead use an already-installed, clean checkout at exactly the pinned revision. `npm pack` performs the frontend build and includes the prebuilt assets. Node, npm, network access and tar are needed when building from source; normal `snl` startup needs no network, compiler or VS Code.
@@ -96,12 +122,13 @@ On Windows, regular entity writes flush the file contents before publication.
 Node does not expose a directory flush there, so a sudden power loss may
 lose the directory entry for an otherwise completed write.
 
-Library deletion recovery also has a Linux-only runtime requirement: restoring
-captured child directories requires a trusted `python3` on PATH, Python stdlib
-`ctypes`, libc `renameat2(RENAME_NOREPLACE)`, and accessible `/proc/self/fd`.
-These host facilities are not installed by npm. If they are unavailable,
-recovery fails closed, retains the hidden captured tree and any partial
-reservation, and does not fall back to an overwriting rename or recursive copy.
+On Linux, Library deletion recovery requires a trusted `python3` on PATH,
+Python stdlib `ctypes`, libc `renameat2(RENAME_NOREPLACE)`, and
+`/proc/self/fd`. Windows recovery requires Windows PowerShell 5.1 and a local
+NTFS volume. It moves the captured Library back by file handle and refuses
+to replace a concurrent destination. If a required host facility is unavailable
+or another writer has taken the destination, recovery reports the error
+and preserves the hidden recovery files.
 
 ## Schema ownership
 

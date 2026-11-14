@@ -128,7 +128,7 @@ export async function serveWorkspace(reader: WorkspaceReader, assetsDirectory: s
   };
 }
 
-export async function startWebReader(root: string, port = WEB_DEFAULT_PORT) {
+export async function loadWorkspaceReader(root: string, requiredAssets: string[]) {
   let canonical: string;
   try {
     canonical = await realpath(root);
@@ -136,10 +136,15 @@ export async function startWebReader(root: string, port = WEB_DEFAULT_PORT) {
   } catch { throw new WebHostError('web.workspace-missing', `No SNL workspace at ${path.resolve(root)}. Use snl init --root <directory> first, or specify an existing workspace with --root.`); }
   const assetsDirectory = fileURLToPath(new URL('../../dist/web/', import.meta.url));
   try {
-    for (const name of ['index.html', 'reader.js', 'reader.css', 'model.mjs']) if (!(await lstat(path.join(assetsDirectory, name))).isFile()) throw new Error('Missing artifact');
+    for (const name of requiredAssets) if (!(await lstat(path.join(assetsDirectory, name))).isFile()) throw new Error('Missing artifact');
   } catch { throw new WebHostError('web.assets-missing', 'Prebuilt reader assets are missing. For a source checkout run npm run build:web; reinstall an incomplete npm package.'); }
   const { createWorkspaceReader } = await import('./workspace');
   const reader = await createWorkspaceReader(canonical, path.join(assetsDirectory, 'model.mjs'));
   await reader.getWorkspace();
+  return { canonical, assetsDirectory, reader };
+}
+
+export async function startWebReader(root: string, port = WEB_DEFAULT_PORT) {
+  const { canonical, assetsDirectory, reader } = await loadWorkspaceReader(root, ['index.html', 'reader.js', 'reader.css', 'model.mjs']);
   return { ...await serveWorkspace(reader, assetsDirectory, port, { root: canonical }), root: canonical };
 }
