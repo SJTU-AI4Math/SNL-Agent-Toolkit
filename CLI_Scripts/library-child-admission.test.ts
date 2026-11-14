@@ -7,7 +7,7 @@ import path from 'node:path';
 import { it } from 'node:test';
 import { deleteManagedEntity, getManagedEntity } from '../lib/entity-crud.ts';
 
-it('F2-R1 public Library rollback refuses child exchange without foreign metadata or content writes', async (t) => {
+it('F2-R1 public Library rollback refuses child exchange without foreign metadata or content writes', { skip: process.platform !== 'linux' }, async (t) => {
   const root = await fs.mkdtemp(path.join(tmpdir(), 'snl-child-admission-'));
   try {
     await fs.cp(path.join(import.meta.dirname, 'fixtures/workspace-v0.1.0/.SNL_Doc'), path.join(root, '.SNL_Doc'), { recursive: true });
@@ -66,7 +66,7 @@ it('F2-R1 public Library rollback refuses child exchange without foreign metadat
 // Public adapters run the same real rollback in separate Node processes. The
 // preload controls only fs scheduling, never substitutes operation results.
 for (const mode of ['CLI', 'DSH source', 'DSH bundle', 'MCP', 'agent MCP']) {
-  it(`F2-R1 child refusal and stable metadata parity: ${mode}`, async () => {
+  it(`F2-R1 child refusal and stable metadata parity: ${mode}`, { skip: process.platform !== 'linux' }, async () => {
     const repo = path.resolve(import.meta.dirname, '..');
     for (const exchange of [false, true]) {
       const root = await fs.mkdtemp(path.join(tmpdir(), 'snl-child-parity-'));

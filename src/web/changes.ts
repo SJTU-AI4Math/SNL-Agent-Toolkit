@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { constants, watch, type FSWatcher } from 'node:fs';
 import { open, lstat, readdir, realpath } from 'node:fs/promises';
 import path from 'node:path';
+import { matchesPathFileIdentity } from '../../lib/file-identity.ts';
 
 export type WorkspaceChange = { event: 'change'; data: { revision: string } }
   | { event: 'unavailable'; data: { message: string } };
@@ -33,13 +34,16 @@ function ignored(name: string, atRoot: boolean): boolean {
  *
  * Linux traversal and watch installation use pinned directory descriptors; an
  * atomic parent swap cannot redirect a child open through a symlink. Elsewhere
- * each directory is lstat/realpath checked before and after opening/watching.
+ * each directory is lstat/realpath checked before and after visiting it.
+ * Windows uses metadata polling because a native directory watcher can
+ * prevent an ancestor from being renamed.
  * Native recursive watch is not used (it may follow file and directory links).
  */
 export async function watchWorkspaceChanges(root: string, options: WatchOptions = {}): Promise<WorkspaceChanges> {
   root = path.resolve(root);
   const debounceMs = options.debounceMs ?? 250;
   const retryMs = options.retryMs ?? 1000;
+  const pollOnly = process.platform === 'win32' && !options.watchDirectory;
   const watchDirectory = options.watchDirectory ?? ((directory, changed) =>
     watch(directory, { persistent: false }, (_event, filename) => changed(filename?.toString() ?? null)));
   const epoch = randomUUID();
@@ -50,6 +54,7 @@ export async function watchWorkspaceChanges(root: string, options: WatchOptions 
   let failureEpoch = 0;
   let dirty = false;
   let timer: NodeJS.Timeout | undefined;
+  let poll: NodeJS.Timeout | undefined;
   let running: Promise<void> | undefined;
   let previous = new Map<string, string>();
   const listeners = new Set<(event: WorkspaceChange) => void>();
@@ -88,20 +93,29 @@ export async function watchWorkspaceChanges(root: string, options: WatchOptions 
       const before = await lstat(filename, { bigint: true });
       if (!before.isDirectory() || before.isSymbolicLink()) throw new Error('Directory unavailable');
       if (process.platform !== 'linux' && await realpath(filename) !== filename) throw new Error('Directory link');
-      const handle = await open(filename, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
+      const handle = process.platform === 'win32' ? undefined
+        : await open(filename, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
       try {
-        const stat = await handle.stat({ bigint: true });
-        const identity = `${stat.dev}:${stat.ino}`;
-        if (!stat.isDirectory() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error('Directory changed');
-        const pinned = process.platform === 'linux' ? `/proc/self/fd/${handle.fd}` : filename;
+        const stat = handle ? await handle.stat({ bigint: true }) : before;
+        const identity = `${before.dev}:${before.ino}`;
+        if (!stat.isDirectory() || !matchesPathFileIdentity(before, stat)) throw new Error('Directory changed');
+        const pinned = process.platform === 'linux' && handle ? `/proc/self/fd/${handle.fd}` : filename;
         const key = workspaceParent ? '..' : relative;
         found.add(key);
         if (!workspaceParent) next.set(relative, `d:${identity}`);
         const existing = watches.get(key);
-        if (existing?.identity !== identity) {
+        if (!pollOnly && existing?.identity !== identity) {
           watches.delete(key);
           existing?.watcher.close();
           const watcher = watchDirectory(pinned, name => {
+            // On Windows a removed directory can emit a stream of rename
+            // events naming itself by absolute path, starving the debounce.
+            if (name !== null && path.isAbsolute(name) && watches.get(key)?.watcher === watcher) {
+              watches.delete(key);
+              watcher.close();
+              schedule();
+              return;
+            }
             if (workspaceParent && name !== null && name !== '.SNL_Doc') return;
             if (!workspaceParent && name !== null && ignored(name, relative === '')) return;
             schedule();
@@ -127,9 +141,9 @@ export async function watchWorkspaceChanges(root: string, options: WatchOptions 
           }
         }
         const after = await lstat(filename, { bigint: true });
-        if (after.isSymbolicLink() || after.dev !== stat.dev || after.ino !== stat.ino) throw new Error('Directory replaced');
+        if (!after.isDirectory() || after.isSymbolicLink() || after.dev !== before.dev || after.ino !== before.ino) throw new Error('Directory replaced');
         if (process.platform !== 'linux' && await realpath(filename) !== filename) throw new Error('Directory link');
-      } finally { await handle.close(); }
+      } finally { await handle?.close(); }
     };
     if (process.platform === 'linux') {
       // The root is canonical at startup, but an ancestor can later become a
@@ -172,6 +186,10 @@ export async function watchWorkspaceChanges(root: string, options: WatchOptions 
     return running;
   }
   await reconcile();
+  if (pollOnly) {
+    poll = setInterval(() => { if (!timer && !running) void reconcile(); }, retryMs);
+    poll.unref();
+  }
   return {
     get revision() { return revision(); },
     get available() { return available; },
@@ -181,6 +199,7 @@ export async function watchWorkspaceChanges(root: string, options: WatchOptions 
       available = false;
       previous.clear();
       if (timer) clearTimeout(timer);
+      if (poll) clearInterval(poll);
       timer = undefined;
       listeners.clear();
       stopWatches();

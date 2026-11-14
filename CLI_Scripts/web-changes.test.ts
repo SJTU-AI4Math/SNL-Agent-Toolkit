@@ -70,8 +70,8 @@ test('cache/locks/editor temps and file/directory symlinks are not followed or a
     await mkdir(outside); await writeFile(path.join(outside, 'secret.json'), 'private');
     await mkdir(path.join(f.doc, '.cache/deep'), { recursive: true });
     await mkdir(path.join(f.doc, 'cache/deep'), { recursive: true });
-    await symlink(outside, path.join(f.doc, 'linked-dir'), 'dir');
-    await symlink(path.join(outside, 'secret.json'), path.join(f.doc, 'linked-file.json'));
+    await symlink(outside, path.join(f.doc, 'linked-dir'), process.platform === 'win32' ? 'junction' : 'dir');
+    if (process.platform !== 'win32') await symlink(path.join(outside, 'secret.json'), path.join(f.doc, 'linked-file.json'));
     for (const name of ['.cache/deep/render.json', 'cache/deep/snapshot.json', '.data-write.lock', '.config.json.snl-write-nonce.tmp', 'config.json.swp', 'config.json~']) {
       await writeFile(path.join(f.doc, name), 'derived');
     }
@@ -79,7 +79,8 @@ test('cache/locks/editor temps and file/directory symlinks are not followed or a
     await writeFile(path.join(outside, 'secret.json'), 'changed outside');
     await writeFile(path.join(outside, 'new.json'), 'outside addition');
     await rm(path.join(f.doc, '.cache'), { recursive: true });
-    await rm(path.join(f.doc, 'linked-dir')); await rm(path.join(f.doc, 'linked-file.json'));
+    await rm(path.join(f.doc, 'linked-dir'));
+    if (process.platform !== 'win32') await rm(path.join(f.doc, 'linked-file.json'));
     await pause();
     await Promise.all(pendingPaths);
     assert.equal(f.source.revision, before);
@@ -94,7 +95,7 @@ test('a root replaced by a symlink is unavailable, does not follow it, and recov
   try {
     const outside = path.join(f.root, 'external'); await mkdir(outside);
     await rename(f.doc, path.join(f.root, 'saved'));
-    await symlink(outside, f.doc, 'dir');
+    await symlink(outside, f.doc, process.platform === 'win32' ? 'junction' : 'dir');
     await until(() => !f.source.available, 'root link is unavailable');
     const revision = f.source.revision;
     await writeFile(path.join(outside, 'config.json'), 'private');
@@ -246,7 +247,7 @@ test('close during an in-flight directory reconciliation drains newly-installed 
   const f = await fixture({ watchDirectory(directory, changed) {
     const watcher = watch(directory, (_event, name) => changed(name?.toString() ?? null));
     active.add(watcher); watcher.once('close', () => active.delete(watcher));
-    if (realpathSync(directory).endsWith('/new-nested')) closing = f.source.close();
+    if (path.basename(realpathSync(directory)) === 'new-nested') closing = f.source.close();
     return watcher;
   } });
   try {

@@ -2,6 +2,7 @@ import { constants, promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { matchesPathFileIdentity } from './file-identity.ts';
+import { readBoundedFile } from './read-bounded-file.ts';
 
 export function jsonText(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
@@ -37,8 +38,8 @@ export async function readRegularText(file: string): Promise<RegularText> {
   return { text, ...identity };
 }
 
-export async function readRegularBytes(file: string): Promise<Buffer> {
-  return (await readRegularFile(file, handle => handle.readFile())).value;
+export async function readRegularBytes(file: string, limit: number): Promise<Buffer> {
+  return (await readRegularFile(file, handle => readBoundedFile(handle, limit))).value;
 }
 
 async function readRegularFile<T>(

@@ -17805,6 +17805,25 @@ function matchesPathFileIdentity(entry, opened) {
   return entry.ino !== 0n && entry.ino === opened.ino && (entry.dev === opened.dev || process.platform === "win32" && entry.dev === 0n);
 }
 
+// lib/read-bounded-file.ts
+var FileSizeLimitError = class extends Error {
+};
+async function readBoundedFile(handle, limit) {
+  const { size } = await handle.stat();
+  if (size > limit) throw new FileSizeLimitError();
+  const chunks = [];
+  let length = 0;
+  while (length <= limit) {
+    const chunk = Buffer.allocUnsafe(Math.min(64 * 1024, limit - length + 1));
+    const { bytesRead } = await handle.read(chunk, 0, chunk.length, length);
+    if (bytesRead === 0) return Buffer.concat(chunks, length);
+    length += bytesRead;
+    if (length > limit) break;
+    chunks.push(chunk.subarray(0, bytesRead));
+  }
+  throw new FileSizeLimitError();
+}
+
 // lib/guarded-json-file.ts
 function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
@@ -17828,6 +17847,9 @@ async function assertCanonicalDirectory(directory, expected) {
 async function readRegularText(file) {
   const { value: text3, ...identity } = await readRegularFile(file, (handle) => handle.readFile("utf8"));
   return { text: text3, ...identity };
+}
+async function readRegularBytes(file, limit) {
+  return (await readRegularFile(file, (handle) => readBoundedFile(handle, limit))).value;
 }
 async function readRegularFile(file, read) {
   const directory = import_node_path.default.dirname(file);
@@ -25279,16 +25301,7 @@ async function guard(root, id, scope, create) {
 async function readCache(root, descriptor) {
   try {
     const file = await guard(root, descriptor.id, descriptor.scope, false);
-    const handle = await import_node_fs8.promises.open(file, import_node_fs8.constants.O_RDONLY | (import_node_fs8.constants.O_NOFOLLOW ?? 0));
-    let text3;
-    try {
-      const stat = await handle.stat();
-      if (!stat.isFile() || stat.size > MAX_BYTES) return void 0;
-      text3 = await handle.readFile("utf8");
-    } finally {
-      await handle.close();
-    }
-    const envelope = JSON.parse(text3);
+    const envelope = JSON.parse((await readRegularBytes(file, MAX_BYTES)).toString("utf8"));
     if (!object2(envelope) || envelope.format !== "snl-derived-cache" || envelope.schema !== 1 || envelope.generator !== descriptor.id || envelope.version !== descriptor.version || envelope.library !== (descriptor.scope?.library ?? null) || envelope.inputHash !== cacheFingerprint(descriptor.input) || !descriptor.validate(envelope.value) || envelope.valueHash !== cacheFingerprint(envelope.value)) return void 0;
     return envelope.value;
   } catch {
@@ -25307,7 +25320,7 @@ async function writeCache(root, descriptor, value, beforeRename) {
     valueHash: cacheFingerprint(value),
     value
   });
-  if (Buffer.byteLength(text3) > MAX_BYTES) throw new Error("Cache output exceeds size limit");
+  if (Buffer.byteLength(text3) + 1 > MAX_BYTES) throw new Error("Cache output exceeds size limit");
   const file = await guard(root, descriptor.id, descriptor.scope, true);
   const temporary = path9.join(path9.dirname(file), `.${(0, import_node_crypto7.randomUUID)()}.tmp`);
   try {
@@ -25321,11 +25334,13 @@ async function writeCache(root, descriptor, value, beforeRename) {
     await beforeRename();
     await guard(root, descriptor.id, descriptor.scope, false);
     await import_node_fs8.promises.rename(temporary, file);
-    const directory = await import_node_fs8.promises.open(path9.dirname(file), import_node_fs8.constants.O_RDONLY);
-    try {
-      await directory.sync();
-    } finally {
-      await directory.close();
+    if (process.platform !== "win32") {
+      const directory = await import_node_fs8.promises.open(path9.dirname(file), import_node_fs8.constants.O_RDONLY);
+      try {
+        await directory.sync();
+      } finally {
+        await directory.close();
+      }
     }
   } finally {
     await import_node_fs8.promises.unlink(temporary).catch((error) => {

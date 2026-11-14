@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
-import { access, cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { access, cp, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import test from 'node:test';
 
 import { generatedMetadata } from '../scripts/generate-plugin-metadata.mjs';
@@ -77,7 +78,7 @@ test('package manifest declares a DSH profile bundle and distributable payload',
   assert.ok(files.includes('!Skills/__deprecated__/**'), 'deprecated Skills must not ship');
   const readme = await readFile(resolve(root, 'README.md'), 'utf8');
   assert.doesNotMatch(readme, /agent-plugin\/skills\/snl-agent-toolkit|six MCP tools/);
-  assert.notEqual((await stat(resolve(root, 'dist/mcp/server.cjs'))).mode & 0o111, 0, 'MCP bin must be executable');
+  if (process.platform !== 'win32') assert.notEqual((await stat(resolve(root, 'dist/mcp/server.cjs'))).mode & 0o111, 0, 'MCP bin must be executable');
   const build = await readFile(resolve(root, 'scripts/build-plugin.mjs'), 'utf8');
   assert.match(build, /chmod\(resolve\(root, 'dist\/mcp\/server\.cjs'\), 0o755\)/);
 });
@@ -93,7 +94,8 @@ test('published agent routing targets current packaged Skill documents', async (
       assert.doesNotMatch(target, /%20/i, 'Agent file routing must use literal workspace paths, not URL encoding');
       const resolvedTarget = resolve(root, document === 'AGENT.md' ? target : `Skills/${target}`);
       await access(resolvedTarget);
-      assert.ok((await stat(resolvedTarget)).size > 0, `Agent routing target must be non-empty: ${target}`);
+      const info = await stat(resolvedTarget);
+      assert.ok(info.isDirectory() ? (await readdir(resolvedTarget)).length > 0 : info.size > 0, `Agent routing target must be non-empty: ${target}`);
     }
   }
 });
@@ -120,7 +122,7 @@ test('prebuilt DSH adapter bundles defineTool instead of importing a second Harn
   const adapterPath = resolve(root, 'dist/dsh/adapter.mjs');
   const adapter = await readFile(adapterPath, 'utf8');
   assert.doesNotMatch(adapter, /from ["']@deepseek-ai\/dsh-tools["']/);
-  const loaded = await import(`${new URL(adapterPath, import.meta.url).href}?test=${Date.now()}`);
+  const loaded = await import(`${pathToFileURL(adapterPath).href}?test=${Date.now()}`);
   assert.equal(typeof loaded.apply, 'function');
   const registered: Array<Record<string, any>> = [];
   const noopAdapter = {

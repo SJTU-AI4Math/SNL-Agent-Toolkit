@@ -4,6 +4,7 @@
 import { constants, promises as fs } from 'node:fs';
 import { createHash, randomUUID } from 'node:crypto';
 import * as path from 'node:path';
+import { readRegularBytes } from './guarded-json-file.ts';
 
 /** Internal, trusted calculators only. This API is not a user-script sandbox. */
 export type CacheRoot = string | { readonly uri: string };
@@ -92,11 +93,7 @@ async function guard(root: string, id: string, scope: CacheScope | undefined, cr
 export async function readCache<T>(root: string, descriptor: CacheDescriptor<T>): Promise<T | undefined> {
   try {
     const file = await guard(root, descriptor.id, descriptor.scope, false);
-    const handle = await fs.open(file, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
-    let text: string;
-    try { const stat = await handle.stat(); if (!stat.isFile() || stat.size > MAX_BYTES) return undefined; text = await handle.readFile('utf8'); }
-    finally { await handle.close(); }
-    const envelope: unknown = JSON.parse(text);
+    const envelope: unknown = JSON.parse((await readRegularBytes(file, MAX_BYTES)).toString('utf8'));
     if (!object(envelope) || envelope.format !== 'snl-derived-cache' || envelope.schema !== 1 ||
       envelope.generator !== descriptor.id || envelope.version !== descriptor.version ||
       envelope.library !== (descriptor.scope?.library ?? null) ||
@@ -115,7 +112,7 @@ export async function writeCache<T>(root: string, descriptor: CacheDescriptor<T>
   const text = JSON.stringify({ format: 'snl-derived-cache', schema: 1, generator: descriptor.id,
     version: descriptor.version, library: descriptor.scope?.library ?? null,
     inputHash: cacheFingerprint(descriptor.input), valueHash: cacheFingerprint(value), value });
-  if (Buffer.byteLength(text) > MAX_BYTES) throw new Error('Cache output exceeds size limit');
+  if (Buffer.byteLength(text) + 1 > MAX_BYTES) throw new Error('Cache output exceeds size limit');
   const file = await guard(root, descriptor.id, descriptor.scope, true);
   const temporary = path.join(path.dirname(file), `.${randomUUID()}.tmp`);
   try {
@@ -124,7 +121,10 @@ export async function writeCache<T>(root: string, descriptor: CacheDescriptor<T>
     await beforeRename();
     await guard(root, descriptor.id, descriptor.scope, false);
     await fs.rename(temporary, file);
-    const directory = await fs.open(path.dirname(file), constants.O_RDONLY);
-    try { await directory.sync(); } finally { await directory.close(); }
+    // Windows flushes the temporary file above, but Node cannot fsync its directory.
+    if (process.platform !== 'win32') {
+      const directory = await fs.open(path.dirname(file), constants.O_RDONLY);
+      try { await directory.sync(); } finally { await directory.close(); }
+    }
   } finally { await fs.unlink(temporary).catch(error => { if (error.code !== 'ENOENT') throw error; }); }
 }

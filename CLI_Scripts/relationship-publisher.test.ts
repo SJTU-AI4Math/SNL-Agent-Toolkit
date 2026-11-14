@@ -117,16 +117,19 @@ test('stale CAS rejects but cache-only churn preserves preview credentials; save
 test('strict publication rejects symlink paths and permissions; never succeeds from memory', async () => {
   for (const component of ['.cache', '.cache/dependencies', '.cache/dependencies/result.json']) {
     const root = await fixture(); const outside = path.join(root, 'outside'); await mkdir(outside);
-    const target = path.join(root, '.SNL_Doc', component); await mkdir(path.dirname(target), { recursive: true }); await symlink(outside, target);
+    const target = path.join(root, '.SNL_Doc', component); await mkdir(path.dirname(target), { recursive: true });
+    await symlink(outside, target, process.platform === 'win32' ? 'junction' : 'dir');
     const revision = await captureWorkspaceRevision(root);
     failure(await call(root, { scope: {}, expectedWorkspaceRevision: revision }), 'relationship.publication-failed');
     assert.deepEqual(await readdir(outside), []);
     assert.ok(!(await readdir(path.join(root, '.SNL_Doc'))).includes('.data-write.lock'));
   }
-  const root = await fixture(); await mkdir(path.dirname(file(root)), { recursive: true });
-  await chmod(path.dirname(file(root)), 0o500);
-  try { failure(await call(root, { scope: {}, expectedWorkspaceRevision: await captureWorkspaceRevision(root) }), 'relationship.publication-failed'); }
-  finally { await chmod(path.dirname(file(root)), 0o700); }
+  if (process.platform !== 'win32') {
+    const root = await fixture(); await mkdir(path.dirname(file(root)), { recursive: true });
+    await chmod(path.dirname(file(root)), 0o500);
+    try { failure(await call(root, { scope: {}, expectedWorkspaceRevision: await captureWorkspaceRevision(root) }), 'relationship.publication-failed'); }
+    finally { await chmod(path.dirname(file(root)), 0o700); }
+  }
 });
 test('apply owns the existing shared lock and excludes other Toolkit publishers', async () => {
   const root = await fixture(); const revision = await captureWorkspaceRevision(root);

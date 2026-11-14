@@ -65,18 +65,20 @@ test('unknown author assets, cache-like paths, genuine entity content and modes 
     await put(root, relative, 'changed');
     const edited = await captureWorkspaceRevision(root); assert.notEqual(edited, previous, relative); previous = edited;
   }
-  await chmod(path.join(root, '.SNL_Doc/config.json'), 0o600);
-  assert.notEqual(await captureWorkspaceRevision(root), previous);
-  previous = await captureWorkspaceRevision(root);
-  await chmod(path.join(root, '.SNL_Doc/entries'), 0o700);
-  assert.notEqual(await captureWorkspaceRevision(root), previous);
-  previous = await captureWorkspaceRevision(root);
+  if (process.platform !== 'win32') {
+    await chmod(path.join(root, '.SNL_Doc/config.json'), 0o600);
+    assert.notEqual(await captureWorkspaceRevision(root), previous);
+    previous = await captureWorkspaceRevision(root);
+    await chmod(path.join(root, '.SNL_Doc/entries'), 0o700);
+    assert.notEqual(await captureWorkspaceRevision(root), previous);
+    previous = await captureWorkspaceRevision(root);
+  }
   const entity = success(await publicCall(root, 'entry/get', { id: 'entry.localized' })).entity;
   success(await publicCall(root, 'entry/update', { id: entity.id, value: { ...entity.value, title: 'real Authoring edit' }, expectedRevision: entity.revision }));
   assert.notEqual(await captureWorkspaceRevision(root), previous);
 });
 
-for (const mutation of ['create', 'update', 'delete'] as const) test(`public checked batch accepts intervening cache ${mutation} and preserves the current full cache tree`, async () => {
+for (const mutation of ['create', 'update', 'delete'] as const) test(`public checked batch accepts intervening cache ${mutation} and preserves the current full cache tree`, { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture();
   const library = success(await publicCall(root, 'library/list', {})).entities[0].id;
   const paths = ['.cache/dependencies/result.json', `libraries/${library}/.cache/graph-layout/result.json`];
@@ -95,7 +97,7 @@ for (const mutation of ['create', 'update', 'delete'] as const) test(`public che
   assert.deepEqual(await readdir(root), ['.SNL_Doc']);
 });
 
-test('old whole-tree receipt is rejected explicitly even cold; fresh no-op batch is stable', async () => {
+test('old whole-tree receipt is rejected explicitly even cold; fresh no-op batch is stable', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); const checked = await checkBatch(root, []);
   // Independent legacy-v1 serialization oracle on actual full st_mode/bytes.
   const hash = createHash('sha256').update(`snl.batch.workspace/v1\0${root}\0`);
@@ -114,7 +116,7 @@ test('old whole-tree receipt is rejected explicitly even cold; fresh no-op batch
   assert.equal(applied.resultingWorkspaceRevision, checked.expectedWorkspaceRevision);
 });
 
-for (const target of ['.cache/dependencies/result.json', 'config.json']) test(`pre-exchange ${target} churn is accurately classified and never discarded`, async () => {
+for (const target of ['.cache/dependencies/result.json', 'config.json']) test(`pre-exchange ${target} churn is accurately classified and never discarded`, { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); await put(root, '.cache/dependencies/result.json', 'old');
   await chmod(path.join(root, '.SNL_Doc', target), 0o644);
   const checked = await checkBatch(root, operations);
@@ -125,7 +127,7 @@ for (const target of ['.cache/dependencies/result.json', 'config.json']) test(`p
   assert.deepEqual(await readdir(root), ['.SNL_Doc']);
 });
 
-for (const seam of ['afterExchange', 'beforeParentSync'] as const) test(`cache readback corruption at ${seam} rolls back exact full physical preimage`, async () => {
+for (const seam of ['afterExchange', 'beforeParentSync'] as const) test(`cache readback corruption at ${seam} rolls back exact full physical preimage`, { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); await put(root, '.cache/dependencies/result.json', 'preimage');
   await chmod(path.join(root, '.SNL_Doc/.cache/dependencies/result.json'), 0o640);
   const checked = await checkBatch(root, operations); const before = await physical(root);
@@ -135,7 +137,7 @@ for (const seam of ['afterExchange', 'beforeParentSync'] as const) test(`cache r
   assert.deepEqual(await physical(root), before); assert.deepEqual(await readdir(root), ['.SNL_Doc']);
 });
 
-test('cache corruption in retained preimage cannot pass Authoring-only rollback verification', async () => {
+test('cache corruption in retained preimage cannot pass Authoring-only rollback verification', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); await put(root, '.cache/dependencies/result.json', 'preimage');
   const checked = await checkBatch(root, operations);
   await assert.rejects(applyBatch(root, checked.normalizedOperations, checked.checkedDigest, checked.expectedWorkspaceRevision, {
@@ -151,7 +153,7 @@ test('cache corruption in retained preimage cannot pass Authoring-only rollback 
   await assert.rejects(captureWorkspaceRevision(root), { code: 'batch.recovery-required' });
 });
 
-test('cache copy failure is I/O failure, not Authoring conflict, and leaves live bytes intact', async () => {
+test('cache copy failure is I/O failure, not Authoring conflict, and leaves live bytes intact', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); await put(root, '.cache/dependencies/result.json', 'preimage');
   const checked = await checkBatch(root, operations); const before = await physical(root); const write = fs.writeFile;
   let invoked = false;
@@ -166,7 +168,7 @@ test('cache copy failure is I/O failure, not Authoring conflict, and leaves live
   assert.equal(invoked, true); assert.deepEqual(await physical(root), before); assert.deepEqual(await readdir(root), ['.SNL_Doc']);
 });
 
-for (const unsafe of ['symlink', 'special-mode'] as const) test(`Authoring capture ignores unsafe cache but physical batch fails closed: ${unsafe}`, async () => {
+for (const unsafe of ['symlink', 'special-mode'] as const) test(`Authoring capture ignores unsafe cache but physical batch fails closed: ${unsafe}`, { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); const checked = await checkBatch(root, []); const revision = await captureWorkspaceRevision(root);
   if (unsafe === 'symlink') await symlink('/tmp', path.join(root, '.SNL_Doc/.cache'));
   else { await put(root, '.cache/dependencies/result.json', 'cache'); await chmod(path.join(root, '.SNL_Doc/.cache'), 0o1700); }

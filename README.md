@@ -81,6 +81,8 @@ The startup folder is the initial data source, not the Toolkit installation fold
 
 The listener binds only to `127.0.0.1`. It serves an explicit frontend asset list and read APIs, not arbitrary repository paths. Foreign Host/Origin, cross-site requests and mutations are rejected. Do not expose this local-only service through an external reverse proxy.
 
+Reader snapshots embed at most 32 MiB of asset bytes from up to 512 distinct references. The per-file limit is 1 MiB for SVG and 10 MiB for other assets. Unavailable or oversized assets are listed in the Library warnings. Windows detects workspace changes through periodic metadata scans so the Reader can follow directory replacements without holding open directory watches.
+
 ### Shared frontend build
 
 `reader-source.json` pins an immutable Extension revision. `npm run build:web` downloads that source at build time, installs its locked build dependencies in a temporary directory, then invokes its maintained `build-local-reader.mjs`. It builds shared browser and model artifacts into ignored `dist/web/`; no UI source fork is vendored into Toolkit. `npm run build:web -- --source /path/to/extension` can instead use an already-installed, clean checkout at exactly the pinned revision. `npm pack` performs the frontend build and includes the prebuilt assets. Node, npm, network access and tar are needed when building from source; normal `snl` startup needs no network, compiler or VS Code.

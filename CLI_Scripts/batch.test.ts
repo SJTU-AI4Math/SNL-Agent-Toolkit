@@ -46,7 +46,7 @@ function success(result: Awaited<ReturnType<typeof call>>) {
   return result.response.data as Record<string, any>;
 }
 
-test('public batch check is read-only; apply creates dependents atomically and retains tags', async () => {
+test('public batch check is read-only; apply creates dependents atomically and retains tags', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture();
   const before = await tree(root);
   const checked = success(await call(root, 'batch/check', { operations }));
@@ -61,7 +61,7 @@ test('public batch check is read-only; apply creates dependents atomically and r
 });
 
 
-test('all seven create families resolve against complete candidate, including first relationship pool', async () => {
+test('all seven create families resolve against complete candidate, including first relationship pool', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture();
   const config = JSON.parse(await readFile(path.join(root, '.SNL_Doc', 'config.json'), 'utf8'));
   const macros = success(await call(root, 'macro/list', { limit: 100 })).entities;
@@ -104,7 +104,7 @@ for (const [relative, mode] of [
   ['config.json', 0o2644], ['config.json', 0o1644],
 ] as const) {
   for (const ops of [[], operations]) {
-    test(`special mode ${mode.toString(8)} on ${relative || '.SNL_Doc'} rejects check and stale apply (${ops.length} operations) without side effects`, async () => {
+    test(`special mode ${mode.toString(8)} on ${relative || '.SNL_Doc'} rejects check and stale apply (${ops.length} operations) without side effects`, { skip: process.platform !== 'linux' }, async () => {
       const root = await fixture();
       const target = path.join(root, '.SNL_Doc', relative);
       await chmod(target, mode & 0o777);
@@ -123,7 +123,7 @@ for (const [relative, mode] of [
   }
 }
 
-test('plain-mode empty batch preserves complete tree and modes', async () => {
+test('plain-mode empty batch preserves complete tree and modes', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture();
   await chmod(path.join(root, '.SNL_Doc', 'entries'), 0o775);
   await chmod(path.join(root, '.SNL_Doc', 'config.json'), 0o640);
@@ -147,7 +147,7 @@ test('discovery preserves current init and reader, with exactly seven batch crea
   failure(await call(root, 'relationship/generate'), 'operation.invalid-arguments', 2);
 });
 
-test('digest tampering, operation tampering, stale workspace receipt and replay reject without residue', async () => {
+test('digest tampering, operation tampering, stale workspace receipt and replay reject without residue', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture();
   const checked = success(await call(root, 'batch/check', { operations }));
   const good = receipt(checked);
@@ -208,7 +208,7 @@ test('strict JSON rejects duplicate/escaped keys, comments, trailing commas and 
   assert.deepEqual(await tree(root), before);
 });
 
-test('own prototype-colliding extension keys survive dependent creation and receipts are stable', async () => {
+test('own prototype-colliding extension keys survive dependent creation and receipts are stable', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture();
   const value = JSON.parse('{"id":"__proto__","kind":"definition","tags":["constructor"],"__proto__":{"retained":true},"constructor":"data"}');
   const ops = [{ command: 'entry/create', arguments: { value } }];
@@ -235,14 +235,15 @@ test('lock, retained journal, symlinks, nested temp directories and schema error
     await unlink(file);
   }
   const link = path.join(root, '.SNL_Doc', 'unsafe');
-  await symlink('/tmp', link);
+  await symlink(tmpdir(), link, process.platform === 'win32' ? 'junction' : 'dir');
   const before = await tree(root);
   failure(await call(root, 'batch/check', { operations }), 'workspace.unsafe-path', 2);
   failure(await call(root, 'batch/apply', good), 'workspace.unsafe-path', 2);
   assert.deepEqual(await tree(root), before); await unlink(link);
-  const prior = process.env.TMPDIR;
-  try { process.env.TMPDIR = root; failure(await call(root, 'batch/check', { operations }), 'batch.unsafe-temp-directory', 2); }
-  finally { if (prior === undefined) delete process.env.TMPDIR; else process.env.TMPDIR = prior; }
+  const tmpVariable = process.platform === 'win32' ? 'TEMP' : 'TMPDIR';
+  const prior = process.env[tmpVariable];
+  try { process.env[tmpVariable] = root; failure(await call(root, 'batch/check', { operations }), 'batch.unsafe-temp-directory', 2); }
+  finally { if (prior === undefined) delete process.env[tmpVariable]; else process.env[tmpVariable] = prior; }
   const file = path.join(root, '.SNL_Doc', 'config.json');
   const config = JSON.parse(await readFile(file, 'utf8')); config.version = '99.0.0'; await writeFile(file, JSON.stringify(config));
   const invalid = await tree(root);
@@ -254,6 +255,11 @@ test('unsupported publication platform and missing python fail before exchange w
   const root = await fixture();
   const checked = success(await call(root, 'batch/check', { operations }));
   const before = await tree(root);
+  if (process.platform !== 'linux') {
+    failure(await call(root, 'batch/apply', receipt(checked)), 'batch.publication-unsupported', 2);
+    assert.deepEqual(await tree(root), before);
+    return;
+  }
   const platform = Object.getOwnPropertyDescriptor(process, 'platform')!;
   try {
     Object.defineProperty(process, 'platform', { ...platform, value: 'darwin' });
@@ -269,7 +275,7 @@ test('unsupported publication platform and missing python fail before exchange w
 });
 
 for (const seam of ['beforeExchange', 'afterExchange', 'beforeParentSync', 'readback', 'fsync'] as const) {
-  test(`injected ${seam} failure restores exact bytes/modes and leaves no lock, journal or stage`, async () => {
+  test(`injected ${seam} failure restores exact bytes/modes and leaves no lock, journal or stage`, { skip: process.platform !== 'linux' }, async () => {
     const root = await fixture();
     await chmod(path.join(root, '.SNL_Doc', 'config.json'), 0o640);
     const checked = success(await call(root, 'batch/check', { operations }));
@@ -298,7 +304,7 @@ for (const seam of ['beforeExchange', 'afterExchange', 'beforeParentSync', 'read
   });
 }
 
-test('uncertain rollback retains complete candidate, lock/journal/stage and blocks ordinary CRUD', async () => {
+test('uncertain rollback retains complete candidate, lock/journal/stage and blocks ordinary CRUD', { skip: process.platform !== 'linux' }, async () => {
   const root = await fixture(); const checked = success(await call(root, 'batch/check', { operations }));
   await assert.rejects(applyBatch(root, checked.normalizedOperations, checked.checkedDigest, checked.expectedWorkspaceRevision, {
     afterExchange: async () => {
@@ -318,7 +324,7 @@ test('uncertain rollback retains complete candidate, lock/journal/stage and bloc
   assert.deepEqual(success(await call(root, 'entry/get', { id: 'batch.dependent' })).entity.value.tags, tags);
 });
 
-test('committed backup and lock cleanup failures must never be reported as uncommitted', async () => {
+test('committed backup and lock cleanup failures must never be reported as uncommitted', { skip: process.platform !== 'linux' }, async () => {
   for (const kind of ['backup', 'lock']) {
     const root = await fixture(); const checked = success(await call(root, 'batch/check', { operations }));
     const hooks = { afterExchange: async () => {

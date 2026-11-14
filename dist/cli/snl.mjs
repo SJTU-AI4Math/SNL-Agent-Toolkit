@@ -51,6 +51,31 @@ var init_file_identity = __esm({
   }
 });
 
+// lib/read-bounded-file.ts
+async function readBoundedFile(handle, limit) {
+  const { size } = await handle.stat();
+  if (size > limit) throw new FileSizeLimitError();
+  const chunks = [];
+  let length = 0;
+  while (length <= limit) {
+    const chunk = Buffer.allocUnsafe(Math.min(64 * 1024, limit - length + 1));
+    const { bytesRead } = await handle.read(chunk, 0, chunk.length, length);
+    if (bytesRead === 0) return Buffer.concat(chunks, length);
+    length += bytesRead;
+    if (length > limit) break;
+    chunks.push(chunk.subarray(0, bytesRead));
+  }
+  throw new FileSizeLimitError();
+}
+var FileSizeLimitError;
+var init_read_bounded_file = __esm({
+  "lib/read-bounded-file.ts"() {
+    "use strict";
+    FileSizeLimitError = class extends Error {
+    };
+  }
+});
+
 // lib/guarded-json-file.ts
 import { constants, promises as fs } from "node:fs";
 import path from "node:path";
@@ -78,8 +103,8 @@ async function readRegularText(file) {
   const { value: text3, ...identity } = await readRegularFile(file, (handle) => handle.readFile("utf8"));
   return { text: text3, ...identity };
 }
-async function readRegularBytes(file) {
-  return (await readRegularFile(file, (handle) => handle.readFile())).value;
+async function readRegularBytes(file, limit) {
+  return (await readRegularFile(file, (handle) => readBoundedFile(handle, limit))).value;
 }
 async function readRegularFile(file, read) {
   const directory = path.dirname(file);
@@ -338,6 +363,7 @@ var init_guarded_json_file = __esm({
   "lib/guarded-json-file.ts"() {
     "use strict";
     init_file_identity();
+    init_read_bounded_file();
   }
 });
 
@@ -23603,6 +23629,7 @@ async function watchWorkspaceChanges(root, options = {}) {
   root = path14.resolve(root);
   const debounceMs = options.debounceMs ?? 250;
   const retryMs = options.retryMs ?? 1e3;
+  const pollOnly = process.platform === "win32" && !options.watchDirectory;
   const watchDirectory = options.watchDirectory ?? ((directory, changed) => watch(directory, { persistent: false }, (_event, filename) => changed(filename?.toString() ?? null)));
   const epoch = randomUUID6();
   let generation = 0;
@@ -23612,6 +23639,7 @@ async function watchWorkspaceChanges(root, options = {}) {
   let failureEpoch = 0;
   let dirty = false;
   let timer;
+  let poll;
   let running;
   let previous = /* @__PURE__ */ new Map();
   const listeners = /* @__PURE__ */ new Set();
@@ -23653,20 +23681,26 @@ async function watchWorkspaceChanges(root, options = {}) {
       const before = await lstat2(filename, { bigint: true });
       if (!before.isDirectory() || before.isSymbolicLink()) throw new Error("Directory unavailable");
       if (process.platform !== "linux" && await realpath(filename) !== filename) throw new Error("Directory link");
-      const handle = await open3(filename, constants9.O_RDONLY | constants9.O_DIRECTORY | constants9.O_NOFOLLOW);
+      const handle = process.platform === "win32" ? void 0 : await open3(filename, constants9.O_RDONLY | constants9.O_DIRECTORY | constants9.O_NOFOLLOW);
       try {
-        const stat = await handle.stat({ bigint: true });
-        const identity = `${stat.dev}:${stat.ino}`;
-        if (!stat.isDirectory() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error("Directory changed");
-        const pinned = process.platform === "linux" ? `/proc/self/fd/${handle.fd}` : filename;
+        const stat = handle ? await handle.stat({ bigint: true }) : before;
+        const identity = `${before.dev}:${before.ino}`;
+        if (!stat.isDirectory() || !matchesPathFileIdentity(before, stat)) throw new Error("Directory changed");
+        const pinned = process.platform === "linux" && handle ? `/proc/self/fd/${handle.fd}` : filename;
         const key = workspaceParent ? ".." : relative2;
         found.add(key);
         if (!workspaceParent) next.set(relative2, `d:${identity}`);
         const existing = watches.get(key);
-        if (existing?.identity !== identity) {
+        if (!pollOnly && existing?.identity !== identity) {
           watches.delete(key);
           existing?.watcher.close();
           const watcher = watchDirectory(pinned, (name) => {
+            if (name !== null && path14.isAbsolute(name) && watches.get(key)?.watcher === watcher) {
+              watches.delete(key);
+              watcher.close();
+              schedule();
+              return;
+            }
             if (workspaceParent && name !== null && name !== ".SNL_Doc") return;
             if (!workspaceParent && name !== null && ignored(name, relative2 === "")) return;
             schedule();
@@ -23695,10 +23729,10 @@ async function watchWorkspaceChanges(root, options = {}) {
           }
         }
         const after = await lstat2(filename, { bigint: true });
-        if (after.isSymbolicLink() || after.dev !== stat.dev || after.ino !== stat.ino) throw new Error("Directory replaced");
+        if (!after.isDirectory() || after.isSymbolicLink() || after.dev !== before.dev || after.ino !== before.ino) throw new Error("Directory replaced");
         if (process.platform !== "linux" && await realpath(filename) !== filename) throw new Error("Directory link");
       } finally {
-        await handle.close();
+        await handle?.close();
       }
     };
     if (process.platform === "linux") {
@@ -23750,6 +23784,12 @@ async function watchWorkspaceChanges(root, options = {}) {
     return running;
   }
   await reconcile();
+  if (pollOnly) {
+    poll = setInterval(() => {
+      if (!timer && !running) void reconcile();
+    }, retryMs);
+    poll.unref();
+  }
   return {
     get revision() {
       return revision2();
@@ -23768,6 +23808,7 @@ async function watchWorkspaceChanges(root, options = {}) {
       available = false;
       previous.clear();
       if (timer) clearTimeout(timer);
+      if (poll) clearInterval(poll);
       timer = void 0;
       listeners.clear();
       stopWatches();
@@ -23780,6 +23821,7 @@ var WATCH_UNAVAILABLE;
 var init_changes = __esm({
   "src/web/changes.ts"() {
     "use strict";
+    init_file_identity();
     WATCH_UNAVAILABLE = "Automatic updates are unavailable. Use Refresh; watching will retry.";
   }
 });
@@ -23840,17 +23882,27 @@ async function createWorkspaceReader(root, modelSource) {
         library: { slug, metadata, graph: graph ?? { nodes: [], relationships: [] }, counters }
       });
       snapshot2.resources = /* @__PURE__ */ Object.create(null);
-      for (const asset of model.readerAssetPaths(snapshot2)) {
+      let assetBudget = SNAPSHOT_ASSET_LIMIT;
+      let candidates = 0;
+      for (const asset of new Set(model.readerAssetPaths(snapshot2))) {
+        if (++candidates > SNAPSHOT_ASSET_COUNT) {
+          snapshot2.library.warnings.push("Some assets were omitted because the snapshot references too many files.");
+          break;
+        }
+        const svg = asset.toLowerCase().endsWith(".svg");
+        const fileLimit = svg ? SVG_LIMIT : IMAGE_LIMIT;
         try {
-          const bytes = await readAsset(root, asset);
+          const bytes = await readAsset(root, asset, Math.min(fileLimit, assetBudget));
+          assetBudget -= bytes.length;
           const resource = {
             url: `data:${assetMime(asset)};base64,${bytes.toString("base64")}`,
             revision: "sha256:" + createHash6("sha256").update(bytes).digest("hex"),
-            ...asset.toLowerCase().endsWith(".svg") ? { text: bytes.toString("utf8") } : {}
+            ...svg ? { text: bytes.toString("utf8") } : {}
           };
           Object.defineProperty(snapshot2.resources, asset, { value: resource, enumerable: true, writable: true, configurable: true });
-        } catch {
-          snapshot2.library.warnings.push(`Asset unavailable: ${asset}`);
+        } catch (error) {
+          const reason = error instanceof FileSizeLimitError ? assetBudget < fileLimit ? " (snapshot asset budget exceeded)" : ` (exceeds ${fileLimit / MiB} MiB)` : "";
+          snapshot2.library.warnings.push(`Asset unavailable: ${asset}${reason}`);
         }
       }
       snapshot2.renderSnapshotId = createHash6("sha256").update(JSON.stringify(snapshot2)).digest("hex");
@@ -23867,12 +23919,12 @@ function assetMime(asset) {
   const mimes = { ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".avif": "image/avif", ".bmp": "image/bmp", ".ico": "image/x-icon" };
   return mimes[path15.extname(asset).toLowerCase()] ?? "application/octet-stream";
 }
-async function readAsset(root, asset) {
+async function readAsset(root, asset, limit) {
   if (!asset || /[:\\\\%\u0000-\u001f\u007f-\u009f]/u.test(asset) || asset.split("/").some((part) => !part || part === "." || part === "..")) {
     throw new Error("Invalid asset path.");
   }
   if (process.platform === "win32") {
-    return readRegularBytes(path15.join(root, ".SNL_Doc", "assets", ...asset.split("/")));
+    return readRegularBytes(path15.join(root, ".SNL_Doc", "assets", ...asset.split("/")), limit);
   }
   const handles = [];
   try {
@@ -23894,17 +23946,24 @@ async function readAsset(root, asset) {
     handles.push(handle);
     const stat = await handle.stat();
     if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error("Asset changed while opening.");
-    return await handle.readFile();
+    return await readBoundedFile(handle, limit);
   } finally {
     for (const handle of handles.reverse()) await handle.close();
   }
 }
+var MiB, IMAGE_LIMIT, SVG_LIMIT, SNAPSHOT_ASSET_LIMIT, SNAPSHOT_ASSET_COUNT;
 var init_workspace = __esm({
   "src/web/workspace.ts"() {
     "use strict";
     init_snl_doc();
     init_entity_crud();
     init_guarded_json_file();
+    init_read_bounded_file();
+    MiB = 1024 * 1024;
+    IMAGE_LIMIT = 10 * MiB;
+    SVG_LIMIT = MiB;
+    SNAPSHOT_ASSET_LIMIT = 32 * MiB;
+    SNAPSHOT_ASSET_COUNT = 512;
   }
 });
 
@@ -24984,6 +25043,7 @@ function dependencyCacheDescriptor(snapshot2) {
 }
 
 // lib/dependency-cache-storage.ts
+init_guarded_json_file();
 import { constants as constants7, promises as fs7 } from "node:fs";
 import { createHash as createHash5, randomUUID as randomUUID4 } from "node:crypto";
 import * as path9 from "node:path";
@@ -25063,16 +25123,7 @@ async function guard(root, id, scope, create) {
 async function readCache(root, descriptor) {
   try {
     const file = await guard(root, descriptor.id, descriptor.scope, false);
-    const handle = await fs7.open(file, constants7.O_RDONLY | (constants7.O_NOFOLLOW ?? 0));
-    let text3;
-    try {
-      const stat = await handle.stat();
-      if (!stat.isFile() || stat.size > MAX_BYTES) return void 0;
-      text3 = await handle.readFile("utf8");
-    } finally {
-      await handle.close();
-    }
-    const envelope = JSON.parse(text3);
+    const envelope = JSON.parse((await readRegularBytes(file, MAX_BYTES)).toString("utf8"));
     if (!object(envelope) || envelope.format !== "snl-derived-cache" || envelope.schema !== 1 || envelope.generator !== descriptor.id || envelope.version !== descriptor.version || envelope.library !== (descriptor.scope?.library ?? null) || envelope.inputHash !== cacheFingerprint(descriptor.input) || !descriptor.validate(envelope.value) || envelope.valueHash !== cacheFingerprint(envelope.value)) return void 0;
     return envelope.value;
   } catch {
@@ -25091,7 +25142,7 @@ async function writeCache(root, descriptor, value, beforeRename) {
     valueHash: cacheFingerprint(value),
     value
   });
-  if (Buffer.byteLength(text3) > MAX_BYTES) throw new Error("Cache output exceeds size limit");
+  if (Buffer.byteLength(text3) + 1 > MAX_BYTES) throw new Error("Cache output exceeds size limit");
   const file = await guard(root, descriptor.id, descriptor.scope, true);
   const temporary = path9.join(path9.dirname(file), `.${randomUUID4()}.tmp`);
   try {
@@ -25105,11 +25156,13 @@ async function writeCache(root, descriptor, value, beforeRename) {
     await beforeRename();
     await guard(root, descriptor.id, descriptor.scope, false);
     await fs7.rename(temporary, file);
-    const directory = await fs7.open(path9.dirname(file), constants7.O_RDONLY);
-    try {
-      await directory.sync();
-    } finally {
-      await directory.close();
+    if (process.platform !== "win32") {
+      const directory = await fs7.open(path9.dirname(file), constants7.O_RDONLY);
+      try {
+        await directory.sync();
+      } finally {
+        await directory.close();
+      }
     }
   } finally {
     await fs7.unlink(temporary).catch((error) => {
