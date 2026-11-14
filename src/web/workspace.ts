@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { assertSnlDoc, readConfig, readEntries, readActiveMacros, readLibraryMeta, readLibraryGraph, readLibraryCounters } from '../../lib/snl-doc.ts';
 import { listManagedEntities, validateManagedWorkspace } from '../../lib/entity-crud.ts';
+import { readRegularBytes } from '../../lib/guarded-json-file.ts';
 import type { CounterNode, EntryData, EntryKind, LibraryGraph, LibraryMetaFile, MacroKind, MacroPackageEntry, SnlConfig } from '../../lib/snl-doc-schema.ts';
 
 export interface WorkspaceReaderInput {
@@ -117,6 +118,12 @@ function assetMime(asset: string): string {
 async function readAsset(root: string, asset: string): Promise<Buffer> {
   if (!asset || /[:\\\\%\u0000-\u001f\u007f-\u009f]/u.test(asset) || asset.split('/').some(part => !part || part === '.' || part === '..')) {
     throw new Error('Invalid asset path.');
+  }
+  if (process.platform === 'win32') {
+    // libuv cannot open Windows directory handles. The guarded reader checks
+    // that the whole parent path resolves to itself, then binds the leaf to
+    // the same file ID before and after opening.
+    return readRegularBytes(path.join(root, '.SNL_Doc', 'assets', ...asset.split('/')));
   }
   // Linux descriptor-relative traversal pins every parent, including .SNL_Doc
   // and assets. A concurrently swapped parent cannot redirect a child read.

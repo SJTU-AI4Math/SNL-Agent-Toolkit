@@ -17799,13 +17799,20 @@ var path3 = __toESM(require("node:path"), 1);
 var import_node_fs = require("node:fs");
 var import_node_path = __toESM(require("node:path"), 1);
 var import_node_crypto = require("node:crypto");
+
+// lib/file-identity.ts
+function matchesPathFileIdentity(entry, opened) {
+  return entry.ino !== 0n && entry.ino === opened.ino && (entry.dev === opened.dev || process.platform === "win32" && entry.dev === 0n);
+}
+
+// lib/guarded-json-file.ts
 function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
 `;
 }
 async function readCanonicalDirectoryIdentity(directory) {
   const resolved = import_node_path.default.resolve(directory);
-  const stat = await import_node_fs.promises.lstat(resolved);
+  const stat = await import_node_fs.promises.lstat(resolved, { bigint: true });
   if (!stat.isDirectory() || stat.isSymbolicLink() || await import_node_fs.promises.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
@@ -17819,19 +17826,25 @@ async function assertCanonicalDirectory(directory, expected) {
   return observed;
 }
 async function readRegularText(file) {
+  const { value: text3, ...identity } = await readRegularFile(file, (handle) => handle.readFile("utf8"));
+  return { text: text3, ...identity };
+}
+async function readRegularFile(file, read) {
   const directory = import_node_path.default.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
-  const before = await import_node_fs.promises.lstat(file);
+  const before = await import_node_fs.promises.lstat(file, { bigint: true });
   if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
-    handle = await import_node_fs.promises.open(file, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW);
-    const stat = await handle.stat();
+    handle = await import_node_fs.promises.open(file, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW | import_node_fs.constants.O_NONBLOCK);
+    const stat = await handle.stat({ bigint: true });
+    const current = await import_node_fs.promises.lstat(file, { bigint: true });
     await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
+    if (!stat.isFile() || !current.isFile() || current.dev !== before.dev || !matchesPathFileIdentity(before, stat) || !matchesPathFileIdentity(current, stat))
+      throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
-      text: await handle.readFile("utf8"),
-      mode: stat.mode & 511,
+      value: await read(handle),
+      mode: Number(stat.mode & 0o777n),
       dev: stat.dev,
       ino: stat.ino,
       directoryDev: directoryIdentity.dev,
@@ -17848,9 +17861,10 @@ async function readRegularText(file) {
 async function syncDirectory(directory, beforeSync, expected) {
   await beforeSync?.();
   await assertCanonicalDirectory(directory, expected);
+  if (process.platform === "win32") return;
   const handle = await import_node_fs.promises.open(directory, import_node_fs.constants.O_RDONLY | import_node_fs.constants.O_NOFOLLOW | import_node_fs.constants.O_DIRECTORY);
   try {
-    const stat = await handle.stat();
+    const stat = await handle.stat({ bigint: true });
     if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
       throw new Error(`${directory} changed concurrently before directory sync.`);
     await handle.sync();
@@ -17861,7 +17875,7 @@ async function syncDirectory(directory, beforeSync, expected) {
 }
 async function sameInode(left, right) {
   try {
-    const [a4, b4] = await Promise.all([import_node_fs.promises.lstat(left), import_node_fs.promises.lstat(right)]);
+    const [a4, b4] = await Promise.all([import_node_fs.promises.lstat(left, { bigint: true }), import_node_fs.promises.lstat(right, { bigint: true })]);
     return a4.dev === b4.dev && a4.ino === b4.ino;
   } catch {
     return false;
@@ -21371,7 +21385,7 @@ async function isCanonicalAcquisition(handle, lockPath, parent) {
     const currentParent = await (0, import_promises.lstat)(path4.dirname(lockPath), { bigint: true });
     const current = await (0, import_promises.lstat)(lockPath, { bigint: true });
     const held = await handle.stat({ bigint: true });
-    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && sameIdentity(held, current);
+    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && matchesPathFileIdentity(current, held);
   } catch (error) {
     if (errorCode(error) === "ENOENT" || errorCode(error) === "ENOTDIR") return false;
     throw error;
@@ -22896,6 +22910,7 @@ async function assertDirectoryIdentity(directory, expected) {
 async function syncDirectoryDurably(directory, beforeSync, expected) {
   await beforeSync?.();
   if (expected) await assertDirectoryIdentity(directory, expected);
+  if (process.platform === "win32") return;
   const handle = await import_node_fs6.promises.open(directory, import_node_fs6.constants.O_RDONLY | import_node_fs6.constants.O_NOFOLLOW | import_node_fs6.constants.O_DIRECTORY);
   try {
     const stat = await handle.stat();
@@ -23086,7 +23101,7 @@ async function packageRows(root, type) {
   for (const file of await jsonFiles(import_node_path2.default.join(doc, "packages"))) {
     const manifest = requireRecord(await readJson2(file), "Package manifest");
     const id = requireId(manifest);
-    if (import_node_path2.default.relative(doc, file) !== packageManifestPath(id))
+    if (import_node_path2.default.relative(doc, file).split(import_node_path2.default.sep).join("/") !== packageManifestPath(id))
       throw new Error(`${file} does not match Package identity ${id}.`);
     if (type === "entry-package")
       rows.push(managed(type, id, manifest));
@@ -24481,22 +24496,23 @@ async function snapshot(root, domain = "physical") {
   async function walk(relative2) {
     if (relative2 === DATA_WRITE_LOCK_FILENAME || domain === "authoring" && derivedPath(relative2)) return;
     const p3 = import_node_path3.default.join(doc, relative2);
-    const s4 = await import_node_fs7.promises.lstat(p3);
+    const s4 = await import_node_fs7.promises.lstat(p3, { bigint: true });
     if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
-    const mode = supportedMode(s4.mode, p3);
+    const mode = supportedMode(Number(s4.mode), p3);
     if (s4.isDirectory()) {
       out.set(relative2, { kind: "directory", mode });
       for (const name of (await import_node_fs7.promises.readdir(p3)).sort(compareCanonicalIds)) await walk(relative2 ? `${relative2}/${name}` : name);
     } else {
       const handle = await import_node_fs7.promises.open(p3, import_node_fs7.constants.O_RDONLY | import_node_fs7.constants.O_NOFOLLOW | import_node_fs7.constants.O_NONBLOCK);
       try {
-        const opened = await handle.stat();
-        const openedMode = supportedMode(opened.mode, p3);
+        const opened = await handle.stat({ bigint: true });
+        const openedMode = supportedMode(Number(opened.mode), p3);
         const conflict2 = domain === "physical" && derivedPath(relative2) ? "batch.physical-conflict" : "batch.workspace-conflict";
-        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
+        const current = await import_node_fs7.promises.lstat(p3, { bigint: true });
+        if (!opened.isFile() || !current.isFile() || !matchesPathFileIdentity(s4, opened) || !matchesPathFileIdentity(current, opened) || opened.mode !== s4.mode) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
         const bytes = await handle.readFile();
-        const after = await handle.stat();
-        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
+        const after = await handle.stat({ bigint: true });
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeNs !== opened.mtimeNs || after.ctimeNs !== opened.ctimeNs) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
         out.set(relative2, { kind: "file", mode: openedMode, bytes });
       } finally {
         await handle.close();

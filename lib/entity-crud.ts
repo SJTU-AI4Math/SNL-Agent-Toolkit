@@ -64,6 +64,8 @@ async function syncDirectoryDurably(
 ): Promise<void> {
     await beforeSync?.();
     if (expected) await assertDirectoryIdentity(directory, expected);
+    // Windows has no directory fsync through Node; file contents are flushed.
+    if (process.platform === "win32") return;
     const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
     try {
         const stat = await handle.stat();
@@ -280,7 +282,7 @@ async function packageRows(root: string, type: "entry-package" | "macro-package"
     for (const file of await jsonFiles(path.join(doc, "packages"))) {
         const manifest = requireRecord(await readJson(file), "Package manifest");
         const id = requireId(manifest);
-        if (path.relative(doc, file) !== packageManifestPath(id))
+        if (path.relative(doc, file).split(path.sep).join("/") !== packageManifestPath(id))
             throw new Error(`${file} does not match Package identity ${id}.`);
         if (type === "entry-package")
             rows.push(managed(type, id, manifest));
@@ -1125,11 +1127,11 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
         }
         await options.beforeLibraryDirectoryRemove?.(tomb);
-        const fileCaptures: Array<{ name: string; captured: string; identity: { dev: number; ino: number } }> = [];
+        const fileCaptures: Array<{ name: string; captured: string; identity: { dev: bigint; ino: bigint } }> = [];
         try {
             for (const name of ["meta.json", "graph.json", "counters.json"]) {
                 const source = path.join(tomb, name);
-                let identity: { dev: number; ino: number };
+                let identity: { dev: bigint; ino: bigint };
                 try {
                     const original = await readRegularText(source);
                     identity = { dev: original.dev, ino: original.ino };

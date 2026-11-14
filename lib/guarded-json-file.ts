@@ -1,16 +1,17 @@
 import { constants, promises as fs } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { matchesPathFileIdentity } from './file-identity.ts';
 
 export function jsonText(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
-type DirectoryIdentity = { dev: number; ino: number };
+type DirectoryIdentity = { dev: bigint; ino: bigint };
 
 async function readCanonicalDirectoryIdentity(directory: string): Promise<DirectoryIdentity> {
   const resolved = path.resolve(directory);
-  const stat = await fs.lstat(resolved);
+  const stat = await fs.lstat(resolved, { bigint: true });
   if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
@@ -25,21 +26,41 @@ async function assertCanonicalDirectory(directory: string, expected?: DirectoryI
   return observed;
 }
 
-export async function readRegularText(file: string): Promise<{ text: string; mode: number; dev: number; ino: number; directoryDev: number; directoryIno: number }> {
+interface RegularFileIdentity {
+  mode: number; dev: bigint; ino: bigint; directoryDev: bigint; directoryIno: bigint;
+}
+
+interface RegularText extends RegularFileIdentity { text: string }
+
+export async function readRegularText(file: string): Promise<RegularText> {
+  const { value: text, ...identity } = await readRegularFile(file, handle => handle.readFile('utf8'));
+  return { text, ...identity };
+}
+
+export async function readRegularBytes(file: string): Promise<Buffer> {
+  return (await readRegularFile(file, handle => handle.readFile())).value;
+}
+
+async function readRegularFile<T>(
+  file: string, read: (handle: Awaited<ReturnType<typeof fs.open>>) => Promise<T>,
+): Promise<RegularFileIdentity & { value: T }> {
   const directory = path.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
   // Windows has no native O_NOFOLLOW. Check the directory entry itself, then
   // verify the opened descriptor still identifies that same regular file.
-  const before = await fs.lstat(file);
+  const before = await fs.lstat(file, { bigint: true });
   if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
-    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await handle.stat();
+    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const stat = await handle.stat({ bigint: true });
+    const current = await fs.lstat(file, { bigint: true });
     await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
+    if (!stat.isFile() || !current.isFile() || current.dev !== before.dev ||
+        !matchesPathFileIdentity(before, stat) || !matchesPathFileIdentity(current, stat))
+      throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
-      text: await handle.readFile('utf8'), mode: stat.mode & 0o777,
+      value: await read(handle), mode: Number(stat.mode & 0o777n),
       dev: stat.dev, ino: stat.ino,
       directoryDev: directoryIdentity.dev, directoryIno: directoryIdentity.ino,
     };
@@ -59,9 +80,12 @@ async function syncDirectory(
 ): Promise<void> {
   await beforeSync?.();
   await assertCanonicalDirectory(directory, expected);
+  // libuv cannot fsync a directory on Windows. File content is still flushed
+  // before publication; the directory entries do not get a power-loss guarantee.
+  if (process.platform === 'win32') return;
   const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
   try {
-    const stat = await handle.stat();
+    const stat = await handle.stat({ bigint: true });
     if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
       throw new Error(`${directory} changed concurrently before directory sync.`);
     await handle.sync();
@@ -73,7 +97,7 @@ async function syncDirectory(
 
 async function sameInode(left: string, right: string): Promise<boolean> {
   try {
-    const [a, b] = await Promise.all([fs.lstat(left), fs.lstat(right)]);
+    const [a, b] = await Promise.all([fs.lstat(left, { bigint: true }), fs.lstat(right, { bigint: true })]);
     return a.dev === b.dev && a.ino === b.ino;
   } catch {
     return false;
@@ -288,7 +312,7 @@ export async function removeJsonIfUnchanged(
   await assertCanonicalDirectory(directory, expectedDirectory);
   await hooks.afterParentCheckBeforeCapture?.();
   await fs.rename(file, captured);
-  let observed: { text: string; mode: number; dev: number; ino: number; directoryDev: number; directoryIno: number };
+  let observed: RegularText;
   try {
     await assertCanonicalDirectory(directory, expectedDirectory);
     await hooks.afterCapture?.();

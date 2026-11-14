@@ -20,8 +20,8 @@ async function target(): Promise<string> {
 
 function run(root: string, args: string[]) {
   return spawnSync(
-    path.resolve('node_modules/.bin/tsx'),
-    ['src/cli/snl.ts', '--root', root, '--json', ...args],
+    process.execPath,
+    [path.resolve('node_modules/tsx/dist/cli.mjs'), 'src/cli/snl.ts', '--root', root, '--json', ...args],
     { cwd: path.resolve(import.meta.dirname, '..'), encoding: 'utf8' },
   );
 }

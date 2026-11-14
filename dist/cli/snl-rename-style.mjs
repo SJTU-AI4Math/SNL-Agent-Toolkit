@@ -3137,9 +3137,16 @@ import * as path2 from "node:path";
 // lib/guarded-json-file.ts
 import { constants, promises as fs } from "node:fs";
 import path from "node:path";
+
+// lib/file-identity.ts
+function matchesPathFileIdentity(entry, opened) {
+  return entry.ino !== 0n && entry.ino === opened.ino && (entry.dev === opened.dev || process.platform === "win32" && entry.dev === 0n);
+}
+
+// lib/guarded-json-file.ts
 async function readCanonicalDirectoryIdentity(directory) {
   const resolved = path.resolve(directory);
-  const stat = await fs.lstat(resolved);
+  const stat = await fs.lstat(resolved, { bigint: true });
   if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
@@ -3153,19 +3160,25 @@ async function assertCanonicalDirectory(directory, expected) {
   return observed;
 }
 async function readRegularText(file) {
+  const { value: text, ...identity } = await readRegularFile(file, (handle) => handle.readFile("utf8"));
+  return { text, ...identity };
+}
+async function readRegularFile(file, read) {
   const directory = path.dirname(file);
   const directoryIdentity = await assertCanonicalDirectory(directory);
-  const before = await fs.lstat(file);
+  const before = await fs.lstat(file, { bigint: true });
   if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
-    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await handle.stat();
+    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const stat = await handle.stat({ bigint: true });
+    const current = await fs.lstat(file, { bigint: true });
     await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
+    if (!stat.isFile() || !current.isFile() || current.dev !== before.dev || !matchesPathFileIdentity(before, stat) || !matchesPathFileIdentity(current, stat))
+      throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
-      text: await handle.readFile("utf8"),
-      mode: stat.mode & 511,
+      value: await read(handle),
+      mode: Number(stat.mode & 0o777n),
       dev: stat.dev,
       ino: stat.ino,
       directoryDev: directoryIdentity.dev,
@@ -4327,7 +4340,7 @@ async function isCanonicalAcquisition(handle, lockPath, parent) {
     const currentParent = await lstat(path3.dirname(lockPath), { bigint: true });
     const current = await lstat(lockPath, { bigint: true });
     const held = await handle.stat({ bigint: true });
-    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && sameIdentity(held, current);
+    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && matchesPathFileIdentity(current, held);
   } catch (error) {
     if (errorCode(error) === "ENOENT" || errorCode(error) === "ENOTDIR") return false;
     throw error;

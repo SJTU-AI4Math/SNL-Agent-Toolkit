@@ -3,6 +3,7 @@ import test from 'node:test';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   ENTITY_TYPES,
@@ -234,7 +235,7 @@ test('DeepSeek Harness apply(ctx) registers the same seven generic tools through
 
 
 test('real MCP and DSH paths invoke the first-class Entry renderer', async () => {
-  const workspace = new URL('./fixtures/workspace-v0.1.0/', import.meta.url).pathname;
+  const workspace = fileURLToPath(new URL('./fixtures/workspace-v0.1.0/', import.meta.url));
   const adapter = createEntityAdapter();
   const dispatch = createMcpDispatcher(adapter);
   const mcp = await dispatch({
@@ -261,7 +262,7 @@ test('real MCP and DSH paths invoke the first-class Entry renderer', async () =>
 });
 
 test('built-in Entry renderer returns structured invalid results for malformed Entry content', async () => {
-  const source = new URL('./fixtures/workspace-v0.1.0/', import.meta.url).pathname;
+  const source = fileURLToPath(new URL('./fixtures/workspace-v0.1.0/', import.meta.url));
   const parent = await mkdtemp(path.join(tmpdir(), 'snl-entry-render-invalid-'));
   const workspace = path.join(parent, 'workspace');
   try {
@@ -282,7 +283,7 @@ test('built-in Entry renderer returns structured invalid results for malformed E
 });
 
 test('MCP and DSH reject non-block Entry projections that would leak htmlData', async () => {
-  const source = new URL('./fixtures/workspace-v0.1.0/', import.meta.url).pathname;
+  const source = fileURLToPath(new URL('./fixtures/workspace-v0.1.0/', import.meta.url));
   const parent = await mkdtemp(path.join(tmpdir(), 'snl-entry-render-htmldata-'));
   const workspace = path.join(parent, 'workspace');
   try {
@@ -325,7 +326,7 @@ test('MCP and DSH reject non-block Entry projections that would leak htmlData', 
 });
 
 test('real MCP and DSH paths print a localized Library Entry tree', async () => {
-  const source = new URL('./fixtures/workspace-v0.1.0/', import.meta.url).pathname;
+  const source = fileURLToPath(new URL('./fixtures/workspace-v0.1.0/', import.meta.url));
   const parent = await mkdtemp(path.join(tmpdir(), 'snl-library-tree-'));
   const workspace = path.join(parent, 'workspace');
   try {
@@ -381,7 +382,7 @@ test('real MCP and DSH paths print a localized Library Entry tree', async () => 
     await writeFile(path.join(outsideLibrary, 'meta.json'), '{"title":"OUTSIDE_SECRET"}');
     await writeFile(path.join(outsideLibrary, 'graph.json'), '{"nodes":[],"relationships":[]}');
     await writeFile(path.join(outsideLibrary, 'counters.json'), '{"counters":[]}');
-    await symlink(outsideLibrary, path.join(workspace, '.SNL_Doc', 'libraries', 'escape'), 'dir');
+    await symlink(outsideLibrary, path.join(workspace, '.SNL_Doc', 'libraries', 'escape'), process.platform === 'win32' ? 'junction' : 'dir');
     const escaped = await adapter.renderLibraryTree!({ root: workspace, librarySlug: 'escape' }) as {
       status: string; code: string; message: string; title?: string;
     };
@@ -443,7 +444,7 @@ test('real MCP and DSH paths print a localized Library Entry tree', async () => 
 
 test('built-in adapter serves all eight entity families from a v0.1.0 workspace', async () => {
   const adapter = createEntityAdapter();
-  const workspace = new URL('./fixtures/workspace-v0.1.0/', import.meta.url).pathname;
+  const workspace = fileURLToPath(new URL('./fixtures/workspace-v0.1.0/', import.meta.url));
   const entryPackages = await adapter.list({ root: workspace, entityType: 'entry-package', limit: 20 }) as { entities: Array<{ id: string }> };
   assert.deepEqual(entryPackages.entities.map(({ id }) => id), ['_unpackaged', 'Logic']);
   const macro = await adapter.get({ root: workspace, entityType: 'macro', id: 'Logic::FOL.implies' }) as { entity: { id: string }; revision: string };

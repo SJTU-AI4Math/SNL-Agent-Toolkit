@@ -90,6 +90,10 @@ not single-entity loops. Its first edition supports dependent creates with one
 digest/revision receipt and Linux directory-exchange publication (`python3`
 required), with explicit guarded recovery and documented crash/reader limits.
 
+On Windows, regular entity writes flush the file contents before publication.
+Node does not expose a directory flush there, so a sudden power loss may
+lose the directory entry for an otherwise completed write.
+
 Library deletion recovery also has a Linux-only runtime requirement: restoring
 captured child directories requires a trusted `python3` on PATH, Python stdlib
 `ctypes`, libc `renameat2(RENAME_NOREPLACE)`, and accessible `/proc/self/fd`.

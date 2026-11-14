@@ -152,7 +152,7 @@ describe('unified entity CLI', () => {
 
   it('rejects writes through a symlinked workspace root', async () => {
     const {root}=await workspace(); const parent=await mkdtemp(path.join(tmpdir(),'snl-entity-alias-')); roots.push(parent);
-    const alias=path.join(parent,'alias'); await symlink(root,alias,'dir'); const draft=path.join(parent,'kind.json');
+    const alias=path.join(parent,'alias'); await symlink(root,alias,process.platform === 'win32' ? 'junction' : 'dir'); const draft=path.join(parent,'kind.json');
     await json(draft,{id:'unsafe',name:'Unsafe',coloring:{stroke:'',background:''},style:''});
     const result=run(alias,['create','--type','entry-kind','--input',draft]); assert.equal(result.status,2);
     assert.match(JSON.parse(result.stdout).message,/canonical|symlink/i);
@@ -184,10 +184,11 @@ describe('unified entity CLI', () => {
 
   it('preserves existing JSON file permission modes on atomic replacement', async () => {
     const {root,doc}=await workspace(); const configFile=path.join(doc,'config.json'); await chmod(configFile,0o600);
+    const originalMode=(await stat(configFile)).mode&0o777;
     const before=JSON.parse(run(root,['get','--type','entry-kind','definition']).stdout).entity; before.value.name='Private';
     const draft=path.join(root,'kind-private.json'); await json(draft,before.value);
     assert.equal(run(root,['update','--type','entry-kind','--if-match',before.revision,'--input',draft,'definition']).status,0);
-    assert.equal((await stat(configFile)).mode&0o777,0o600);
+    assert.equal((await stat(configFile)).mode&0o777,originalMode);
   });
 
 });

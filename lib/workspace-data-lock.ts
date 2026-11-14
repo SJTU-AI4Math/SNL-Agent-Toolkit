@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { hostname } from 'node:os';
 import { lstat, open, readFile, unlink, type FileHandle } from 'node:fs/promises';
 import * as path from 'node:path';
+import { matchesPathFileIdentity } from './file-identity.ts';
 
 export const DATA_WRITE_LOCK_FILENAME = '.data-write.lock';
 export const BATCH_JOURNAL_FILENAME = '.snl-batch-transaction.json';
@@ -62,7 +63,7 @@ async function isCanonicalAcquisition(handle: FileHandle, lockPath: string, pare
     const current = await lstat(lockPath, { bigint: true });
     const held = await handle.stat({ bigint: true });
     return currentParent.isDirectory() && sameIdentity(parent, currentParent) &&
-      current.isFile() && held.isFile() && sameIdentity(held, current);
+      current.isFile() && held.isFile() && matchesPathFileIdentity(current, held);
   } catch (error) {
     if (errorCode(error) === 'ENOENT' || errorCode(error) === 'ENOTDIR') return false;
     throw error;

@@ -2,6 +2,7 @@ import { constants, promises as fs } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { createHash } from 'node:crypto';
+import { matchesPathFileIdentity } from './file-identity.ts';
 import { execFile } from 'node:child_process';
 import { promisify, types as utilTypes } from 'node:util';
 import { parseTree, type Node as JsonNode, type ParseError } from 'jsonc-parser';
@@ -144,22 +145,24 @@ async function snapshot(root: string, domain: 'physical' | 'authoring' = 'physic
   async function walk(relative: string) {
     if (relative === DATA_WRITE_LOCK_FILENAME || (domain === 'authoring' && derivedPath(relative))) return;
     const p = path.join(doc, relative);
-    const s = await fs.lstat(p);
+    const s = await fs.lstat(p, { bigint: true });
     if (s.isSymbolicLink() || (!s.isDirectory() && !s.isFile())) throw new BatchError('workspace.unsafe-path', `Batch refuses symlinks and special files: ${p}.`, 2);
-    const mode = supportedMode(s.mode, p);
+    const mode = supportedMode(Number(s.mode), p);
     if (s.isDirectory()) {
       out.set(relative, { kind: 'directory', mode });
       for (const name of (await fs.readdir(p)).sort(compareCanonicalIds)) await walk(relative ? `${relative}/${name}` : name);
     } else {
       const handle = await fs.open(p, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
       try {
-        const opened = await handle.stat();
-        const openedMode = supportedMode(opened.mode, p);
+        const opened = await handle.stat({ bigint: true });
+        const openedMode = supportedMode(Number(opened.mode), p);
         const conflict = domain === 'physical' && derivedPath(relative) ? 'batch.physical-conflict' : 'batch.workspace-conflict';
-        if (!opened.isFile() || opened.ino !== s.ino || opened.dev !== s.dev || opened.mode !== s.mode) throw new BatchError(conflict, `${p} changed during ${domain} capture.`);
+        const current = await fs.lstat(p, { bigint: true });
+        if (!opened.isFile() || !current.isFile() || !matchesPathFileIdentity(s, opened) ||
+            !matchesPathFileIdentity(current, opened) || opened.mode !== s.mode) throw new BatchError(conflict, `${p} changed during ${domain} capture.`);
         const bytes = await handle.readFile();
-        const after = await handle.stat();
-        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError(conflict, `${p} changed during ${domain} capture.`);
+        const after = await handle.stat({ bigint: true });
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeNs !== opened.mtimeNs || after.ctimeNs !== opened.ctimeNs) throw new BatchError(conflict, `${p} changed during ${domain} capture.`);
         out.set(relative, { kind: 'file', mode: openedMode, bytes });
       } finally { await handle.close(); }
     }
