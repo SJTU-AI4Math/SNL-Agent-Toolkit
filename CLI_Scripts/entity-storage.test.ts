@@ -307,7 +307,7 @@ describe('Extension 0.0.6 per-entity storage', () => {
     await assert.rejects(() => readEntries(root), /does not match its logical identity path/);
   });
 
-  it('rejects symlinked live entity files', async () => {
+  it('rejects symlinked live entity files', { skip: process.platform === 'win32' }, async () => {
     const { root, doc } = await workspace();
     await json(path.join(doc, 'config.json'), currentConfig());
     const outside = path.join(root, 'outside.json');
@@ -322,7 +322,7 @@ describe('Extension 0.0.6 per-entity storage', () => {
   it('rejects a dangling config symlink instead of falling back to legacy storage', async () => {
     const { root, doc } = await workspace();
     await rm(path.join(doc, 'config.json'), { force: true });
-    await symlink(path.join(root, 'missing-config-target.json'), path.join(doc, 'config.json'));
+    await symlink(path.join(root, 'missing-config-target.json'), path.join(doc, 'config.json'), process.platform === 'win32' ? 'junction' : 'dir');
     await assert.rejects(() => readEntries(root), /regular, non-symlink file|ELOOP/i);
   });
 
@@ -331,11 +331,11 @@ describe('Extension 0.0.6 per-entity storage', () => {
     await json(path.join(source.doc, 'config.json'), currentConfig());
     const root = await mkdtemp(path.join(tmpdir(), 'snl-toolkit-boundary-'));
     roots.push(root);
-    await symlink(source.doc, path.join(root, '.SNL_Doc'));
+    await symlink(source.doc, path.join(root, '.SNL_Doc'), process.platform === 'win32' ? 'junction' : 'dir');
     await assert.rejects(() => readEntries(root), /\.SNL_Doc.*symlink|regular, non-symlink directory/i);
   });
 
-  it('rejects a symlinked config instead of following it', async () => {
+  it('rejects a symlinked config instead of following it', { skip: process.platform === 'win32' }, async () => {
     const { root, doc } = await workspace();
     const outside = path.join(root, 'outside-config.json');
     await json(outside, currentConfig());

@@ -12,6 +12,7 @@ import { findEntityReferences } from "./entity-references.ts";
 import { withWorkspaceDataLock } from "./workspace-data-lock.ts";
 import { addEntryEntity, addMacroEntity, addPackageEntity } from "./entity-writes.ts";
 import { installNewJson, jsonText, readRegularText, removeJsonIfUnchanged, replaceJsonIfUnchanged } from "./guarded-json-file.ts";
+import { moveWindowsNoReplace } from "./windows-no-replace.ts";
 export const ENTITY_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"] as const;
 export type ManagedEntityType = typeof ENTITY_TYPES[number];
 export interface ManagedEntity {
@@ -45,9 +46,9 @@ async function jsonFiles(directory: string): Promise<string[]> { return (await f
 function managed(type: ManagedEntityType, id: string, value: RecordJson, revisionSource: unknown = value): ManagedEntity { return { type, id, revision: sha(revisionSource), value }; }
 function requireRecord(value: unknown, label: string): RecordJson { if (!isRecord(value))
     throw new Error(`${label} must be a JSON object.`); return value; }
-type DirectoryIdentity = { dev: number; ino: number };
+type DirectoryIdentity = { dev: bigint; ino: bigint };
 async function readDirectoryIdentity(directory: string): Promise<DirectoryIdentity> {
-    const stat = await fs.lstat(directory);
+    const stat = await fs.lstat(directory, { bigint: true });
     if (stat.isSymbolicLink() || !stat.isDirectory())
         throw new Error(`${directory} must be a regular, non-symlink directory.`);
     return { dev: stat.dev, ino: stat.ino };
@@ -60,13 +61,15 @@ async function assertDirectoryIdentity(directory: string, expected: DirectoryIde
 async function syncDirectoryDurably(
     directory: string,
     beforeSync?: () => void | Promise<void>,
-    expected?: { dev: number; ino: number },
+    expected?: DirectoryIdentity,
 ): Promise<void> {
     await beforeSync?.();
     if (expected) await assertDirectoryIdentity(directory, expected);
+    // Windows has no directory fsync through Node; file contents are flushed.
+    if (process.platform === "win32") return;
     const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
     try {
-        const stat = await handle.stat();
+        const stat = await handle.stat({ bigint: true });
         if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
             throw new Error(`${directory} changed concurrently before directory sync.`);
         await handle.sync();
@@ -195,7 +198,7 @@ async function installDirectorySnapshot(targetHandle: Awaited<ReturnType<typeof 
                 const identity = await readDirectoryIdentity(staged);
                 const child = await fs.open(staged, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
                 directories.set(item.relativePath, child);
-                const opened = await child.stat();
+                const opened = await child.stat({ bigint: true });
                 if (opened.dev !== identity.dev || opened.ino !== identity.ino)
                     throw new Error(`${item.relativePath} changed before private child admission.`);
                 await assertDirectoryIdentity(staged, identity);
@@ -225,9 +228,23 @@ async function installDirectorySnapshot(targetHandle: Awaited<ReturnType<typeof 
 async function restoreCapturedDirectory(
     captured: string,
     target: string,
-    hooks: { beforeInstall?: () => void | Promise<void>; afterReservationCheckBeforeCopy?: () => void | Promise<void>; beforeSync?: () => void | Promise<void> } = {},
+    hooks: { beforeInstall?: () => void | Promise<void>; afterReservationCheckBeforeCopy?: () => void | Promise<void>; beforeSync?: () => void | Promise<void>; capturedIdentity?: DirectoryIdentity; parentIdentity?: DirectoryIdentity } = {},
 ): Promise<void> {
     const parent = path.dirname(target);
+    if (process.platform === "win32") {
+        try {
+            const [capturedIdentity, parentIdentity] = await Promise.all([
+                hooks.capturedIdentity ?? readDirectoryIdentity(captured), hooks.parentIdentity ?? readDirectoryIdentity(parent),
+            ]);
+            await hooks.beforeInstall?.();
+            await hooks.beforeSync?.();
+            await moveWindowsNoReplace(captured, target, true, capturedIdentity, parentIdentity);
+        }
+        catch (error) {
+            throw new Error(`${target} could not be restored without touching a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+        }
+        return;
+    }
     const parentIdentity = await readDirectoryIdentity(parent);
     try {
         // Reserve the absent canonical name without replacing anything a
@@ -245,7 +262,7 @@ async function restoreCapturedDirectory(
         const snapshot = await captureDirectorySnapshot(captured);
         const targetHandle = await fs.open(target, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
         try {
-            const targetStat = await targetHandle.stat();
+            const targetStat = await targetHandle.stat({ bigint: true });
             if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
                 throw new Error(`${target} changed concurrently before restoration copy.`);
             await hooks.afterReservationCheckBeforeCopy?.();
@@ -280,7 +297,7 @@ async function packageRows(root: string, type: "entry-package" | "macro-package"
     for (const file of await jsonFiles(path.join(doc, "packages"))) {
         const manifest = requireRecord(await readJson(file), "Package manifest");
         const id = requireId(manifest);
-        if (path.relative(doc, file) !== packageManifestPath(id))
+        if (path.relative(doc, file).split(path.sep).join("/") !== packageManifestPath(id))
             throw new Error(`${file} does not match Package identity ${id}.`);
         if (type === "entry-package")
             rows.push(managed(type, id, manifest));
@@ -648,7 +665,7 @@ async function createDirect(root: string, type: "relationship" | "library", inpu
         if (path.basename(id) !== id || id === "." || id === "..")
             return invalid("Library slug must be one safe path segment.");
         const docDirectoryIdentity = await readDirectoryIdentity(docRoot(root));
-        let librariesDirectoryIdentity: { dev: number; ino: number };
+        let librariesDirectoryIdentity: DirectoryIdentity;
         try {
             await fs.mkdir(librariesDir);
             await syncDirectoryDurably(docRoot(root), options.beforeLibraryCreateParentSync, docDirectoryIdentity);
@@ -1093,19 +1110,23 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
         }
         const tomb = path.join(path.dirname(dir), `.${id}.snl-entity-${randomUUID()}.deleted`);
+        const restoreHooks = {
+            beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck,
+            parentIdentity: librariesDirectoryIdentity,
+        };
         await options.beforeEntityDelete?.();
         await fs.rename(dir, tomb);
+        const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
         try { await syncDirectoryDurably(path.dirname(dir), options.beforeLibraryCaptureSync, librariesDirectoryIdentity); }
         catch (error) {
-            try { await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck }); }
+            try { await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity }); }
             catch (restoreError) {
                 throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
             }
             throw error;
         }
-        const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
         if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
-            await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+            await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
             throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
         }
         let captured: RecordJson;
@@ -1113,7 +1134,7 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             captured = await readLibraryDirectoryValue(tomb, id);
         }
         catch (error) {
-            await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+            await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
             throw new Error(
                 `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
                 { cause: error },
@@ -1121,15 +1142,16 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
         }
         const capturedExtras = await libraryExtraNames(tomb);
         if (sha(captured) !== current.revision || capturedExtras.length) {
-            await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+            await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
             throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
         }
-        await options.beforeLibraryDirectoryRemove?.(tomb);
-        const fileCaptures: Array<{ name: string; captured: string; identity: { dev: number; ino: number } }> = [];
+        const fileCaptures: Array<{ name: string; captured: string; identity: { dev: bigint; ino: bigint } }> = [];
+        let removed = false;
         try {
+            await options.beforeLibraryDirectoryRemove?.(tomb);
             for (const name of ["meta.json", "graph.json", "counters.json"]) {
                 const source = path.join(tomb, name);
-                let identity: { dev: number; ino: number };
+                let identity: { dev: bigint; ino: bigint };
                 try {
                     const original = await readRegularText(source);
                     identity = { dev: original.dev, ino: original.ino };
@@ -1148,21 +1170,41 @@ async function mutateDirect(root: string, type: Exclude<ManagedEntityType, "entr
             // Never recurse: an unmanaged file arriving after the earlier check
             // makes rmdir fail and is restored with the Library instead of lost.
             await fs.rmdir(tomb);
+            removed = true;
             await syncDirectoryDurably(path.dirname(tomb), options.beforeLibraryDeleteCommitSync, librariesDirectoryIdentity);
         }
         catch (error) {
             const recoveryErrors: string[] = [];
-            try { await fs.mkdir(tomb); }
+            let recoveryIdentity = capturedDirectoryIdentity;
+            try {
+                if (process.platform !== "win32" || removed) {
+                    await fs.mkdir(tomb);
+                    if (process.platform === "win32") recoveryIdentity = await readDirectoryIdentity(tomb);
+                }
+            }
             catch (mkdirError) {
-                if ((mkdirError as NodeJS.ErrnoException).code !== "EEXIST")
+                if (process.platform === "win32" || (mkdirError as NodeJS.ErrnoException).code !== "EEXIST")
                     recoveryErrors.push(`recreate tomb: ${mkdirError instanceof Error ? mkdirError.message : String(mkdirError)}`);
             }
-            for (const item of fileCaptures.reverse()) {
-                try { await fs.rename(item.captured, path.join(tomb, item.name)); }
+            for (const item of (recoveryErrors.length && process.platform === "win32" ? [] : fileCaptures.reverse())) {
+                try {
+                    const destination = path.join(tomb, item.name);
+                    if (process.platform === "win32") {
+                        await moveWindowsNoReplace(item.captured, destination, false, item.identity, recoveryIdentity);
+                    } else {
+                        await fs.rename(item.captured, destination);
+                    }
+                }
                 catch (restoreError) { recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
             }
-            try { await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck }); }
-            catch (restoreError) { recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
+            if (!recoveryErrors.length || process.platform !== "win32") {
+                try {
+                    await restoreCapturedDirectory(tomb, dir, {
+                        ...restoreHooks, capturedIdentity: recoveryIdentity,
+                    });
+                }
+                catch (restoreError) { recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`); }
+            }
             if (recoveryErrors.length)
                 throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });
             throw new Error(`${dir} changed while deletion was in flight; its directory was restored.`, { cause: error });

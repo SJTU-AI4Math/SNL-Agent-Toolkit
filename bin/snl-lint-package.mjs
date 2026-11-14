@@ -9,9 +9,9 @@ import { dirname, join } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const target = join(here, '..', 'src', 'cli', 'lint-package.ts');
-const tsx = join(here, '..', 'node_modules', '.bin', 'tsx');
+const tsx = join(here, '..', 'node_modules', 'tsx', 'dist', 'cli.mjs');
 
-const child = spawn(tsx, [target, ...process.argv.slice(2)], {
+const child = spawn(process.execPath, [tsx, target, ...process.argv.slice(2)], {
   stdio: 'inherit',
 });
 child.on('exit', (code, signal) => {

@@ -2314,22 +2314,22 @@ function scalarMatches(type, value) {
   }
 }
 var ONE_OF_SIBLING_KEYWORDS = ["properties", "required", "additionalProperties", "items", "enum", "const"];
-function checkObjectSchemaTail(node, path14, properties, violations) {
+function checkObjectSchemaTail(node, path16, properties, violations) {
   const hasRequired = Object.hasOwn(node, "required");
   const required = hasRequired ? node.required : void 0;
   if (hasRequired) {
     if (!isPlainJsonArray(required) || required.some((entry) => typeof entry !== "string")) {
-      violations.push(`${path14}.required must be an array of strings`);
+      violations.push(`${path16}.required must be an array of strings`);
     } else {
       const declared = isJsonSchemaRecord(properties) ? properties : {};
       for (const key of required) {
         if (!Object.hasOwn(declared, key))
-          violations.push(`${path14}.required names "${key}" which is not in properties`);
+          violations.push(`${path16}.required names "${key}" which is not in properties`);
       }
     }
   }
   if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") {
-    violations.push(`${path14}.additionalProperties must be a boolean`);
+    violations.push(`${path16}.additionalProperties must be a boolean`);
   }
 }
 function checkSchemaNode(root, rootPath, violations, seen) {
@@ -2350,13 +2350,13 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       checkObjectSchemaTail(task.node, task.path, task.properties, violations);
       continue;
     }
-    const { node, path: path14 } = task;
+    const { node, path: path16 } = task;
     if (!isJsonSchemaRecord(node)) {
-      violations.push(`${path14} must be a schema object`);
+      violations.push(`${path16} must be a schema object`);
       continue;
     }
     if (seen.has(node)) {
-      violations.push(`${path14} is circular`);
+      violations.push(`${path16} is circular`);
       continue;
     }
     seen.add(node);
@@ -2367,48 +2367,48 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       if (ANNOTATION_KEYWORDS.has(key)) {
         try {
           if (!isJsonValue(node[key]))
-            violations.push(`${path14}.${key} annotation must be lossless JSON data`);
+            violations.push(`${path16}.${key} annotation must be lossless JSON data`);
         } catch {
-          violations.push(`${path14}.${key} annotation must be lossless JSON data`);
+          violations.push(`${path16}.${key} annotation must be lossless JSON data`);
         }
         continue;
       }
-      violations.push(`${path14}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
+      violations.push(`${path16}.${key} is not a supported keyword (subset: type/oneOf/properties/required/additionalProperties/items/enum/const + annotations)`);
     }
     if (Object.hasOwn(node, "description") && typeof node.description !== "string") {
-      violations.push(`${path14}.description must be a string`);
+      violations.push(`${path16}.description must be a string`);
     }
     if (Object.hasOwn(node, "title") && typeof node.title !== "string") {
-      violations.push(`${path14}.title must be a string`);
+      violations.push(`${path16}.title must be a string`);
     }
     const hasType = Object.hasOwn(node, "type");
     const hasOneOf = Object.hasOwn(node, "oneOf");
     if (hasType && hasOneOf) {
-      violations.push(`${path14} cannot declare both type and oneOf`);
+      violations.push(`${path16} cannot declare both type and oneOf`);
       continue;
     }
     if (!hasType && !hasOneOf) {
       for (const key of ONE_OF_SIBLING_KEYWORDS) {
         if (Object.hasOwn(node, key))
-          violations.push(`${path14}.${key} requires type or oneOf`);
+          violations.push(`${path16}.${key} requires type or oneOf`);
       }
       continue;
     }
     if (hasOneOf) {
       const oneOf = node.oneOf;
-      tasks.push({ kind: "one-of-tail", node, path: path14 });
+      tasks.push({ kind: "one-of-tail", node, path: path16 });
       if (!isPlainJsonArray(oneOf) || oneOf.length < 2) {
-        violations.push(`${path14}.oneOf must be an array of at least two schemas`);
+        violations.push(`${path16}.oneOf must be an array of at least two schemas`);
       } else {
         for (let index = oneOf.length - 1; index >= 0; index--) {
-          tasks.push({ kind: "enter", node: oneOf[index], path: `${path14}.oneOf[${index}]` });
+          tasks.push({ kind: "enter", node: oneOf[index], path: `${path16}.oneOf[${index}]` });
         }
       }
       continue;
     }
     const type = node.type;
     if (typeof type !== "string" || !SCHEMA_TYPES.includes(type)) {
-      violations.push(Array.isArray(type) ? `${path14}.type must be a single type string (type arrays are not supported)` : `${path14}.type must be one of ${SCHEMA_TYPES.join("/")}`);
+      violations.push(Array.isArray(type) ? `${path16}.type must be a single type string (type arrays are not supported)` : `${path16}.type must be one of ${SCHEMA_TYPES.join("/")}`);
       continue;
     }
     const schemaType = type;
@@ -2422,23 +2422,23 @@ function checkSchemaNode(root, rootPath, violations, seen) {
     };
     for (const [key, types] of Object.entries(allowedFor)) {
       if (Object.hasOwn(node, key) && !types.includes(schemaType)) {
-        violations.push(`${path14}.${key} is not supported on type "${schemaType}"`);
+        violations.push(`${path16}.${key} is not supported on type "${schemaType}"`);
       }
     }
     switch (schemaType) {
       case "object": {
         const properties = Object.hasOwn(node, "properties") ? node.properties : void 0;
-        tasks.push({ kind: "object-tail", node, path: path14, properties });
+        tasks.push({ kind: "object-tail", node, path: path16, properties });
         if (Object.hasOwn(node, "properties")) {
           if (!isJsonSchemaRecord(properties)) {
-            violations.push(`${path14}.properties must be an object of schemas`);
+            violations.push(`${path16}.properties must be an object of schemas`);
           } else {
             const entries = Object.entries(properties);
             for (let index = entries.length - 1; index >= 0; index--) {
               const entry = entries[index];
               if (entry === void 0)
                 continue;
-              tasks.push({ kind: "enter", node: entry[1], path: `${path14}.properties.${entry[0]}` });
+              tasks.push({ kind: "enter", node: entry[1], path: `${path16}.properties.${entry[0]}` });
             }
           }
         }
@@ -2446,7 +2446,7 @@ function checkSchemaNode(root, rootPath, violations, seen) {
       }
       case "array": {
         if (Object.hasOwn(node, "items"))
-          tasks.push({ kind: "enter", node: node.items, path: `${path14}.items` });
+          tasks.push({ kind: "enter", node: node.items, path: `${path16}.items` });
         break;
       }
       case "string":
@@ -2458,16 +2458,16 @@ function checkSchemaNode(root, rootPath, violations, seen) {
         const allowed = hasEnum ? node.enum : void 0;
         const enumValid = isPlainJsonArray(allowed) && allowed.length > 0 && allowed.every((entry) => scalarMatches(schemaType, entry));
         if (hasEnum && !enumValid) {
-          violations.push(`${path14}.enum must be a non-empty array of ${schemaType} values`);
+          violations.push(`${path16}.enum must be a non-empty array of ${schemaType} values`);
         }
         const hasConst = Object.hasOwn(node, "const");
         const declaredConst = hasConst ? node.const : void 0;
         const constValid = scalarMatches(schemaType, declaredConst);
         if (hasConst) {
           if (!constValid) {
-            violations.push(`${path14}.const must be a ${schemaType} value`);
+            violations.push(`${path16}.const must be a ${schemaType} value`);
           } else if (enumValid && !allowed.includes(declaredConst)) {
-            violations.push(`${path14}.const must be one of ${path14}.enum when both are declared`);
+            violations.push(`${path16}.const must be one of ${path16}.enum when both are declared`);
           }
         }
         break;
@@ -2491,24 +2491,24 @@ function safelyIsJsonValue(value) {
     return false;
   }
 }
-function diagnosticPath(path14) {
-  return path14 === "" ? "arguments" : path14;
+function diagnosticPath(path16) {
+  return path16 === "" ? "arguments" : path16;
 }
-function propertyPath(path14, key) {
-  return path14 === "" ? key : `${path14}.${key}`;
+function propertyPath(path16, key) {
+  return path16 === "" ? key : `${path16}.${key}`;
 }
-function losslessValueViolation(path14) {
-  return [`"${diagnosticPath(path14)}" must be a lossless JSON value`];
+function losslessValueViolation(path16) {
+  return [`"${diagnosticPath(path16)}" must be a lossless JSON value`];
 }
 function appendViolations(target, source) {
   for (const violation of source)
     target.push(violation);
 }
-function valueFrame(node, value, path14) {
+function valueFrame(node, value, path16) {
   return {
     node,
     value,
-    path: path14,
+    path: path16,
     catches: false,
     phase: "start",
     children: [],
@@ -2518,18 +2518,18 @@ function valueFrame(node, value, path14) {
     matches: 0
   };
 }
-function checkScalarValue(node, value, path14) {
+function checkScalarValue(node, value, path16) {
   const allowed = Object.hasOwn(node, "enum") ? node.enum : void 0;
   if (allowed !== void 0 && !allowed.includes(value)) {
-    return [`"${diagnosticPath(path14)}" must be one of ${JSON.stringify(allowed)}`];
+    return [`"${diagnosticPath(path16)}" must be one of ${JSON.stringify(allowed)}`];
   }
   if (Object.hasOwn(node, "const") && value !== node.const) {
-    return [`"${diagnosticPath(path14)}" must be ${JSON.stringify(node.const)}`];
+    return [`"${diagnosticPath(path16)}" must be ${JSON.stringify(node.const)}`];
   }
   return [];
 }
-function checkValue(schema, value, path14) {
-  const frames = [valueFrame(schema, value, path14)];
+function checkValue(schema, value, path16) {
+  const frames = [valueFrame(schema, value, path16)];
   let rootResult;
   const receive = (result) => {
     const parent = frames.at(-1);
@@ -2668,10 +2668,10 @@ function checkValue(schema, value, path14) {
       receive(losslessValueViolation(failed.path));
     }
   }
-  return rootResult ?? losslessValueViolation(path14);
+  return rootResult ?? losslessValueViolation(path16);
 }
-function validateJsonSchemaValue(schema, value, path14 = "value") {
-  return checkValue(schema, value, path14);
+function validateJsonSchemaValue(schema, value, path16 = "value") {
+  return checkValue(schema, value, path16);
 }
 
 // node_modules/@deepseek-ai/dsh-tools/lib/types/schema.js
@@ -2689,10 +2689,10 @@ function copyAnnotations(source, target) {
   if (Object.hasOwn(source, "examples"))
     target.examples = source.examples;
 }
-function assertAuthorKeys(source, path14, allowed) {
+function assertAuthorKeys(source, path16, allowed) {
   for (const key of Object.keys(source)) {
     if (!allowed.includes(key))
-      authorError(`${path14}.${key} is not supported by the value schema DSL`);
+      authorError(`${path16}.${key} is not supported by the value schema DSL`);
   }
 }
 function assignCompiledNode(destination, node) {
@@ -2783,22 +2783,22 @@ function runSchemaCompiler(initial) {
       }
       continue;
     }
-    const { input, path: path14 } = task;
+    const { input, path: path16 } = task;
     if (!isJsonSchemaRecord(input))
-      authorError(`${path14} must be a value schema object`);
+      authorError(`${path16} must be a value schema object`);
     if (seen.has(input))
-      authorError(`${path14} is circular`);
+      authorError(`${path16} is circular`);
     seen.add(input);
     const authorKeys = [...ANNOTATION_KEYS, ...task.allowRequired ? ["required"] : []];
     const node = {};
     assignCompiledNode(task.destination, node);
     tasks.push({ kind: "leave", input });
     if (Object.hasOwn(input, "oneOf")) {
-      assertAuthorKeys(input, path14, [...authorKeys, "oneOf", "type"]);
+      assertAuthorKeys(input, path16, [...authorKeys, "oneOf", "type"]);
       if (Object.hasOwn(input, "type"))
-        authorError(`${path14} cannot declare both type and oneOf`);
+        authorError(`${path16} cannot declare both type and oneOf`);
       if (!isPlainJsonArray(input.oneOf))
-        authorError(`${path14}.oneOf must be an array of at least two value schemas`);
+        authorError(`${path16}.oneOf must be an array of at least two value schemas`);
       const branches = [];
       node.oneOf = branches;
       copyAnnotations(input, node);
@@ -2806,7 +2806,7 @@ function runSchemaCompiler(initial) {
         tasks.push({
           kind: "value",
           input: input.oneOf[index],
-          path: `${path14}.oneOf[${index}]`,
+          path: `${path16}.oneOf[${index}]`,
           allowRequired: false,
           destination: { kind: "one-of", target: branches, index }
         });
@@ -2816,13 +2816,13 @@ function runSchemaCompiler(initial) {
     const inputType = Object.hasOwn(input, "type") ? input.type : void 0;
     switch (inputType) {
       case "json":
-        assertAuthorKeys(input, path14, [...authorKeys, "type"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type"]);
         copyAnnotations(input, node);
         break;
       case "object":
-        assertAuthorKeys(input, path14, [...authorKeys, "type", "properties", "additionalProperties"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type", "properties", "additionalProperties"]);
         if (!Object.hasOwn(input, "additionalProperties") || typeof input.additionalProperties !== "boolean") {
-          authorError(`${path14}.additionalProperties must be explicitly true or false`);
+          authorError(`${path16}.additionalProperties must be explicitly true or false`);
         }
         node.type = "object";
         copyAnnotations(input, node);
@@ -2831,20 +2831,20 @@ function runSchemaCompiler(initial) {
           tasks.push({
             kind: "property-map",
             input: input.properties,
-            path: `${path14}.properties`,
+            path: `${path16}.properties`,
             destination: { kind: "object", target: node }
           });
         }
         break;
       case "array":
-        assertAuthorKeys(input, path14, [...authorKeys, "type", "items"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type", "items"]);
         node.type = "array";
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "items")) {
           tasks.push({
             kind: "value",
             input: input.items,
-            path: `${path14}.items`,
+            path: `${path16}.items`,
             allowRequired: false,
             destination: { kind: "item", target: node }
           });
@@ -2855,31 +2855,31 @@ function runSchemaCompiler(initial) {
       case "integer":
       case "boolean":
       case "null":
-        assertAuthorKeys(input, path14, [...authorKeys, "type", "enum", "const"]);
+        assertAuthorKeys(input, path16, [...authorKeys, "type", "enum", "const"]);
         node.type = inputType;
         copyAnnotations(input, node);
         if (Object.hasOwn(input, "enum")) {
           if (!isPlainJsonArray(input.enum))
-            authorError(`${path14}.enum must be a non-empty array of scalar values`);
+            authorError(`${path16}.enum must be a non-empty array of scalar values`);
           node.enum = Array.from(input.enum, (entry) => entry);
         }
         if (Object.hasOwn(input, "const"))
           node.const = input.const;
         break;
       default:
-        authorError(`${path14}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
+        authorError(`${path16}.type must be string/number/integer/boolean/null/array/object/json, or use oneOf`);
     }
   }
 }
-function compilePropertyMap(input, path14) {
+function compilePropertyMap(input, path16) {
   const holder = {};
-  runSchemaCompiler({ kind: "property-map", input, path: path14, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path14} did not compile`);
+  runSchemaCompiler({ kind: "property-map", input, path: path16, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path16} did not compile`);
 }
-function compileValueSchema(input, path14) {
+function compileValueSchema(input, path16) {
   const holder = {};
-  runSchemaCompiler({ kind: "value", input, path: path14, allowRequired: false, destination: { kind: "root", holder } });
-  return holder.value ?? authorError(`${path14} did not compile`);
+  runSchemaCompiler({ kind: "value", input, path: path16, allowRequired: false, destination: { kind: "root", holder } });
+  return holder.value ?? authorError(`${path16} did not compile`);
 }
 function valueSchemaSpecToJsonSchema(spec) {
   const schema = compileValueSchema(spec, "schema");
@@ -4325,11 +4325,11 @@ var scriptData = [{
 }];
 function scriptFromCodepoint(codepoint) {
   for (var i5 = 0; i5 < scriptData.length; i5++) {
-    var script2 = scriptData[i5];
-    for (var _i6 = 0; _i6 < script2.blocks.length; _i6++) {
-      var block = script2.blocks[_i6];
+    var script4 = scriptData[i5];
+    for (var _i6 = 0; _i6 < script4.blocks.length; _i6++) {
+      var block = script4.blocks[_i6];
       if (codepoint >= block[0] && codepoint <= block[1]) {
-        return script2.name;
+        return script4.name;
       }
     }
   }
@@ -4372,27 +4372,27 @@ var sqrtTall = function sqrtTall2(extraVinculum, hLinePad2, viewBoxHeight) {
 };
 var sqrtPath = function sqrtPath2(size, extraVinculum, viewBoxHeight) {
   extraVinculum = 1e3 * extraVinculum;
-  var path14 = "";
+  var path16 = "";
   switch (size) {
     case "sqrtMain":
-      path14 = sqrtMain(extraVinculum, hLinePad);
+      path16 = sqrtMain(extraVinculum, hLinePad);
       break;
     case "sqrtSize1":
-      path14 = sqrtSize1(extraVinculum, hLinePad);
+      path16 = sqrtSize1(extraVinculum, hLinePad);
       break;
     case "sqrtSize2":
-      path14 = sqrtSize2(extraVinculum, hLinePad);
+      path16 = sqrtSize2(extraVinculum, hLinePad);
       break;
     case "sqrtSize3":
-      path14 = sqrtSize3(extraVinculum, hLinePad);
+      path16 = sqrtSize3(extraVinculum, hLinePad);
       break;
     case "sqrtSize4":
-      path14 = sqrtSize4(extraVinculum, hLinePad);
+      path16 = sqrtSize4(extraVinculum, hLinePad);
       break;
     case "sqrtTall":
-      path14 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
+      path16 = sqrtTall(extraVinculum, hLinePad, viewBoxHeight);
   }
-  return path14;
+  return path16;
 };
 var innerPath = function innerPath2(name2, height) {
   switch (name2) {
@@ -4834,9 +4834,9 @@ var SymbolNode = class {
     this.classes = classes || [];
     this.style = style2 || {};
     this.maxFontSize = 0;
-    var script2 = scriptFromCodepoint(this.text.charCodeAt(0));
-    if (script2) {
-      this.classes.push(script2 + "_fallback");
+    var script4 = scriptFromCodepoint(this.text.charCodeAt(0));
+    if (script4) {
+      this.classes.push(script4 + "_fallback");
     }
     if (/[îïíì]/.test(this.text)) {
       this.text = iCombinations[this.text];
@@ -8575,8 +8575,8 @@ var svgData = {
 };
 var staticSvg = function staticSvg2(value, options) {
   var [pathName, width, height] = svgData[value];
-  var path14 = new PathNode(pathName);
-  var svgNode = new SvgNode([path14], {
+  var path16 = new PathNode(pathName);
+  var svgNode = new SvgNode([path16], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -9745,8 +9745,8 @@ var stretchySvg = function stretchySvg2(group, options) {
           pathName = "tilde" + imgIndex;
         }
       }
-      var path14 = new PathNode(pathName);
-      var svgNode = new SvgNode([path14], {
+      var path16 = new PathNode(pathName);
+      var svgNode = new SvgNode([path16], {
         "width": "100%",
         "height": makeEm(_height),
         "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight,
@@ -11043,8 +11043,8 @@ var makeGlyphSpan = function makeGlyphSpan2(symbol, font, mode) {
 };
 var makeInner = function makeInner2(ch2, height, options) {
   var width = fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)] ? fontMetricsData["Size4-Regular"][ch2.charCodeAt(0)][4] : fontMetricsData["Size1-Regular"][ch2.charCodeAt(0)][4];
-  var path14 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
-  var svgNode = new SvgNode([path14], {
+  var path16 = new PathNode("inner", innerPath(ch2, Math.round(1e3 * height)));
+  var svgNode = new SvgNode([path16], {
     "width": makeEm(width),
     "height": makeEm(height),
     // Override CSS rule `.katex svg { width: 100% }`
@@ -11213,10 +11213,10 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
     var midHeight = realHeightTotal - topHeightTotal - bottomHeightTotal;
     var viewBoxHeight = Math.round(realHeightTotal * 1e3);
     var pathStr = tallDelim(svgLabel, Math.round(midHeight * 1e3));
-    var path14 = new PathNode(svgLabel, pathStr);
+    var path16 = new PathNode(svgLabel, pathStr);
     var width = makeEm(viewBoxWidth / 1e3);
     var height = makeEm(viewBoxHeight / 1e3);
-    var svg = new SvgNode([path14], {
+    var svg = new SvgNode([path16], {
       "width": width,
       "height": height,
       "viewBox": "0 0 " + viewBoxWidth + " " + viewBoxHeight
@@ -11257,8 +11257,8 @@ var makeStackedDelim = function makeStackedDelim2(delim, heightTotal, center, op
 var vbPad = 80;
 var emPad = 0.08;
 var sqrtSvg = function sqrtSvg2(sqrtName, height, viewBoxHeight, extraVinculum, options) {
-  var path14 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
-  var pathNode = new PathNode(sqrtName, path14);
+  var path16 = sqrtPath(sqrtName, extraVinculum, viewBoxHeight);
+  var pathNode = new PathNode(sqrtName, path16);
   var svg = new SvgNode([pathNode], {
     // Note: 1000:1 ratio of viewBox to document em width.
     "width": "400em",
@@ -11765,8 +11765,8 @@ var htmlBuilder$7 = (group, options) => {
     var angleHeight = inner2.height + inner2.depth + lineWeight + clearance;
     inner2.style.paddingLeft = makeEm(angleHeight / 2 + lineWeight);
     var viewBoxHeight = Math.floor(1e3 * angleHeight * scale);
-    var path14 = phasePath(viewBoxHeight);
-    var svgNode = new SvgNode([new PathNode("phase", path14)], {
+    var path16 = phasePath(viewBoxHeight);
+    var svgNode = new SvgNode([new PathNode("phase", path16)], {
       "width": "400em",
       "height": makeEm(viewBoxHeight / 1e3),
       "viewBox": "0 0 400000 " + viewBoxHeight,
@@ -18594,13 +18594,39 @@ import * as path3 from "node:path";
 import { constants, promises as fs } from "node:fs";
 import path2 from "node:path";
 import { randomUUID } from "node:crypto";
+
+// lib/file-identity.ts
+function matchesPathFileIdentity(entry, opened) {
+  return entry.ino !== 0n && entry.ino === opened.ino && (entry.dev === opened.dev || process.platform === "win32" && entry.dev === 0n);
+}
+
+// lib/read-bounded-file.ts
+var FileSizeLimitError = class extends Error {
+};
+async function readBoundedFile(handle, limit) {
+  const { size } = await handle.stat();
+  if (size > limit) throw new FileSizeLimitError();
+  const chunks = [];
+  let length = 0;
+  while (length <= limit) {
+    const chunk = Buffer.allocUnsafe(Math.min(64 * 1024, limit - length + 1));
+    const { bytesRead } = await handle.read(chunk, 0, chunk.length, length);
+    if (bytesRead === 0) return Buffer.concat(chunks, length);
+    length += bytesRead;
+    if (length > limit) break;
+    chunks.push(chunk.subarray(0, bytesRead));
+  }
+  throw new FileSizeLimitError();
+}
+
+// lib/guarded-json-file.ts
 function jsonText(value) {
   return `${JSON.stringify(value, null, 2)}
 `;
 }
 async function readCanonicalDirectoryIdentity(directory) {
   const resolved = path2.resolve(directory);
-  const stat = await fs.lstat(resolved);
+  const stat = await fs.lstat(resolved, { bigint: true });
   if (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(resolved) !== resolved) {
     throw new Error(`${resolved} must be a canonical, non-symlink directory.`);
   }
@@ -18614,23 +18640,32 @@ async function assertCanonicalDirectory(directory, expected) {
   return observed;
 }
 async function readRegularText(file) {
+  const { value: text3, ...identity } = await readRegularFile(file, (handle) => handle.readFile("utf8"));
+  return { text: text3, ...identity };
+}
+async function readRegularBytes(file, limit) {
+  return (await readRegularFile(file, (handle) => readBoundedFile(handle, limit))).value;
+}
+async function readRegularFile(file, read) {
   const directory = path2.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory(directory);
-  const before = await fs.lstat(file);
+  const directoryIdentity2 = await assertCanonicalDirectory(directory);
+  const before = await fs.lstat(file, { bigint: true });
   if (!before.isFile() || before.isSymbolicLink()) throw new Error(`${file} must be a regular, non-symlink file.`);
   let handle;
   try {
-    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
-    const stat = await handle.stat();
-    await assertCanonicalDirectory(directory, directoryIdentity);
-    if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
+    handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+    const stat = await handle.stat({ bigint: true });
+    const current = await fs.lstat(file, { bigint: true });
+    await assertCanonicalDirectory(directory, directoryIdentity2);
+    if (!stat.isFile() || !current.isFile() || current.dev !== before.dev || !matchesPathFileIdentity(before, stat) || !matchesPathFileIdentity(current, stat))
+      throw new Error(`${file} changed concurrently or is not a regular, non-symlink file.`);
     return {
-      text: await handle.readFile("utf8"),
-      mode: stat.mode & 511,
+      value: await read(handle),
+      mode: Number(stat.mode & 0o777n),
       dev: stat.dev,
       ino: stat.ino,
-      directoryDev: directoryIdentity.dev,
-      directoryIno: directoryIdentity.ino
+      directoryDev: directoryIdentity2.dev,
+      directoryIno: directoryIdentity2.ino
     };
   } catch (error) {
     if (error.code === "ELOOP")
@@ -18643,9 +18678,10 @@ async function readRegularText(file) {
 async function syncDirectory(directory, beforeSync, expected) {
   await beforeSync?.();
   await assertCanonicalDirectory(directory, expected);
+  if (process.platform === "win32") return;
   const handle = await fs.open(directory, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_DIRECTORY);
   try {
-    const stat = await handle.stat();
+    const stat = await handle.stat({ bigint: true });
     if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
       throw new Error(`${directory} changed concurrently before directory sync.`);
     await handle.sync();
@@ -18656,7 +18692,7 @@ async function syncDirectory(directory, beforeSync, expected) {
 }
 async function sameInode(left, right) {
   try {
-    const [a4, b4] = await Promise.all([fs.lstat(left), fs.lstat(right)]);
+    const [a4, b4] = await Promise.all([fs.lstat(left, { bigint: true }), fs.lstat(right, { bigint: true })]);
     return a4.dev === b4.dev && a4.ino === b4.ino;
   } catch {
     return false;
@@ -18683,7 +18719,7 @@ async function quarantineAndRemoveOwnedPath(file, ownedLink) {
 }
 async function installNewJson(file, value, hooks = {}) {
   const directory = path2.dirname(file);
-  const directoryIdentity = await assertCanonicalDirectory(directory);
+  const directoryIdentity2 = await assertCanonicalDirectory(directory);
   const temp = path2.join(
     directory,
     `.${path2.basename(file)}.snl-create-${process.pid}-${randomUUID()}.tmp`
@@ -18696,11 +18732,11 @@ async function installNewJson(file, value, hooks = {}) {
     await handle.sync();
     await handle.close();
     handle = void 0;
-    await assertCanonicalDirectory(directory, directoryIdentity);
+    await assertCanonicalDirectory(directory, directoryIdentity2);
     await fs.link(temp, file);
     installed = true;
     try {
-      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity);
+      await syncDirectory(directory, hooks.beforeDirectorySync, directoryIdentity2);
     } catch (error) {
       await hooks.beforeRollbackQuarantine?.();
       if (await quarantineAndRemoveOwnedPath(file, temp)) installed = false;
@@ -19964,8 +20000,8 @@ async function computeEntryBareLatex(root, id) {
 // lib/entity-crud.ts
 import { createHash as createHash3, randomUUID as randomUUID3 } from "node:crypto";
 import { constants as constants5, promises as fs5 } from "node:fs";
-import { spawn } from "node:child_process";
-import path7 from "node:path";
+import { spawn as spawn2 } from "node:child_process";
+import path8 from "node:path";
 
 // lib/snl-parser.ts
 function tryParseSnlSyntaxTree(input) {
@@ -20325,12 +20361,12 @@ function lintPackage(raw, opts = {}) {
           const result = checkKatex(filled, { displayMode: template2.mode === "formula_display" });
           if (!result.ok) {
             const suffix = projections.length > 1 ? `.values[${projectionIndex}]` : "";
-            const path14 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
+            const path16 = `macros.${name2}.styles[${styleIndex}].template${suffix}.body`;
             issues2.push({
               severity: "error",
               code: "style.katex-compile",
-              message: `${path14} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
-              path: path14,
+              message: `${path16} does not compile under KaTeX: ${result.message}. Filled preview ('#N' -> x): ${filled}`,
+              path: path16,
               position: result.position
             });
           }
@@ -20344,43 +20380,43 @@ function lintPackage(raw, opts = {}) {
   return { issues };
 }
 function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
-  const path14 = `macros.${name2}`;
+  const path16 = `macros.${name2}`;
   if (!isRecord4(raw)) {
-    issues.push({ severity: "error", code: "macro.not-object", message: `${path14}: macro entry must be an object.`, path: path14 });
+    issues.push({ severity: "error", code: "macro.not-object", message: `${path16}: macro entry must be an object.`, path: path16 });
     return;
   }
   const macro2 = raw;
   if (typeof macro2.description !== "string") {
-    issues.push({ severity: "error", code: "macro.missing-description", message: `${path14}.description must be a string (may be empty).`, path: `${path14}.description` });
+    issues.push({ severity: "error", code: "macro.missing-description", message: `${path16}.description must be a string (may be empty).`, path: `${path16}.description` });
   }
   if (!isRecord4(macro2.source) || !isStringArray2(macro2.source.entries) || !isStringArray2(macro2.source.urls)) {
-    issues.push({ severity: "error", code: "macro.bad-source", message: `${path14}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path14}.source` });
+    issues.push({ severity: "error", code: "macro.bad-source", message: `${path16}.source must be { entries: string[], urls: string[] } (both arrays required, may be empty).`, path: `${path16}.source` });
   }
   if (typeof macro2.dynamic_arity !== "boolean") {
-    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path14}.dynamic_arity must be a boolean.`, path: `${path14}.dynamic_arity` });
+    issues.push({ severity: "error", code: "macro.missing-dynamic-arity", message: `${path16}.dynamic_arity must be a boolean.`, path: `${path16}.dynamic_arity` });
   }
   if (macro2.kind !== void 0 && typeof macro2.kind !== "string") {
-    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path14}.kind must be a string when present.`, path: `${path14}.kind` });
+    issues.push({ severity: "error", code: "macro.bad-kind", message: `${path16}.kind must be a string when present.`, path: `${path16}.kind` });
   }
   if (!isStringArray2(macro2.tags)) {
-    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path14}.tags must be a string array (may be empty).`, path: `${path14}.tags` });
+    issues.push({ severity: "error", code: "macro.missing-tags", message: `${path16}.tags must be a string array (may be empty).`, path: `${path16}.tags` });
   } else if (macro2.tags.some((tag) => tag.includes("\\"))) {
-    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path14}.tags must not contain backslashes.`, path: `${path14}.tags` });
+    issues.push({ severity: "error", code: "macro.bad-tags", message: `${path16}.tags must not contain backslashes.`, path: `${path16}.tags` });
   }
   const defaultStyle = macro2.default_style;
   if (defaultStyle === void 0) {
-    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path14}.default_style must be a language \u2192 style-name object.`, path: `${path14}.default_style` });
+    issues.push({ severity: "error", code: "macro.missing-default-style", message: `${path16}.default_style must be a language \u2192 style-name object.`, path: `${path16}.default_style` });
   } else if (!isRecord4(defaultStyle) || Object.values(defaultStyle).some((value) => typeof value !== "string")) {
-    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style must map language keys to style-name strings.`, path: `${path14}.default_style` });
+    issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path16}.default_style must map language keys to style-name strings.`, path: `${path16}.default_style` });
   }
   if (!Array.isArray(macro2.styles) || macro2.styles.length === 0) {
-    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path14}.styles must be a non-empty array.`, path: `${path14}.styles` });
+    issues.push({ severity: "error", code: "macro.missing-styles", message: `${path16}.styles must be a non-empty array.`, path: `${path16}.styles` });
     return;
   }
   const seenNames = /* @__PURE__ */ new Set();
   const maxIndexes = [];
   macro2.styles.forEach((rawStyle, index) => {
-    const stylePath = `${path14}.styles[${index}]`;
+    const stylePath = `${path16}.styles[${index}]`;
     if (!isRecord4(rawStyle)) {
       issues.push({ severity: "error", code: "style.not-object", message: `${stylePath} must be an object.`, path: stylePath });
       return;
@@ -20444,12 +20480,12 @@ function lintMacroEntry(name2, raw, issues, checkKatexEnabled) {
   if (isRecord4(defaultStyle)) {
     for (const [language, styleName] of Object.entries(defaultStyle)) {
       if (!language.trim() || typeof styleName !== "string" || !seenNames.has(styleName)) {
-        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path14}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path14}.default_style` });
+        issues.push({ severity: "error", code: "macro.bad-default-style", message: `${path16}.default_style[${JSON.stringify(language)}] must name a declared style.`, path: `${path16}.default_style` });
       }
     }
   }
   if (maxIndexes.length > 1 && new Set(maxIndexes).size > 1) {
-    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path14}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path14}.styles` });
+    issues.push({ severity: "info", code: "macro.style-arity-mismatch", message: `${path16}: styles reference different maximum child indexes (${[...new Set(maxIndexes)].sort((a4, b4) => a4 - b4).join(", ")}). This is legal but may be an oversight.`, path: `${path16}.styles` });
   }
 }
 function scanTemplatePlaceholders(template2) {
@@ -21506,12 +21542,12 @@ function parseTree3(text3, errors = [], options = ParseOptions.DEFAULT) {
   }
   return result;
 }
-function findNodeAtLocation(root, path14) {
+function findNodeAtLocation(root, path16) {
   if (!root) {
     return void 0;
   }
   let node = root;
-  for (let segment2 of path14) {
+  for (let segment2 of path16) {
     if (typeof segment2 === "string") {
       if (node.type !== "object" || !Array.isArray(node.children)) {
         return void 0;
@@ -21865,14 +21901,14 @@ function getNodeType(value) {
 
 // node_modules/jsonc-parser/lib/esm/impl/edit.js
 function setProperty(text3, originalPath, value, options) {
-  const path14 = originalPath.slice();
+  const path16 = originalPath.slice();
   const errors = [];
   const root = parseTree3(text3, errors);
   let parent = void 0;
   let lastSegment = void 0;
-  while (path14.length > 0) {
-    lastSegment = path14.pop();
-    parent = findNodeAtLocation(root, path14);
+  while (path16.length > 0) {
+    lastSegment = path16.pop();
+    parent = findNodeAtLocation(root, path16);
     if (parent === void 0 && value !== void 0) {
       if (typeof lastSegment === "string") {
         value = { [lastSegment]: value };
@@ -22096,8 +22132,8 @@ function printParseErrorCode(code) {
   }
   return "<unknown ParseErrorCode>";
 }
-function modify(text3, path14, value, options) {
-  return setProperty(text3, path14, value, options);
+function modify(text3, path16, value, options) {
+  return setProperty(text3, path16, value, options);
 }
 function applyEdits(text3, edits) {
   let sortedEdits = edits.slice(0).sort((a4, b4) => {
@@ -22166,7 +22202,7 @@ async function isCanonicalAcquisition(handle, lockPath, parent) {
     const currentParent = await lstat(path4.dirname(lockPath), { bigint: true });
     const current = await lstat(lockPath, { bigint: true });
     const held = await handle.stat({ bigint: true });
-    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && sameIdentity(held, current);
+    return currentParent.isDirectory() && sameIdentity(parent, currentParent) && current.isFile() && held.isFile() && matchesPathFileIdentity(current, held);
   } catch (error) {
     if (errorCode(error) === "ENOENT" || errorCode(error) === "ENOTDIR") return false;
     throw error;
@@ -22218,14 +22254,17 @@ async function acquireLock(workspaceRoot, purpose) {
 async function withWorkspaceDataLock(workspaceRoot, purpose, task) {
   if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME} before any write or stale-lock removal.`);
   const acquired = await acquireLock(workspaceRoot, purpose);
+  let closingHandle;
+  const closeHandle = () => closingHandle ??= acquired.handle.close();
   try {
     if (await hasBatchJournal(workspaceRoot)) throw new Error(`SNL batch recovery required: inspect ${BATCH_JOURNAL_FILENAME}.`);
     if (!await isCanonicalAcquisition(acquired.handle, acquired.lockPath, acquired.parent) || (await readLock(acquired.lockPath))?.token !== acquired.record.token) {
       throw new Error("SNL workspace lock changed during acquisition; no write was admitted. Retry against the current workspace.");
     }
-    return await task();
+    return await task({ contents: `${JSON.stringify(acquired.record)}
+`, closeHandle });
   } finally {
-    await acquired.handle.close();
+    await closeHandle();
     const current = await readLock(acquired.lockPath);
     if (current?.token === acquired.record.token && !await hasBatchJournal(workspaceRoot)) {
       try {
@@ -23638,13 +23677,218 @@ async function addPackageEntity(workspaceRoot, raw, options = {}) {
   });
 }
 
+// lib/windows-no-replace.ts
+import { spawn } from "node:child_process";
+import path7 from "node:path";
+var script2 = String.raw`
+$ErrorActionPreference = 'Stop'
+try {
+  $request = [Console]::In.ReadToEnd() | ConvertFrom-Json
+  Add-Type -TypeDefinition @'
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using Microsoft.Win32.SafeHandles;
+
+public static class SnlRename {
+    const uint Read = 0x80000000, Delete = 0x10000, Synchronize = 0x100000;
+    const uint OpenReparsePoint = 0x200000, BackupSemantics = 0x2000000;
+    const uint ShareReadWrite = 3, Directory = 0x10, ReparsePoint = 0x400;
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct UnicodeString { public ushort Length, Limit; public IntPtr Buffer; }
+    [StructLayout(LayoutKind.Sequential)]
+    struct ObjectAttributes {
+        public int Length;
+        public IntPtr Root, Name;
+        public uint Attributes;
+        public IntPtr Security, Quality;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    struct IoStatus { public IntPtr Status, Information; }
+    [StructLayout(LayoutKind.Sequential)]
+    struct FileInformation {
+        public uint Attributes;
+        public System.Runtime.InteropServices.ComTypes.FILETIME Creation, Access, Write;
+        public uint Volume, SizeHigh, SizeLow, Links, IndexHigh, IndexLow;
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    static extern SafeFileHandle CreateFileW(string path, uint access, uint share,
+        IntPtr security, uint disposition, uint flags, IntPtr template);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern bool GetFileInformationByHandle(SafeFileHandle file, out FileInformation info);
+    [DllImport("ntdll.dll")]
+    static extern int NtCreateFile(out SafeFileHandle handle, uint access, ref ObjectAttributes obj,
+        out IoStatus status, IntPtr allocation, uint attributes, uint share, uint disposition,
+        uint options, IntPtr ea, uint eaLength);
+    [DllImport("ntdll.dll")]
+    static extern int NtSetInformationFile(SafeFileHandle file, out IoStatus status,
+        IntPtr buffer, uint length, int infoClass);
+    [DllImport("ntdll.dll")]
+    static extern int RtlNtStatusToDosError(int status);
+
+    static IOException Error(string action, int code) {
+        return new IOException(action + ": " + new Win32Exception(code).Message + " (" + code + ")");
+    }
+
+    static SafeFileHandle OpenChild(SafeFileHandle parent, string name, bool directory, bool rename) {
+        if (name == "." || name == ".." || name.Length == 0 || name.IndexOfAny(new[] { ':', '/', '\\', '\0' }) >= 0)
+            throw new IOException("Invalid Windows path component.");
+        IntPtr chars = Marshal.StringToHGlobalUni(name);
+        IntPtr unicode = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnicodeString)));
+        try {
+            ushort length = checked((ushort)(name.Length * 2));
+            Marshal.StructureToPtr(new UnicodeString { Length = length, Limit = length, Buffer = chars }, unicode, false);
+            var obj = new ObjectAttributes { Length = Marshal.SizeOf(typeof(ObjectAttributes)),
+                Root = parent.DangerousGetHandle(), Name = unicode, Attributes = 0x40 };
+            IoStatus status;
+            SafeFileHandle handle;
+            int result = NtCreateFile(out handle, Read | Synchronize | (rename ? Delete : 0u), ref obj, out status,
+                IntPtr.Zero, 0, ShareReadWrite, 1 /* FILE_OPEN */,
+                OpenReparsePoint | 0x20 /* FILE_SYNCHRONOUS_IO_NONALERT */ |
+                (directory ? 1u : 0x40u), IntPtr.Zero, 0);
+            GC.KeepAlive(parent);
+            if (result >= 0) return handle;
+            if (handle != null) handle.Dispose();
+            throw Error("Cannot open " + name, RtlNtStatusToDosError(result));
+        } finally {
+            Marshal.FreeHGlobal(unicode);
+            Marshal.FreeHGlobal(chars);
+        }
+    }
+
+    static void Check(SafeFileHandle handle, bool directory, string volume = null, string id = null) {
+        FileInformation info;
+        if (!GetFileInformationByHandle(handle, out info))
+            throw Error("Cannot inspect Windows file identity", Marshal.GetLastWin32Error());
+        if ((info.Attributes & ReparsePoint) != 0 || ((info.Attributes & Directory) != 0) != directory)
+            throw new IOException("Recovery refuses symbolic links, junctions and other reparse points.");
+        ulong index = ((ulong)info.IndexHigh << 32) | info.IndexLow;
+        // libuv may omit the volume number for path-based stats. The drive
+        // and ancestors are already pinned, and file IDs are checked exactly.
+        if (id != null && (index == 0 || (volume != "0" && info.Volume != UInt32.Parse(volume)) || index != UInt64.Parse(id)))
+            throw new IOException("Recovery path changed concurrently.");
+    }
+
+    static SafeFileHandle OpenDirectory(string path, Dictionary<string, SafeFileHandle> held) {
+        SafeFileHandle existing;
+        if (held.TryGetValue(path, out existing)) return existing;
+        var drive = Path.GetPathRoot(path);
+        SafeFileHandle handle;
+        if (path == drive) {
+            if (drive.Length != 3 || drive[1] != ':' || new DriveInfo(drive).DriveType != DriveType.Fixed ||
+                !String.Equals(new DriveInfo(drive).DriveFormat, "NTFS", StringComparison.OrdinalIgnoreCase))
+                throw new IOException("Windows Library recovery requires a local NTFS drive.");
+            handle = CreateFileW(drive, Read, ShareReadWrite, IntPtr.Zero, 3,
+                OpenReparsePoint | BackupSemantics, IntPtr.Zero);
+            if (handle.IsInvalid) {
+                int code = Marshal.GetLastWin32Error();
+                handle.Dispose();
+                throw Error("Cannot open Windows drive", code);
+            }
+        } else {
+            var parent = OpenDirectory(Path.GetDirectoryName(path), held);
+            handle = OpenChild(parent, Path.GetFileName(path), true, false);
+        }
+        held.Add(path, handle);
+        Check(handle, true);
+        return handle;
+    }
+
+    public static void Move(string source, string targetParent, string targetName, bool directory,
+        string sourceVolume, string sourceId, string parentVolume, string parentId) {
+        var held = new Dictionary<string, SafeFileHandle>(StringComparer.OrdinalIgnoreCase);
+        try {
+            var from = OpenDirectory(Path.GetDirectoryName(source), held);
+            var to = OpenDirectory(targetParent, held);
+            Check(to, true, parentVolume, parentId);
+            using (var subject = OpenChild(from, Path.GetFileName(source), directory, true)) {
+                Check(subject, directory, sourceVolume, sourceId);
+                var name = Encoding.Unicode.GetBytes(targetName);
+                int lengthOffset = 2 * IntPtr.Size;
+                // FILE_RENAME_INFORMATION with ReplaceIfExists=false.
+                var bytes = new byte[lengthOffset + 4 + name.Length + 2];
+                var parent = IntPtr.Size == 8 ? BitConverter.GetBytes(to.DangerousGetHandle().ToInt64()) :
+                    BitConverter.GetBytes(to.DangerousGetHandle().ToInt32());
+                Array.Copy(parent, 0, bytes, IntPtr.Size, IntPtr.Size);
+                Array.Copy(BitConverter.GetBytes(name.Length), 0, bytes, lengthOffset, 4);
+                Array.Copy(name, 0, bytes, lengthOffset + 4, name.Length);
+                var buffer = Marshal.AllocHGlobal(bytes.Length);
+                try {
+                    Marshal.Copy(bytes, 0, buffer, bytes.Length);
+                    IoStatus status;
+                    int result = NtSetInformationFile(subject, out status, buffer, (uint)bytes.Length, 10);
+                    GC.KeepAlive(to);
+                    if (result < 0) throw Error("Cannot rename without replacing the destination", RtlNtStatusToDosError(result));
+                } finally { Marshal.FreeHGlobal(buffer); }
+            }
+        } finally {
+            foreach (var handle in held.Values) handle.Dispose();
+        }
+    }
+}
+'@
+  [SnlRename]::Move($request.source, $request.parent, $request.name, $request.directory,
+    $request.sourceVolume, $request.sourceId, $request.parentVolume, $request.parentId)
+  [Console]::Out.WriteLine('ok')
+} catch {
+  [Console]::Error.WriteLine($_.Exception.GetBaseException().Message)
+  exit 1
+}
+`;
+async function moveWindowsNoReplace(source, target, directory, expected, parent) {
+  const systemRoot = process.env.SystemRoot;
+  if (!systemRoot || !/^[A-Za-z]:\\/.test(systemRoot)) throw new Error("Windows PowerShell could not be located.");
+  const executable = path7.join(systemRoot, "System32", "WindowsPowerShell", "v1.0", "powershell.exe");
+  const encodedScript = Buffer.from(script2, "utf16le").toString("base64");
+  const request = JSON.stringify({
+    source,
+    parent: path7.dirname(target),
+    name: path7.basename(target),
+    directory,
+    sourceVolume: String(expected.dev),
+    sourceId: String(expected.ino),
+    parentVolume: String(parent.dev),
+    parentId: String(parent.ino)
+  });
+  await new Promise((resolve6, reject) => {
+    const child = spawn(executable, ["-NoProfile", "-NonInteractive", "-EncodedCommand", encodedScript], {
+      windowsHide: true,
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: 3e4
+    });
+    let out = "";
+    let error = "";
+    child.stdout.on("data", (chunk) => {
+      out += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      if (error.length < 4096) error += chunk;
+    });
+    child.stdin.on("error", reject);
+    child.once("error", reject);
+    child.once("close", (code) => {
+      if (code === 0 && out.trim() === "ok") resolve6();
+      else {
+        const plain = error.replace(/#< CLIXML\s*<Objs[^>]*>.*?<\/Objs>\s*/gs, "").trim();
+        reject(new Error(plain || "Windows no-replace rename did not complete."));
+      }
+    });
+    child.stdin.end(request.replace(/[^\x00-\x7f]/g, (char) => "\\u" + char.charCodeAt(0).toString(16).padStart(4, "0")));
+  });
+}
+
 // lib/entity-crud.ts
 var ENTITY_TYPES2 = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship", "library"];
 var isRecord7 = (value) => !!value && typeof value === "object" && !Array.isArray(value);
 var sha = (value) => createHash3("sha256").update(JSON.stringify(value)).digest("hex");
 var compare = (a4, b4) => a4.id.localeCompare(b4.id);
 function docRoot(root) {
-  return path7.join(path7.resolve(root), ".SNL_Doc");
+  return path8.join(path8.resolve(root), ".SNL_Doc");
 }
 async function assertWorkspace(root) {
   const config = await readConfig(root);
@@ -23652,14 +23896,14 @@ async function assertWorkspace(root) {
     throw new Error("snl-entity requires current workspace data 0.0.6 per-entity storage.");
 }
 async function canonicalWriteWorkspace(root) {
-  const resolved = path7.resolve(root);
+  const resolved = path8.resolve(root);
   const real = await fs5.realpath(resolved);
   const stat = await fs5.lstat(resolved);
   if (!stat.isDirectory() || stat.isSymbolicLink() || real !== resolved)
     throw new Error(`Workspace root ${resolved} must be a canonical, non-symlink directory.`);
-  const doc = path7.join(resolved, ".SNL_Doc");
+  const doc = path8.join(resolved, ".SNL_Doc");
   const docStat = await fs5.lstat(doc);
-  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await fs5.realpath(doc) !== path7.join(real, ".SNL_Doc"))
+  if (!docStat.isDirectory() || docStat.isSymbolicLink() || await fs5.realpath(doc) !== path8.join(real, ".SNL_Doc"))
     throw new Error(`${doc} must be a canonical, non-symlink directory.`);
   return resolved;
 }
@@ -23667,7 +23911,7 @@ async function readJson2(file) {
   return JSON.parse(await fs5.readFile(file, "utf8"));
 }
 async function jsonFiles(directory) {
-  return (await fs5.readdir(directory, { withFileTypes: true })).filter((e2) => e2.isFile() && e2.name.endsWith(".json")).map((e2) => path7.join(directory, e2.name)).sort();
+  return (await fs5.readdir(directory, { withFileTypes: true })).filter((e2) => e2.isFile() && e2.name.endsWith(".json")).map((e2) => path8.join(directory, e2.name)).sort();
 }
 function managed(type, id, value, revisionSource = value) {
   return { type, id, revision: sha(revisionSource), value };
@@ -23678,7 +23922,7 @@ function requireRecord(value, label) {
   return value;
 }
 async function readDirectoryIdentity(directory) {
-  const stat = await fs5.lstat(directory);
+  const stat = await fs5.lstat(directory, { bigint: true });
   if (stat.isSymbolicLink() || !stat.isDirectory())
     throw new Error(`${directory} must be a regular, non-symlink directory.`);
   return { dev: stat.dev, ino: stat.ino };
@@ -23691,9 +23935,10 @@ async function assertDirectoryIdentity(directory, expected) {
 async function syncDirectoryDurably(directory, beforeSync, expected) {
   await beforeSync?.();
   if (expected) await assertDirectoryIdentity(directory, expected);
+  if (process.platform === "win32") return;
   const handle = await fs5.open(directory, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
   try {
-    const stat = await handle.stat();
+    const stat = await handle.stat({ bigint: true });
     if (expected && (stat.dev !== expected.dev || stat.ino !== expected.ino))
       throw new Error(`${directory} changed concurrently before directory sync.`);
     await handle.sync();
@@ -23715,8 +23960,8 @@ async function captureDirectorySnapshot(directory) {
     const pinned = `/proc/self/fd/${handle.fd}`;
     const names = (await fs5.readdir(pinned)).sort((a4, b4) => a4.localeCompare(b4));
     for (const name2 of names) {
-      const relativePath = relativeBase ? path7.join(relativeBase, name2) : name2;
-      const source = path7.join(pinned, name2);
+      const relativePath = relativeBase ? path8.join(relativeBase, name2) : name2;
+      const source = path8.join(pinned, name2);
       const before = await fs5.lstat(source);
       if (before.isSymbolicLink()) throw new Error(`${relativePath} became a symlink during Library snapshot.`);
       if (before.isDirectory()) {
@@ -23755,7 +24000,7 @@ async function captureDirectorySnapshot(directory) {
   return items;
 }
 async function publishDirectoryNoReplace(sourceParent, source, targetParent, target) {
-  const script2 = `import ctypes, os, sys
+  const script4 = `import ctypes, os, sys
 libc = ctypes.CDLL(None, use_errno=True)
 rename = libc.renameat2
 rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
@@ -23765,7 +24010,7 @@ if rename(3, os.fsencode(sys.argv[1]), 4, os.fsencode(sys.argv[2]), 1) != 0:
     raise OSError(error, os.strerror(error))
 `;
   await new Promise((resolve6, reject) => {
-    const child = spawn("python3", ["-I", "-S", "-c", script2, source, target], {
+    const child = spawn2("python3", ["-I", "-S", "-c", script4, source, target], {
       stdio: ["ignore", "ignore", "pipe", sourceParent.fd, targetParent.fd]
     });
     let diagnostic = "";
@@ -23797,20 +24042,20 @@ async function installDirectorySnapshot(targetHandle, snapshot2) {
     for (const item of snapshot2) {
       if (!item.relativePath) continue;
       await checkAdmissions();
-      const parentPath = path7.dirname(item.relativePath);
+      const parentPath = path8.dirname(item.relativePath);
       const parent = directories.get(parentPath === "." ? "" : parentPath);
       if (!parent) throw new Error(`Missing pinned Library parent for ${item.relativePath}.`);
-      const destination = path7.join(`/proc/self/fd/${parent.fd}`, path7.basename(item.relativePath));
+      const destination = path8.join(`/proc/self/fd/${parent.fd}`, path8.basename(item.relativePath));
       if (item.kind === "directory") {
-        const staged = await fs5.mkdtemp(path7.join(`/proc/self/fd/${targetHandle.fd}`, ".snl-restore-child-"));
+        const staged = await fs5.mkdtemp(path8.join(`/proc/self/fd/${targetHandle.fd}`, ".snl-restore-child-"));
         const identity = await readDirectoryIdentity(staged);
         const child = await fs5.open(staged, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
         directories.set(item.relativePath, child);
-        const opened = await child.stat();
+        const opened = await child.stat({ bigint: true });
         if (opened.dev !== identity.dev || opened.ino !== identity.ino)
           throw new Error(`${item.relativePath} changed before private child admission.`);
         await assertDirectoryIdentity(staged, identity);
-        await publishDirectoryNoReplace(targetHandle, path7.basename(staged), parent, path7.basename(item.relativePath));
+        await publishDirectoryNoReplace(targetHandle, path8.basename(staged), parent, path8.basename(item.relativePath));
         await assertDirectoryIdentity(destination, identity);
         admitted.set(item.relativePath, { destination, identity });
         await checkAdmissions();
@@ -23835,7 +24080,21 @@ async function installDirectorySnapshot(targetHandle, snapshot2) {
   }
 }
 async function restoreCapturedDirectory(captured, target, hooks = {}) {
-  const parent = path7.dirname(target);
+  const parent = path8.dirname(target);
+  if (process.platform === "win32") {
+    try {
+      const [capturedIdentity, parentIdentity2] = await Promise.all([
+        hooks.capturedIdentity ?? readDirectoryIdentity(captured),
+        hooks.parentIdentity ?? readDirectoryIdentity(parent)
+      ]);
+      await hooks.beforeInstall?.();
+      await hooks.beforeSync?.();
+      await moveWindowsNoReplace(captured, target, true, capturedIdentity, parentIdentity2);
+    } catch (error) {
+      throw new Error(`${target} could not be restored without touching a concurrent replacement; captured directory remains at ${captured}: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+    }
+    return;
+  }
   const parentIdentity = await readDirectoryIdentity(parent);
   try {
     await fs5.mkdir(target);
@@ -23850,7 +24109,7 @@ async function restoreCapturedDirectory(captured, target, hooks = {}) {
     const snapshot2 = await captureDirectorySnapshot(captured);
     const targetHandle = await fs5.open(target, constants5.O_RDONLY | constants5.O_NOFOLLOW | constants5.O_DIRECTORY);
     try {
-      const targetStat = await targetHandle.stat();
+      const targetStat = await targetHandle.stat({ bigint: true });
       if (targetStat.dev !== reservation.dev || targetStat.ino !== reservation.ino)
         throw new Error(`${target} changed concurrently before restoration copy.`);
       await hooks.afterReservationCheckBeforeCopy?.();
@@ -23878,10 +24137,10 @@ async function packageRows(root, type) {
   const macroPackages = type === "macro-package" ? await readAllMacroPackages(root) : void 0;
   const rows = [];
   const doc = docRoot(root);
-  for (const file of await jsonFiles(path7.join(doc, "packages"))) {
+  for (const file of await jsonFiles(path8.join(doc, "packages"))) {
     const manifest = requireRecord(await readJson2(file), "Package manifest");
     const id = requireId(manifest);
-    if (path7.relative(doc, file) !== packageManifestPath(id))
+    if (path8.relative(doc, file).split(path8.sep).join("/") !== packageManifestPath(id))
       throw new Error(`${file} does not match Package identity ${id}.`);
     if (type === "entry-package")
       rows.push(managed(type, id, manifest));
@@ -23900,7 +24159,7 @@ async function entryRows(root, options = {}) {
   const values = await readEntries(root);
   await options.afterAuthoritativeRead?.("entry");
   for (const value of values) {
-    const persisted = await readRegularText(path7.join(doc, entryEntityPath(value.package ?? "", value.id)));
+    const persisted = await readRegularText(path8.join(doc, entryEntityPath(value.package ?? "", value.id)));
     const envelope = requireRecord(JSON.parse(persisted.text), "Entry envelope");
     if (!isRecord7(envelope.entry) || sha(envelope.entry) !== sha(value))
       throw new Error(`Entry ${JSON.stringify(value.id)} changed concurrently while listing; retry.`);
@@ -23915,7 +24174,7 @@ async function macroRows(root, options = {}) {
   await options.afterAuthoritativeRead?.("macro");
   for (const [pkg, macroPackage] of Object.entries(packages)) {
     for (const [name2, body] of Object.entries(macroPackage.macros)) {
-      const persisted = await readRegularText(path7.join(doc, macroEntityPath(pkg, name2)));
+      const persisted = await readRegularText(path8.join(doc, macroEntityPath(pkg, name2)));
       const envelope = requireRecord(JSON.parse(persisted.text), "Macro envelope");
       const persistedMacro = isRecord7(envelope.macro) ? envelope.macro : void 0;
       const persistedBody = persistedMacro ? Object.fromEntries(Object.entries(persistedMacro).filter(([key]) => key !== "name")) : void 0;
@@ -23927,7 +24186,7 @@ async function macroRows(root, options = {}) {
   return rows.sort(compare);
 }
 async function relationshipRows(root) {
-  const file = path7.join(docRoot(root), "relationships.json");
+  const file = path8.join(docRoot(root), "relationships.json");
   try {
     const data = requireRecord(JSON.parse((await readRegularText(file)).text), "Relationships file");
     if (!Array.isArray(data.relationships))
@@ -23953,26 +24212,26 @@ async function libraryExtraNames(dir) {
   return (await fs5.readdir(dir)).filter((name2) => !owned.has(name2)).sort((a4, b4) => a4.localeCompare(b4));
 }
 async function readLibraryDirectoryValue(dir, slug) {
-  const meta = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "meta.json"))).text), "Library meta");
-  const graph = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "graph.json"))).text), "Library graph");
+  const meta = requireRecord(JSON.parse((await readRegularText(path8.join(dir, "meta.json"))).text), "Library meta");
+  const graph = requireRecord(JSON.parse((await readRegularText(path8.join(dir, "graph.json"))).text), "Library graph");
   let counters = { counters: [] };
   try {
-    counters = requireRecord(JSON.parse((await readRegularText(path7.join(dir, "counters.json"))).text), "Library counters");
+    counters = requireRecord(JSON.parse((await readRegularText(path8.join(dir, "counters.json"))).text), "Library counters");
   } catch (e2) {
     if (e2.code !== "ENOENT") throw e2;
   }
   return { slug, meta, graph, counters };
 }
 async function readLibraryRow(root, slug) {
-  if (slug === "" || path7.basename(slug) !== slug || slug === "." || slug === "..") return void 0;
-  const base = path7.join(docRoot(root), "libraries");
+  if (slug === "" || path8.basename(slug) !== slug || slug === "." || slug === "..") return void 0;
+  const base = path8.join(docRoot(root), "libraries");
   try {
     await readDirectoryIdentity(base);
   } catch (error) {
     if (error.code === "ENOENT") return void 0;
     throw error;
   }
-  const dir = path7.join(base, slug);
+  const dir = path8.join(base, slug);
   try {
     await readDirectoryIdentity(dir);
   } catch (error) {
@@ -23982,7 +24241,7 @@ async function readLibraryRow(root, slug) {
   return managed("library", slug, await readLibraryDirectoryValue(dir, slug));
 }
 async function libraryRows(root) {
-  const base = path7.join(docRoot(root), "libraries");
+  const base = path8.join(docRoot(root), "libraries");
   const rows = [];
   let entries;
   try {
@@ -23998,8 +24257,8 @@ async function libraryRows(root) {
   for (const entry of entries.sort((a4, b4) => a4.name.localeCompare(b4.name))) {
     if (entry.isFile() && entry.name === ".gitkeep") continue;
     if (entry.isSymbolicLink() || !entry.isDirectory())
-      throw new Error(`${path7.join(base, entry.name)} must be a regular, non-symlink Library directory.`);
-    const dir = path7.join(base, entry.name);
+      throw new Error(`${path8.join(base, entry.name)} must be a regular, non-symlink Library directory.`);
+    const dir = path8.join(base, entry.name);
     rows.push(managed("library", entry.name, await readLibraryDirectoryValue(dir, entry.name)));
   }
   return rows.sort(compare);
@@ -24046,7 +24305,7 @@ async function validateManagedWorkspace(root) {
     }
   }
   for (const [type, directory] of [["entry", "entries"], ["macro", "macros"], ["library", "libraries"]]) {
-    const absoluteDirectory = path7.join(docRoot(root), directory);
+    const absoluteDirectory = path8.join(docRoot(root), directory);
     let hasPersistentContent = false;
     try {
       const children = await fs5.readdir(absoluteDirectory, { withFileTypes: true });
@@ -24055,7 +24314,7 @@ async function validateManagedWorkspace(root) {
     }
     if (hasPersistentContent)
       continue;
-    const placeholder = path7.join(absoluteDirectory, ".gitkeep");
+    const placeholder = path8.join(absoluteDirectory, ".gitkeep");
     try {
       const stat = await fs5.lstat(placeholder);
       if (!stat.isFile() || stat.isSymbolicLink() || stat.size !== 0)
@@ -24123,7 +24382,7 @@ function currentKindCatalogProblem(config, next) {
 }
 async function mutateConfigEntity(root, type, operation, id, input, ifMatch) {
   return withWorkspaceDataLock(root, `${operation} ${type}`, async () => {
-    const file = path7.join(docRoot(root), "config.json");
+    const file = path8.join(docRoot(root), "config.json");
     const originalConfig = await readRegularText(file);
     const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
     if (!usesEntityStorage(config))
@@ -24250,7 +24509,7 @@ async function createDirect(root, type, input, options = {}) {
     if (await getManagedEntity(root, type, id))
       return { status: "conflict", code: "entity.already-exists", message: `${type} ${JSON.stringify(id)} already exists.` };
     if (type === "relationship") {
-      const file = path7.join(docRoot(root), "relationships.json");
+      const file = path8.join(docRoot(root), "relationships.json");
       let data = { version: 1, relationships: [] };
       let original;
       try {
@@ -24266,9 +24525,9 @@ async function createDirect(root, type, input, options = {}) {
       if (original) await replaceJsonIfUnchanged(file, original.text, next);
       else await installNewJson(file, next);
     } else {
-      const librariesDir2 = path7.join(docRoot(root), "libraries");
-      const dir = path7.join(librariesDir2, id);
-      if (path7.basename(id) !== id || id === "." || id === "..")
+      const librariesDir2 = path8.join(docRoot(root), "libraries");
+      const dir = path8.join(librariesDir2, id);
+      if (path8.basename(id) !== id || id === "." || id === "..")
         return invalid("Library slug must be one safe path segment.");
       const docDirectoryIdentity = await readDirectoryIdentity(docRoot(root));
       let librariesDirectoryIdentity;
@@ -24283,17 +24542,17 @@ async function createDirect(root, type, input, options = {}) {
       }
       librariesDirectoryIdentity = await readDirectoryIdentity(librariesDir2);
       await fs5.mkdir(dir, { recursive: false });
-      const directoryIdentity = await readDirectoryIdentity(dir);
+      const directoryIdentity2 = await readDirectoryIdentity(dir);
       const resources = [
-        { file: path7.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
-        { file: path7.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
-        { file: path7.join(dir, "counters.json"), value: requireRecord(value.counters, "Library counters") }
+        { file: path8.join(dir, "meta.json"), value: requireRecord(value.meta, "Library meta") },
+        { file: path8.join(dir, "graph.json"), value: requireRecord(value.graph, "Library graph") },
+        { file: path8.join(dir, "counters.json"), value: requireRecord(value.counters, "Library counters") }
       ];
       const installed = [];
       try {
         for (const resource of resources) {
-          await options.beforeLibraryCreateResource?.(path7.basename(resource.file));
-          await assertDirectoryIdentity(dir, directoryIdentity);
+          await options.beforeLibraryCreateResource?.(path8.basename(resource.file));
+          await assertDirectoryIdentity(dir, directoryIdentity2);
           await installNewJson(resource.file, resource.value);
           installed.push(resource);
         }
@@ -24301,7 +24560,7 @@ async function createDirect(root, type, input, options = {}) {
       } catch (error) {
         const cleanupErrors = [];
         try {
-          await assertDirectoryIdentity(dir, directoryIdentity);
+          await assertDirectoryIdentity(dir, directoryIdentity2);
         } catch (identityError) {
           throw new Error(
             `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; cleanup refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
@@ -24317,10 +24576,10 @@ async function createDirect(root, type, input, options = {}) {
         }
         try {
           await options.beforeLibraryCreateCleanupCapture?.();
-          const recovery = path7.join(librariesDir2, `.${id}.snl-entity-${process.pid}-${randomUUID3()}.create-failed`);
+          const recovery = path8.join(librariesDir2, `.${id}.snl-entity-${process.pid}-${randomUUID3()}.create-failed`);
           await fs5.rename(dir, recovery);
           const capturedIdentity = await readDirectoryIdentity(recovery);
-          if (capturedIdentity.dev === directoryIdentity.dev && capturedIdentity.ino === directoryIdentity.ino) {
+          if (capturedIdentity.dev === directoryIdentity2.dev && capturedIdentity.ino === directoryIdentity2.ino) {
             await fs5.rmdir(recovery);
             await syncDirectoryDurably(librariesDir2, void 0, librariesDirectoryIdentity);
           } else {
@@ -24385,14 +24644,14 @@ async function createManagedEntity(root, type, input, options = {}) {
 async function locateFile(root, type, entity) {
   const doc = docRoot(root);
   if (type === "entry-package" || type === "macro-package")
-    return path7.join(doc, packageManifestPath(entity.id));
+    return path8.join(doc, packageManifestPath(entity.id));
   if (type === "entry") {
     const pkg = typeof entity.value.package === "string" ? entity.value.package : "";
-    return path7.join(doc, entryEntityPath(pkg, entity.id));
+    return path8.join(doc, entryEntityPath(pkg, entity.id));
   }
   if (type === "macro") {
     const split = entity.id.indexOf("::");
-    return path7.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
+    return path8.join(doc, macroEntityPath(entity.id.slice(0, split), entity.id.slice(split + 2)));
   }
   throw new Error(`No entity file for ${type}.`);
 }
@@ -24413,7 +24672,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       if (identityFor(type, value) !== id)
         return invalid(`${type} identity is immutable: payload identity must equal ${JSON.stringify(id)}.`);
       if (type === "relationship") {
-        const file = path7.join(docRoot(root), "relationships.json");
+        const file = path8.join(docRoot(root), "relationships.json");
         const original = await readRegularText(file);
         const data = requireRecord(JSON.parse(original.text), "relationships.json");
         const values = data.relationships;
@@ -24428,18 +24687,18 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
           relationships: values.map((row) => isRecord7(row) && row.id === id ? value : row)
         });
       } else if (type === "library") {
-        const dir = path7.join(docRoot(root), "libraries", id);
-        const directoryIdentity = await readDirectoryIdentity(dir);
+        const dir = path8.join(docRoot(root), "libraries", id);
+        const directoryIdentity2 = await readDirectoryIdentity(dir);
         const resources = [
-          { file: path7.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
-          { file: path7.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
-          { file: path7.join(dir, "counters.json"), next: requireRecord(value.counters, "Library counters") }
+          { file: path8.join(dir, "meta.json"), next: requireRecord(value.meta, "Library meta") },
+          { file: path8.join(dir, "graph.json"), next: requireRecord(value.graph, "Library graph") },
+          { file: path8.join(dir, "counters.json"), next: requireRecord(value.counters, "Library counters") }
         ];
         const originals = await Promise.all(resources.map(async (resource) => {
           try {
             return { ...resource, original: await readRegularText(resource.file) };
           } catch (error) {
-            if (path7.basename(resource.file) === "counters.json" && error.code === "ENOENT")
+            if (path8.basename(resource.file) === "counters.json" && error.code === "ENOENT")
               return { ...resource, original: void 0 };
             throw error;
           }
@@ -24455,9 +24714,9 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         const installed = [];
         try {
           await options.beforeEntityInstall?.();
-          await assertDirectoryIdentity(dir, directoryIdentity);
+          await assertDirectoryIdentity(dir, directoryIdentity2);
           for (const resource of originals) {
-            await assertDirectoryIdentity(dir, directoryIdentity);
+            await assertDirectoryIdentity(dir, directoryIdentity2);
             if (resource.original) await replaceJsonIfUnchanged(resource.file, resource.original.text, resource.next);
             else await installNewJson(resource.file, resource.next);
             installed.push(resource);
@@ -24465,7 +24724,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         } catch (error) {
           const rollbackErrors = [];
           try {
-            await assertDirectoryIdentity(dir, directoryIdentity);
+            await assertDirectoryIdentity(dir, directoryIdentity2);
           } catch (identityError) {
             throw new Error(
               `${error instanceof Error ? error.message : String(error)} Library directory changed concurrently; rollback refused to access the replacement directory: ${identityError instanceof Error ? identityError.message : String(identityError)}`,
@@ -24538,7 +24797,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             await options.beforeEntityInstall?.();
             await replaceJsonIfUnchanged(file, originalEntity.text, nextEnvelope);
           } else {
-            const destinationFile = path7.join(docRoot(root), entryEntityPath(newPackage, id));
+            const destinationFile = path8.join(docRoot(root), entryEntityPath(newPackage, id));
             if (!currentSchema) {
               let installed = false;
               try {
@@ -24556,8 +24815,8 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
                 throw error;
               }
             } else {
-              const sourceManifestFile = path7.join(docRoot(root), packageManifestPath(oldPackage));
-              const destinationManifestFile = path7.join(docRoot(root), packageManifestPath(newPackage));
+              const sourceManifestFile = path8.join(docRoot(root), packageManifestPath(oldPackage));
+              const destinationManifestFile = path8.join(docRoot(root), packageManifestPath(newPackage));
               const sourceOriginal = await readRegularText(sourceManifestFile);
               const destinationOriginal = await readRegularText(destinationManifestFile);
               const sourceManifest = requireRecord(JSON.parse(sourceOriginal.text), "Source Package manifest");
@@ -24650,7 +24909,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         return { status: "ok", operation, type, entity: current };
       }
       const packageId2 = typeof current.value.package === "string" ? current.value.package : "";
-      const manifestFile = path7.join(docRoot(root), packageManifestPath(packageId2));
+      const manifestFile = path8.join(docRoot(root), packageManifestPath(packageId2));
       const originalManifest = await readRegularText(manifestFile);
       const manifest = requireRecord(JSON.parse(originalManifest.text), "Package manifest");
       const entryIds = manifest.entry_ids;
@@ -24680,7 +24939,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       await options.beforeEntityDelete?.();
       await removeJsonIfUnchanged(file, original.text);
     } else if (type === "relationship") {
-      const file = path7.join(docRoot(root), "relationships.json");
+      const file = path8.join(docRoot(root), "relationships.json");
       const original = await readRegularText(file);
       const data = requireRecord(JSON.parse(original.text), "relationships.json");
       const values = data.relationships;
@@ -24695,36 +24954,41 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
         relationships: values.filter((row) => !(isRecord7(row) && row.id === id))
       });
     } else if (type === "library") {
-      const dir = path7.join(docRoot(root), "libraries", id);
-      const librariesDirectoryIdentity = await readDirectoryIdentity(path7.dirname(dir));
+      const dir = path8.join(docRoot(root), "libraries", id);
+      const librariesDirectoryIdentity = await readDirectoryIdentity(path8.dirname(dir));
       const originalDirectoryIdentity = await readDirectoryIdentity(dir);
       const extras = await libraryExtraNames(dir);
       if (extras.length) {
         return { status: "conflict", code: "library.not-empty", message: `Library ${JSON.stringify(id)} still contains unmanaged data: ${extras.join(", ")}.` };
       }
-      const tomb = path7.join(path7.dirname(dir), `.${id}.snl-entity-${randomUUID3()}.deleted`);
+      const tomb = path8.join(path8.dirname(dir), `.${id}.snl-entity-${randomUUID3()}.deleted`);
+      const restoreHooks = {
+        beforeInstall: options.beforeLibraryRestoreInstall,
+        afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck,
+        parentIdentity: librariesDirectoryIdentity
+      };
       await options.beforeEntityDelete?.();
       await fs5.rename(dir, tomb);
+      const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
       try {
-        await syncDirectoryDurably(path7.dirname(dir), options.beforeLibraryCaptureSync, librariesDirectoryIdentity);
+        await syncDirectoryDurably(path8.dirname(dir), options.beforeLibraryCaptureSync, librariesDirectoryIdentity);
       } catch (error) {
         try {
-          await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+          await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
         } catch (restoreError) {
           throw new Error(`Library delete could not durably capture ${dir}, and rollback failed: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`, { cause: error });
         }
         throw error;
       }
-      const capturedDirectoryIdentity = await readDirectoryIdentity(tomb);
       if (capturedDirectoryIdentity.dev !== originalDirectoryIdentity.dev || capturedDirectoryIdentity.ino !== originalDirectoryIdentity.ino) {
-        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
         throw new Error(`${dir} was replaced while deletion was in flight; the replacement directory was restored.`);
       }
       let captured;
       try {
         captured = await readLibraryDirectoryValue(tomb, id);
       } catch (error) {
-        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
         throw new Error(
           `${dir} changed while deletion was in flight; its captured directory was restored: ${error instanceof Error ? error.message : String(error)}`,
           { cause: error }
@@ -24732,14 +24996,15 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       }
       const capturedExtras = await libraryExtraNames(tomb);
       if (sha(captured) !== current.revision || capturedExtras.length) {
-        await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
+        await restoreCapturedDirectory(tomb, dir, { ...restoreHooks, capturedIdentity: capturedDirectoryIdentity });
         throw new Error(`${dir} changed while deletion was in flight; its captured directory was restored.`);
       }
-      await options.beforeLibraryDirectoryRemove?.(tomb);
       const fileCaptures = [];
+      let removed = false;
       try {
+        await options.beforeLibraryDirectoryRemove?.(tomb);
         for (const name2 of ["meta.json", "graph.json", "counters.json"]) {
-          const source = path7.join(tomb, name2);
+          const source = path8.join(tomb, name2);
           let identity;
           try {
             const original = await readRegularText(source);
@@ -24748,7 +25013,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             if (name2 === "counters.json" && error.code === "ENOENT") continue;
             throw error;
           }
-          const capturedFile = path7.join(path7.dirname(tomb), `${path7.basename(tomb)}.${name2}.${randomUUID3()}.captured`);
+          const capturedFile = path8.join(path8.dirname(tomb), `${path8.basename(tomb)}.${name2}.${randomUUID3()}.captured`);
           await fs5.rename(source, capturedFile);
           fileCaptures.push({ name: name2, captured: capturedFile, identity });
           const observed = await readRegularText(capturedFile);
@@ -24756,26 +25021,41 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
             throw new Error(`${source} changed while Library deletion was in flight.`);
         }
         await fs5.rmdir(tomb);
-        await syncDirectoryDurably(path7.dirname(tomb), options.beforeLibraryDeleteCommitSync, librariesDirectoryIdentity);
+        removed = true;
+        await syncDirectoryDurably(path8.dirname(tomb), options.beforeLibraryDeleteCommitSync, librariesDirectoryIdentity);
       } catch (error) {
         const recoveryErrors = [];
+        let recoveryIdentity = capturedDirectoryIdentity;
         try {
-          await fs5.mkdir(tomb);
+          if (process.platform !== "win32" || removed) {
+            await fs5.mkdir(tomb);
+            if (process.platform === "win32") recoveryIdentity = await readDirectoryIdentity(tomb);
+          }
         } catch (mkdirError) {
-          if (mkdirError.code !== "EEXIST")
+          if (process.platform === "win32" || mkdirError.code !== "EEXIST")
             recoveryErrors.push(`recreate tomb: ${mkdirError instanceof Error ? mkdirError.message : String(mkdirError)}`);
         }
-        for (const item of fileCaptures.reverse()) {
+        for (const item of recoveryErrors.length && process.platform === "win32" ? [] : fileCaptures.reverse()) {
           try {
-            await fs5.rename(item.captured, path7.join(tomb, item.name));
+            const destination = path8.join(tomb, item.name);
+            if (process.platform === "win32") {
+              await moveWindowsNoReplace(item.captured, destination, false, item.identity, recoveryIdentity);
+            } else {
+              await fs5.rename(item.captured, destination);
+            }
           } catch (restoreError) {
             recoveryErrors.push(`${item.name}: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
           }
         }
-        try {
-          await restoreCapturedDirectory(tomb, dir, { beforeInstall: options.beforeLibraryRestoreInstall, afterReservationCheckBeforeCopy: options.afterLibraryRestoreReservationCheck });
-        } catch (restoreError) {
-          recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+        if (!recoveryErrors.length || process.platform !== "win32") {
+          try {
+            await restoreCapturedDirectory(tomb, dir, {
+              ...restoreHooks,
+              capturedIdentity: recoveryIdentity
+            });
+          } catch (restoreError) {
+            recoveryErrors.push(`directory: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+          }
         }
         if (recoveryErrors.length)
           throw new Error(`${error instanceof Error ? error.message : String(error)} Library deletion recovery failed without overwriting concurrent data: ${recoveryErrors.join("; ")}`, { cause: error });
@@ -24795,7 +25075,7 @@ async function mutateDirect(root, type, operation, id, input, ifMatch, options =
       const lockedPackageValue = type === "macro-package" ? { ...lockedManifest, macros: (await readAllMacroPackages(root))[id]?.macros } : lockedManifest;
       if (sha(lockedPackageValue) !== ifMatch)
         return conflict(`${type} ${JSON.stringify(id)} changed; fetch it again and retry with its current revision.`);
-      const configFile = path7.join(docRoot(root), "config.json");
+      const configFile = path8.join(docRoot(root), "config.json");
       const originalConfig = await readRegularText(configFile);
       const config = requireRecord(JSON.parse(originalConfig.text), "config.json");
       const active = Array.isArray(config.active_macro_packages) ? config.active_macro_packages.filter((value) => typeof value === "string") : (await packageRows(root, "entry-package")).map((row) => row.id).filter((packageId2) => packageId2 !== "_unpackaged");
@@ -25005,9 +25285,9 @@ function indexCounterPaths(counters) {
     ids.add(counter.id);
     names.add(counter.name);
     visiting.add(counter);
-    const path14 = [...parents, counter];
-    paths.set(counter, path14);
-    for (const child of counter.children) visit2(child, path14);
+    const path16 = [...parents, counter];
+    paths.set(counter, path16);
+    for (const child of counter.children) visit2(child, path16);
     visiting.delete(counter);
   };
   for (const counter of counters) visit2(counter, []);
@@ -25060,15 +25340,15 @@ function numberNodes(index, entries, kinds, counters, paths) {
   for (const nodeId of index.readingOrder) {
     const node = index.nodesById.get(nodeId);
     const counter = resolveCounter(node, entries, kinds, counters);
-    const path14 = counter ? paths.get(counter) : void 0;
-    if (!counter || !path14) {
+    const path16 = counter ? paths.get(counter) : void 0;
+    if (!counter || !path16) {
       numbers.set(nodeId, null);
       continue;
     }
     values.set(counter, (values.get(counter) ?? 0) + 1);
     resetDescendants(counter);
     const segments = [];
-    for (const level of path14) {
+    for (const level of path16) {
       const value = values.get(level);
       if (value === void 0) {
         segments.length = 0;
@@ -25142,19 +25422,157 @@ function singleLine(value) {
 }
 
 // src/cli/operation.ts
-import path13 from "node:path";
+import path15 from "node:path";
 
 // lib/relationship-publisher.ts
 import { isDeepStrictEqual as isDeepStrictEqual2 } from "node:util";
-import path10 from "node:path";
+import path12 from "node:path";
 
 // lib/batch.ts
 import { constants as constants6, promises as fs6 } from "node:fs";
-import path8 from "node:path";
+import path10 from "node:path";
 import os from "node:os";
 import { createHash as createHash4 } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify, types as utilTypes } from "node:util";
+
+// lib/windows-batch-exchange.ts
+import { spawn as spawn3 } from "node:child_process";
+import path9 from "node:path";
+import { createInterface } from "node:readline";
+var script3 = String.raw`
+$ErrorActionPreference = 'Stop'
+$phase = 'open'
+try {
+  Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+
+public static class SnlBatchExchange {
+    [DllImport("ktmw32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    static extern SafeFileHandle CreateTransaction(IntPtr security, IntPtr uow, uint options,
+        uint isolation, uint flags, uint timeout, string description);
+    [DllImport("ktmw32.dll", SetLastError = true)]
+    static extern bool CommitTransaction(SafeFileHandle transaction);
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    static extern bool MoveFileTransactedW(string source, string destination, IntPtr progress,
+        IntPtr data, uint flags, SafeFileHandle transaction);
+
+    public static SafeFileHandle Open(string live, string staged) {
+        var drive = new DriveInfo(Path.GetPathRoot(live));
+        if (!String.Equals(drive.Name, Path.GetPathRoot(staged), StringComparison.OrdinalIgnoreCase) ||
+            drive.DriveType != DriveType.Fixed || !String.Equals(drive.DriveFormat, "NTFS", StringComparison.OrdinalIgnoreCase))
+            throw new Win32Exception(50);
+        var tx = CreateTransaction(IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 300000, "SNL batch exchange");
+        if (!tx.IsInvalid) return tx;
+        int error = Marshal.GetLastWin32Error();
+        tx.Dispose();
+        throw new Win32Exception(error);
+    }
+
+    public static void Move(string from, string to, SafeFileHandle tx) {
+        // No copy, replace or delayed operation flags.
+        if (!MoveFileTransactedW(from, to, IntPtr.Zero, IntPtr.Zero, 0, tx))
+            throw new Win32Exception(Marshal.GetLastWin32Error());
+    }
+
+    public static void Commit(SafeFileHandle tx) {
+        if (!CommitTransaction(tx)) throw new Win32Exception(Marshal.GetLastWin32Error());
+    }
+}
+'@
+  $request = [Console]::In.ReadLine() | ConvertFrom-Json
+  $tx = [SnlBatchExchange]::Open($request.live, $request.staged)
+  try {
+    $phase = 'prepare'
+    [SnlBatchExchange]::Move($request.live, $request.temporary, $tx)
+    [SnlBatchExchange]::Move($request.staged, $request.live, $tx)
+    [SnlBatchExchange]::Move($request.temporary, $request.staged, $tx)
+    [Console]::Out.WriteLine('prepared')
+    [Console]::Out.Flush()
+    if ([Console]::In.ReadLine() -eq 'commit') {
+      $phase = 'commit'
+      [SnlBatchExchange]::Commit($tx)
+      [Console]::Out.WriteLine('committed')
+    }
+  } finally {
+    $tx.Dispose()
+  }
+} catch {
+  $errorDetail = $_.Exception.GetBaseException()
+  $nativeCode = if ($errorDetail -is [ComponentModel.Win32Exception]) { $errorDetail.NativeErrorCode } else { -1 }
+  [Console]::Out.WriteLine("$phase $nativeCode")
+  exit 1
+}
+`;
+var WindowsBatchExchangeError = class extends Error {
+  constructor(phase, nativeCode, detail) {
+    super("Windows NTFS batch transaction failed during " + phase + " (Win32 " + nativeCode + ")" + (detail ? ": " + detail : "."));
+    this.phase = phase;
+    this.nativeCode = nativeCode;
+  }
+  phase;
+  nativeCode;
+  get unsupported() {
+    return this.phase === "open" || this.phase === "prepare" && [1, 50, 120, 6801, 6805].includes(this.nativeCode);
+  }
+};
+async function exchangeWindowsBatch(live, staged, temporary, beforeCommit) {
+  const systemRoot = process.env.SystemRoot;
+  if (!systemRoot || !/^[A-Za-z]:\\/.test(systemRoot)) throw new WindowsBatchExchangeError("open", 50);
+  const executable = path9.join(systemRoot, "System32", "WindowsPowerShell", "v1.0", "powershell.exe");
+  const command = Buffer.from(script3, "utf16le").toString("base64");
+  const child = spawn3(executable, ["-NoProfile", "-NonInteractive", "-EncodedCommand", command], {
+    windowsHide: true,
+    stdio: ["pipe", "pipe", "pipe"]
+  });
+  const lines = createInterface({ input: child.stdout, crlfDelay: Infinity });
+  const output = lines[Symbol.asyncIterator]();
+  let failure;
+  child.stdin.on("error", (error) => {
+    failure ??= error;
+  });
+  child.on("error", (error) => {
+    failure ??= error;
+  });
+  const closed = new Promise((resolve6) => child.once("close", () => resolve6()));
+  let stderr = "";
+  child.stderr.on("data", (chunk) => {
+    if (stderr.length < 2048) stderr += chunk;
+  });
+  const next = async (success, phase) => {
+    const timeout = setTimeout(() => {
+      failure = new Error("Windows transaction helper timed out.");
+      child.kill();
+    }, phase === "prepare" ? 3e4 : 3e5);
+    const { value } = await output.next().finally(() => clearTimeout(timeout));
+    if (value === success) return;
+    const result = /^(open|prepare|commit) (-?\d+)$/.exec(value ?? "");
+    if (result) throw new WindowsBatchExchangeError(result[1], Number(result[2]));
+    throw new WindowsBatchExchangeError(phase, -1, failure?.message || stderr.trim().slice(0, 300));
+  };
+  const request = JSON.stringify({ live, staged, temporary }).replace(
+    /[^\x00-\x7f]/g,
+    (char) => "\\u" + char.charCodeAt(0).toString(16).padStart(4, "0")
+  );
+  try {
+    child.stdin.write(request + "\n");
+    await next("prepared", "prepare");
+    await beforeCommit();
+    child.stdin.end("commit\n");
+    await next("committed", "commit");
+    await closed;
+  } finally {
+    if (!child.stdin.writableEnded) child.stdin.end();
+    await closed;
+    lines.close();
+  }
+}
+
+// lib/batch.ts
 var BATCH_CREATE_TYPES = ["entry-kind", "macro-kind", "entry-package", "macro-package", "entry", "macro", "relationship"];
 var BatchError = class extends Error {
   constructor(code, message, exitCode = 1, details) {
@@ -25255,11 +25673,11 @@ async function exists(p3) {
   }
 }
 async function assertRoot(root) {
-  for (const p3 of [root, path8.join(root, ".SNL_Doc")]) {
+  for (const p3 of [root, path10.join(root, ".SNL_Doc")]) {
     const s4 = await fs6.lstat(p3);
     if (!s4.isDirectory() || s4.isSymbolicLink() || await fs6.realpath(p3) !== p3) throw new BatchError("workspace.unsafe-path", `${p3} must be a canonical non-symlink directory.`, 2);
   }
-  if (await exists(path8.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
+  if (await exists(path10.join(root, BATCH_JOURNAL_FILENAME))) throw new BatchError("batch.recovery-required", `Inspect ${BATCH_JOURNAL_FILENAME} and recover the retained transaction before writing.`, 2);
 }
 function supportedMode(mode, p3) {
   if (mode & 3584) throw new BatchError("workspace.unsupported-mode", `Batch refuses setuid, setgid and sticky permission bits: ${p3}.`, 2);
@@ -25272,26 +25690,27 @@ function derivedPath(relative2) {
 }
 async function snapshot(root, domain = "physical") {
   const out = /* @__PURE__ */ new Map();
-  const doc = path8.join(root, ".SNL_Doc");
+  const doc = path10.join(root, ".SNL_Doc");
   async function walk(relative2) {
     if (relative2 === DATA_WRITE_LOCK_FILENAME || domain === "authoring" && derivedPath(relative2)) return;
-    const p3 = path8.join(doc, relative2);
-    const s4 = await fs6.lstat(p3);
+    const p3 = path10.join(doc, relative2);
+    const s4 = await fs6.lstat(p3, { bigint: true });
     if (s4.isSymbolicLink() || !s4.isDirectory() && !s4.isFile()) throw new BatchError("workspace.unsafe-path", `Batch refuses symlinks and special files: ${p3}.`, 2);
-    const mode = supportedMode(s4.mode, p3);
+    const mode = supportedMode(Number(s4.mode), p3);
     if (s4.isDirectory()) {
       out.set(relative2, { kind: "directory", mode });
       for (const name2 of (await fs6.readdir(p3)).sort(compareCanonicalIds)) await walk(relative2 ? `${relative2}/${name2}` : name2);
     } else {
       const handle = await fs6.open(p3, constants6.O_RDONLY | constants6.O_NOFOLLOW | constants6.O_NONBLOCK);
       try {
-        const opened = await handle.stat();
-        const openedMode = supportedMode(opened.mode, p3);
+        const opened = await handle.stat({ bigint: true });
+        const openedMode = supportedMode(Number(opened.mode), p3);
         const conflict2 = domain === "physical" && derivedPath(relative2) ? "batch.physical-conflict" : "batch.workspace-conflict";
-        if (!opened.isFile() || opened.ino !== s4.ino || opened.dev !== s4.dev || opened.mode !== s4.mode) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
+        const current = await fs6.lstat(p3, { bigint: true });
+        if (!opened.isFile() || !current.isFile() || !matchesPathFileIdentity(s4, opened) || !matchesPathFileIdentity(current, opened) || opened.mode !== s4.mode) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
         const bytes = await handle.readFile();
-        const after = await handle.stat();
-        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeMs !== opened.mtimeMs || after.ctimeMs !== opened.ctimeMs) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
+        const after = await handle.stat({ bigint: true });
+        if (after.mode !== opened.mode || after.size !== opened.size || after.mtimeNs !== opened.mtimeNs || after.ctimeNs !== opened.ctimeNs) throw new BatchError(conflict2, `${p3} changed during ${domain} capture.`);
         out.set(relative2, { kind: "file", mode: openedMode, bytes });
       } finally {
         await handle.close();
@@ -25316,11 +25735,12 @@ function assertUnchanged(root, current, authoring, physical) {
 }
 async function materialize(stage, data) {
   for (const [name2, node] of data) {
-    const p3 = path8.join(stage, ".SNL_Doc", name2);
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
     if (node.kind === "directory") await fs6.mkdir(p3, { mode: 448 });
     else {
-      await fs6.writeFile(p3, node.bytes, { flag: "wx", mode: node.mode });
-      await fs6.chmod(p3, node.mode);
+      const mode = process.platform === "win32" ? node.mode | 128 : node.mode;
+      await fs6.writeFile(p3, node.bytes, { flag: "wx", mode });
+      await fs6.chmod(p3, mode);
     }
   }
 }
@@ -25436,7 +25856,7 @@ async function prepare(stage, original, operations) {
   }
   if (relationsChanged) pending.set("relationships.json", relationships);
   for (const [name2, value] of pending) {
-    const target = path8.join(stage, ".SNL_Doc", name2);
+    const target = path10.join(stage, ".SNL_Doc", name2);
     if (original.has(name2)) await fs6.writeFile(target, jsonText(value));
     else await installNewJson(target, value);
   }
@@ -25482,6 +25902,7 @@ async function prepare(stage, original, operations) {
   return { diagnostics, results, counts: validation.counts };
 }
 async function syncDir(p3) {
+  if (process.platform === "win32") return;
   const h3 = await fs6.open(p3, constants6.O_RDONLY | constants6.O_DIRECTORY | constants6.O_NOFOLLOW);
   try {
     await h3.sync();
@@ -25489,21 +25910,29 @@ async function syncDir(p3) {
     await h3.close();
   }
 }
+async function syncFile(p3) {
+  const flags = process.platform === "win32" ? constants6.O_RDWR : constants6.O_RDONLY;
+  const handle = await fs6.open(p3, flags | constants6.O_NOFOLLOW);
+  try {
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
+}
 async function seal(stage, original) {
   const tree = await snapshot(stage);
   for (const [name2, node] of tree) {
-    const p3 = path8.join(stage, ".SNL_Doc", name2);
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
     if (node.kind === "file") {
-      const h3 = await fs6.open(p3, constants6.O_RDONLY | constants6.O_NOFOLLOW);
-      try {
-        await h3.sync();
-      } finally {
-        await h3.close();
+      await syncFile(p3);
+      if (process.platform === "win32") {
+        const previous = original.get(name2);
+        if (previous?.kind === "file" && previous.mode !== node.mode) await fs6.chmod(p3, previous.mode);
       }
     }
   }
   for (const [name2, node] of [...tree].reverse()) if (node.kind === "directory") {
-    const p3 = path8.join(stage, ".SNL_Doc", name2);
+    const p3 = path10.join(stage, ".SNL_Doc", name2);
     await fs6.chmod(p3, original.get(name2)?.mode ?? node.mode);
     await syncDir(p3);
   }
@@ -25511,33 +25940,34 @@ async function seal(stage, original) {
 }
 var run = promisify(execFile);
 var EXCHANGE = "import ctypes,os,sys\nl=ctypes.CDLL(None,use_errno=True)\nf=l.renameat2\nf.argtypes=[ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint]\nf.restype=ctypes.c_int\nr=f(-100,os.fsencode(sys.argv[1]),-100,os.fsencode(sys.argv[2]),2)\nif r: raise OSError(ctypes.get_errno(),os.strerror(ctypes.get_errno()))\n";
-async function exchange(a4, b4) {
-  if (process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires Linux renameat2(RENAME_EXCHANGE) and python3.", 2);
+async function exchangeLinux(a4, b4) {
   await run("python3", ["-I", "-c", EXCHANGE, a4, b4]);
 }
+var sameDirectory = (a4, b4) => a4.dev === b4.dev && a4.ino === b4.ino;
+var directoryIdentity = (name2) => fs6.stat(name2, { bigint: true });
 async function captureWorkspaceRevision(root, allowWriterLock = false) {
   await assertRoot(root);
-  if (!allowWriterLock && await exists(path8.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock.", 2);
+  if (!allowWriterLock && await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock.", 2);
   return revision(root, await snapshot(root, "authoring"));
 }
 async function checkBatch(root, raw) {
   const operations = normalize(raw);
   await assertRoot(root);
-  if (await exists(path8.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
+  if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) throw new BatchError("workspace.locked", "Workspace has an active or stale writer lock; check again after it is resolved.", 2);
   const original = await snapshot(root);
   const expectedWorkspaceRevision = revision(root, original);
   const originalPhysicalRevision = revision(root, original, "physical");
   const temporaryRoot = await fs6.realpath(os.tmpdir());
-  const relativeTemporaryRoot = path8.relative(root, temporaryRoot);
-  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path8.sep}`) && relativeTemporaryRoot !== ".." && !path8.isAbsolute(relativeTemporaryRoot)) {
+  const relativeTemporaryRoot = path10.relative(root, temporaryRoot);
+  if (relativeTemporaryRoot === "" || !relativeTemporaryRoot.startsWith(`..${path10.sep}`) && relativeTemporaryRoot !== ".." && !path10.isAbsolute(relativeTemporaryRoot)) {
     throw new BatchError("batch.unsafe-temp-directory", "The check temporary directory must be outside the workspace; set TMPDIR to an external directory.", 2);
   }
-  const stage = await fs6.mkdtemp(path8.join(temporaryRoot, "snl-batch-check-"));
+  const stage = await fs6.mkdtemp(path10.join(temporaryRoot, "snl-batch-check-"));
   try {
     await materialize(stage, original);
     const prepared = await prepare(stage, original, operations);
     await assertRoot(root);
-    if (await exists(path8.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) fail("batch.workspace-conflict", "Writer lock appeared during preflight; check the complete batch again.");
+    if (await exists(path10.join(root, ".SNL_Doc", DATA_WRITE_LOCK_FILENAME))) fail("batch.workspace-conflict", "Writer lock appeared during preflight; check the complete batch again.");
     assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
     return { normalizedOperations: operations, checkedDigest: sha2(["snl.batch/v1", operations]), expectedWorkspaceRevision, diagnostics: prepared.diagnostics, counts: prepared.counts };
   } finally {
@@ -25549,46 +25979,85 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
   await assertRoot(root);
   let committedRevision;
   try {
-    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async () => {
+    return await withWorkspaceDataLock(root, "apply checked batch (inspect recovery journal before stale-lock removal)", async (writerLock) => {
       if (sha2(["snl.batch/v1", operations]) !== checkedDigest) fail("batch.digest-conflict", "checkedDigest does not match the normalized operation sequence; recheck the whole batch.");
       const original = await snapshot(root);
       if (revision(root, original) !== expectedWorkspaceRevision) fail("batch.workspace-conflict", "Authoring revision changed or receipt uses the retired whole-tree token; recheck the whole batch with this Toolkit, never replay a suffix.");
+      const windows = process.platform === "win32";
+      if (!windows && process.platform !== "linux") throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires a supported Linux or Windows filesystem. Batch check is available on this platform.", 2);
       const originalPhysicalRevision = revision(root, original, "physical");
-      const stage = await fs6.mkdtemp(path8.join(root, ".snl-batch-"));
-      const liveDoc = path8.join(root, ".SNL_Doc");
-      const stagedDoc = path8.join(stage, ".SNL_Doc");
-      const journal = path8.join(root, BATCH_JOURNAL_FILENAME);
+      const stage = await fs6.mkdtemp(path10.join(root, ".snl-batch-"));
+      const liveDoc = path10.join(root, ".SNL_Doc");
+      const stagedDoc = path10.join(stage, ".SNL_Doc");
+      const exchange = windows ? (a4, b4, beforeCommit = async () => {
+      }) => exchangeWindowsBatch(a4, b4, path10.join(stage, "exchange-reservation"), beforeCommit) : exchangeLinux;
+      const journal = path10.join(root, BATCH_JOURNAL_FILENAME);
       let retain = false;
       let journalCreated = false;
       let committed = false;
       let originalInode;
+      let candidateInode;
       try {
-        await materialize(stage, original);
-        const prepared = await prepare(stage, original, operations);
-        const a4 = path8.join(stage, "probe-a"), b4 = path8.join(stage, "probe-b");
+        const a4 = path10.join(stage, "probe-a"), b4 = path10.join(stage, "probe-b");
         await fs6.mkdir(a4);
         await fs6.mkdir(b4);
-        await exchange(a4, b4);
+        try {
+          await exchange(a4, b4);
+        } catch (error) {
+          if (error instanceof WindowsBatchExchangeError && error.unsupported) {
+            throw new BatchError("batch.publication-unsupported", "Atomic batch apply requires a local NTFS volume with Windows Transactional NTFS enabled. Batch check remains available.", 2, { nativeCode: error.nativeCode });
+          }
+          throw error;
+        }
         await fs6.rmdir(a4);
         await fs6.rmdir(b4);
-        const lock = await fs6.readFile(path8.join(liveDoc, DATA_WRITE_LOCK_FILENAME));
-        await fs6.writeFile(path8.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
-        const lh = await fs6.open(path8.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), "r");
-        try {
-          await lh.sync();
-        } finally {
-          await lh.close();
+        await materialize(stage, original);
+        const prepared = await prepare(stage, original, operations);
+        const lock = Buffer.from(writerLock.contents);
+        if (!(await fs6.readFile(path10.join(liveDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock)) {
+          fail("batch.workspace-conflict", "The shared writer lock changed while preparing the batch.");
         }
+        await fs6.writeFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME), lock, { flag: "wx", mode: 384 });
+        await syncFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME));
         await seal(stage, original);
         const candidate = await snapshot(stage);
+        candidateInode = await directoryIdentity(stagedDoc);
         const resultingWorkspaceRevision = revision(root, candidate);
         const resultingPhysicalRevision = revision(root, candidate, "physical");
         await hooks.beforeExchange?.();
         assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
-        originalInode = await fs6.stat(liveDoc);
-        await installNewJson(journal, { protocol: "snl.batch.recovery/v1", root, stage, expectedWorkspaceRevision, resultingWorkspaceRevision, originalPhysicalRevision, resultingPhysicalRevision, checkedDigest, originalDirectory: { dev: originalInode.dev, ino: originalInode.ino } });
+        const originalDirectory = originalInode = await directoryIdentity(liveDoc);
+        const candidateDirectory = candidateInode;
+        await installNewJson(journal, {
+          protocol: "snl.batch.recovery/v1",
+          root,
+          stage,
+          expectedWorkspaceRevision,
+          resultingWorkspaceRevision,
+          originalPhysicalRevision,
+          resultingPhysicalRevision,
+          checkedDigest,
+          originalDirectory: { dev: Number(originalDirectory.dev), ino: Number(originalDirectory.ino) },
+          ...windows ? {
+            publication: "windows-ntfs-transaction",
+            windowsFileIds: {
+              original: { dev: String(originalDirectory.dev), ino: String(originalDirectory.ino) },
+              candidate: { dev: String(candidateDirectory.dev), ino: String(candidateDirectory.ino) }
+            }
+          } : {}
+        });
         journalCreated = true;
-        await exchange(liveDoc, stagedDoc);
+        if (windows) await writerLock.closeHandle();
+        await exchange(liveDoc, stagedDoc, windows ? async () => {
+          await hooks.beforeWindowsCommit?.();
+          assertUnchanged(root, await snapshot(root), expectedWorkspaceRevision, originalPhysicalRevision);
+          if (revision(root, await snapshot(stage), "physical") !== resultingPhysicalRevision) {
+            throw new BatchError("batch.candidate-conflict", "The staged batch changed before Windows transaction commit.", 2);
+          }
+          if (!sameDirectory(await directoryIdentity(liveDoc), originalDirectory) || !sameDirectory(await directoryIdentity(stagedDoc), candidateDirectory) || !(await fs6.readFile(path10.join(liveDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock) || !(await fs6.readFile(path10.join(stagedDoc, DATA_WRITE_LOCK_FILENAME))).equals(lock)) {
+            throw new BatchError("batch.workspace-conflict", "The original directory or the shared writer lock changed before Windows transaction commit.", 2);
+          }
+        } : void 0);
         assertUnchanged(root, await snapshot(stage), expectedWorkspaceRevision, originalPhysicalRevision);
         await hooks.afterExchange?.();
         await hooks.beforeParentSync?.();
@@ -25607,12 +26076,26 @@ async function applyBatch(root, raw, checkedDigest, expectedWorkspaceRevision, h
           retain = true;
           diagnostics.push({ severity: "warning", code: "batch.backup-cleanup-failed", message: `Commit completed; retained transaction backup at ${stage}.` });
         }
-        return { results: prepared.results, resultingWorkspaceRevision, workspaceRevision: resultingWorkspaceRevision, diagnostics, publication: "linux-directory-exchange", recoveryPath: retain ? stage : null };
+        return {
+          results: prepared.results,
+          resultingWorkspaceRevision,
+          workspaceRevision: resultingWorkspaceRevision,
+          diagnostics,
+          publication: windows ? "windows-ntfs-transaction" : "linux-directory-exchange",
+          recoveryPath: retain ? stage : null
+        };
       } catch (error) {
         if (journalCreated && originalInode) {
           try {
-            const now = await fs6.stat(liveDoc);
-            if (now.dev !== originalInode.dev || now.ino !== originalInode.ino) await exchange(liveDoc, stagedDoc);
+            const originalDirectory = originalInode;
+            const now = await directoryIdentity(liveDoc);
+            if (!sameDirectory(now, originalDirectory)) {
+              await exchange(liveDoc, stagedDoc, windows ? async () => {
+                if (!candidateInode || !sameDirectory(await directoryIdentity(liveDoc), candidateInode) || !sameDirectory(await directoryIdentity(stagedDoc), originalDirectory) || revision(root, await snapshot(stage), "physical") !== originalPhysicalRevision) {
+                  throw new Error("The original or candidate directory changed before Windows transaction rollback.");
+                }
+              } : void 0);
+            }
             await syncDir(root);
             await syncDir(stage);
             if (revision(root, await snapshot(root), "physical") !== originalPhysicalRevision) throw new Error("Rollback physical revision mismatch.");
@@ -25981,7 +26464,7 @@ function dependencyCacheDescriptor(snapshot2) {
 // lib/dependency-cache-storage.ts
 import { constants as constants7, promises as fs7 } from "node:fs";
 import { createHash as createHash5, randomUUID as randomUUID4 } from "node:crypto";
-import * as path9 from "node:path";
+import * as path11 from "node:path";
 var MAX_BYTES = 64 * 1024 * 1024;
 var object2 = (v3) => v3 !== null && typeof v3 === "object" && !Array.isArray(v3);
 function cacheFingerprint(value) {
@@ -26017,8 +26500,8 @@ function segment(value) {
 function cachePath(root, id, scope) {
   segment(id);
   if (scope) segment(scope.library);
-  const base = scope ? path9.join(root, ".SNL_Doc", "libraries", scope.library) : path9.join(root, ".SNL_Doc");
-  return path9.resolve(base, ".cache", id, "result.json");
+  const base = scope ? path11.join(root, ".SNL_Doc", "libraries", scope.library) : path11.join(root, ".SNL_Doc");
+  return path11.resolve(base, ".cache", id, "result.json");
 }
 async function checkDirectory(directory, create) {
   try {
@@ -26036,17 +26519,17 @@ async function checkDirectory(directory, create) {
 }
 async function guard(root, id, scope, create) {
   const file = cachePath(root, id, scope);
-  let current = path9.resolve(root, ".SNL_Doc");
+  let current = path11.resolve(root, ".SNL_Doc");
   await checkDirectory(current, false);
   if (scope) {
-    current = path9.join(current, "libraries");
+    current = path11.join(current, "libraries");
     await checkDirectory(current, false);
-    current = path9.join(current, scope.library);
+    current = path11.join(current, scope.library);
     await checkDirectory(current, false);
   }
-  current = path9.join(current, ".cache");
+  current = path11.join(current, ".cache");
   await checkDirectory(current, create);
-  await checkDirectory(path9.join(current, id), create);
+  await checkDirectory(path11.join(current, id), create);
   try {
     const stat = await fs7.lstat(file);
     if (stat.isSymbolicLink() || !stat.isFile()) throw new Error("Unsafe cache file");
@@ -26058,16 +26541,7 @@ async function guard(root, id, scope, create) {
 async function readCache(root, descriptor) {
   try {
     const file = await guard(root, descriptor.id, descriptor.scope, false);
-    const handle = await fs7.open(file, constants7.O_RDONLY | (constants7.O_NOFOLLOW ?? 0));
-    let text3;
-    try {
-      const stat = await handle.stat();
-      if (!stat.isFile() || stat.size > MAX_BYTES) return void 0;
-      text3 = await handle.readFile("utf8");
-    } finally {
-      await handle.close();
-    }
-    const envelope = JSON.parse(text3);
+    const envelope = JSON.parse((await readRegularBytes(file, MAX_BYTES)).toString("utf8"));
     if (!object2(envelope) || envelope.format !== "snl-derived-cache" || envelope.schema !== 1 || envelope.generator !== descriptor.id || envelope.version !== descriptor.version || envelope.library !== (descriptor.scope?.library ?? null) || envelope.inputHash !== cacheFingerprint(descriptor.input) || !descriptor.validate(envelope.value) || envelope.valueHash !== cacheFingerprint(envelope.value)) return void 0;
     return envelope.value;
   } catch {
@@ -26086,9 +26560,9 @@ async function writeCache(root, descriptor, value, beforeRename) {
     valueHash: cacheFingerprint(value),
     value
   });
-  if (Buffer.byteLength(text3) > MAX_BYTES) throw new Error("Cache output exceeds size limit");
+  if (Buffer.byteLength(text3) + 1 > MAX_BYTES) throw new Error("Cache output exceeds size limit");
   const file = await guard(root, descriptor.id, descriptor.scope, true);
-  const temporary = path9.join(path9.dirname(file), `.${randomUUID4()}.tmp`);
+  const temporary = path11.join(path11.dirname(file), `.${randomUUID4()}.tmp`);
   try {
     const handle = await fs7.open(temporary, "wx", 384);
     try {
@@ -26100,11 +26574,13 @@ async function writeCache(root, descriptor, value, beforeRename) {
     await beforeRename();
     await guard(root, descriptor.id, descriptor.scope, false);
     await fs7.rename(temporary, file);
-    const directory = await fs7.open(path9.dirname(file), constants7.O_RDONLY);
-    try {
-      await directory.sync();
-    } finally {
-      await directory.close();
+    if (process.platform !== "win32") {
+      const directory = await fs7.open(path11.dirname(file), constants7.O_RDONLY);
+      try {
+        await directory.sync();
+      } finally {
+        await directory.close();
+      }
     }
   } finally {
     await fs7.unlink(temporary).catch((error) => {
@@ -26137,7 +26613,7 @@ async function validate2(root) {
   return result;
 }
 async function generateRelationships(root, dryRun, expectedWorkspaceRevision, hooks = {}) {
-  await readRegularText(path10.join(root, ".SNL_Doc/config.json"));
+  await readRegularText(path12.join(root, ".SNL_Doc/config.json"));
   if (!usesEntityStorage(await readConfig(root))) throw new RelationshipPublishError("workspace.unsupported-schema", "Generation requires current entity storage.", 2);
   const run2 = async () => {
     const revision2 = await captureWorkspaceRevision(root, !dryRun);
@@ -26262,14 +26738,14 @@ var KeyStore = class {
   }
 };
 function createKey(key) {
-  let path14 = null;
+  let path16 = null;
   let id = null;
   let src = null;
   let weight = 1;
   let getFn = null;
   if (isString(key) || isArray(key)) {
     src = key;
-    path14 = createKeyPath(key);
+    path16 = createKeyPath(key);
     id = createKeyId(key);
   } else {
     if (!hasOwn.call(key, "name")) throw new Error(MISSING_KEY_PROPERTY("name"));
@@ -26279,12 +26755,12 @@ function createKey(key) {
       weight = key.weight;
       if (weight <= 0) throw new Error(INVALID_KEY_WEIGHT_VALUE(createKeyId(name2)));
     }
-    path14 = createKeyPath(name2);
+    path16 = createKeyPath(name2);
     id = createKeyId(name2);
     getFn = key.getFn ?? null;
   }
   return {
-    path: path14,
+    path: path16,
     id,
     weight,
     src,
@@ -26297,29 +26773,29 @@ function createKeyPath(key) {
 function createKeyId(key) {
   return isArray(key) ? key.join(".") : key;
 }
-function get(obj, path14) {
+function get(obj, path16) {
   const list = [];
   let arr = false;
-  const deepGet = (obj2, path15, index, arrayIndex) => {
+  const deepGet = (obj2, path17, index, arrayIndex) => {
     if (!isDefined(obj2)) return;
-    if (!path15[index]) list.push(arrayIndex !== void 0 ? {
+    if (!path17[index]) list.push(arrayIndex !== void 0 ? {
       v: obj2,
       i: arrayIndex
     } : obj2);
     else {
-      const value = obj2[path15[index]];
+      const value = obj2[path17[index]];
       if (!isDefined(value)) return;
-      if (index === path15.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
+      if (index === path17.length - 1 && (isString(value) || isNumber(value) || isBoolean(value) || typeof value === "bigint")) list.push(arrayIndex !== void 0 ? {
         v: toString(value),
         i: arrayIndex
       } : toString(value));
       else if (isArray(value)) {
         arr = true;
-        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path15, index + 1, i5);
-      } else if (path15.length) deepGet(value, path15, index + 1, arrayIndex);
+        for (let i5 = 0, len = value.length; i5 < len; i5 += 1) deepGet(value[i5], path17, index + 1, i5);
+      } else if (path17.length) deepGet(value, path17, index + 1, arrayIndex);
     }
   };
-  deepGet(obj, isString(path14) ? path14.split(".") : path14, 0);
+  deepGet(obj, isString(path16) ? path16.split(".") : path16, 0);
   return arr ? list : list[0];
 }
 var MatchOptions = {
@@ -27889,7 +28365,7 @@ async function querySnoogl(workspaceRoot, mode, query) {
 // lib/init-workspace.ts
 import { randomUUID as randomUUID5 } from "node:crypto";
 import { constants as constants8, promises as fs8 } from "node:fs";
-import path11 from "node:path";
+import path13 from "node:path";
 
 // lib/init-preset-packages/fulcrum-math-notes.json
 var fulcrum_math_notes_default = {
@@ -29349,7 +29825,7 @@ async function pathKind(target) {
   }
 }
 async function canonicalExistingDirectory(root) {
-  const resolved = path11.resolve(root);
+  const resolved = path13.resolve(root);
   let stat;
   try {
     stat = await fs8.lstat(resolved);
@@ -29369,16 +29845,16 @@ async function canonicalExistingDirectory(root) {
   return resolved;
 }
 async function writeJson(file, value) {
-  await fs8.mkdir(path11.dirname(file), { recursive: true });
+  await fs8.mkdir(path13.dirname(file), { recursive: true });
   await fs8.writeFile(file, jsonText(value), { encoding: "utf8", flag: "wx", mode: 420 });
 }
 async function listRelativeFiles(root, current = root) {
   const names = await fs8.readdir(current, { withFileTypes: true });
   const out = [];
   for (const item of names.sort((left, right) => left.name.localeCompare(right.name))) {
-    const absolute = path11.join(current, item.name);
+    const absolute = path13.join(current, item.name);
     if (item.isDirectory()) out.push(...await listRelativeFiles(root, absolute));
-    else out.push(path11.relative(root, absolute).split(path11.sep).join("/"));
+    else out.push(path13.relative(root, absolute).split(path13.sep).join("/"));
   }
   return out;
 }
@@ -29449,7 +29925,7 @@ function resolvePreset(presetId, presetValue) {
 async function initializeWorkspace(root, presetId, presetValue) {
   const preset = resolvePreset(presetId, presetValue);
   const canonicalRoot = await canonicalExistingDirectory(root);
-  const targetDoc = path11.join(canonicalRoot, ".SNL_Doc");
+  const targetDoc = path13.join(canonicalRoot, ".SNL_Doc");
   if (await pathKind(targetDoc) === "present") {
     throw new InitWorkspaceError(
       "workspace.already-initialized",
@@ -29458,7 +29934,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
     );
   }
   const token = randomUUID5();
-  const lockPath = path11.join(canonicalRoot, ".SNL_Doc.init.lock");
+  const lockPath = path13.join(canonicalRoot, ".SNL_Doc.init.lock");
   let lock;
   try {
     lock = await fs8.open(lockPath, constants8.O_CREAT | constants8.O_EXCL | constants8.O_WRONLY, 384);
@@ -29476,8 +29952,8 @@ async function initializeWorkspace(root, presetId, presetValue) {
     }
     throw error;
   }
-  const stageRoot = path11.join(canonicalRoot, `.snl-init-stage-${token}`);
-  const stageDoc = path11.join(stageRoot, ".SNL_Doc");
+  const stageRoot = path13.join(canonicalRoot, `.snl-init-stage-${token}`);
+  const stageDoc = path13.join(stageRoot, ".SNL_Doc");
   let published = false;
   try {
     if (await pathKind(targetDoc) === "present") {
@@ -29487,20 +29963,20 @@ async function initializeWorkspace(root, presetId, presetValue) {
         `${targetDoc} appeared while initialization was starting; refusing to overwrite it.`
       );
     }
-    await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs8.mkdir(path11.join(stageDoc, directory), { recursive: true })));
+    await Promise.all(["entries", "macros", "packages", "libraries"].map((directory) => fs8.mkdir(path13.join(stageDoc, directory), { recursive: true })));
     await Promise.all([
-      ...["entries", "macros", "libraries"].map((directory) => fs8.writeFile(path11.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
-      ...defaultPackageManifests().map((item) => writeJson(path11.join(stageDoc, item.relativePath), item.value)),
-      ...defaultMacroEnvelopes().map((item) => writeJson(path11.join(stageDoc, item.relativePath), item.value)),
-      writeJson(path11.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
+      ...["entries", "macros", "libraries"].map((directory) => fs8.writeFile(path13.join(stageDoc, directory, ".gitkeep"), "", { flag: "wx", mode: 420 })),
+      ...defaultPackageManifests().map((item) => writeJson(path13.join(stageDoc, item.relativePath), item.value)),
+      ...defaultMacroEnvelopes().map((item) => writeJson(path13.join(stageDoc, item.relativePath), item.value)),
+      writeJson(path13.join(stageDoc, "relationships.json"), { version: 1, relationships: [] })
     ]);
     const config = defaultConfig(preset);
-    await writeJson(path11.join(stageDoc, "config.json"), config);
+    await writeJson(path13.join(stageDoc, "config.json"), config);
     if (preset) {
       await createPresetEntities(stageRoot, preset);
       const macroPackages = [...new Set(preset.macros.map((value) => value.package).filter((value) => typeof value === "string"))].filter((value) => value !== "BasicMacros").sort((left, right) => left.localeCompare(right));
       config.active_macro_packages = ["BasicMacros", ...macroPackages];
-      await fs8.writeFile(path11.join(stageDoc, "config.json"), jsonText(config), "utf8");
+      await fs8.writeFile(path13.join(stageDoc, "config.json"), jsonText(config), "utf8");
     }
     const validation = await validateManagedWorkspace(stageRoot);
     if (!validation.valid) {
@@ -29540,7 +30016,7 @@ async function initializeWorkspace(root, presetId, presetValue) {
 
 // lib/package-membership-repair.ts
 import { promises as fs9 } from "node:fs";
-import path12 from "node:path";
+import path14 from "node:path";
 function record3(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
   return value;
@@ -29553,17 +30029,17 @@ async function repairPackageEntryIds(workspaceRoot, packageId2) {
       throw new Error("Package entry_ids repair requires the current per-entity workspace schema.");
     }
     const doc = snlDocRoot(workspaceRoot);
-    const manifestFile = path12.join(doc, packageManifestPath(packageId2));
+    const manifestFile = path14.join(doc, packageManifestPath(packageId2));
     const original = await readRegularText(manifestFile);
     const manifest = record3(JSON.parse(original.text), "Package manifest");
     if (manifest.format !== "snl-package" || manifest.version !== PACKAGE_STORAGE_VERSION || manifest.schema_version !== CURRENT_PACKAGE_SCHEMA_VERSION || manifest.id !== packageId2 || typeof manifest.name !== "string" || typeof manifest.description !== "string") {
       throw new Error(`Package ${JSON.stringify(packageId2)} is not a current canonical Package manifest.`);
     }
     const seen = /* @__PURE__ */ new Set();
-    const entriesDir = path12.join(doc, "entries");
+    const entriesDir = path14.join(doc, "entries");
     for (const name2 of (await fs9.readdir(entriesDir)).filter((item) => item.endsWith(".json")).sort()) {
       const relative2 = `entries/${name2}`;
-      const envelope = record3(JSON.parse((await readRegularText(path12.join(entriesDir, name2))).text), relative2);
+      const envelope = record3(JSON.parse((await readRegularText(path14.join(entriesDir, name2))).text), relative2);
       const entry = record3(envelope.entry, `${relative2}#entry`);
       if (envelope.format !== "snl-entry" || envelope.version !== ENTRY_STORAGE_VERSION || envelope.schema_version !== CURRENT_ENTRY_SCHEMA_VERSION || typeof envelope.package !== "string" || entry.package !== envelope.package || typeof entry.id !== "string" || !entry.id) {
         throw new Error(`${relative2} is not a current canonical Entry envelope.`);
@@ -29633,7 +30109,7 @@ var COMMAND_PATHS = Object.freeze([
 var field = (type, required) => ({ type, required });
 function describeCommand(command) {
   if (command === "batch/check") return { command, access: "read", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true) }, summary: "Validate a complete dependent create batch without workspace writes; return digest and workspace revision." };
-  if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange (python3 required)." };
+  if (command === "batch/apply") return { command, access: "write", arguments: { operations: field("array<{command,arguments:{value}}> (create-only)", true), checkedDigest: field("string", true), expectedWorkspaceRevision: field("string", true) }, summary: "Publish exactly a checked batch under one writer lock using Linux directory exchange or Windows Transactional NTFS." };
   if (command === "relationship/generate") return { command, access: "write", arguments: { scope: field("empty object (global)", true), dryRun: field("boolean", false), expectedWorkspaceRevision: field("string (required for apply; use dry-run receipt)", false) }, summary: "Generate global dependencies; dry-run writes nothing, apply publishes only the existing dependencies cache under fresh Authoring CAS." };
   const action = command.split("/").at(-1);
   if (action === "list") return { command, access: "read", arguments: { query: field("string|null", false), limit: field("integer", false), cursor: field("string|null", false) }, summary: "List one managed entity family with stable pagination." };
@@ -29670,7 +30146,7 @@ async function executeOperation(request) {
   try {
     if (!request || request.protocol !== OPERATION_PROTOCOL || typeof request.root !== "string" || !request.root || !request.arguments || typeof request.arguments !== "object" || Array.isArray(request.arguments))
       return operationFailure(command || "unknown", 2, "operation.invalid-request", "Expected protocol snl.operation/v1, an absolute workspace root, and an arguments object.");
-    if (!path13.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
+    if (!path15.isAbsolute(request.root)) return operationFailure(command, 2, "workspace.root-not-absolute", "root must be an absolute path.");
     const tokens = command.split("/");
     if (command === "relationship/generate") {
       const args2 = request.arguments;
@@ -29699,10 +30175,11 @@ async function executeOperation(request) {
       return succeed(command, {
         operationProtocol: OPERATION_PROTOCOL,
         resultProtocol: RESULT_PROTOCOL,
-        commands: COMMAND_PATHS.filter((path14) => path14 !== "help"),
+        commands: COMMAND_PATHS.filter((path16) => path16 !== "help"),
         initPresets: BUILTIN_INIT_PRESET_DESCRIPTORS,
         batch: { commands: ["batch/check", "batch/apply"].map(describeCommand), operationCommands: BATCH_CREATE_TYPES.map((type2) => `${type2}/create`) },
         web: { usage: "snl [--root <directory>] [--port <port>] [--json]", host: "127.0.0.1", defaultPort: 4911, readOnly: true, rootDefault: "." },
+        remoteReader: { usage: "snl serve-remote [--root <directory>] [--host <bind IP>] [--port <port>] --tls-key <file> --tls-cert <file> [--json]", tokenEnvironment: "SNL_READER_TOKEN", readOnly: true },
         initHelp: {
           usage: "snl init --root <directory> [--preset <id> | --input <file|->] [--json]",
           rootDefault: ".",
@@ -29742,7 +30219,7 @@ async function executeOperation(request) {
       if (!validation.valid) return operationFailure(command, 1, "workspace.invalid", "Workspace validation reported errors.", validation);
       const config = await readConfig(request.root);
       return succeed(command, {
-        root: path13.resolve(request.root),
+        root: path15.resolve(request.root),
         version: config.version,
         versions: { workspace: config.version, entitySchema: 1, libraryTopology: 1, operationProtocol: OPERATION_PROTOCOL, resultProtocol: RESULT_PROTOCOL },
         counts: validation.counts,

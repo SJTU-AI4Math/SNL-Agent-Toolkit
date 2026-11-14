@@ -52,10 +52,12 @@ async function readInput(file: string, batch = false): Promise<unknown> {
   const text=file==='-'?await new Promise<string>((resolve,reject)=>{let data='';process.stdin.setEncoding('utf8');process.stdin.on('data',c=>data+=c);process.stdin.on('end',()=>resolve(data));process.stdin.on('error',reject);}):await fs.readFile(path.resolve(file),'utf8');
   return batch ? parseBatchJson(text) : JSON.parse(text);
 }
-function webArguments(argv: string[]): { root: string; port: number; json: boolean; error?: string } | null {
+function webArguments(argv: string[]): { root: string; port: number; json: boolean; remote?: { host: string; keyFile: string; certFile: string }; error?: string } | null {
   if (argv.includes('--help') || argv.includes('-h')) return null;
+  const isRemote = argv[0] === 'serve-remote';
   let root = '.'; let port = 4911; let json = false; let error: string | undefined;
-  for (let i = 0; i < argv.length; i++) {
+  let host = '127.0.0.1'; let keyFile = ''; let certFile = '';
+  for (let i = isRemote ? 1 : 0; i < argv.length; i++) {
     const token = argv[i];
     if (token === '--json') { json = true; continue; }
     if (token === '--root' || token === '-r') {
@@ -68,9 +70,19 @@ function webArguments(argv: string[]): { root: string; port: number; json: boole
       else port = Number(value);
       continue;
     }
+    if (isRemote && ['--host', '--tls-key', '--tls-cert'].includes(token)) {
+      const value = argv[++i];
+      if (!value || value.startsWith('--')) return { root, port, json, error: `${token} requires a value.` };
+      if (token === '--host') host = value;
+      if (token === '--tls-key') keyFile = value;
+      if (token === '--tls-cert') certFile = value;
+      continue;
+    }
+    if (isRemote) return { root, port, json, error: `Unexpected serve-remote argument: ${token}` };
     return null; // Existing domains and unknown flags remain owned by the operation parser.
   }
-  return { root: path.resolve(root), port, json, error };
+  if (isRemote && (!keyFile || !certFile)) error ??= 'serve-remote requires --tls-key and --tls-cert.';
+  return { root: path.resolve(root), port, json, remote: isRemote ? { host, keyFile, certFile } : undefined, error };
 }
 export async function main(argv=process.argv.slice(2)): Promise<number> {
   const web = webArguments(argv);
@@ -79,11 +91,15 @@ export async function main(argv=process.argv.slice(2)): Promise<number> {
       process.stdout.write(JSON.stringify(operationFailure('web', 2, 'usage.invalid', web.error).response) + '\n'); return 2;
     }
     try {
-      const { startWebReader } = await import('../web/server');
-      const running = await startWebReader(web.root, web.port);
+      const running = web.remote
+        ? await (await import('../web/remote')).startRemoteReader(web.root, { ...web.remote, port: web.port, token: process.env.SNL_READER_TOKEN ?? '' })
+        : await (await import('../web/server')).startWebReader(web.root, web.port);
+      const workspaceRoot = 'root' in running ? running.root : undefined;
       process.stdout.write(web.json
-        ? JSON.stringify({ protocol: 'snl.web/v1', ok: true, url: running.url, root: running.root, readOnly: true }) + '\n'
-        : `SNL read-only reader: ${running.url}\nWorkspace: ${JSON.stringify(running.root)}\nPress Ctrl+C to stop.\n`);
+        ? JSON.stringify({ protocol: 'snl.web/v1', ok: true, url: running.url, ...(workspaceRoot ? { root: workspaceRoot } : { mode: 'remote' }), readOnly: true }) + '\n'
+        : web.remote
+          ? `SNL remote Reader API: ${running.url}\nPress Ctrl+C to stop.\n`
+          : `SNL read-only reader: ${running.url}\nWorkspace: ${JSON.stringify(workspaceRoot)}\nPress Ctrl+C to stop.\n`);
       await new Promise<void>((resolve, reject) => {
         let closing = false;
         const stop = () => {

@@ -86,7 +86,7 @@ test('detects a non-cooperative concurrent replacement instead of losing it', as
   }
 });
 
-test('rejects indirect Entry paths before writing any envelope', async () => {
+test('rejects indirect Entry paths before writing any envelope', { skip: process.platform === 'win32' }, async () => {
   const root = await fixture();
   const external = path.join(await mkdtemp(path.join(tmpdir(), 'snl-entry-external-')), 'outside.json');
   try {
@@ -124,7 +124,7 @@ test('rejects a symlinked .SNL_Doc before creating a lock in its target', async 
   try {
     await mkdir(path.join(external, 'entries'));
     await writeFile(path.join(external, 'config.json'), `${JSON.stringify({ version: '0.1.0', entity_storage: { version: 1 } }, null, 2)}\n`);
-    await symlink(external, path.join(root, '.SNL_Doc'));
+    await symlink(external, path.join(root, '.SNL_Doc'), process.platform === 'win32' ? 'junction' : 'dir');
     await assert.rejects(repairV010EntrySchemaMarkers(root), /canonical, non-symlink directory/u);
     await assert.rejects(stat(path.join(external, '.data-write.lock')), /ENOENT/u);
   } finally {

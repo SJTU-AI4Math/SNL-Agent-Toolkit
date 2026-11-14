@@ -4,6 +4,14 @@ import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { assertSnlDoc, readConfig, readEntries, readActiveMacros, readLibraryMeta, readLibraryGraph, readLibraryCounters } from '../../lib/snl-doc.ts';
 import { listManagedEntities, validateManagedWorkspace } from '../../lib/entity-crud.ts';
+import { readRegularBytes } from '../../lib/guarded-json-file.ts';
+import { FileSizeLimitError, readBoundedFile } from '../../lib/read-bounded-file.ts';
+
+const MiB = 1024 * 1024;
+const IMAGE_LIMIT = 10 * MiB;
+const SVG_LIMIT = MiB;
+const SNAPSHOT_ASSET_LIMIT = 32 * MiB;
+const SNAPSHOT_ASSET_COUNT = 512;
 import type { CounterNode, EntryData, EntryKind, LibraryGraph, LibraryMetaFile, MacroKind, MacroPackageEntry, SnlConfig } from '../../lib/snl-doc-schema.ts';
 
 export interface WorkspaceReaderInput {
@@ -87,15 +95,27 @@ export async function createWorkspaceReader(root: string, modelSource: string | 
       // No general file route: only references enumerated by the shared renderer
       // may obtain bytes, and only from this workspace's assets directory.
       snapshot.resources = Object.create(null);
-      for (const asset of model.readerAssetPaths(snapshot)) {
+      let assetBudget = SNAPSHOT_ASSET_LIMIT;
+      let candidates = 0;
+      for (const asset of new Set(model.readerAssetPaths(snapshot))) {
+        if (++candidates > SNAPSHOT_ASSET_COUNT) {
+          snapshot.library.warnings.push('Some assets were omitted because the snapshot references too many files.');
+          break;
+        }
+        const svg = asset.toLowerCase().endsWith('.svg');
+        const fileLimit = svg ? SVG_LIMIT : IMAGE_LIMIT;
         try {
-          const bytes = await readAsset(root, asset);
+          const bytes = await readAsset(root, asset, Math.min(fileLimit, assetBudget));
+          assetBudget -= bytes.length;
           const resource = { url: `data:${assetMime(asset)};base64,${bytes.toString('base64')}`,
             revision: 'sha256:' + createHash('sha256').update(bytes).digest('hex'),
-            ...(asset.toLowerCase().endsWith('.svg') ? { text: bytes.toString('utf8') } : {}) };
+            ...(svg ? { text: bytes.toString('utf8') } : {}) };
           Object.defineProperty(snapshot.resources, asset, { value: resource, enumerable: true, writable: true, configurable: true });
-        } catch {
-          snapshot.library.warnings.push(`Asset unavailable: ${asset}`);
+        } catch (error) {
+          const reason = error instanceof FileSizeLimitError
+            ? (assetBudget < fileLimit ? ' (snapshot asset budget exceeded)' : ` (exceeds ${fileLimit / MiB} MiB)`)
+            : '';
+          snapshot.library.warnings.push(`Asset unavailable: ${asset}${reason}`);
         }
       }
       // Include captured resources, so refresh notices changes to image bytes too.
@@ -114,9 +134,15 @@ function assetMime(asset: string): string {
   const mimes: Record<string, string> = { '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp', '.avif': 'image/avif', '.bmp': 'image/bmp', '.ico': 'image/x-icon' };
   return mimes[path.extname(asset).toLowerCase()] ?? 'application/octet-stream';
 }
-async function readAsset(root: string, asset: string): Promise<Buffer> {
+async function readAsset(root: string, asset: string, limit: number): Promise<Buffer> {
   if (!asset || /[:\\\\%\u0000-\u001f\u007f-\u009f]/u.test(asset) || asset.split('/').some(part => !part || part === '.' || part === '..')) {
     throw new Error('Invalid asset path.');
+  }
+  if (process.platform === 'win32') {
+    // libuv cannot open Windows directory handles. The guarded reader checks
+    // that the whole parent path resolves to itself, then binds the leaf to
+    // the same file ID before and after opening.
+    return readRegularBytes(path.join(root, '.SNL_Doc', 'assets', ...asset.split('/')), limit);
   }
   // Linux descriptor-relative traversal pins every parent, including .SNL_Doc
   // and assets. A concurrently swapped parent cannot redirect a child read.
@@ -142,7 +168,7 @@ async function readAsset(root: string, asset: string): Promise<Buffer> {
     handles.push(handle);
     const stat = await handle.stat();
     if (!stat.isFile() || stat.dev !== before.dev || stat.ino !== before.ino) throw new Error('Asset changed while opening.');
-    return await handle.readFile();
+    return await readBoundedFile(handle, limit);
   } finally {
     for (const handle of handles.reverse()) await handle.close();
   }

@@ -22,7 +22,7 @@ async function workspace(){
  await json(path.join(doc,'relationships.json'),{version:1,relationships:[]});
  return root;
 }
-function run(root:string,args:string[]){return spawnSync(path.resolve('node_modules/.bin/tsx'),['src/cli/snl.ts','--root',root,'--json',...args],{cwd:path.resolve(import.meta.dirname,'..'),encoding:'utf8'});}
+function run(root:string,args:string[]){return spawnSync(process.execPath,[path.resolve('node_modules/tsx/dist/cli.mjs'),'src/cli/snl.ts','--root',root,'--json',...args],{cwd:path.resolve(import.meta.dirname,'..'),encoding:'utf8'});}
 function result(runResult:ReturnType<typeof spawnSync>){assert.equal(runResult.stderr,'');assert.equal(typeof runResult.stdout,'string');return JSON.parse(runResult.stdout as string);}
 
 describe('unified snl command',()=>{

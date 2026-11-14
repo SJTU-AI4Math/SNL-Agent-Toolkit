@@ -401,7 +401,7 @@ describe('renameEntityId', () => {
     const entries = JSON.parse(entriesText);
     assert.equal(entries[0].contribution_info.text, 'entry.old must stay opaque');
     assert.match(entriesText, /"huge": 9007199254740993/);
-    assert.equal((await fs.stat(entriesPath)).mode & 0o777, 0o640);
+    if (process.platform !== 'win32') assert.equal((await fs.stat(entriesPath)).mode & 0o777, 0o640);
     const graphPath = path.join(root, '.SNL_Doc/libraries/demo/graph.json');
     const graphText = await fs.readFile(graphPath, 'utf8');
     const graph = JSON.parse(graphText);
@@ -574,7 +574,7 @@ describe('renameEntityId', () => {
     const doc = path.join(root, '.SNL_Doc');
     const realDoc = path.join(root, 'external-doc');
     await fs.rename(doc, realDoc);
-    await fs.symlink(realDoc, doc);
+    await fs.symlink(realDoc, doc, process.platform === 'win32' ? 'junction' : 'dir');
     const before = await fs.readFile(path.join(realDoc, 'entries.json'), 'utf8');
     await assert.rejects(
       renameEntityId(root, 'entry', 'entry.old', 'entry.new'),
@@ -583,7 +583,7 @@ describe('renameEntityId', () => {
     assert.equal(await fs.readFile(path.join(realDoc, 'entries.json'), 'utf8'), before);
   });
 
-  it('rejects symlinked macro package files instead of silently skipping them', async () => {
+  it('rejects symlinked macro package files instead of silently skipping them', { skip: process.platform === 'win32' }, async () => {
     const root = await fixture();
     const external = path.join(root, 'external-macro.json');
     await fs.writeFile(
@@ -606,14 +606,14 @@ describe('renameEntityId', () => {
     const macros = path.join(doc, 'term_macros');
     const realMacros = path.join(doc, 'term-macros-real');
     await fs.rename(macros, realMacros);
-    await fs.symlink(realMacros, macros);
+    await fs.symlink(realMacros, macros, process.platform === 'win32' ? 'junction' : 'dir');
     await assert.rejects(
       findEntityReferences(root, 'macro', 'Macro.old'),
       /term_macros must be a real directory, not a symlink/,
     );
   });
 
-  it('rejects symlinked schema files', async () => {
+  it('rejects symlinked schema files', { skip: process.platform === 'win32' }, async () => {
     const root = await fixture();
     const doc = path.join(root, '.SNL_Doc');
     const entriesPath = path.join(doc, 'entries.json');

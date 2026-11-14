@@ -513,7 +513,7 @@ describe('agent-facing entity write CLIs', () => {
     const root = await mkdtemp(path.join(tmpdir(), 'snl-add-cli-doc-link-'));
     const external = await mkdtemp(path.join(tmpdir(), 'snl-add-cli-external-doc-'));
     roots.push(root, external);
-    await symlink(external, path.join(root, '.SNL_Doc'), 'dir');
+    await symlink(external, path.join(root, '.SNL_Doc'), process.platform === 'win32' ? 'junction' : 'dir');
     const packageDraft = path.join(root, 'package.json');
     const macroDraft = path.join(root, 'macro.json');
     const entryDraft = path.join(root, 'entry.json');
@@ -548,7 +548,7 @@ describe('agent-facing entity write CLIs', () => {
     const parent = await mkdtemp(path.join(tmpdir(), 'snl-add-alias-'));
     roots.push(parent);
     const alias = path.join(parent, 'workspace-link');
-    await symlink(source.root, alias, 'dir');
+    await symlink(source.root, alias, process.platform === 'win32' ? 'junction' : 'dir');
     const draft = path.join(parent, 'entry.json');
     await json(draft, { id: 'entry.alias', kind: 'definition', content: {} });
 

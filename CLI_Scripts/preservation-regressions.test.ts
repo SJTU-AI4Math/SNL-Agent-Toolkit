@@ -173,7 +173,7 @@ for (const mode of ['source', 'CLI', 'DSH source', 'DSH bundle', 'MCP', 'agent M
 }
 
 for (const field of ['mtimeMs', 'atimeMs', 'mode'] as const) {
-  it(`F2 restores canonical root, nested directories and files ${field} under restrictive umask`, async () => {
+  it(`F2 restores canonical root, nested directories and files ${field} under restrictive umask`, { skip: process.platform !== 'linux' }, async () => {
     const { root } = await fixture();
     const dir = path.join(root, '.SNL_Doc/libraries/sample');
     await fs.mkdir(dir, { recursive: true });

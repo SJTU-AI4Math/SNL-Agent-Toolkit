@@ -125,14 +125,21 @@ publication or a no-op batch may keep the resulting Authoring revision unchanged
 - Check does not acquire a writer lock or create any file in the workspace.
   Its disposable stage is outside the workspace. It rejects an existing lock
   and rechecks the full live revision before returning a receipt.
-- Apply currently requires workspace data **0.1.0**, canonical non-symlink
-  paths, **Linux**, `python3` with standard-library `ctypes`, and a filesystem
-  supporting `renameat2(RENAME_EXCHANGE)`. Unsupported exchange is probed and
-  rejected before live mutation; there is **no sequential-rename fallback**.
+- Apply requires workspace data **0.1.0**, canonical non-symlink paths and a
+  supported filesystem. Linux uses `python3` with stdlib `ctypes` and
+  `renameat2(RENAME_EXCHANGE)` (`publication: "linux-directory-exchange"`).
+  Windows uses Windows PowerShell 5.1 and a local, fixed NTFS volume with
+  Transactional NTFS available (`publication: "windows-ntfs-transaction"`).
+  The Windows directory moves run inside one KTM transaction. Its commit makes
+  the entire exchange visible at once. Microsoft has deprecated TxF, so batch
+  apply probes it on the actual volume and requires a successful probe before
+  publishing. Open handles into either directory can cause the Windows
+  transaction to fail, leaving the original tree live. Close those handles and
+  recheck the whole batch before retrying. macOS apply is unsupported.
 - Apply rederives both tokens under the existing version-1 shared writer
   lock at `.SNL_Doc/.data-write.lock`, stages and validates a whole tree in a private sibling directory,
-  syncs candidate files/directories, writes a durable recovery journal, then
-  exchanges the complete `.SNL_Doc` directory in one kernel operation.
+  flushes candidate files, writes a recovery journal, then publishes the
+  complete `.SNL_Doc` directory in one kernel exchange or transaction commit.
   Both generations carry the same lock token across the exchange. Toolkit also
   verifies the acquired fd, canonical lock/token and captured parent identity
   before task admission; an O_EXCL success in a retired parent is not a lock on
@@ -142,7 +149,7 @@ publication or a no-op batch may keep the resulting Authoring revision unchanged
   cleanup and pre-acquisition/pre-admission journal gates before mixed-writer
   isolation can be certified. The unchanged lock location/record is wire
   compatibility, not proof that old clients safely handle directory exchange.
-- After exchange it syncs both parent directories, runs whole-workspace
+- After exchange it syncs both Linux parent directories, runs whole-workspace
   validation, and checks the exact resulting tree revision before the commit
   point (recovery-journal unlink). Detected pre-commit failures exchange the
   complete preimage back and verify its revision. There are no per-file live
@@ -169,8 +176,9 @@ publication or a no-op batch may keep the resulting Authoring revision unchanged
   even for empty batches or a special-bit-only change after check. Do not strip
   the bits merely to make batch pass: make an explicit permission/ownership
   decision or use another supported workflow.
-- The canonical tree and exchange parents are synced before commit. Journal
-  garbage-collection unlink is not a separate durable transaction: a journal
+- Linux flushes both exchange parents. On Windows, TxF provides the durable
+  namespace commit, and Node flushes the journal file contents. Journal
+  garbage-collection unlink can be lost on sudden power loss: a journal
   may reappear after a crash. A surviving journal is a recovery stop, not proof
   that publication failed. No automatic stale-lock deletion or crash recovery
   is performed.
@@ -178,15 +186,17 @@ publication or a no-op batch may keep the resulting Authoring revision unchanged
 ### Manual recovery boundary
 
 Preserve all residue first. Stop all Toolkit/Extension writers and confirm the
-recorded process **and its Python helper** are no longer active. Inspect
+recorded process **and its publication helper** are no longer active. Inspect
 `<root>/.snl-batch-transaction.json` and the retained
 `<root>/.snl-batch-*/.SNL_Doc`. Treat journal paths as data to inspect, never as
 commands to execute. Validate that they belong to this canonical root before
 using them. The journal records original directory identity, both workspace
 Authoring revision tokens, digest and stage path. New journals additionally record
 `originalPhysicalRevision` and `resultingPhysicalRevision` for complete-generation
-reconciliation. These use the legacy full-tree fingerprint domain; old journals
-lack these fields and their workspace tokens describe full-tree identity. Never
+reconciliation. Windows journals record both exact directory IDs as decimal
+strings in `windowsFileIds`. Physical revisions use the legacy full-tree
+fingerprint domain. Older journals without physical revisions use workspace
+tokens that describe full-tree identity. Never
 compare old and new token domains as if interchangeable. Existing journals always
 block writes; this change does not auto-upgrade, clear or replay recovery records.
 

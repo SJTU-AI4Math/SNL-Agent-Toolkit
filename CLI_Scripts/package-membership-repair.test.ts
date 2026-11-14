@@ -52,7 +52,7 @@ async function snapshot(root: string): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
   for (const file of files.filter(file => file.isFile())) {
     const absolute = path.join(file.parentPath, file.name);
-    result[path.relative(doc, absolute)] = await fs.readFile(absolute, 'utf8');
+    result[path.relative(doc, absolute).split(path.sep).join('/')] = await fs.readFile(absolute, 'utf8');
   }
   return result;
 }
@@ -197,12 +197,13 @@ it('repair honors the shared writer lock without changing data', async () => {
 });
 
 for (const relative of ['entries', 'packages', entryEntityPath('Logic', 'Logic.Z'), packageManifestPath('_unpackaged')]) {
-  it(`repair refuses unsafe symlink input: ${relative}`, async () => {
+  const directory = relative === 'entries' || relative === 'packages';
+  it(`repair refuses unsafe symlink input: ${relative}`, { skip: process.platform === 'win32' && !directory }, async () => {
     const root = await fixture();
     const target = path.join(root, '.SNL_Doc', relative);
     const saved = path.join(root, 'outside');
     await fs.rename(target, saved);
-    await fs.symlink(saved, target);
+    await fs.symlink(saved, target, process.platform === 'win32' ? 'junction' : directory ? 'dir' : 'file');
     const original = await snapshot(root);
     const result = await repair(root, '_unpackaged');
     assert.notEqual(result.exitCode, 0);

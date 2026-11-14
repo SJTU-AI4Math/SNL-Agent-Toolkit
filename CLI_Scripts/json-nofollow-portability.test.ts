@@ -8,7 +8,7 @@ import { build } from 'esbuild';
 
 const require = createRequire(import.meta.url);
 for (const module of ['guarded-json-file', 'snl-doc']) {
-  test(`JSON leaf guards work without native O_NOFOLLOW (${module})`, async () => {
+  test(`JSON leaf guards work without native O_NOFOLLOW (${module})`, { skip: process.platform === 'win32' }, async () => {
     const temp = await mkdtemp(path.join(tmpdir(), 'snl-json-nofollow-'));
     try {
       const output = path.join(temp, 'reader.cjs');

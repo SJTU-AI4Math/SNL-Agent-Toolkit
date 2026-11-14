@@ -666,7 +666,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(JSON.parse(await readFile(path.join(targetDir, 'meta.json'), 'utf8')).title, 'after');
   });
 
-  it('rejects symlinked Relationship and Library payload files', async () => {
+  it('rejects symlinked Relationship and Library payload files', { skip: process.platform === 'win32' }, async () => {
     const relationshipRoot = await fixtureCopy();
     const externalRelationship = path.join(relationshipRoot, 'outside-relationships.json');
     await writeFile(externalRelationship, '{"version":1,"relationships":[]}\n');
@@ -754,7 +754,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     );
   });
 
-  it('preserves an identical replacement Library directory at the final delete seam', async () => {
+  it('preserves an identical replacement Library directory at the final delete seam', { skip: process.platform !== 'linux' }, async () => {
     const root = await fixtureCopy();
     const libraries = path.join(root, '.SNL_Doc', 'libraries');
     const dir = path.join(libraries, 'sample');
@@ -783,7 +783,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal((await readdir(libraries)).some(name => name.startsWith('.sample.snl-entity-')), true);
   });
 
-  it('restores a Library when documents appear at the final delete seam', async () => {
+  it('restores a Library when documents appear at the final delete seam', { skip: process.platform !== 'linux' }, async () => {
     const root = await fixtureCopy();
     const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
     await mkdir(dir, { recursive: true });
@@ -804,7 +804,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(dir, 'documents', 'arrived.txt'), 'utf8'), 'external');
   });
 
-  it('restores a Library when unmanaged data arrives after the final extras check', async () => {
+  it('restores a Library when unmanaged data arrives after the final extras check', { skip: !['linux', 'win32'].includes(process.platform) }, async () => {
     const root = await fixtureCopy();
     const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
     await mkdir(dir, { recursive: true });
@@ -826,7 +826,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(dir, 'meta.json'), 'utf8'), '{}\n');
   });
 
-  it('rolls back a Library delete when the durable parent commit fails', async () => {
+  it('rolls back a Library delete when the parent commit fails', { skip: !['linux', 'win32'].includes(process.platform) }, async () => {
     const root = await fixtureCopy();
     const dir = path.join(root, '.SNL_Doc', 'libraries', 'sample');
     await mkdir(dir, { recursive: true });
@@ -860,7 +860,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
       () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
         beforeLibraryDeleteCommitSync: () => { throw new Error('force restoration'); },
         beforeLibraryRestoreInstall: async () => {
-          await rename(dir, displacedReservation);
+          if (process.platform !== 'win32') await rename(dir, displacedReservation);
           await mkdir(dir);
         },
       }),
@@ -872,7 +872,38 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(libraries, recovery, 'meta.json'), 'utf8'), '{}\n');
   });
 
-  it('pins the restore reservation across the final check-to-copy seam', async () => {
+  it('preserves both directories if a captured Windows Library is replaced before restore', { skip: process.platform !== 'win32' }, async () => {
+    const root = await fixtureCopy();
+    const libraries = path.join(root, '.SNL_Doc', 'libraries');
+    const dir = path.join(libraries, 'sample');
+    const displaced = path.join(libraries, 'displaced-capture');
+    await mkdir(dir, { recursive: true });
+    await writeFile(path.join(dir, 'meta.json'), '{}\n');
+    await writeFile(path.join(dir, 'graph.json'), '{"nodes":[],"relationships":[]}\n');
+    const library = await getManagedEntity(root, 'library', 'sample');
+    assert.ok(library);
+    await assert.rejects(
+      () => deleteManagedEntity(root, 'library', 'sample', library.revision, {
+        beforeLibraryRestoreInstall: async () => {
+          const name = (await readdir(libraries)).find(name => name.endsWith('.deleted'));
+          assert.ok(name);
+          const captured = path.join(libraries, name);
+          await rename(captured, displaced);
+          await mkdir(captured);
+          await writeFile(path.join(captured, 'foreign.txt'), 'foreign');
+        },
+        beforeLibraryDirectoryRemove: () => { throw new Error('force restore'); },
+      }),
+      /changed concurrently/i,
+    );
+    assert.equal(await readFile(path.join(displaced, 'meta.json'), 'utf8'), '{}\n');
+    const name = (await readdir(libraries)).find(name => name.endsWith('.deleted'));
+    assert.ok(name);
+    assert.equal(await readFile(path.join(libraries, name, 'foreign.txt'), 'utf8'), 'foreign');
+    assert.ok(!(await readdir(libraries)).includes('sample'));
+  });
+
+  it('pins the restore reservation across the final check-to-copy seam', { skip: process.platform !== 'linux' }, async () => {
     const root = await fixtureCopy();
     const libraries = path.join(root, '.SNL_Doc', 'libraries');
     const dir = path.join(libraries, 'sample');
@@ -897,7 +928,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(displacedReservation, 'meta.json'), 'utf8'), '{}\n');
   });
 
-  it('pins the captured Library across the final restore copy seam', async () => {
+  it('pins the captured Library across the final restore copy seam', { skip: process.platform !== 'linux' }, async () => {
     const root = await fixtureCopy();
     const libraries = path.join(root, '.SNL_Doc', 'libraries');
     const dir = path.join(libraries, 'sample');
@@ -928,7 +959,7 @@ describe('unified CRUD on workspace v0.1.0', () => {
     assert.equal(await readFile(path.join(replacementCapture, 'meta.json'), 'utf8'), '{"owner":"external"}\n');
   });
 
-  it('restores the captured Library bytes when a captured child changes after snapshot', async () => {
+  it('restores the captured Library bytes when a captured child changes after snapshot', { skip: process.platform !== 'linux' }, async () => {
     const root = await fixtureCopy();
     const libraries = path.join(root, '.SNL_Doc', 'libraries');
     const dir = path.join(libraries, 'sample');

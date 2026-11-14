@@ -8,7 +8,7 @@ import { readActiveMacros, readAllMacroPackages } from '../lib/snl-doc.ts';
 const { authorNonemptyFixture } = await import(new URL('../scripts/publisher-test-support.mjs', import.meta.url).href);
 const { activationCases, setupActivation, authoringHashes } = await import(new URL('../scripts/publisher-activation-fixture.mjs', import.meta.url).href);
 
-test('effective Macro activation excludes system without changing strict management catalogs or authored bytes', async () => {
+test('effective Macro activation excludes system without changing strict management catalogs or authored bytes', { skip: process.platform !== 'linux' }, async () => {
   const parent = await mkdtemp(path.join(tmpdir(), 'snl-activation-'));
   const root = await mkdtemp(path.join(parent, 'fixture-'));
   const op = async (command: string, args: Record<string, unknown>) => {

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, readdir, realpath, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, open, readFile, readdir, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, test } from 'node:test';
@@ -8,6 +8,7 @@ import { createManagedEntity, getManagedEntity, updateManagedEntity, validateMan
 import { createWorkspaceReader, type WorkspaceReaderModel } from '../src/web/workspace.ts';
 
 const roots: string[] = [];
+const directoryLink = process.platform === 'win32' ? 'junction' : 'dir';
 afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }); });
 async function fixture() {
   const root = await mkdtemp(path.join(os.tmpdir(), 'snl-web-workspace-')); roots.push(root);
@@ -45,6 +46,26 @@ const model: WorkspaceReaderModel = {
   },
   readerAssetPaths() { return ['image.svg', 'missing.png']; },
 };
+
+test('bounds individual assets and the total embedded resource bytes', async () => {
+  const root = await fixture();
+  const assets = path.join(root, '.SNL_Doc/assets');
+  const mib = 1024 * 1024;
+  const files = [['oversized.svg', mib + 1], ['one.png', 10 * mib], ['two.png', 10 * mib],
+    ['three.png', 10 * mib], ['four.png', 3 * mib]] as const;
+  for (const [name, size] of files) {
+    const handle = await open(path.join(assets, name), 'wx');
+    try { await handle.truncate(size); } finally { await handle.close(); }
+  }
+  const reader = await createWorkspaceReader(root, {
+    ...model,
+    readerAssetPaths: () => ['image.svg', ...files.map(([name]) => name), 'one.png'],
+  });
+  const snapshot = await reader.getSnapshot('book');
+  assert.deepEqual(Object.keys(snapshot.resources), ['image.svg', 'one.png', 'two.png', 'three.png']);
+  assert.ok(snapshot.library.warnings.some(w => w.includes('oversized.svg') && w.includes('1 MiB')));
+  assert.ok(snapshot.library.warnings.some(w => w.includes('four.png') && w.includes('snapshot asset budget')));
+});
 
 test('loads an official workspace read-only and refreshes the complete raw data', async () => {
   const root = await fixture();
@@ -100,7 +121,7 @@ test('rejects invalid roots and Library slugs without exposing repository paths'
   await mkdir(path.join(empty, '.SNL_Doc'));
   await assert.rejects(() => createWorkspaceReader(empty, model), /Invalid .SNL_Doc workspace/);
   await rm(path.join(empty, '.SNL_Doc'), { recursive: true });
-  await symlink(path.join(root, '.SNL_Doc'), path.join(empty, '.SNL_Doc'));
+  await symlink(path.join(root, '.SNL_Doc'), path.join(empty, '.SNL_Doc'), directoryLink);
   await assert.rejects(() => createWorkspaceReader(empty, model), /non-symlink/);
 });
 
@@ -108,8 +129,8 @@ test('only serves referenced assets, never traversal, repository files, or symli
   const root = await fixture();
   const assetDir = path.join(root, '.SNL_Doc/assets');
   await writeFile(path.join(root, 'private.svg'), 'repository secret');
-  await symlink(path.join(root, 'private.svg'), path.join(assetDir, 'link.svg'));
-  await symlink(root, path.join(assetDir, 'linked'));
+  if (process.platform !== 'win32') await symlink(path.join(root, 'private.svg'), path.join(assetDir, 'link.svg'));
+  await symlink(root, path.join(assetDir, 'linked'), directoryLink);
   await writeFile(path.join(assetDir, 'unreferenced.svg'), 'unreferenced secret');
   await writeFile(path.join(assetDir, '__proto__'), 'own-key asset');
   const forbidden = ['../private.svg', '../../private.svg', '/etc/passwd', '%2e%2e/private.svg', 'linked/private.svg', 'link.svg', 'file:///etc/passwd', 'image.svg/child'];
@@ -124,7 +145,7 @@ test('only serves referenced assets, never traversal, repository files, or symli
   await writeFile(path.join(assetDir, 'image.svg'), '<svg>changed</svg>');
   assert.notEqual((await reader.getSnapshot('book')).renderSnapshotId, revision);
   await rm(assetDir, { recursive: true });
-  await symlink(root, assetDir);
+  await symlink(root, assetDir, directoryLink);
   assert.deepEqual(Object.keys((await reader.getSnapshot('book')).resources), []);
 });
 
@@ -133,7 +154,7 @@ test('canonicalizes an admitted root alias and isolates multiple workspaces', as
   const current = await getManagedEntity(second, 'entry', 'Root'); assert.ok(current);
   const update = await updateManagedEntity(second, 'entry', 'Root', { ...current.value, title: 'Second workspace' }, current.revision);
   assert.equal(update.status, 'ok');
-  const alias = first + '-alias'; roots.push(alias); await symlink(first, alias);
+  const alias = first + '-alias'; roots.push(alias); await symlink(first, alias, directoryLink);
   const a = await createWorkspaceReader(alias, model); const b = await createWorkspaceReader(second, model);
   assert.equal((await a.getWorkspace()).root, await realpath(first));
   assert.equal((await a.getSnapshot('book')).entries.find(e => e.id === 'Root')?.title, 'Root');

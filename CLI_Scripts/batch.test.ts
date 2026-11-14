@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { cp, mkdtemp, readdir, readFile, rm, writeFile, symlink, lstat, readlink, chmod, unlink } from 'node:fs/promises';
+import { cp, mkdtemp, open, readdir, readFile, rm, writeFile, symlink, lstat, readlink, chmod, unlink } from 'node:fs/promises';
+import { spawn } from 'node:child_process';
+import { once } from 'node:events';
 import { promises as fs } from 'node:fs';
 import { syncBuiltinESMExports } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -9,8 +11,10 @@ import { applyBatch, parseBatchJson } from '../lib/batch.ts';
 import { DATA_WRITE_LOCK_FILENAME, BATCH_JOURNAL_FILENAME } from '../lib/workspace-data-lock.ts';
 import { createManagedEntity } from '../lib/entity-crud.ts';
 import { executeOperation, OPERATION_PROTOCOL } from '../src/cli/operation.ts';
+import { entryEntityPath, packageManifestPath } from '../lib/entity-storage.ts';
 
 const roots: string[] = [];
+const supportsBatchApply = ['linux', 'win32'].includes(process.platform);
 afterEach(async () => { mock.restoreAll(); syncBuiltinESMExports(); for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }); });
 async function fixture() {
   const root = await mkdtemp(path.join(tmpdir(), 'snl-batch-test-'));
@@ -46,14 +50,14 @@ function success(result: Awaited<ReturnType<typeof call>>) {
   return result.response.data as Record<string, any>;
 }
 
-test('public batch check is read-only; apply creates dependents atomically and retains tags', async () => {
+test('public batch check is read-only; apply creates dependents atomically and retains tags', { skip: !supportsBatchApply }, async () => {
   const root = await fixture();
   const before = await tree(root);
   const checked = success(await call(root, 'batch/check', { operations }));
   assert.deepEqual(await tree(root), before);
   const applied = success(await call(root, 'batch/apply', { operations: checked.normalizedOperations, checkedDigest: checked.checkedDigest, expectedWorkspaceRevision: checked.expectedWorkspaceRevision }));
   assert.equal(applied.results.length, 2);
-  assert.equal(applied.publication, 'linux-directory-exchange');
+  assert.equal(applied.publication, process.platform === 'win32' ? 'windows-ntfs-transaction' : 'linux-directory-exchange');
   const entry = success(await call(root, 'entry/get', { id: 'batch.dependent' })).entity;
   assert.deepEqual(entry.value.tags, tags);
   assert.deepEqual((await readdir(root)).sort(), ['.SNL_Doc']);
@@ -61,7 +65,7 @@ test('public batch check is read-only; apply creates dependents atomically and r
 });
 
 
-test('all seven create families resolve against complete candidate, including first relationship pool', async () => {
+test('all seven create families resolve against complete candidate, including first relationship pool', { skip: !supportsBatchApply }, async () => {
   const root = await fixture();
   const config = JSON.parse(await readFile(path.join(root, '.SNL_Doc', 'config.json'), 'utf8'));
   const macros = success(await call(root, 'macro/list', { limit: 100 })).entities;
@@ -104,7 +108,7 @@ for (const [relative, mode] of [
   ['config.json', 0o2644], ['config.json', 0o1644],
 ] as const) {
   for (const ops of [[], operations]) {
-    test(`special mode ${mode.toString(8)} on ${relative || '.SNL_Doc'} rejects check and stale apply (${ops.length} operations) without side effects`, async () => {
+    test(`special mode ${mode.toString(8)} on ${relative || '.SNL_Doc'} rejects check and stale apply (${ops.length} operations) without side effects`, { skip: process.platform !== 'linux' }, async () => {
       const root = await fixture();
       const target = path.join(root, '.SNL_Doc', relative);
       await chmod(target, mode & 0o777);
@@ -123,7 +127,7 @@ for (const [relative, mode] of [
   }
 }
 
-test('plain-mode empty batch preserves complete tree and modes', async () => {
+test('plain-mode empty batch preserves complete tree and modes', { skip: !supportsBatchApply }, async () => {
   const root = await fixture();
   await chmod(path.join(root, '.SNL_Doc', 'entries'), 0o775);
   await chmod(path.join(root, '.SNL_Doc', 'config.json'), 0o640);
@@ -147,7 +151,7 @@ test('discovery preserves current init and reader, with exactly seven batch crea
   failure(await call(root, 'relationship/generate'), 'operation.invalid-arguments', 2);
 });
 
-test('digest tampering, operation tampering, stale workspace receipt and replay reject without residue', async () => {
+test('digest tampering, operation tampering, stale workspace receipt and replay reject without residue', { skip: !supportsBatchApply }, async () => {
   const root = await fixture();
   const checked = success(await call(root, 'batch/check', { operations }));
   const good = receipt(checked);
@@ -208,7 +212,7 @@ test('strict JSON rejects duplicate/escaped keys, comments, trailing commas and 
   assert.deepEqual(await tree(root), before);
 });
 
-test('own prototype-colliding extension keys survive dependent creation and receipts are stable', async () => {
+test('own prototype-colliding extension keys survive dependent creation and receipts are stable', { skip: !supportsBatchApply }, async () => {
   const root = await fixture();
   const value = JSON.parse('{"id":"__proto__","kind":"definition","tags":["constructor"],"__proto__":{"retained":true},"constructor":"data"}');
   const ops = [{ command: 'entry/create', arguments: { value } }];
@@ -235,14 +239,15 @@ test('lock, retained journal, symlinks, nested temp directories and schema error
     await unlink(file);
   }
   const link = path.join(root, '.SNL_Doc', 'unsafe');
-  await symlink('/tmp', link);
+  await symlink(tmpdir(), link, process.platform === 'win32' ? 'junction' : 'dir');
   const before = await tree(root);
   failure(await call(root, 'batch/check', { operations }), 'workspace.unsafe-path', 2);
   failure(await call(root, 'batch/apply', good), 'workspace.unsafe-path', 2);
   assert.deepEqual(await tree(root), before); await unlink(link);
-  const prior = process.env.TMPDIR;
-  try { process.env.TMPDIR = root; failure(await call(root, 'batch/check', { operations }), 'batch.unsafe-temp-directory', 2); }
-  finally { if (prior === undefined) delete process.env.TMPDIR; else process.env.TMPDIR = prior; }
+  const tmpVariable = process.platform === 'win32' ? 'TEMP' : 'TMPDIR';
+  const prior = process.env[tmpVariable];
+  try { process.env[tmpVariable] = root; failure(await call(root, 'batch/check', { operations }), 'batch.unsafe-temp-directory', 2); }
+  finally { if (prior === undefined) delete process.env[tmpVariable]; else process.env[tmpVariable] = prior; }
   const file = path.join(root, '.SNL_Doc', 'config.json');
   const config = JSON.parse(await readFile(file, 'utf8')); config.version = '99.0.0'; await writeFile(file, JSON.stringify(config));
   const invalid = await tree(root);
@@ -250,10 +255,15 @@ test('lock, retained journal, symlinks, nested temp directories and schema error
   assert.deepEqual(await tree(root), invalid);
 });
 
-test('unsupported publication platform and missing python fail before exchange with no residue', async () => {
+test('unsupported publication platform and missing python fail before exchange with no residue', { skip: process.platform === 'win32' }, async () => {
   const root = await fixture();
   const checked = success(await call(root, 'batch/check', { operations }));
   const before = await tree(root);
+  if (!supportsBatchApply) {
+    failure(await call(root, 'batch/apply', receipt(checked)), 'batch.publication-unsupported', 2);
+    assert.deepEqual(await tree(root), before);
+    return;
+  }
   const platform = Object.getOwnPropertyDescriptor(process, 'platform')!;
   try {
     Object.defineProperty(process, 'platform', { ...platform, value: 'darwin' });
@@ -269,7 +279,9 @@ test('unsupported publication platform and missing python fail before exchange w
 });
 
 for (const seam of ['beforeExchange', 'afterExchange', 'beforeParentSync', 'readback', 'fsync'] as const) {
-  test(`injected ${seam} failure restores exact bytes/modes and leaves no lock, journal or stage`, async () => {
+  test(`injected ${seam} failure restores exact bytes/modes and leaves no lock, journal or stage`, {
+    skip: !supportsBatchApply || (seam === 'fsync' && process.platform === 'win32'),
+  }, async () => {
     const root = await fixture();
     await chmod(path.join(root, '.SNL_Doc', 'config.json'), 0o640);
     const checked = success(await call(root, 'batch/check', { operations }));
@@ -298,7 +310,7 @@ for (const seam of ['beforeExchange', 'afterExchange', 'beforeParentSync', 'read
   });
 }
 
-test('uncertain rollback retains complete candidate, lock/journal/stage and blocks ordinary CRUD', async () => {
+test('uncertain rollback retains complete candidate, lock/journal/stage and blocks ordinary CRUD', { skip: !supportsBatchApply }, async () => {
   const root = await fixture(); const checked = success(await call(root, 'batch/check', { operations }));
   await assert.rejects(applyBatch(root, checked.normalizedOperations, checked.checkedDigest, checked.expectedWorkspaceRevision, {
     afterExchange: async () => {
@@ -309,7 +321,7 @@ test('uncertain rollback retains complete candidate, lock/journal/stage and bloc
   }), (error: any) => error.code === 'batch.recovery-required');
   mock.restoreAll(); syncBuiltinESMExports();
   const journal = JSON.parse(await readFile(path.join(root, BATCH_JOURNAL_FILENAME), 'utf8'));
-  assert.ok(journal.stage.startsWith(root + '/.snl-batch-'));
+  assert.ok(journal.stage.startsWith(path.join(root, '.snl-batch-')));
   assert.ok(await readFile(path.join(root, '.SNL_Doc', DATA_WRITE_LOCK_FILENAME)));
   assert.ok(await readFile(path.join(journal.stage, '.SNL_Doc', 'config.json')));
   const before = await tree(root);
@@ -318,13 +330,100 @@ test('uncertain rollback retains complete candidate, lock/journal/stage and bloc
   assert.deepEqual(success(await call(root, 'entry/get', { id: 'batch.dependent' })).entity.value.tags, tags);
 });
 
-test('committed backup and lock cleanup failures must never be reported as uncommitted', async () => {
+test('Windows transaction holds the complete prior tree visible and excludes writes until commit', { skip: process.platform !== 'win32' }, async () => {
+  const root = await fixture();
+  const doc = path.join(root, '.SNL_Doc');
+  const config = path.join(doc, 'config.json');
+  await chmod(config, 0o444);
+  const original = await readFile(config);
+  const originalMode = (await lstat(config)).mode;
+  const checked = success(await call(root, 'batch/check', { operations }));
+  const entryPath = path.join(doc, entryEntityPath('Batch', 'batch.dependent'));
+  const packagePath = path.join(doc, packageManifestPath('Batch'));
+  const result = await applyBatch(root, checked.normalizedOperations, checked.checkedDigest, checked.expectedWorkspaceRevision, {
+    async beforeWindowsCommit() {
+      assert.deepEqual(await readFile(config), original);
+      await assert.rejects(lstat(entryPath), { code: 'ENOENT' });
+      await assert.rejects(lstat(packagePath), { code: 'ENOENT' });
+      await assert.rejects(writeFile(path.join(doc, 'external.txt'), 'cannot add'));
+      await assert.rejects(createManagedEntity(root, 'entry', { id: 'blocked', kind: 'definition' }), /batch recovery required/);
+    },
+    async afterExchange() {
+      assert.equal(JSON.parse(await readFile(entryPath, 'utf8')).package, 'Batch');
+      assert.equal(JSON.parse(await readFile(packagePath, 'utf8')).id, 'Batch');
+    },
+  });
+  assert.equal(result.publication, 'windows-ntfs-transaction');
+  assert.ok(JSON.parse(await readFile(config, 'utf8')).active_macro_packages.includes('Batch'));
+  assert.equal((await lstat(config)).mode, originalMode);
+  assert.deepEqual(await readdir(root), ['.SNL_Doc']);
+});
+
+test('Windows pre-commit fault or blocked rename leaves the exact original tree', { skip: process.platform !== 'win32' }, async () => {
+  const root = await fixture();
+  const before = await tree(root);
+  const checked = success(await call(root, 'batch/check', { operations }));
+  const apply = (hooks: Parameters<typeof applyBatch>[4]) =>
+    applyBatch(root, checked.normalizedOperations, checked.checkedDigest, checked.expectedWorkspaceRevision, hooks);
+  await assert.rejects(apply({ beforeWindowsCommit: async () => { throw new Error('pre-commit fault'); } }), /pre-commit fault/);
+  assert.deepEqual(await tree(root), before);
+  const openChild = await open(path.join(root, '.SNL_Doc', 'config.json'), 'r');
+  try { await assert.rejects(apply({}), /transaction failed during prepare/i); }
+  finally { await openChild.close(); }
+  assert.deepEqual(await tree(root), before);
+  success(await call(root, 'batch/apply', receipt(checked)));
+});
+
+test('killing the Windows batch process before commit aborts publication and retains the recovery journal', { skip: process.platform !== 'win32', timeout: 20_000 }, async () => {
+  const root = await fixture();
+  const before = await tree(root);
+  const checked = success(await call(root, 'batch/check', { operations }));
+  const source = `
+    const { applyBatch } = await import('./lib/batch.ts');
+    const [root, body] = process.argv.slice(1);
+    const args = JSON.parse(body);
+    await applyBatch(root, args.operations, args.checkedDigest, args.expectedWorkspaceRevision, {
+      beforeWindowsCommit: () => new Promise(() => { process.stdout.write('before Windows commit\\n'); })
+    });
+  `;
+  const child = spawn(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', source, root, JSON.stringify(receipt(checked))], {
+    cwd: path.resolve(import.meta.dirname, '..'), stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,
+  });
+  const closed = once(child, 'close');
+  let stderr = '';
+  child.stderr.on('data', data => { stderr += data; });
+  try {
+    await Promise.race([
+      once(child.stdout, 'data').then(([data]) => assert.match(String(data), /before Windows commit/)),
+      closed.then(() => { throw new Error('Windows child exited early: ' + stderr); }),
+    ]);
+    child.kill();
+    await closed;
+    const journal = JSON.parse(await readFile(path.join(root, BATCH_JOURNAL_FILENAME), 'utf8'));
+    assert.equal(journal.publication, 'windows-ntfs-transaction');
+    assert.match(journal.windowsFileIds.original.ino, /^\d+$/);
+    assert.equal(journal.stage, (await fs.realpath(journal.stage)));
+    // The helper drops the uncommitted transaction on stdin EOF. The journal
+    // blocks cooperating writers until recovery is reconciled.
+    const entry = await call(root, 'entry/get', { id: 'batch.dependent' });
+    assert.equal(entry.response.ok, false);
+    await assert.rejects(createManagedEntity(root, 'entry', { id: 'blocked', kind: 'definition' }), /batch recovery required/);
+    const surviving = (await tree(root)).filter(([name]) =>
+      !name.startsWith('.snl-batch-') && name !== path.join('.SNL_Doc', DATA_WRITE_LOCK_FILENAME));
+    assert.deepEqual(surviving, before);
+  } finally {
+    if (child.exitCode === null && child.signalCode === null) child.kill();
+    await closed;
+  }
+});
+
+test('committed backup and lock cleanup failures must never be reported as uncommitted', { skip: !supportsBatchApply }, async () => {
   for (const kind of ['backup', 'lock']) {
     const root = await fixture(); const checked = success(await call(root, 'batch/check', { operations }));
     const hooks = { afterExchange: async () => {
       if (kind === 'backup') {
         const remove = fs.rm;
-        mock.method(fs, 'rm', async (...args: Parameters<typeof fs.rm>) => { if (String(args[0]).startsWith(root + '/.snl-batch-')) throw Error('backup cleanup fault'); return remove(...args); });
+        mock.method(fs, 'rm', async (...args: Parameters<typeof fs.rm>) => { if (String(args[0]).startsWith(path.join(root, '.snl-batch-'))) throw Error('backup cleanup fault'); return remove(...args); });
       } else {
         const remove = fs.unlink;
         mock.method(fs, 'unlink', async (...args: Parameters<typeof fs.unlink>) => { if (args[0] === path.join(root, '.SNL_Doc', DATA_WRITE_LOCK_FILENAME)) throw Error('lock cleanup fault'); return remove(...args); });
