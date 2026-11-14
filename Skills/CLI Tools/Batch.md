@@ -122,6 +122,13 @@ publication or a no-op batch may keep the resulting Authoring revision unchanged
 
 ## Publication guarantee and operational limits
 
+`batch check` is available on Windows. To publish the same operations from
+Windows using WSL, run both check and apply against a workspace on WSL's Linux
+filesystem (for example, under `~/workspaces`). Mounted Windows drives such as
+`/mnt/c` and `/mnt/d` do not provide the required directory exchange. The
+revision receipt is bound to its workspace, so generate it after choosing the
+publication location.
+
 - Check does not acquire a writer lock or create any file in the workspace.
   Its disposable stage is outside the workspace. It rejects an existing lock
   and rechecks the full live revision before returning a receipt.
